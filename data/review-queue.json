@@ -1,0 +1,18 @@
+{
+  "additions": [
+    {
+      "x": 47.4,
+      "y": 69.3,
+      "name": "滴滴保险",
+      "type": "safe3",
+      "ic": "../assets/icons/滴滴保险.png",
+      "note": "",
+      "images": [],
+      "comments": [],
+      "_uid": "add_1779826789697_0tyf",
+      "_pending": true
+    }
+  ],
+  "deletions": [],
+  "edits": []
+}
