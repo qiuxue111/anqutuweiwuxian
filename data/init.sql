@@ -1,0 +1,43 @@
+CREATE TABLE pins (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  x DOUBLE PRECISION NOT NULL,
+  y DOUBLE PRECISION NOT NULL,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  ic TEXT DEFAULT '',
+  note TEXT DEFAULT '',
+  images TEXT[] DEFAULT '{}',
+  comments JSONB DEFAULT '[]'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE pending_pins (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  x DOUBLE PRECISION NOT NULL,
+  y DOUBLE PRECISION NOT NULL,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  ic TEXT DEFAULT '',
+  note TEXT DEFAULT '',
+  images TEXT[] DEFAULT '{}',
+  comments JSONB DEFAULT '[]'::jsonb,
+  votes INTEGER DEFAULT 0,
+  voters TEXT[] DEFAULT '{}',
+  admin_passed BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE map_comments (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  text TEXT NOT NULL,
+  time TEXT DEFAULT '',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE pins ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pending_pins ENABLE ROW LEVEL SECURITY;
+ALTER TABLE map_comments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "public_access" ON pins FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "public_access" ON pending_pins FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "public_access" ON map_comments FOR ALL USING (true) WITH CHECK (true);
