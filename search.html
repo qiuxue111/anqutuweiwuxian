@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搜索 — 暗区突围：无限攻略站</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .search-page { margin-top: 60px; max-width: 700px; margin-left: auto; margin-right: auto; padding: 2rem 1rem; }
+    .search-page h1 { color: #ffc832; text-align: center; margin-bottom: 2rem; }
+    .search-box {
+      display: flex; gap: 0.5rem; margin-bottom: 2rem;
+    }
+    .search-box input {
+      flex: 1; padding: 0.8rem 1.2rem; border-radius: 8px;
+      border: 1px solid #1e1e2a; background: #12121a;
+      color: #fff; font-size: 1rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-box input:focus { border-color: #ffc832; }
+    .search-box input::placeholder { color: #555; }
+    .search-box button {
+      padding: 0.8rem 1.5rem; background: #ffc832; color: #0a0a0f;
+      border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
+      font-size: 0.95rem; transition: background 0.2s;
+    }
+    .search-box button:hover { background: #ffd950; }
+
+    .search-result-item {
+      display: flex; align-items: center; gap: 0.8rem;
+      background: #12121a; border: 1px solid #1e1e2a;
+      border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+      text-decoration: none; transition: border-color 0.2s;
+    }
+    .search-result-item:hover { border-color: rgba(255,200,50,0.3); }
+    .sr-type {
+      display: inline-block; padding: 0.2rem 0.7rem; border-radius: 4px;
+      font-size: 0.75rem; font-weight: 600; min-width: 42px; text-align: center;
+      background: #2a2a3a; color: #aaa;
+    }
+    .sr-title { color: #fff; font-weight: 600; font-size: 0.95rem; flex-shrink: 0; }
+    .sr-desc { color: #888; font-size: 0.82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .search-empty {
+      text-align: center; color: #666; padding: 3rem 0;
+    }
+    .search-hint { text-align: center; color: #555; font-size: 0.85rem; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo"><a href="index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html">首页</a></li>
+      <li><a href="pages/maps.html">地图</a></li>
+      <li><a href="pages/weapons.html">枪械</a></li>
+      <li><a href="pages/strategy.html">技巧</a></li>
+      <li><a href="pages/gear.html">配装</a></li>
+      <li><a href="search.html" style="color:#ffc832;">🔍</a></li>
+    </ul>
+  </nav>
+
+  <div class="search-page">
+    <h1>🔍 搜索攻略</h1>
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="搜索地图、枪械、技巧、配装… 例如：北山、H416、跑刀" autofocus>
+      <button onclick="doSearch(document.getElementById('search-input').value)">搜索</button>
+    </div>
+    <div id="search-results"></div>
+    <div class="search-hint">
+      支持模糊搜索 · 试试搜 "北山" "H416" "跑刀" "四级弹" "架枪"
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+  <script src="js/search.js"></script>
+  <script>
+    // 页面加载后自动显示所有分类作为预览
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        renderResults(searchIndex.slice(0, 8), 'search-results');
+      }, 300);
+    });
+  </script>
+
+  <footer>
+    <p>暗区突围攻略站 · 持续更新中</p>
+  </footer>
+</body>
+</html>

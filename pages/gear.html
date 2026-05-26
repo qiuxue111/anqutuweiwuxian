@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>配装推荐 — 暗区突围攻略站</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .gear-header { text-align: center; padding: 2rem 0 1rem; }
+    .gear-header h1 { font-size: 2rem; color: #ffc832; }
+    .gear-header p { color: #888; margin-top: 0.3rem; }
+
+    .gear-tier {
+      background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;
+      padding: 2rem; margin-bottom: 2rem;
+    }
+    .gear-tier:target { border-color: #ffc832; }
+
+    .gear-tier h2 { color: #fff; font-size: 1.4rem; margin-bottom: 1rem; }
+    .gear-tier h2 .budget { font-size: 0.9rem; color: #888; font-weight: 400; }
+
+    .gear-table {
+      width: 100%; border-collapse: collapse; margin-bottom: 1rem;
+    }
+    .gear-table th {
+      text-align: left; color: #ffc832; font-size: 0.85rem;
+      padding: 0.5rem 0.8rem; border-bottom: 1px solid #1e1e2a;
+    }
+    .gear-table td {
+      padding: 0.6rem 0.8rem; color: #ccc; font-size: 0.9rem;
+      border-bottom: 1px solid #1a1a22;
+    }
+    .gear-table tr:hover td { background: #0f0f16; }
+
+    .gear-tier .desc { color: #999; font-size: 0.9rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
+    <ul class="nav-links">
+      <li><a href="../index.html">首页</a></li>
+      <li><a href="maps.html">地图</a></li>
+      <li><a href="weapons.html">枪械</a></li>
+      <li><a href="strategy.html">技巧</a></li>
+      <li><a href="gear.html" style="color:#ffc832;">配装</a></li>
+      <li><a href="../search.html">🔍</a></li>
+    </ul>
+  </nav>
+
+  <div style="margin-top:60px;max-width:800px;margin-left:auto;margin-right:auto;padding:0 1rem;">
+    <div class="gear-header">
+      <h1>🛡️ 配装推荐</h1>
+      <p>不同预算、不同玩法下的装备搭配</p>
+    </div>
+
+    <!-- 跑刀装 -->
+    <div class="gear-tier" id="knife">
+      <h2>🔪 跑刀装 <span class="budget">≈ 0 成本</span></h2>
+      <p class="desc">爆仓/连败时回血用，目标是不花钱摸金。活着出来血赚，死了不亏。</p>
+      <table class="gear-table">
+        <tr><th>部位</th><th>推荐</th><th>备注</th></tr>
+        <tr><td>主武器</td><td>✖️ 不携带</td><td>去地图里捡AI的枪</td></tr>
+        <tr><td>近战</td><td>任意匕首</td><td>切刀跑更快</td></tr>
+        <tr><td>防弹衣</td><td>✖️ 不穿</td><td>跑刀穿甲亏钱</td></tr>
+        <tr><td>背包</td><td>✖️ 不背</td><td>进去捡</td></tr>
+        <tr><td>安全箱</td><td>✖️ 不装</td><td>死了不心疼</td></tr>
+      </table>
+      <div class="tip-box" style="background:#0f0f16;border-left:3px solid #ffc832;padding:0.8rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0;font-size:0.9rem;color:#ddd;">
+        <strong>💡 打法：</strong>进图先躲 2 分钟，等枪声响了再出去捡尸体。优先去容易被忽略的小房间搜刮。
+      </div>
+    </div>
+
+    <!-- 贫民装 -->
+    <div class="gear-tier" id="budget">
+      <h2>💵 贫民装 <span class="budget">≈ 2-3 万</span></h2>
+      <p class="desc">萌新过渡、日常低风险搜刮。核心思路：够用就行，死了不心疼。</p>
+      <table class="gear-table">
+        <tr><th>部位</th><th>推荐</th><th>预算</th></tr>
+        <tr><td>主武器</td><td>AK74N 基础改 / SKS</td><td>1.2 万</td></tr>
+        <tr><td>弹药</td><td>三级弹 60 发</td><td>0.3 万</td></tr>
+        <tr><td>防弹衣</td><td>三级甲</td><td>0.5 万</td></tr>
+        <tr><td>头盔</td><td>三级盔 / 二级盔</td><td>0.3 万</td></tr>
+        <tr><td>背包</td><td>普通背包</td><td>0.1 万</td></tr>
+        <tr><td>医疗</td><td>绷带 ×2 + 止痛药 ×1</td><td>0.1 万</td></tr>
+      </table>
+      <p style="color:#ffc832;font-weight:600;">总计 ≈ 2.5 万</p>
+    </div>
+
+    <!-- 标准装 -->
+    <div class="gear-tier" id="standard">
+      <h2>⚖️ 标准装 <span class="budget">≈ 5-8 万</span></h2>
+      <p class="desc">日常稳健作战，能打能抗。适合大部分地图和场景。</p>
+      <table class="gear-table">
+        <tr><th>部位</th><th>推荐</th><th>预算</th></tr>
+        <tr><td>主武器</td><td>H416 / MPX / M4A1 改装</td><td>3-5 万</td></tr>
+        <tr><td>弹药</td><td>四级弹 90 发</td><td>1 万</td></tr>
+        <tr><td>防弹衣</td><td>四级甲</td><td>1.2 万</td></tr>
+        <tr><td>头盔</td><td>四级盔</td><td>0.8 万</td></tr>
+        <tr><td>背包</td><td>中型背包</td><td>0.2 万</td></tr>
+        <tr><td>医疗</td><td>大医疗包 + 手术包 + 止痛药</td><td>0.3 万</td></tr>
+        <tr><td>投掷物</td><td>烟雾弹 ×1 + 闪光弹 ×1</td><td>0.2 万</td></tr>
+      </table>
+      <p style="color:#ffc832;font-weight:600;">总计 ≈ 6-9 万</p>
+    </div>
+
+    <!-- 满配装 -->
+    <div class="gear-tier" id="premium">
+      <h2>🏆 满配装 <span class="budget">≈ 15 万+</span></h2>
+      <p class="desc">攻坚/决赛圈/堡垒等高强度对局使用。装备拉满，目标就是打穿全场。</p>
+      <table class="gear-table">
+        <tr><th>部位</th><th>推荐</th><th>预算</th></tr>
+        <tr><td>主武器</td><td>满改 H416 / Vector / FAL</td><td>8-12 万</td></tr>
+        <tr><td>弹药</td><td>五级弹 120 发（弹匣+备用）</td><td>3 万</td></tr>
+        <tr><td>防弹衣</td><td>五级甲 / 六级甲</td><td>3-5 万</td></tr>
+        <tr><td>头盔</td><td>五级盔 + 面罩</td><td>2 万</td></tr>
+        <tr><td>耳机</td><td>战术耳机（高品质）</td><td>0.3 万</td></tr>
+        <tr><td>背包</td><td>大型背包</td><td>0.3 万</td></tr>
+        <tr><td>医疗</td><td>大医疗包 ×2 + 手术包×2 + 止痛药×2</td><td>0.6 万</td></tr>
+        <tr><td>投掷物</td><td>烟雾 ×2 + 闪光 ×2 + 破片手雷 ×1</td><td>0.5 万</td></tr>
+      </table>
+      <p style="color:#ffc832;font-weight:600;">总计 ≈ 15-23 万</p>
+    </div>
+
+    <!-- 狙击装 -->
+    <div class="gear-tier" id="sniper">
+      <h2>🎯 狙击装 <span class="budget">≈ 10-12 万</span></h2>
+      <p class="desc">北山/前线要塞架枪专用。核心是隐蔽+一发制敌。</p>
+      <table class="gear-table">
+        <tr><th>部位</th><th>推荐</th><th>预算</th></tr>
+        <tr><td>主武器</td><td>AX50 / 满改狙击</td><td>8 万</td></tr>
+        <tr><td>副武器</td><td>手枪 / 便宜的冲锋枪</td><td>0.5 万</td></tr>
+        <tr><td>弹药</td><td>高级穿甲弹 20 发</td><td>0.8 万</td></tr>
+        <tr><td>防弹衣</td><td>四级甲</td><td>1.2 万</td></tr>
+        <tr><td>背包</td><td>小型背包</td><td>0.1 万</td></tr>
+        <tr><td>医疗</td><td>医疗包 + 手术包 + 止痛药</td><td>0.3 万</td></tr>
+      </table>
+      <p style="color:#ffc832;font-weight:600;">总计 ≈ 11-13 万</p>
+    </div>
+
+    <!-- 评论区 -->
+    <div style="margin: 3rem 0; padding: 2rem; background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;">
+      <h2 style="color:#ffc832; margin-bottom: 1rem;">💬 讨论</h2>
+      <p style="color:#888; margin-bottom:1rem;">你的配装方案是什么？来分享！</p>
+      <script src="https://giscus.app/client.js"
+        data-repo="qiuxue111/anqutuweiwuxian"
+        data-repo-id="R_kgDOSolC_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOSolC_c4C95Vo"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="dark"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </div>
+
+  <footer>
+    <p>暗区突围：无限 攻略站 · 持续更新中</p>
+    <p style="margin-top:0.3rem;">数据基于游戏版本 · 仅供参考</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>枪械改装 — 暗区突围：无限攻略站</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .weapon-header { text-align: center; padding: 2rem 0 1rem; }
+    .weapon-header h1 { font-size: 2rem; color: #ffc832; }
+    .weapon-header p { color: #888; margin-top: 0.3rem; }
+
+    .weapon-detail {
+      background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;
+      padding: 2rem; margin-bottom: 2rem;
+    }
+    .weapon-detail:target { border-color: #ffc832; }
+
+    .weapon-detail .top-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;
+    }
+    .weapon-detail h2 { color: #fff; font-size: 1.4rem; }
+    .weapon-type {
+      display: inline-block; padding: 0.2rem 0.8rem; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 600;
+    }
+    .type-ar   { background: #3a1a1a; color: #f66; }
+    .type-smg  { background: #1a3a1a; color: #6f6; }
+    .type-sr   { background: #1a1a3a; color: #66f; }
+    .type-dmr  { background: #3a3a1a; color: #ffc832; }
+    .type-sg   { background: #3a1a3a; color: #f6f; }
+
+    .weapon-stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.8rem; margin-bottom: 1.5rem;
+    }
+    .weapon-stats .stat {
+      background: #0f0f16; border-radius: 8px; padding: 0.6rem;
+      text-align: center;
+    }
+    .weapon-stats .stat .label { font-size: 0.75rem; color: #666; }
+    .weapon-stats .stat .value { font-size: 1.1rem; color: #fff; font-weight: 600; }
+
+    .build-box {
+      background: #0f0f16; border-radius: 10px; padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .build-box h3 { color: #ffc832; font-size: 1rem; margin-bottom: 0.5rem; }
+    .build-box .cost { color: #6f6; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .build-box ul { list-style: none; padding: 0; }
+    .build-box ul li {
+      padding: 0.3rem 0; font-size: 0.88rem; color: #ccc;
+      border-bottom: 1px solid #1a1a22;
+    }
+    .build-box ul li:last-child { border-bottom: none; }
+    .build-box ul li .part { color: #ffc832; }
+
+    .weapon-video { margin-top: 1rem; }
+    .weapon-video h3 { color: #ffc832; font-size: 1rem; margin-bottom: 0.8rem; }
+    .video-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .video-card {
+      background: #0f0f16; border-radius: 8px; overflow: hidden;
+    }
+    .video-card iframe {
+      width: 100%; aspect-ratio: 16/9; border: none;
+    }
+    .video-card .vtitle {
+      padding: 0.5rem 0.8rem; font-size: 0.82rem; color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
+    <ul class="nav-links">
+      <li><a href="../index.html">首页</a></li>
+      <li><a href="maps.html">地图</a></li>
+      <li><a href="weapons.html" style="color:#ffc832;">枪械</a></li>
+      <li><a href="strategy.html">技巧</a></li>
+      <li><a href="gear.html">配装</a></li>
+      <li><a href="../search.html">🔍</a></li>
+    </ul>
+  </nav>
+
+  <div style="margin-top:60px;max-width:900px;margin-left:auto;margin-right:auto;padding:0 1rem;">
+    <div class="weapon-header">
+      <h1>🔫 枪械改装</h1>
+      <p>热门枪械数据、性价比改装与满改方案</p>
+    </div>
+
+    <!-- H416 -->
+    <div class="weapon-detail" id="h416">
+      <div class="top-row">
+        <h2>H416</h2>
+        <span class="weapon-type type-ar">AR · 突击步枪</span>
+      </div>
+      <div class="weapon-stats">
+        <div class="stat"><div class="label">射速</div><div class="value">700 RPM</div></div>
+        <div class="stat"><div class="label">基础伤害</div><div class="value">41</div></div>
+        <div class="stat"><div class="label">有效射程</div><div class="value">55m</div></div>
+        <div class="stat"><div class="label">弹匣容量</div><div class="value">30/40</div></div>
+        <div class="stat"><div class="label">后坐力</div><div class="value">中等</div></div>
+      </div>
+
+      <div class="build-box">
+        <h3>💵 性价比改装（约 6 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>H416 长枪管</li>
+          <li><span class="part">护木：</span>H416 M-LOK 护木</li>
+          <li><span class="part">握把：</span>RK-2 前握把</li>
+          <li><span class="part">枪托：</span>H416 可调枪托</li>
+          <li><span class="part">瞄具：</span>全息镜 / 红点</li>
+          <li><span class="part">弹匣：</span>STANAG 30发</li>
+        </ul>
+      </div>
+      <div class="build-box">
+        <h3>🏆 满改方案（约 12 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>H416 竞赛级长枪管</li>
+          <li><span class="part">护木：</span>H416 碳纤维护木</li>
+          <li><span class="part">握把：</span>先锋前握把 + 后握把</li>
+          <li><span class="part">枪托：</span>H416 战术枪托 + 托腮板</li>
+          <li><span class="part">瞄具：</span>3.5x 战术镜 + 侧瞄</li>
+          <li><span class="part">枪口：</span>消音器 / 补偿器</li>
+          <li><span class="part">弹匣：</span>STANAG 40发</li>
+        </ul>
+      </div>
+      <div class="weapon-video">
+        <h3>🎬 推荐视频</h3>
+        <div class="video-grid">
+          <div class="video-card">
+            <iframe src="https://player.bilibili.com/player.html?bvid=BV1GJ411x7qT" allowfullscreen></iframe>
+            <div class="vtitle">H416 满改实测与弹道控制</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MPX -->
+    <div class="weapon-detail" id="mpx">
+      <div class="top-row">
+        <h2>MPX</h2>
+        <span class="weapon-type type-smg">SMG · 冲锋枪</span>
+      </div>
+      <div class="weapon-stats">
+        <div class="stat"><div class="label">射速</div><div class="value">850 RPM</div></div>
+        <div class="stat"><div class="label">基础伤害</div><div class="value">32</div></div>
+        <div class="stat"><div class="label">有效射程</div><div class="value">30m</div></div>
+        <div class="stat"><div class="label">弹匣容量</div><div class="value">30/50</div></div>
+        <div class="stat"><div class="label">后坐力</div><div class="value">低</div></div>
+      </div>
+      <div class="build-box">
+        <h3>💵 性价比改装（约 4 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>MPX 标准枪管</li>
+          <li><span class="part">握把：</span>轻型前握把</li>
+          <li><span class="part">瞄具：</span>红点</li>
+          <li><span class="part">枪口：</span>消音器（室内作战推荐）</li>
+        </ul>
+      </div>
+      <div class="build-box">
+        <h3>🏆 满改方案（约 8 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>MPX 竞赛短枪管</li>
+          <li><span class="part">握把：</span>RK-2 前握把 + 后握把</li>
+          <li><span class="part">枪托：</span>MPX 折叠托</li>
+          <li><span class="part">瞄具：</span>全息镜 + 侧红点</li>
+          <li><span class="part">弹匣：</span>MPX 50发弹鼓</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Vector -->
+    <div class="weapon-detail" id="vector">
+      <div class="top-row">
+        <h2>Vector 9mm</h2>
+        <span class="weapon-type type-smg">SMG · 冲锋枪</span>
+      </div>
+      <div class="weapon-stats">
+        <div class="stat"><div class="label">射速</div><div class="value">1100 RPM</div></div>
+        <div class="stat"><div class="label">基础伤害</div><div class="value">30</div></div>
+        <div class="stat"><div class="label">有效射程</div><div class="value">20m</div></div>
+        <div class="stat"><div class="label">弹匣容量</div><div class="value">20/33</div></div>
+        <div class="stat"><div class="label">后坐力</div><div class="value">高（可控）</div></div>
+      </div>
+      <div class="build-box">
+        <h3>💵 腰射流改装（约 5 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>Vector 短枪管</li>
+          <li><span class="part">握把：</span>腰射专用握把</li>
+          <li><span class="part">枪托：</span>无托 / 折叠托</li>
+          <li><span class="part">瞄具：</span>腰射镭射</li>
+          <li><span class="part">弹匣：</span>33发加长弹匣</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- FAL -->
+    <div class="weapon-detail" id="fal">
+      <div class="top-row">
+        <h2>FAL</h2>
+        <span class="weapon-type type-dmr">DMR · 精确射手</span>
+      </div>
+      <div class="weapon-stats">
+        <div class="stat"><div class="label">射速</div><div class="value">~350 RPM</div></div>
+        <div class="stat"><div class="label">基础伤害</div><div class="value">55</div></div>
+        <div class="stat"><div class="label">有效射程</div><div class="value">70m</div></div>
+        <div class="stat"><div class="label">弹匣容量</div><div class="value">20/30</div></div>
+        <div class="stat"><div class="label">后坐力</div><div class="value">中等偏高</div></div>
+      </div>
+      <div class="build-box">
+        <h3>💵 推荐改装（约 7 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>FAL 精度长枪管</li>
+          <li><span class="part">握把：</span>RK-2 前握把</li>
+          <li><span class="part">枪托：</span>FAL 液压缓冲托</li>
+          <li><span class="part">瞄具：</span>4x 瞄准镜</li>
+          <li><span class="part">枪口：</span>消音器（保持隐蔽）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- AK74N -->
+    <div class="weapon-detail" id="ak74n">
+      <div class="top-row">
+        <h2>AK74N</h2>
+        <span class="weapon-type type-ar">AR · 突击步枪</span>
+      </div>
+      <div class="weapon-stats">
+        <div class="stat"><div class="label">射速</div><div class="value">650 RPM</div></div>
+        <div class="stat"><div class="label">基础伤害</div><div class="value">39</div></div>
+        <div class="stat"><div class="label">有效射程</div><div class="value">45m</div></div>
+        <div class="stat"><div class="label">弹匣容量</div><div class="value">30/45</div></div>
+        <div class="stat"><div class="label">后坐力</div><div class="value">中等（可改）</div></div>
+      </div>
+      <div class="build-box">
+        <h3>💵 平民改装（约 3 万）</h3>
+        <ul>
+          <li><span class="part">护木：</span>AK 通用导轨护木</li>
+          <li><span class="part">握把：</span>AK 后握把</li>
+          <li><span class="part">枪托：</span>AK 可折叠枪托</li>
+          <li><span class="part">瞄具：</span>简易红点</li>
+          <li><span class="part">弹匣：</span>AK 30发</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- M4A1 -->
+    <div class="weapon-detail" id="m4a1">
+      <div class="top-row">
+        <h2>M4A1</h2>
+        <span class="weapon-type type-ar">AR · 突击步枪</span>
+      </div>
+      <div class="weapon-stats">
+        <div class="stat"><div class="label">射速</div><div class="value">720 RPM</div></div>
+        <div class="stat"><div class="label">基础伤害</div><div class="value">40</div></div>
+        <div class="stat"><div class="label">有效射程</div><div class="value">50m</div></div>
+        <div class="stat"><div class="label">弹匣容量</div><div class="value">30/60</div></div>
+        <div class="stat"><div class="label">后坐力</div><div class="value">低</div></div>
+      </div>
+      <div class="build-box">
+        <h3>🏆 全能满改（约 10 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>M4 长枪管 + 消音器</li>
+          <li><span class="part">护木：</span>M4 碳纤维护木</li>
+          <li><span class="part">握把：</span>先锋前握把</li>
+          <li><span class="part">瞄具：</span>3.5x 战术镜 + 侧红点</li>
+          <li><span class="part">弹匣：</span>60发弹鼓</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- AX50 -->
+    <div class="weapon-detail" id="ax50">
+      <div class="top-row">
+        <h2>AX50</h2>
+        <span class="weapon-type type-sr">SR · 狙击步枪</span>
+      </div>
+      <div class="weapon-stats">
+        <div class="stat"><div class="label">射速</div><div class="value">手动</div></div>
+        <div class="stat"><div class="label">基础伤害</div><div class="value">95</div></div>
+        <div class="stat"><div class="label">有效射程</div><div class="value">120m+</div></div>
+        <div class="stat"><div class="label">弹匣容量</div><div class="value">5</div></div>
+        <div class="stat"><div class="label">穿透</div><div class="value">极高</div></div>
+      </div>
+      <div class="build-box">
+        <h3>🏆 标准架枪配置（约 10 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>AX50 长枪管</li>
+          <li><span class="part">瞄具：</span>8x 战术镜</li>
+          <li><span class="part">脚架：</span>双脚架</li>
+          <li><span class="part">枪口：</span>AX50 消音器（可选）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- MK14 -->
+    <div class="weapon-detail" id="mk14">
+      <div class="top-row">
+        <h2>MK14 EBR</h2>
+        <span class="weapon-type type-dmr">DMR · 精确射手</span>
+      </div>
+      <div class="weapon-stats">
+        <div class="stat"><div class="label">射速</div><div class="value">~400 RPM</div></div>
+        <div class="stat"><div class="label">基础伤害</div><div class="value">58</div></div>
+        <div class="stat"><div class="label">有效射程</div><div class="value">80m</div></div>
+        <div class="stat"><div class="label">弹匣容量</div><div class="value">15/20</div></div>
+        <div class="stat"><div class="label">后坐力</div><div class="value">高</div></div>
+      </div>
+      <div class="build-box">
+        <h3>💵 推荐改装（约 8 万）</h3>
+        <ul>
+          <li><span class="part">枪管：</span>MK14 加长枪管</li>
+          <li><span class="part">握把：</span>RK-2</li>
+          <li><span class="part">枪托：</span>MK14 枪托</li>
+          <li><span class="part">瞄具：</span>4-6x 可变倍镜</li>
+          <li><span class="part">弹匣：</span>20发</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 评论区 -->
+    <div style="margin: 3rem 0; padding: 2rem; background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;">
+      <h2 style="color:#ffc832; margin-bottom: 1rem;">💬 讨论</h2>
+      <script src="https://giscus.app/client.js"
+        data-repo="qiuxue111/anqutuweiwuxian"
+        data-repo-id="R_kgDOSolC_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOSolC_c4C95Vo"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="dark"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </div>
+
+  <footer>
+    <p>暗区突围：无限 攻略站 · 持续更新中</p>
+    <p style="margin-top:0.3rem;">数据基于游戏版本 · 仅供参考</p>
+  </footer>
+</body>
+</html>
