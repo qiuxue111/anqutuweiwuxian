@@ -23,10 +23,27 @@ if not exist ".git" (
     git remote add origin https://github.com/qiuxue111/anqutuweiwuxian.git
 )
 
+echo.
+echo 🔄 检查审核队列...
+
+:: 用 node.js 执行审批合并（如果安装了node）
+where node >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo ✅ 检测到 Node.js，开始合并审核队列...
+    node scripts/approve-changes.js
+    if %ERRORLEVEL% NEQ 0 (
+        echo ⚠️  审批脚本执行失败，跳过
+    )
+) else (
+    echo ⚠️  未检测到 Node.js，跳过自动审核
+    echo    审核队列需要手动处理 data/review-queue.json
+)
+
+echo.
 echo 📁 添加所有文件...
 git add .
 
-set /p msg="📝 输入提交说明（直接回车默认"更新攻略": "
+set /p msg="📝 输入提交说明（直接回车默认"更新攻略"）："
 if "%msg%"=="" set msg=更新攻略
 
 git commit -m "%msg%" --allow-empty
@@ -39,14 +56,12 @@ if %ERRORLEVEL% EQU 0 (
     echo.
     echo ✅ 上传成功！
     echo 🌐 访问地址: https://qiuxue111.github.io/anqutuweiwuxian/
-    echo.
-    echo 提示：需要在 GitHub 仓库 Settings - Pages 开启 GitHub Pages
-    echo Source 选 "Deploy from a branch", Branch 选 "main", 目录选 "/ (root)"
 ) else (
     echo.
     echo ❌ 推送失败，可能是：
     echo   1. 没有登录 GitHub（需要 Personal Access Token）
     echo   2. 网络问题
+    echo   3. 分支名不对，试试 git push -u origin main --force
     echo.
     echo 解决方法：用 GitHub Desktop 或手动上传
 )
