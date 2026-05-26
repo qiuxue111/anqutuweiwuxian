@@ -99,7 +99,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
     <button onclick="resetView()">&#x27F2;</button>
     <span id="zl">100%</span>
     <button id="mdBtn" class="mode">&#x1F441;&#xFE0F; 浏览</button>
-    <button onclick="showReviewQueue()" style="background:#2a1a0a;border:1px solid rgba(255,200,50,.2);color:#ffc832;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;position:relative">待审 <span id="rqBadge" style="background:#e55;color:#fff;border-radius:10px;padding:0 6px;font-size:11px;margin-left:2px">0</span></button>
+    <button onclick="exportToCloud()" style="background:#2a1a0a;border:1px solid rgba(255,200,50,.2);color:#ffc832;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px">📤 导出</button>
   </div>
 <div class="ly-pop" id="lp"></div>
 <div class="crosshair" id="ch"><div class="ch-v"></div><div class="ch-h"></div><div class="ch-dot"></div></div>
@@ -403,12 +403,10 @@ function showPicker(){
 }
 function closePicker(){document.getElementById("po").style.display="none";}
 
-// ─── 共享云端点位库 ───
-// 云端 = data/pins.json (随 GitHub 部署)
-// 本地审核队列 = localStorage "abi_farm_review"
+// ─── 数据管理 ───
+// 云端只读加载 data/pins.json，本地编辑后手动导出覆盖
 var cloudPins=[],cloudComments=[];
 
-// 从云端加载
 function loadCloudPins(){
   var xhr=new XMLHttpRequest();
   xhr.open("GET","../data/pins.json?"+Date.now(),true);
@@ -420,91 +418,113 @@ function loadCloudPins(){
         cloudComments=d.mapComments||[];
       }catch(e){cloudPins=[];cloudComments=[];}
     }
-    // 合并本地审核队列
-    mergeReviewQueue();
+    // 合并本地编辑到云端数据上
+    applyLocalEdits();
     renderMarkers();
     renderMapComments();
   };
   xhr.onerror=function(){
-    // 离线时用本地缓存
-    mergeReviewQueue();
+    applyLocalEdits();
     renderMarkers();
     renderMapComments();
   };
   xhr.send();
 }
 
-// 合并本地审核队列到显示数据
-function mergeReviewQueue(){
-  var rq=getReviewQueue();
-  // pins = 云端 + 待审批的添加 (过滤掉待审批的删除)
-  pins=cloudPins.slice();
-  rq.additions.forEach(function(a){pins.push(a);});
-  // 待审批的删除
-  rq.deletions.forEach(function(del){
-    for(var i=0;i<pins.length;i++){
-      if(pins[i]._uid===del.uid||(pins[i].x===del.x&&pins[i].y===del.y&&pins[i].type===del.type)){
-        pins.splice(i,1);break;
-      }
-    }
-  });
-  // 待审批的修改
-  rq.edits.forEach(function(ed){
-    for(var i=0;i<pins.length;i++){
-      if(pins[i]._uid===ed.uid||(pins[i].x===ed.x&&pins[i].y===ed.y)){
-        if(ed.note!==undefined)pins[i].note=ed.note;
-        break;
-      }
-    }
-  });
-  // 评论全部来自云端
-  mapComments=cloudComments.slice();
+// 本地编辑存 localStorage（管理员可见，推送到云端时需手动导出覆盖）
+function getLocalPins(){
+  try{var d=JSON.parse(localStorage.getItem("abi_farm_pins"));if(d&&d.pins)return d.pins;}catch(e){}
+  return null;
+}
+function getLocalComments(){
+  try{var d=JSON.parse(localStorage.getItem("abi_farm_pins"));if(d&&d.mapComments)return d.mapComments;}catch(e){}
+  return null;
+}
+function saveLocalPins(p,cm){
+  try{localStorage.setItem("abi_farm_pins",JSON.stringify({pins:p,mapComments:cm||[]}));}catch(e){}
 }
 
-// ─── 用户操作 = 提交到审核队列 ───
-function getReviewQueue(){
-  try{return JSON.parse(localStorage.getItem("abi_farm_review"))||{additions:[],deletions:[],edits:[]};}catch(e){}
-  return {additions:[],deletions:[],edits:[]};
-}
-function saveReviewQueue(q){
-  try{localStorage.setItem("abi_farm_review",JSON.stringify(q));}catch(e){}
+function applyLocalEdits(){
+  var lp=getLocalPins();
+  if(lp){pins=lp;}else{pins=cloudPins.slice();}
+  var lc=getLocalComments();
+  if(lc){mapComments=lc;}else{mapComments=cloudComments.slice();}
 }
 
-function queueAddPin(tid){
+function addPin(tid){
   if(!pp)return;
-  var q=getReviewQueue();
-  q.additions.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[],_uid:"add_"+Date.now()+"_"+Math.random().toString(36).slice(2,6),_pending:true});
-  saveReviewQueue(q);
-  mergeReviewQueue();
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  lp.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[]});
+  saveLocalPins(lp,lc);
+  applyLocalEdits();
   renderMarkers();
   pp=null;document.getElementById("cv").textContent="未选择";document.getElementById("ab").style.display="none";closePicker();
-  document.getElementById("rqBadge").textContent=getReviewQueue().additions.length+getReviewQueue().deletions.length+getReviewQueue().edits.length;
 }
 
-function queueDeletePin(idx){
+function deleteCurrentPin(){
   if(curPinIdx===null)return;
-  var p=pins[idx];
-  var q=getReviewQueue();
-  q.deletions.push({uid:p._uid||("del_"+p.x+"_"+p.y+"_"+p.type),x:p.x,y:p.y,type:p.type});
-  saveReviewQueue(q);
+  if(!confirm("确认删除这个点位？"))return;
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  lp.splice(curPinIdx,1);
+  saveLocalPins(lp,lc);
   curPinIdx=null;
   closePinDetail();
-  mergeReviewQueue();
+  applyLocalEdits();
   renderMarkers();
-  document.getElementById("rqBadge").textContent=q.additions.length+q.deletions.length+q.edits.length;
 }
 
-function queueEditNote(idx){
+function savePinNote(){
   if(curPinIdx===null)return;
-  var p=pins[idx];
-  var note=document.getElementById("pdNote").value;
-  var q=getReviewQueue();
-  q.edits.push({uid:p._uid||("edit_"+p.x+"_"+p.y),x:p.x,y:p.y,note:note,_pending:true});
-  saveReviewQueue(q);
-  document.getElementById("rqBadge").textContent=q.additions.length+q.deletions.length+q.edits.length;
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  lp[curPinIdx].note=document.getElementById("pdNote").value;
+  saveLocalPins(lp,lc);
 }
 
-// 替换原来的
+function renderPinImages(){
+  var grid=document.getElementById("pdImgGrid");grid.innerHTML="";
+  if(curPinIdx===null)return;
+  var imgs=pins[curPinIdx].images||[];
+  imgs.forEach(function(src,i){
+    var img=document.createElement("img");img.src=src;
+    img.onclick=function(){
+      if(!confirm("删除此图片？"))return;
+      var lp=getLocalPins()||cloudPins.slice();
+      var lc=getLocalComments()||cloudComments.slice();
+      lp[curPinIdx].images.splice(i,1);
+      saveLocalPins(lp,lc);
+      applyLocalEdits();
+      renderPinImages();
+    };
+    grid.appendChild(img);
+  });
+  var addBtn=document.createElement("div");addBtn.className="pd-add-img";addBtn.textContent="+";
+  addBtn.onclick=function(){document.getElementById("pdImgInput").click();};
+  grid.appendChild(addBtn);
+}
+function addPinImages(files){
+  if(curPinIdx===null||!files.length)return;
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  for(var i=0;i<files.length;i++){
+    (function(file){
+      var reader=new FileReader();
+      reader.onload=function(e){
+        lp[curPinIdx].images.push(e.target.result);
+        if(i===files.length-1){
+          saveLocalPins(lp,lc);
+          applyLocalEdits();
+          renderPinImages();
+        }
+      };
+      reader.readAsDataURL(file);
+    })(files[i]);
+  }
+}
+
+// ─── 容器详情弹窗 ───
 function showPinDetail(idx){
   curPinIdx=idx;
   var p=pins[idx];
@@ -516,28 +536,8 @@ function showPinDetail(idx){
   document.getElementById("pd").classList.add("show");
 }
 function closePinDetail(){document.getElementById("pd").classList.remove("show");curPinIdx=null;}
-function savePinNote(){queueEditNote(curPinIdx);}
-function renderPinImages(){
-  var grid=document.getElementById("pdImgGrid");grid.innerHTML="";
-  if(curPinIdx===null)return;
-  var imgs=pins[curPinIdx].images||[];
-  imgs.forEach(function(src,i){
-    var img=document.createElement("img");img.src=src;
-    img.onclick=function(){};
-    grid.appendChild(img);
-  });
-  var addBtn=document.createElement("div");addBtn.className="pd-add-img";addBtn.textContent="+";
-  addBtn.onclick=function(){};
-  grid.appendChild(addBtn);
-}
-function addPinImages(files){}
-function deleteCurrentPin(){
-  if(curPinIdx===null)return;
-  if(!confirm("确认提交删除此点位的申请？(审核通过后才会生效)"))return;
-  queueDeletePin(curPinIdx);
-}
 
-// ─── 容器点位评论区（本地临时提交，等审核） ───
+// ─── 容器点位评论区 ───
 function renderPinComments(){
   var list=document.getElementById("pdcList");list.innerHTML="";
   if(curPinIdx===null)return;
@@ -556,17 +556,17 @@ function postPinComment(){
   if(!text)return;
   var now=new Date();
   var tz=now.toLocaleString("zh-CN",{hour12:false,timeZone:"Asia/Shanghai"});
-  // 评论暂时存在本地，等云端同步
-  var q=getReviewQueue();
-  q.additions.push({x:pins[curPinIdx].x,y:pins[curPinIdx].y,name:pins[curPinIdx].name,type:pins[curPinIdx].type,ic:pins[curPinIdx].ic,note:"",images:[],comments:[{text:text,time:tz}],_uid:"com_"+Date.now()+"_"+Math.random().toString(36).slice(2,6),_pending:true});
-  saveReviewQueue(q);
-  mergeReviewQueue();
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  if(!lp[curPinIdx].comments)lp[curPinIdx].comments=[];
+  lp[curPinIdx].comments.push({text:text,time:tz});
+  saveLocalPins(lp,lc);
+  applyLocalEdits();
   renderPinComments();
   input.value="";
-  document.getElementById("rqBadge").textContent=q.additions.length+q.deletions.length+q.edits.length;
 }
 
-// ─── 地图评论区（同上） ───
+// ─── 地图评论区 ───
 function renderMapComments(){
   var list=document.getElementById("mcList");list.innerHTML="";
   mapComments.forEach(function(c){
@@ -582,43 +582,27 @@ function postMapComment(){
   if(!text)return;
   var now=new Date();
   var tz=now.toLocaleString("zh-CN",{hour12:false,timeZone:"Asia/Shanghai"});
-  // 地图评论临时存本地，等审核
-  var q=getReviewQueue();
-  if(!q.mapComments)q.mapComments=[];
-  q.mapComments.push({text:text,time:tz,_pending:true});
-  saveReviewQueue(q);
-  mapComments.push({text:text,time:tz});
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  lc.push({text:text,time:tz});
+  saveLocalPins(lp,lc);
+  applyLocalEdits();
   renderMapComments();
   input.value="";
-  document.getElementById("rqBadge").textContent=(q.additions.length+q.deletions.length+q.edits.length+(q.mapComments||[]).length);
 }
 
-// ─── 审核队列管理 ───
-function showReviewQueue(){
-  var q=getReviewQueue();
-  var total = (q.additions||[]).length + (q.deletions||[]).length + (q.edits||[]).length + (q.mapComments||[]).length;
-  if(total===0){alert("✅ 审核队列为空，没有待审批的内容");return;}
-  var msg="📋 待审核队列 (共"+total+"项)\n═══════════════\n";
-  msg+="\n➕ 新增点位: "+(q.additions||[]).length+" 个";
-  (q.additions||[]).forEach(function(a,i){msg+="\n  "+(i+1)+". "+a.name+" @ ("+a.x+"%, "+a.y+"%)";});
-  msg+="\n\n➖ 删除点位: "+(q.deletions||[]).length+" 个";
-  (q.deletions||[]).forEach(function(d,i){msg+="\n  "+(i+1)+". ("+d.x+"%, "+d.y+"%)";});
-  msg+="\n\n✏️ 修改备注: "+(q.edits||[]).length+" 个";
-  msg+="\n\n💬 地图评论: "+(q.mapComments||[]).length+" 条";
-  msg+="\n\n═══════════════\n点击「确定」导出审核文件 ▼";
-  if(confirm(msg+"\n\n导出 review-queue.json 到 data/ 目录？")){
-    exportReviewQueue();
-  }
-}
-function exportReviewQueue(){
-  var q=getReviewQueue();
-  var total = (q.additions||[]).length + (q.deletions||[]).length + (q.edits||[]).length + (q.mapComments||[]).length;
-  if(total===0){alert("审核队列为空，没有需要导出的内容");return;}
-  var blob=new Blob([JSON.stringify(q,null,2)],{type:"application/json"});
+// ─── 导出到云端（覆盖 data/pins.json） ───
+function exportToCloud(){
+  var lp=getLocalPins();
+  var lc=getLocalComments();
+  if(!lp)lp=cloudPins.slice();
+  if(!lc)lc=cloudComments.slice();
+  var data={pins:lp,mapComments:lc};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
   var a=document.createElement("a");a.href=URL.createObjectURL(blob);
-  a.download="review-queue.json";
+  a.download="pins.json";
   document.body.appendChild(a);a.click();document.body.removeChild(a);
-  alert("✅ 已导出审核队列！\n\n请把下载的 review-queue.json 放到网站目录的 data/ 文件夹下，\n然后运行 push-to-github.bat 即可自动审批发布。");
+  alert("✅ 已导出 pins.json！\n\n把它复制到网站根目录的 data/ 文件夹覆盖原文件，\n然后双击 push-to-github.bat 即可发布到全球。");
 }
 
 loadCloudPins();
