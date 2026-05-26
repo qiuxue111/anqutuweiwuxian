@@ -29,7 +29,7 @@ git add .
 set /p msg="📝 输入提交说明（直接回车默认"更新攻略": "
 if "%msg%"=="" set msg=更新攻略
 
-git commit -m "%msg%"
+git commit -m "%msg%" --allow-empty
 
 echo.
 echo ☁️ 推送到 GitHub...

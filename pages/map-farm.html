@@ -400,6 +400,7 @@ function showPicker(){
 function closePicker(){document.getElementById("po").style.display="none";}
 function addPin(tid){
   if(!pp)return;
+  if(!checkPinPass())return;
   pins.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[]});
   savePins();renderMarkers();
   pp=null;document.getElementById("cv").textContent="未选择";document.getElementById("ab").style.display="none";closePicker();
@@ -452,6 +453,7 @@ function addPinImages(files){
 }
 function deleteCurrentPin(){
   if(curPinIdx===null)return;
+  if(!checkPinPass())return;
   if(!confirm("确认删除这个点位？"))return;
   pins.splice(curPinIdx,1);curPinIdx=null;
   savePins();renderMarkers();closePinDetail();
@@ -500,6 +502,24 @@ function postMapComment(){
   mapComments.push({text:text,time:tz});
   savePins();renderMapComments();
   input.value="";
+}
+
+// ─── 密码保护（防乱删） ───
+function checkPinPass(){
+  var saved=localStorage.getItem("abi_farm_pinpass");
+  if(!saved){
+    var set=prompt("首次使用，请设置一个修改密码（用于防止别人乱删/乱加点位）：");
+    if(!set||!set.trim())return false;
+    localStorage.setItem("abi_farm_pinpass",set.trim());
+    return true;
+  }
+  var input=prompt("请输入修改密码：");
+  if(input===null)return false;
+  if(input.trim()!==saved){
+    alert("密码错误！");
+    return false;
+  }
+  return true;
 }
 
 loadPins();
