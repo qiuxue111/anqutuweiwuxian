@@ -586,8 +586,9 @@ function renderPinComments(){
   comments.forEach(function(c){
     var item=document.createElement("div");item.className="pdc-item";
     var time=document.createElement("span");time.className="pdc-time";time.textContent=c.time;
-    var text=document.createElement("span");text.textContent=c.text;
-    item.appendChild(text);item.appendChild(time);list.appendChild(item);
+    var user=c.user_name?"<strong style='color:#ffc832'>"+c.user_name+"<\/strong> ":"";
+    item.innerHTML=user+c.text;
+    item.appendChild(time);list.appendChild(item);
   });
 }
 function postPinComment(){
@@ -597,11 +598,12 @@ function postPinComment(){
   if(!text)return;
   var now=new Date();
   var tz=now.toLocaleString("zh-CN",{hour12:false,timeZone:"Asia/Shanghai"});
+  var userName=currentUser&&currentUser.user_metadata&&(currentUser.user_metadata.user_name||currentUser.user_metadata.preferred_username||currentUser.user_metadata.name)||"匿名";
   var p=pins[curPinIdx];
   if(p.id){
-    supabase("map_comments","POST",{text:text,time:tz});
+    supabase("map_comments","POST",{text:text,time:tz,user_name:userName});
   }
-  p.comments.push({text:text,time:tz});
+  p.comments.push({text:text,time:tz,user_name:userName});
   savePins();renderPinComments();
   input.value="";
 }
@@ -612,8 +614,9 @@ function renderMapComments(){
   mapComments.forEach(function(c){
     var item=document.createElement("div");item.className="mc-item";
     var time=document.createElement("span");time.className="mc-time";time.textContent=c.time;
-    var text=document.createElement("span");text.textContent=c.text;
-    item.appendChild(text);item.appendChild(time);list.appendChild(item);
+    var user=c.user_name?"<strong style='color:#ffc832'>"+c.user_name+"<\/strong> ":"";
+    item.innerHTML=user+c.text;
+    item.appendChild(time);list.appendChild(item);
   });
 }
 function postMapComment(){
@@ -622,8 +625,9 @@ function postMapComment(){
   if(!text)return;
   var now=new Date();
   var tz=now.toLocaleString("zh-CN",{hour12:false,timeZone:"Asia/Shanghai"});
-  supabase("map_comments","POST",{text:text,time:tz});
-  mapComments.push({text:text,time:tz});
+  var userName=currentUser&&currentUser.user_metadata&&(currentUser.user_metadata.user_name||currentUser.user_metadata.preferred_username||currentUser.user_metadata.name)||"匿名";
+  supabase("map_comments","POST",{text:text,time:tz,user_name:userName});
+  mapComments.push({text:text,time:tz,user_name:userName});
   savePins();renderMapComments();
   input.value="";
 }
