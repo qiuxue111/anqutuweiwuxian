@@ -213,7 +213,8 @@ function initAuth(){
     var l=document.getElementById('loginBtn');if(l)l.style.display='none';}
   loadAllVideos();}
 function loginGitHub(){
-  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(window.location.origin+'/anqutuweiwuxian/'+(f.startsWith('pages')?'pages/':'')+(f.endsWith('.html')?f:'index.html'));
+  var cb=window.location.origin+window.location.pathname;
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
   window.location.href=u;});}
 function toggleVideoPanel(){
   var p=document.getElementById('videoPanel');
@@ -311,6 +312,23 @@ async function renderVideoAdmin(){
     document.getElementById('videoListContainer').innerHTML=document.getElementById('videoListContainer').innerHTML||'<p style="color:#666;font-size:0.85rem;">暂无视频</p>';
   }catch(e){}}
 document.addEventListener('DOMContentLoaded',initAuth);
+
+(function(){
+  var h=window.location.hash;
+  if(h&&h.includes('access_token=')){
+    var p=new URLSearchParams(h.replace('#',''));
+    var t=p.get('access_token');
+    if(t){
+      try{
+        var payload=JSON.parse(atob(t.split('.')[1]));
+        localStorage.setItem('abi_token',t);
+        localStorage.setItem('abi_user',p.get('email')||payload.email||'');
+        history.replaceState(null,'',window.location.pathname);
+      }catch(err){}
+    }
+  }
+})();
+
 </script>
 </body>
 </html>

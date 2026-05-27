@@ -84,7 +84,8 @@ function supabase(method, table, body, q) {
 }
 
 function loginGitHub(){
-  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(window.location.origin+'/anqutuweiwuxian/pages/strategy.html');
+  var cb=window.location.origin+window.location.pathname;
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
   window.location.href=u;});}
 
 
@@ -100,7 +101,27 @@ function loginGitHub(){
     var t=params.get('access_token');
     if(t){localStorage.setItem('abi_token',t);localStorage.setItem('abi_user',params.get('email')||params.get('user_name')||'');window.location.hash='';window.location.search='';}
   }
-function init(){
+
+// OAuth callback: grab token from URL hash
+(function(){
+  var h=window.location.hash;
+  if(h&&h.includes('access_token=')){
+    var p=new URLSearchParams(h.replace('#',''));
+    var t=p.get('access_token');
+    var e=p.get('expires_in');
+    if(t){
+      try{
+        var payload=JSON.parse(atob(t.split('.')[1]));
+        localStorage.setItem('abi_token',t);
+        localStorage.setItem('abi_user',p.get('email')||payload.email||payload.user_metadata?.email||'');
+        // Clean URL
+        history.replaceState(null,'',window.location.pathname);
+      }catch(err){}
+    }
+  }
+})();
+
+function init{
   var h=window.location.hash;
   if(h&&h.includes('access_token=')){
     var p=new URLSearchParams(h.slice(1));
