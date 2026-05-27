@@ -46,8 +46,6 @@ footer a{color:#444;text-decoration:none}
   <div class="tab" onclick="switchTab(event,'voted')">我投过票</div>
   <div class="tab" onclick="switchTab(event,'deletion')">待删除</div>
   <div class="tab" onclick="switchTab(event,'all')">全部</div>
-  <div class="tab" onclick="switchTab(event,'voted')">我投过票</div>
-  <div class="tab" onclick="switchTab(event,'all')">全部</div>
 </div>
 <div id="list"><div class="loading">加载中...</div></div>
 <footer><a href="javascript:toggleAdmin()">管理员登录</a></footer>
@@ -79,7 +77,7 @@ function switchTab(e,tab){
 }
 
 function loadPending(){
-  document.getElementById("list").innerHTML="<div class='loading'>加载中...</div>";
+  document.getElementById("list").innerHTML="<div class='loading'>"+LS+"...<"+LS+"div>";
   var p=supabase("pending_pins","GET",null,"order=created_at.desc");
   var d=supabase("deletion_requests","GET",null,"order=created_at.desc");
   Promise.all([p,d]).then(function(res){
@@ -88,20 +86,10 @@ function loadPending(){
     if(currentTab==="deletion"){
       renderDeletionList(dels);return;
     }
-    if(!items||!items.length){document.getElementById("list").innerHTML="<div class='empty'>暂无待审核项目</div>";updateStats(items);return;}
     updateStats(items);
     renderList(items);
-  }).catch(function(){
-    document.getElementById("list").innerHTML="<div class='empty'>加载失败，请检查网络</div>";
-  });
-}
-  document.getElementById("list").innerHTML="<div class='loading'>加载中...</div>";
-  supabase("pending_pins","GET",null,"order=created_at.desc").then(function(items){
-    if(!items||!items.length){document.getElementById("list").innerHTML="<div class='empty'>暂无待审核项目</div>";updateStats([]);return;}
-    updateStats(items);
-    renderList(items);
-  }).catch(function(){
-    document.getElementById("list").innerHTML="<div class='empty'>加载失败，请检查网络</div>";
+  })["catch"](function(){
+    document.getElementById("list").innerHTML="<div class='empty'>"+FL+"<"+LS+"div>";
   });
 }
 
@@ -112,34 +100,33 @@ function updateStats(items){
   items.forEach(function(p){if(p.voters&&p.voters.indexOf(uid)>=0)voted++;});
   document.getElementById("scount").textContent=total;
   document.getElementById("vcount").textContent=voted;
-  supabase("pins","GET").then(function(p){document.getElementById("ccount").textContent=(p&&p.length)||0;}).catch(function(){});
+  supabase("pins","GET").then(function(pin){document.getElementById("ccount").textContent=(pin&&pin.length)||0;})["catch"](function(){});
 }
 
 function renderDeletionList(dels){
   var uid=getUserId();
   var html="";
-  if(!dels||!dels.length){html="<div class='empty'>暂无删除请求</div>";document.getElementById("list").innerHTML=html;updateStats([]);return;}
+  if(!dels||!dels.length){html="<div class='empty'>"+NE+"<"+LS+"div>";document.getElementById("list").innerHTML=html;return;}
   dels.forEach(function(p){
     var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
     var votes=p.votes||0;
     var isAdmin=localStorage.getItem("abi_is_admin")==="true";
     html+="<div class='card'>";
-    html+="<h3><span style='color:#e55'>🗑 删除请求</span> "+p.name+"</h3>";
-    html+="<div class='meta'>坐标: ("+p.x+"%, "+p.y+"%) | "+votes+"/10 票（同意删除）</div>";
+    html+="<h3><span style='color:#e55'>"+DT+"<"+LS+"span> "+p.name+"<"+LS+"h3>";
+    html+="<div class='meta'>"+CORD+" ("+p.x+"%, "+p.y+"%) | "+votes+"/10 "+DV+"<"+LS+"div>";
     html+="<div class='actions'>";
     if(!hasVoted){
-      html+="<button class='btn btn-vote' onclick='voteDelete("+p.id+")'>同意删除 ("+(votes+1)+"/10)</button>";
+      html+="<button class='btn btn-vote' onclick='voteDelete("+p.id+")'>"+AGREE+" ("+(votes+1)+"/10)<"+LS+"button>";
     }else{
-      html+="<button class='btn btn-voted'>已投票</button>";
+      html+="<button class='btn btn-voted'>"+VOTED+"<"+LS+"button>";
     }
     if(isAdmin){
-      html+="<button class='btn btn-pass' onclick='adminExecDelete("+p.id+","+p.pin_id+")'>执行删除</button>";
-      html+="<button class='btn btn-reject' onclick='adminRejectDelete("+p.id+")'>驳回</button>";
+      html+="<button class='btn btn-pass' onclick='adminExecDelete("+p.id+","+p.pin_id+")'>"+EXEC_DEL+"<"+LS+"button>";
+      html+="<button class='btn btn-reject' onclick='adminRejectDelete("+p.id+")'>"+REJECT+"<"+LS+"button>";
     }
-    html+="</div></div>";
+    html+="<"+LS+"div><"+LS+"div>";
   });
   document.getElementById("list").innerHTML=html;
-  updateStats([]);
 }
 
 function renderList(items){
@@ -147,7 +134,7 @@ function renderList(items){
   var html="";
   var filtered=items;
   if(currentTab==="voted"){filtered=items.filter(function(p){return p.voters&&p.voters.indexOf(uid)>=0;});}
-  if(filtered.length===0){html="<div class='empty'>没有匹配的项目</div>";}
+  if(filtered.length===0){html="<div class='empty'>"+NE+"<"+LS+"div>";}
   filtered.forEach(function(p){
     var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
     var votes=p.votes||0;
@@ -156,29 +143,28 @@ function renderList(items){
     var created=new Date(p.created_at||now).getTime();
     var hoursOld=(now-created)/3600000;
     var expired=hoursOld>=24;
-
     html+="<div class='card"+(expired?" card-expired":"")+"'>";
-    html+="<h3>"+(p.ic&&p.ic.indexOf("emoji:")===0?p.ic.replace("emoji:",""):"<img src='"+p.ic+"' style='width:18px;height:18px;border-radius:3px;vertical-align:middle'>")+" "+p.name+"</h3>";
-    html+="<div class='meta'>坐标: ("+p.x+"%, "+p.y+"%)";
+    html+="<h3>"+(p.ic&&p.ic.indexOf("emoji:")===0?p.ic.replace("emoji:",""):"<img src='"+p.ic+"' style='width:18px;height:18px;border-radius:3px;vertical-align:middle'>")+" "+p.name+"<"+LS+"h3>";
+    html+="<div class='meta'>"+CORD+" ("+p.x+"%, "+p.y+"%)";
     if(p.note)html+=" | "+p.note;
-    html+=" | "+votes+"/10 票";
-    if(expired)html+=" | <span style='color:#e55'>已过期（超过24小时）</span>";
-    if(p.admin_passed)html+=" | 管理员已通过";
-    html+="</div>";
+    html+=" | "+votes+"/10 "+TICK;
+    if(expired)html+=" | <span style='color:#e55'>"+EXP+"<"+LS+"span>";
+    if(p.admin_passed)html+=" | "+ADMIN_OK;
+    html+="<"+LS+"div>";
     html+="<div class='actions'>";
     if(!expired){
       if(!hasVoted){
-        html+="<button class='btn btn-vote' onclick='vote("+p.id+")'>同意 ("+(votes+1)+"/10)</button>";
+        html+="<button class='btn btn-vote' onclick='vote("+p.id+")'>"+AGREE+" ("+(votes+1)+"/10)<"+LS+"button>";
       }else{
-        html+="<button class='btn btn-voted'>已投票</button>";
+        html+="<button class='btn btn-voted'>"+VOTED+"<"+LS+"button>";
+      }
+      if(isAdmin&&!p.admin_passed){
+        html+="<button class='btn btn-pass' onclick='adminPass("+p.id+")'>"+PASS+"<"+LS+"button>";
+        html+="<button class='btn btn-reject' onclick='adminReject("+p.id+")'>"+REJECT+"<"+LS+"button>";
       }
     }
-    if(isAdmin&&!p.admin_passed&&!expired){
-      html+="<button class='btn btn-pass' onclick='adminPass("+p.id+")'>通过</button>";
-      html+="<button class='btn btn-reject' onclick='adminReject("+p.id+")'>拒绝</button>";
-    }
-    html+="<button class='btn btn-del' onclick='userDelete("+p.id+")'>删除此提交</button>";
-    html+="</div></div>";
+    html+="<button class='btn btn-del' onclick='userDelete("+p.id+")'>"+DELETE+"<"+LS+"button>";
+    html+="<"+LS+"div><"+LS+"div>";
   });
   document.getElementById("list").innerHTML=html;
 }
@@ -189,7 +175,7 @@ function vote(id){
     var p=items[0];
     var voters=p.voters||[];
     var uid=getUserId();
-    if(voters.indexOf(uid)>=0){alert("你已经投过票了");loadPending();return;}
+    if(voters.indexOf(uid)>=0){alert(ALREADY_VOTED);loadPending();return;}
     voters.push(uid);
     var newVotes=(p.votes||0)+1;
     var shouldPass=newVotes>=10;
@@ -212,34 +198,13 @@ function vote(id){
   });
 }
 
-function adminPass(id){
-  if(!confirm("确认直接通过这个点位？"))return;
-  supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
-    if(!items||!items.length)return;
-    var p=items[0];
-    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[]}).then(function(){
-      supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
-    });
-  });
-}
-
-function adminReject(id){
-  if(!confirm("确认拒绝这个点位？会永久删除！"))return;
-  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
-}
-
-function userDelete(id){
-  if(!confirm("确认删除这条提交？"))return;
-  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
-}
-
 function voteDelete(id){
   supabase("deletion_requests","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
     var voters=p.voters||[];
     var uid=getUserId();
-    if(voters.indexOf(uid)>=0){alert("你已经投过票了");loadPending();return;}
+    if(voters.indexOf(uid)>=0){alert(ALREADY_VOTED);loadPending();return;}
     voters.push(uid);
     var newVotes=(p.votes||0)+1;
     var update={votes:newVotes,voters:voters};
@@ -255,26 +220,75 @@ function voteDelete(id){
     });
   });
 }
-function adminExecDelete(reqId,pinId){
-  if(!confirm("确认删除这个点位？"))return;
-  supabase("pins","DELETE",null,"id=eq."+pinId).then(function(){
-    supabase("deletion_requests","DELETE",null,"id=eq."+reqId).then(function(){loadPending();})).then(function(){loadPending();});
+
+function adminPass(id){
+  if(!confirm(CONFIRM_PASS))return;
+  supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
+    if(!items||!items.length)return;
+    var p=items[0];
+    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[]}).then(function(){
+      supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+    });
   });
 }
+
+function adminReject(id){
+  if(!confirm(CONFIRM_REJECT))return;
+  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+}
+
+function adminExecDelete(reqId,pinId){
+  if(!confirm(CONFIRM_EXEC_DEL))return;
+  supabase("pins","DELETE",null,"id=eq."+pinId).then(function(){
+    supabase("deletion_requests","DELETE",null,"id=eq."+reqId).then(function(){loadPending();});
+  });
+}
+
 function adminRejectDelete(id){
-  if(!confirm("驳回删除请求？"))return;
+  if(!confirm(CONFIRM_REJECT_DEL))return;
   supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){loadPending();});
 }
+
+function userDelete(id){
+  if(!confirm(CONFIRM_USER_DEL))return;
+  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+}
+
 function toggleAdmin(){
   var isAdmin=localStorage.getItem("abi_is_admin")==="true";
   if(isAdmin){
     localStorage.setItem("abi_is_admin","false");
   }else{
-    var pass=prompt("请输入管理员密码");
-    if(pass==="admin888"){localStorage.setItem("abi_is_admin","true");}else{alert("密码错误");return;}
+    var pass=prompt(ADMIN_PROMPT);
+    if(pass==="admin888"){localStorage.setItem("abi_is_admin","true");}else{alert(ADMIN_FAIL);return;}
   }
   loadPending();
 }
+
+// Text constants (avoid </ in JS strings)
+var LS = "/div";
+var DT = "\\uD83D\\uDDD1 \\u5220\\u9664\\u8BF7\\u6C42";
+var CORD = "\\u5750\\u6807:";
+var DV = "\\u7968\\uFF08\\u540C\\u610F\\u5220\\u9664\\uFF09";
+var AGREE = "\\u540C\\u610F";
+var VOTED = "\\u5DF2\\u6295\\u7968";
+var EXEC_DEL = "\\u6267\\u884C\\u5220\\u9664";
+var REJECT = "\\u62B3\\u56DE";
+var NE = "\\u6CA1\\u6709\\u5339\\u914D\\u7684\\u9879\\u76EE";
+var FL = "\\u52A0\\u8F7D\\u5931\\u8D25\\uFF0C\\u8BF7\\u68C0\\u67E5\\u7F51\\u7EDC";
+var TICK = "\\u7968";
+var EXP = "\\u5DF2\\u8FC7\\u671F\\uFF08\\u8D85\\u8FC724\\u5C0F\\u65F6\\uFF09";
+var ADMIN_OK = "\\u7BA1\\u7406\\u5458\\u5DF2\\u901A\\u8FC7";
+var PASS = "\\u901A\\u8FC7";
+var DELETE = "\\u5220\\u9664\\u6B64\\u63D0\\u4EA4";
+var ALREADY_VOTED = "\\u4F60\\u5DF2\\u7ECF\\u6295\\u8FC7\\u7968\\u4E86";
+var CONFIRM_PASS = "\\u786E\\u8BA4\\u76F4\\u63A5\\u901A\\u8FC7\\u8FD9\\u4E2A\\u70B9\\u4F4D\\uFF1F";
+var CONFIRM_REJECT = "\\u786E\\u8BA4\\u62D2\\u7EDD\\u8FD9\\u4E2A\\u70B9\\u4F4D\\uFF1F\\u4F1A\\u6C38\\u4E45\\u5220\\u9664\\uFF01";
+var CONFIRM_EXEC_DEL = "\\u786E\\u8BA4\\u5220\\u9664\\u8FD9\\u4E2A\\u70B9\\u4F4D\\uFF1F";
+var CONFIRM_REJECT_DEL = "\\u62B3\\u56DE\\u5220\\u9664\\u8BF7\\u6C42\\uFF1F";
+var CONFIRM_USER_DEL = "\\u786E\\u8BA4\\u5220\\u9664\\u8FD9\\u6761\\u63D0\\u4EA4\\uFF1F";
+var ADMIN_PROMPT = "\\u8BF7\\u8F93\\u5165\\u7BA1\\u7406\\u5458\\u5BC6\\u7801";
+var ADMIN_FAIL = "\\u5BC6\\u7801\\u9519\\u8BEF";
 
 loadPending();
 </script>
