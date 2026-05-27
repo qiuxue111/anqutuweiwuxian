@@ -260,8 +260,7 @@ function addPin(tid){
   if(!currentUser){login();return;}
   if(!pp)return;
   var sdata={x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[],admin_passed:false,votes:0,voters:[]};
-  sdata.submitter=currentUser.user_metadata&&currentUser.user_metadata.user_name||"unknown";
-  supabase("pending_pins","POST",sdata).then(function(){
+supabase("pending_pins","POST",sdata).then(function(){
     var el=document.getElementById("ab");
     if(el)el.innerHTML="<span style='color:#9e9;font-size:14px;margin-left:10px'>投稿成功，等待审核<"+LS+">";
     setTimeout(function(){if(el)el.innerHTML="";},3000);
@@ -283,30 +282,21 @@ f
 var currentUser=null;
 var LS="/span";
 var L_s="/span";
-function initAuth(){
+function initAuth(){ try{document.title=window.location.hash.substring(0,40)||"no-hash";}catch(e){}
   try{
     var u=localStorage.getItem("abi_user");
     if(u){try{currentUser=JSON.parse(u);}catch(e){}}
     var hash=window.location.hash;
     if(hash&&hash.indexOf("access_token")>=0){
-      try{
-        var p=new URLSearchParams(hash.replace("#",""));
-        var token=p.get("access_token");
-        if(token){
-          localStorage.setItem("abi_token",token);
-          var parts=token.split(".");
-          if(parts.length==3){
-            var payload=JSON.parse(atob(parts[1]));
-            if(payload&&payload.user_metadata){
-              currentUser=payload;
-              localStorage.setItem("abi_user",JSON.stringify(payload));
-            }else if(payload&&payload.sub){
-              currentUser={user_metadata:{user_name:payload.sub}};
-              localStorage.setItem("abi_user",JSON.stringify(currentUser));
-            }
-          }
+      var p=new URLSearchParams(hash.replace("#",""));
+      var token=p.get("access_token");
+      if(token){
+        localStorage.setItem("abi_token",token);
+        var meta=p.get("user_metadata");
+        if(meta){
+          try{var md=JSON.parse(decodeURIComponent(meta));currentUser={user_metadata:md};localStorage.setItem("abi_user",JSON.stringify(currentUser));}catch(e){}
         }
-      }catch(e){}
+      }
       window.location.hash="";
     }
   }catch(e){}

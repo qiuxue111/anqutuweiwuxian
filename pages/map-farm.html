@@ -421,12 +421,11 @@ function savePins(){try{localStorage.setItem("abi_farm_pins",JSON.stringify({pin
 // --- Supabase cloud ---
 var SUPABASE_URL="https://hanrfbciinkhgcumvous.supabase.co";
 var SUPABASE_ANON_KEY="sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
-f
 // --- Supabase Auth ---
 var currentUser=null;
 var LS="/span";
 var L_s="/span";
-function initAuth(){ console.log("initAuth: hash=",window.location.hash.substring(0,60));
+function initAuth(){ try{document.title=window.location.hash.substring(0,40)||"no-hash";}catch(e){}
   try{
     var u=localStorage.getItem("abi_user");
     if(u){try{currentUser=JSON.parse(u);}catch(e){}}
@@ -592,7 +591,7 @@ function postMapComment(){
   input.value="";
 }
 
-initAuth();loadCloudPins();updateAuthUI();
+window.onload=function(){console.log("ONLOAD");initAuth();loadCloudPins();updateAuthUI();};
 </script>
 
 </body>
