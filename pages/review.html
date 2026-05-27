@@ -119,9 +119,9 @@ function updateAuthUI(){
   if(currentUser){
     var nm=currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登录";
     var av=currentUser.user_metadata&&currentUser.user_metadata.avatar_url||"";
-    el.innerHTML="<img src='"+av+"' style='width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:4px'> <span style='color:#8c8;font-size:13px'>"+nm+"</span> <span onclick='logoutGit()' style='cursor:pointer;color:#e55;font-size:11px;margin-left:6px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退出</span>";
+    el.innerHTML="<img src='"+av+"' style='width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:4px'> <span style='color:#8c8;font-size:13px'>"+nm+"<\/span> <span onclick='logoutGit()' style='cursor:pointer;color:#e55;font-size:11px;margin-left:6px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退出<\/span>";
   }else{
-    el.innerHTML="<span onclick='loginGit()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:3px 10px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录</span>";
+    el.innerHTML="<span onclick='loginGit()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:3px 10px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录<\/span>";
   }
 }
 function checkAuth(){
@@ -153,7 +153,7 @@ function switchTab(e,tab){
 }
 
 function loadData(){
-  document.getElementById("list").innerHTML="<div class='loading'>加载中...</div>";
+  document.getElementById("list").innerHTML="<div class='loading'>加载中...<\/div>";
   var p=supabase("pending_pins","GET",null,"order=created_at.desc").catch(function(){return [];});
   var d=supabase("deletion_requests","GET",null,"order=created_at.desc").catch(function(){return [];});
   var pin=supabase("pins","GET",null,"order=created_at.desc").catch(function(){return [];});
@@ -165,7 +165,7 @@ function loadData(){
     updateStats(items,dels,pins);
     renderList(items);
   }).catch(function(e){
-    document.getElementById("list").innerHTML="<div class='empty'>加载失败，请检查网络</div>";
+    document.getElementById("list").innerHTML="<div class='empty'>加载失败，请检查网络<\/div>";
   });
 }
 
@@ -191,7 +191,7 @@ function renderList(items){
   var html="";
   var filtered=items;
   if(currentTab==="voted"){filtered=items.filter(function(p){return p.voters&&p.voters.indexOf(uid)>=0;});}
-  if(filtered.length===0){html="<div class='empty'>没有匹配的项目</div>";}
+  if(filtered.length===0){html="<div class='empty'>没有匹配的项目<\/div>";}
   filtered.forEach(function(p){
     var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
     var votes=p.votes||0;
@@ -204,23 +204,23 @@ function renderList(items){
     html+="<div class='card"+(expired?" expired":"")+"'>";
     html+="<div class='hdr'>";
     html+="<img src='"+(p.ic||"")+"' class='icon' onerror='this.remove()'>";
-    html+="<h3>"+p.name+"</h3>";
-    html+=passed?"<span class='badge admin-passed'>已通过</span>":"<span class='badge pending'>待审核</span>";
-    if(expired)html+="<span class='badge expired-badge'>已过期</span>";
-    if(p.submitter)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+p.submitter+"</span>";
-    html+="</div>";
+    html+="<h3>"+p.name+"<\/h3>";
+    html+=passed?"<span class='badge admin-passed'>已通过<\/span>":"<span class='badge pending'>待审核<\/span>";
+    if(expired)html+="<span class='badge expired-badge'>已过期<\/span>";
+    if(p.submitter)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+p.submitter+"<\/span>";
+    html+="<\/div>";
     html+="<div class='meta'>";
-    html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+")'>("+p.x+"%, "+p.y+"%)</span>";
+    html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+")'>("+p.x+"%, "+p.y+"%)<\/span>";
     if(p.note)html+=" | "+p.note;
     html+=" | "+votes+"/10 票";
-    if(expired)html+=" | <span style='color:#e55'>已过期</span>";
-    html+="</div>";
+    if(expired)html+=" | <span style='color:#e55'>已过期<\/span>";
+    html+="<\/div>";
 
     // Go to map button (renderList) — escape all special chars safely
     var n=(p.name||"").replace(/["'\\\n\r]/g,"");
     var i=(p.ic||"").replace(/["'\\\n\r]/g,"");
-    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+",\""+n+"\","+(p.type||0)+",\""+i+"\")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置</span></div>";
-    html+="</div>"; // close card
+    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+",\""+n+"\","+(p.type||0)+",\""+i+"\")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
+    html+="<\/div>"; // close card
 
     // Images if any
     if(p.images&&p.images.length>0){
@@ -228,25 +228,25 @@ function renderList(items){
       p.images.forEach(function(img){
         if(img&&img.startsWith("data:"))html+="<img src='"+img+"' style='width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #333;cursor:pointer' onclick='window.open(this.src)'>";
       });
-      html+="</div>";
+      html+="<\/div>";
     }
 
     html+="<div class='actions'>";
     if(!expired){
       if(!hasVoted){
-        html+="<button class='btn btn-vote' onclick='vote("+p.id+")'>同意投票 ("+(votes+1)+"/10)</button>";
+        html+="<button class='btn btn-vote' onclick='vote("+p.id+")'>同意投票 ("+(votes+1)+"/10)<\/button>";
       }else{
-        html+="<button class='btn btn-voted'>已投票</button>";
+        html+="<button class='btn btn-voted'>已投票<\/button>";
       }
       if(isAdmin&&!passed){
-        html+="<button class='btn btn-pass' onclick='adminPass("+p.id+")'>通过</button>";
-        html+="<button class='btn btn-reject' onclick='adminReject("+p.id+")'>拒绝</button>";
+        html+="<button class='btn btn-pass' onclick='adminPass("+p.id+")'>通过<\/button>";
+        html+="<button class='btn btn-reject' onclick='adminReject("+p.id+")'>拒绝<\/button>";
       }
     }
     if(isAdmin&&!passed&&!expired){
-      html+="<button class='btn btn-del' onclick='userDelete("+p.id+")'>删除此提交</button>";
+      html+="<button class='btn btn-del' onclick='userDelete("+p.id+")'>删除此提交<\/button>";
     }
-    html+="</div></div>";
+    html+="<\/div><\/div>";
   });
   document.getElementById("list").innerHTML=html;
 }
@@ -254,18 +254,18 @@ function renderList(items){
 function renderDels(dels){
   var uid=getUserId();
   var html="";
-  if(!dels||!dels.length){html="<div class='empty'>没有删除请求</div>";}
+  if(!dels||!dels.length){html="<div class='empty'>没有删除请求<\/div>";}
   dels.forEach(function(p){
     var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
     var votes=p.votes||0;
     var isAdmin=localStorage.getItem("abi_is_admin")==="true";
     html+="<div class='card'><div class='hdr'>";
-    html+="<span style='color:#e55;font-size:14px'>删除请求</span>";
-    html+="<h3>"+p.name+"</h3>"
-    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>请求人: "+p.submitted_by+"</span>";
-    html+="</div>";
-    html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+")'>("+p.x+"%, "+p.y+"%)</span>";
-    html+=" | "+votes+"/10 票（同意删除）</div>";
+    html+="<span style='color:#e55;font-size:14px'>删除请求<\/span>";
+    html+="<h3>"+p.name+"<\/h3>"
+    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>请求人: "+p.submitted_by+"<\/span>";
+    html+="<\/div>";
+    html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+")'>("+p.x+"%, "+p.y+"%)<\/span>";
+    html+=" | "+votes+"/10 票（同意删除）<\/div>";
 
     // Map thumbnail
     html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:2/1.5;background:#0f0f16;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
@@ -274,26 +274,26 @@ function renderDels(dels){
     html+="<line x1='0' y1='75' x2='200' y2='75' stroke='#1a1a24' stroke-width='0.5'/>";
     html+="<line x1='100' y1='0' x2='100' y2='150' stroke='#1a1a24' stroke-width='0.5'/>";
     html+="<circle cx='"+(p.x*2)+"' cy='"+(p.y*1.5)+"' r='5' fill='#ff4444' stroke='#fff' stroke-width='1.5' opacity='0.9'/>";
-    html+="<text x='"+(p.x*2+8)+"' y='"+(p.y*1.5+4)+"' fill='#ff4444' font-size='8' font-family='monospace'>("+p.x+"%, "+p.y+"%)</text>";
-    html+="</svg>";
-    html+="</div>";
+    html+="<text x='"+(p.x*2+8)+"' y='"+(p.y*1.5+4)+"' fill='#ff4444' font-size='8' font-family='monospace'>("+p.x+"%, "+p.y+"%)<\/text>";
+    html+="<\/svg>";
+    html+="<\/div>";
 
     // Go to map button (renderDels)
     var n=(p.name||"").replace(/["'\\\n\r]/g,"");
     var i=(p.ic||"").replace(/["'\\\n\r]/g,"");
-    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+",\""+n+"\","+(p.type||0)+",\""+i+"\")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置</span></div>";
+    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+",\""+n+"\","+(p.type||0)+",\""+i+"\")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
 
     html+="<div class='actions'>";
     if(!hasVoted){
-      html+="<button class='btn btn-vote' onclick='voteDelete("+p.id+")'>同意删除 ("+(votes+1)+"/10)</button>";
+      html+="<button class='btn btn-vote' onclick='voteDelete("+p.id+")'>同意删除 ("+(votes+1)+"/10)<\/button>";
     }else{
-      html+="<button class='btn btn-voted'>已投票</button>";
+      html+="<button class='btn btn-voted'>已投票<\/button>";
     }
     if(isAdmin){
-      html+="<button class='btn btn-pass' onclick='adminExecDelete("+p.id+","+p.pin_id+")'>执行删除</button>";
-      html+="<button class='btn btn-reject' onclick='adminRejectDelete("+p.id+")'>驳回</button>";
+      html+="<button class='btn btn-pass' onclick='adminExecDelete("+p.id+","+p.pin_id+")'>执行删除<\/button>";
+      html+="<button class='btn btn-reject' onclick='adminRejectDelete("+p.id+")'>驳回<\/button>";
     }
-    html+="</div></div>";
+    html+="<\/div><\/div>";
   });
   document.getElementById("list").innerHTML=html;
 }
