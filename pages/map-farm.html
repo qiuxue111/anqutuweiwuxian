@@ -630,7 +630,7 @@ function jumpToFromUrl(){
     var xf=parseFloat(x),yf=parseFloat(y);
     for(var i=0;i<pins.length;i++){
       var d=Math.abs(pins[i].x-xf)+Math.abs(pins[i].y-yf);
-      if(d<0.5){showPinDetail(i);return;}
+      if(d<2){showPinDetail(i);return;}
     }
     pp={x:xf,y:yf};
     showPicker();
