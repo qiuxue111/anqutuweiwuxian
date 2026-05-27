@@ -282,31 +282,34 @@ f
 // --- Supabase Auth ---
 var currentUser=null;
 var LS="/span";
+var L_s="/span";
 function initAuth(){
-  var u=localStorage.getItem("abi_user");
-  if(u){try{currentUser=JSON.parse(u);}catch(e){}}
-  var hash=window.location.hash;
-  if(hash&&hash.indexOf("access_token")>=0){
-    try{
-      var p=new URLSearchParams(hash.replace("#",""));
-      var token=p.get("access_token");
-      if(token){
-        localStorage.setItem("abi_token",token);
-        var parts=token.split(".");
-        if(parts.length==3){
-          var payload=JSON.parse(atob(parts[1]));
-          if(payload&&payload.user_metadata){
-            currentUser=payload;
-            localStorage.setItem("abi_user",JSON.stringify(payload));
-          }else if(payload&&payload.sub){
-            currentUser={user_metadata:{user_name:payload.sub}};
-            localStorage.setItem("abi_user",JSON.stringify(currentUser));
+  try{
+    var u=localStorage.getItem("abi_user");
+    if(u){try{currentUser=JSON.parse(u);}catch(e){}}
+    var hash=window.location.hash;
+    if(hash&&hash.indexOf("access_token")>=0){
+      try{
+        var p=new URLSearchParams(hash.replace("#",""));
+        var token=p.get("access_token");
+        if(token){
+          localStorage.setItem("abi_token",token);
+          var parts=token.split(".");
+          if(parts.length==3){
+            var payload=JSON.parse(atob(parts[1]));
+            if(payload&&payload.user_metadata){
+              currentUser=payload;
+              localStorage.setItem("abi_user",JSON.stringify(payload));
+            }else if(payload&&payload.sub){
+              currentUser={user_metadata:{user_name:payload.sub}};
+              localStorage.setItem("abi_user",JSON.stringify(currentUser));
+            }
           }
         }
-      }
-    }catch(e){}
-    window.location.hash="";
-  }
+      }catch(e){}
+      window.location.hash="";
+    }
+  }catch(e){}
   updateAuthUI();
 }
 function login(){
@@ -455,4 +458,4 @@ function postMapComment(){
   input.value="";
 }
 
-initAuth();loadCloudPins();
+initAuth();loadCloudPins();updateAuthUI();

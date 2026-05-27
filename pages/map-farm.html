@@ -83,7 +83,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
   <a href="../index.html" class="logo">暗区无限</a>
   <a href="maps.html" style="color:#888;font-size:13px;text-decoration:none">← 返回地图</a>
 
-  <div id="authArea" style="display:flex;align-items:center;gap:10px;margin-left:auto;font-size:14px;color:#888">未登录</div>
+  <div id="authArea" style="display:flex;align-items:center;gap:10px;margin-left:auto;font-size:14px"><span onclick="login()" style="cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:4px 12px;border-radius:4px;border:1px solid #ffc83244">GitHub 登录</span></div>
 </nav>
 <div class="map-wrap">
   <button class="ly-btn" id="lbb">图层</button>
@@ -428,30 +428,23 @@ var currentUser=null;
 var LS="/span";
 var L_s="/span";
 function initAuth(){
-  var u=localStorage.getItem("abi_user");
-  if(u){try{currentUser=JSON.parse(u);}catch(e){}}
-  var hash=window.location.hash;
-  if(hash&&hash.indexOf("access_token")>=0){
-    try{
+  try{
+    var u=localStorage.getItem("abi_user");
+    if(u){try{currentUser=JSON.parse(u);}catch(e){}}
+    var hash=window.location.hash;
+    if(hash&&hash.indexOf("access_token")>=0){
       var p=new URLSearchParams(hash.replace("#",""));
       var token=p.get("access_token");
       if(token){
         localStorage.setItem("abi_token",token);
-        var parts=token.split(".");
-        if(parts.length==3){
-          var payload=JSON.parse(atob(parts[1]));
-          if(payload&&payload.user_metadata){
-            currentUser=payload;
-            localStorage.setItem("abi_user",JSON.stringify(payload));
-          }else if(payload&&payload.sub){
-            currentUser={user_metadata:{user_name:payload.sub}};
-            localStorage.setItem("abi_user",JSON.stringify(currentUser));
-          }
+        var meta=p.get("user_metadata");
+        if(meta){
+          try{var md=JSON.parse(decodeURIComponent(meta));currentUser={user_metadata:md};localStorage.setItem("abi_user",JSON.stringify(currentUser));}catch(e){}
         }
       }
-    }catch(e){}
-    window.location.hash="";
-  }
+      window.location.hash="";
+    }
+  }catch(e){}
   updateAuthUI();
 }
 function login(){
@@ -469,9 +462,9 @@ function updateAuthUI(){
   if(currentUser){
     var nm=currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登录";
     var av=currentUser.user_metadata&&currentUser.user_metadata.avatar_url||"";
-    el.innerHTML="<img src='"+av+"' style='width:26px;height:26px;border-radius:50%;vertical-align:middle;margin-right:6px'> <span style='color:#8c8;font-size:13px'>"+nm+"</span> <span onclick='logout()' style='cursor:pointer;color:#e55;font-size:12px;margin-left:8px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退出<'+'L_s'+'>";
+    el.innerHTML="<img src='"+av+"' style='width:26px;height:26px;border-radius:50%;vertical-align:middle;margin-right:6px'> <span style='color:#8c8;font-size:13px'>"+nm+"</span> <span onclick='logout()' style='cursor:pointer;color:#e55;font-size:12px;margin-left:8px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退出</span>";
   }else{
-    el.innerHTML="<span onclick='login()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:4px 12px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录<'+'L_s'+'>";
+    el.innerHTML="<span onclick='login()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:4px 12px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录</span>";
   }
 }
 function supabase(t,m,b,q){
@@ -600,7 +593,7 @@ function postMapComment(){
   input.value="";
 }
 
-initAuth();loadCloudPins();
+initAuth();loadCloudPins();updateAuthUI();
 </script>
 
 </body>
