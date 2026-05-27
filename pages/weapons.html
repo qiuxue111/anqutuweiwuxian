@@ -41,7 +41,9 @@
 </nav>
 
 <section style="max-width:800px;margin:80px auto 0;padding:1rem;">
-  <h2 style="color:#ffc832;margin-bottom:1.5rem;">📝 帖子</h2>
+<div style="display:flex;align-items:center;">  <h2 style="color:#ffc832;margin-bottom:1.5rem;">📝 帖子</h2>
+  <button id="fabBtn-weapons" onclick="window.fabOpenPostForm()" style="display:none;width:36px;height:36px;border-radius:50%;background:#ffc832;color:#0a0a0f;border:none;font-size:1.5rem;cursor:pointer;line-height:1;margin-left:auto;flex-shrink:0;" title="发布帖子">+</button></div>
+
 
   <div id="loginHint" class="login-hint" style="display:none;">
     <p style="margin-bottom:1rem;">登录后可以发布帖子</p>
@@ -86,6 +88,11 @@ function loginGitHub(){
   var s=supabasejs.createClient('https://hanrfbciinkhgcumvous.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok');
   s.auth.signInWithOAuth({provider:'github'});}
 
+
+  function fabOpenPostForm(){
+    var pf=document.getElementById('postForm');
+    if(pf)pf.style.display=pf.style.display==='none'?'block':'none';
+  }
 function init(){
   var h=window.location.hash;
   if(h&&h.includes('access_token=')){
@@ -95,7 +102,7 @@ function init(){
   }
   var t=localStorage.getItem('abi_token');currentToken=t;
   var u=localStorage.getItem('abi_user');if(u)currentUser=u;
-  if(currentUser){document.getElementById('postForm').style.display='block';}
+  if(currentUser){var fb=document.getElementById('fabBtn-weapons');if(fb)fb.style.display='';}
   else{document.getElementById('loginHint').style.display='block';}
   loadPosts();
 }
