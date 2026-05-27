@@ -488,7 +488,10 @@ function supabase(t,m,b,q){
   var u=SUPABASE_URL+"/rest/v1/"+t;if(q)u+="?"+q;
   var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"}};
   if(b&&m!=="GET")o.body=JSON.stringify(b);
-  return fetch(u,o).then(function(r){return r.json();});
+  return fetch(u,o).then(function(r){
+    if(!r.ok){throw new Error("HTTP "+r.status+" for "+t);}
+    return r.json().catch(function(){return [];});
+  });
 }
 var cloudPins=[],cloudComments=[];
 function loadCloudPins(){
