@@ -216,8 +216,8 @@ function renderList(items){
     if(expired)html+=" | <span style='color:#e55'>已过期</span>";
     html+="</div>";
 
-    // Map thumbnail (200x200 zoomed around point)
-    html+="<canvas class='map-thumb' data-x='"+p.x+"' data-y='"+p.y+"' data-src='../assets/maps/farm.png' width='200' height='200' style='width:200px;height:200px;border-radius:6px;border:1px solid #1e1e2a;margin:6px 0;flex-shrink:0;background:#0f0f16'></canvas>";
+    // Go to map button
+    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置</span></div>";
 
     // Images if any
     if(p.images&&p.images.length>0){
@@ -275,8 +275,8 @@ function renderDels(dels){
     html+="</svg>";
     html+="</div>";
 
-    // Map thumbnail (200x200 zoomed around point)
-    html+="<canvas class='map-thumb' data-x='"+p.x+"' data-y='"+p.y+"' data-src='../assets/maps/farm.png' width='200' height='200' style='width:200px;height:200px;border-radius:6px;border:1px solid #1e1e2a;margin:6px 0;flex-shrink:0;background:#0f0f16'></canvas>";
+    // Go to map button
+    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置</span></div>";
 
     html+="<div class='actions'>";
     if(!hasVoted){
@@ -397,45 +397,6 @@ function toggleAdmin(){
 }
 
 initAuth();loadData();
-
-// Draw map thumbnails on canvases after data loads
-function drawMapThumbs(){
-  var canvases=document.querySelectorAll("canvas.map-thumb");
-  canvases.forEach(function(c){
-    var img=new Image();
-    img.crossOrigin="anonymous";
-    img.onload=function(){
-      // The map uses percentage coords based on DISPLAYED size (css width:100%).
-      // We display at 200px wide → img scale = 200 / img.naturalWidth
-      var x=parseFloat(c.dataset.x),y=parseFloat(c.dataset.y);
-      var displayScale=200/img.naturalWidth; // since map is width:100%
-      var displayH=img.naturalHeight*displayScale;
-      // Source crop (at natural resolution) centered on the point
-      var px=img.naturalWidth*x/100, py=img.naturalHeight*y/100;
-      var cropSz=200/displayScale; // crop area at natural res that maps to 200px display
-      var sx=px-cropSz/2, sy=py-cropSz/2;
-      sx=Math.max(0,Math.min(sx,img.naturalWidth-cropSz));
-      sy=Math.max(0,Math.min(sy,img.naturalHeight-cropSz));
-      var ctx=c.getContext("2d");
-      ctx.drawImage(img,sx,sy,cropSz,cropSz,0,0,200,200);
-      // Red dot at center
-      ctx.beginPath();ctx.arc(100,100,6,0,Math.PI*2);
-      ctx.fillStyle="#ff4444";ctx.fill();
-      ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();
-      // Coord label
-      ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(130,184,68,14);
-      ctx.fillStyle="#ff4444";ctx.font="10px monospace";
-      ctx.fillText("("+x+"%, "+y+"%)",133,195);
-    };
-    img.src=c.dataset.src;
-  });
-}
-// Override loadData to also draw thumbs
-var origLoadData=loadData;
-loadData=function(){
-  origLoadData();
-  setTimeout(drawMapThumbs,500);
-};
 </script>
 </body>
 </html>
