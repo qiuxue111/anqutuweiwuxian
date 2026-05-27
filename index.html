@@ -196,6 +196,12 @@ async function loadHotPosts(){
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
 document.addEventListener('DOMContentLoaded',loadHotPosts);
 
+function loginGitHub(){
+  var cb=window.location.origin+window.location.pathname;
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
+  window.location.href=u;
+}
+
 (function(){
   var h=window.location.hash;
   if(h&&h.includes('access_token=')){

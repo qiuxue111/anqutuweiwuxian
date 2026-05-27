@@ -95,7 +95,13 @@
   <script src="js/search.js"></script>
   <script>
     // 页面加载后自动显示所有分类作为预览
-    document.addEventListener('DOMContentLoaded', () => {
+    function loginGitHub(){
+  var cb=window.location.origin+window.location.pathname;
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
+  window.location.href=u;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         renderResults(searchIndex.slice(0, 8), 'search-results');
       }, 300);
