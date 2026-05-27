@@ -33,7 +33,7 @@ footer{margin-top:20px;text-align:center;font-size:12px;color:#444}
 footer a{color:#444;text-decoration:none}
 </style>
 </head>
-<body>
+<body><div id="authBar" style="position:fixed;top:10px;right:10px;z-index:999;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;padding:6px 14px;font-size:13px"></div>
 <h1>审核中心</h1>
 <a href="map-farm.html">返回地图</a>
 <div class="stats" id="stats">
@@ -54,7 +54,50 @@ footer a{color:#444;text-decoration:none}
 var SUPABASE_URL = "https://hanrfbciinkhgcumvous.supabase.co";
 var SUPABASE_ANON_KEY = "sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
 
-function supabase(t,m,b,q){
+f
+// Auth
+var currentUser=null;
+var SP="/span";
+var A="/a";
+function initAuth(){
+  var u=localStorage.getItem("abi_user");
+  if(u){try{currentUser=JSON.parse(u);}catch(e){}}
+  var hash=window.location.hash;
+  var p=new URLSearchParams(hash.replace("#",""));
+  var token=p.get("access_token");
+  if(token){
+    localStorage.setItem("abi_token",token);
+    var meta=p.get("user_metadata");
+    if(meta){try{var md=JSON.parse(meta);currentUser=md;}catch(e){}}
+    if(currentUser)localStorage.setItem("abi_user",JSON.stringify(currentUser));
+    window.location.hash="";
+  }
+  updateAuthUI();
+}
+function loginGit(){
+  window.location.href="https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(window.location.href.split("?")[0].split("#")[0]);
+}
+function logoutGit(){
+  currentUser=null;
+  localStorage.removeItem("abi_user");
+  localStorage.removeItem("abi_token");
+  updateAuthUI();
+}
+function checkAuth(){
+  if(!currentUser){loginGit();return false;}
+  return true;
+}
+function updateAuthUI(){
+  var el=document.getElementById("authBar");
+  if(!el)return;
+  if(currentUser){
+    var nm=currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登录";
+    el.innerHTML='<span style="color:#8c8">'+nm+'<'+SP+'> <a href="javascript:logoutGit()" style="color:#e55;font-size:12px">退出<'+A+'>';
+  }else{
+    el.innerHTML='<a href="javascript:loginGit()" style="color:#ffc832;font-size:13px">GitHub 登录<'+A+'>';
+  }
+}
+unction supabase(t,m,b,q){
   var u=SUPABASE_URL+"/rest/v1/"+t;if(q)u+="?"+q;
   var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"}};
   if(b&&m!=="GET")o.body=JSON.stringify(b);
@@ -73,7 +116,7 @@ function switchTab(e,tab){
   currentTab=tab;
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
   e.target.classList.add("active");
-  loadPending();
+  initAuth();loadPending();
 }
 
 function loadPending(){
@@ -169,13 +212,13 @@ function renderList(items){
   document.getElementById("list").innerHTML=html;
 }
 
-function vote(id){
+function vote(id){if(!checkAuth())return;
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
     var voters=p.voters||[];
     var uid=getUserId();
-    if(voters.indexOf(uid)>=0){alert(ALREADY_VOTED);loadPending();return;}
+    if(voters.indexOf(uid)>=0){alert(ALREADY_VOTED);initAuth();loadPending();return;}
     voters.push(uid);
     var newVotes=(p.votes||0)+1;
     var shouldPass=newVotes>=10;
@@ -187,24 +230,24 @@ function vote(id){
           if(approved&&approved.length){
             var a=approved[0];
             supabase("pins","POST",{x:a.x,y:a.y,name:a.name,type:a.type,ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[]}).then(function(){
-              supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+              supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
             });
           }
         });
       }else{
-        loadPending();
+        initAuth();loadPending();
       }
     });
   });
 }
 
-function voteDelete(id){
+function voteDelete(id){if(!checkAuth())return;
   supabase("deletion_requests","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
     var voters=p.voters||[];
     var uid=getUserId();
-    if(voters.indexOf(uid)>=0){alert(ALREADY_VOTED);loadPending();return;}
+    if(voters.indexOf(uid)>=0){alert(ALREADY_VOTED);initAuth();loadPending();return;}
     voters.push(uid);
     var newVotes=(p.votes||0)+1;
     var update={votes:newVotes,voters:voters};
@@ -212,46 +255,46 @@ function voteDelete(id){
     supabase("deletion_requests","PATCH",update,"id=eq."+id).then(function(){
       if(newVotes>=10){
         supabase("pins","DELETE",null,"id=eq."+p.pin_id).then(function(){
-          supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+          supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
         });
       }else{
-        loadPending();
+        initAuth();loadPending();
       }
     });
   });
 }
 
-function adminPass(id){
+function adminPass(id){if(!checkAuth())return;
   if(!confirm(CONFIRM_PASS))return;
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
     supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[]}).then(function(){
-      supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+      supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
     });
   });
 }
 
-function adminReject(id){
+function adminReject(id){if(!checkAuth())return;
   if(!confirm(CONFIRM_REJECT))return;
-  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
 }
 
-function adminExecDelete(reqId,pinId){
+function adminExecDelete(reqId,pinId){if(!checkAuth())return;
   if(!confirm(CONFIRM_EXEC_DEL))return;
   supabase("pins","DELETE",null,"id=eq."+pinId).then(function(){
-    supabase("deletion_requests","DELETE",null,"id=eq."+reqId).then(function(){loadPending();});
+    supabase("deletion_requests","DELETE",null,"id=eq."+reqId).then(function(){initAuth();loadPending();});
   });
 }
 
-function adminRejectDelete(id){
+function adminRejectDelete(id){if(!checkAuth())return;
   if(!confirm(CONFIRM_REJECT_DEL))return;
-  supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+  supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
 }
 
-function userDelete(id){
+function userDelete(id){if(!checkAuth())return;
   if(!confirm(CONFIRM_USER_DEL))return;
-  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
 }
 
 function toggleAdmin(){
@@ -262,7 +305,7 @@ function toggleAdmin(){
     var pass=prompt(ADMIN_PROMPT);
     if(pass==="admin888"){localStorage.setItem("abi_is_admin","true");}else{alert(ADMIN_FAIL);return;}
   }
-  loadPending();
+  initAuth();loadPending();
 }
 
 // Text constants (avoid </ in JS strings)
@@ -290,7 +333,7 @@ var CONFIRM_USER_DEL = "确认删除这条提交？";
 var ADMIN_PROMPT = "请输入管理员密码";
 var ADMIN_FAIL = "密码错误";
 
-loadPending();
+initAuth();loadPending();
 </script>
 </body>
 </html>

@@ -399,6 +399,7 @@ function showPicker(){
 }
 function closePicker(){document.getElementById("po").style.display="none";}
 function addPin(tid){
+  if(!currentUser){login();return;}
   if(!pp)return;
   supabase("pending_pins","POST",{x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[],admin_passed:false,votes:0,voters:[]});
   pins.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[]});
@@ -409,7 +410,46 @@ function savePins(){try{localStorage.setItem("abi_farm_pins",JSON.stringify({pin
 // --- Supabase cloud ---
 var SUPABASE_URL="https://hanrfbciinkhgcumvous.supabase.co";
 var SUPABASE_ANON_KEY="sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
-function supabase(t,m,b,q){
+f
+// --- Supabase Auth ---
+var currentUser=null;
+function initAuth(){
+  var hash=window.location.hash;
+  var params=new URLSearchParams(hash.replace("#",""));
+  var token=params.get("access_token");
+  var refresh=params.get("refresh_token");
+  if(token&&refresh){
+    localStorage.setItem("abi_token",token);
+    localStorage.setItem("abi_refresh",refresh);
+    window.location.hash="";
+  }
+  var saved=localStorage.getItem("abi_token");
+  if(saved){
+    supabase("user","GET",null).then(function(u){
+      if(u&&u.id){currentUser=u;updateAuthUI();}
+    })["catch"](function(){currentUser=null;updateAuthUI();});
+  }
+}
+function login(){
+  window.location.href=SUPABASE_URL+"/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(window.location.href.split("?")[0].split("#")[0]);
+}
+function logout(){
+  localStorage.removeItem("abi_token");
+  localStorage.removeItem("abi_refresh");
+  currentUser=null;
+  updateAuthUI();
+}
+function updateAuthUI(){
+  var el=document.getElementById("authBar");
+  if(!el)return;
+  var sp="/span",a="/a";
+  if(currentUser){
+    el.innerHTML='<span style="color:#8c8">'+(currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登录")+'<'+sp+'> <a href="javascript:logout()" style="color:#e55;font-size:12px">退出<'"+a+">";
+  }else{
+    el.innerHTML='<a href="javascript:login()" style="color:#ffc832;font-size:13px">GitHub 登录<'"+a+">";
+  }
+}
+unction supabase(t,m,b,q){
   var u=SUPABASE_URL+"/rest/v1/"+t;if(q)u+="?"+q;
   var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"}};
   if(b&&m!=="GET")o.body=JSON.stringify(b);
@@ -474,6 +514,7 @@ function addPinImages(files){
   }
 }
 function deleteCurrentPin(){
+  if(!currentUser){login();return;}
   if(curPinIdx===null)return;
   var p=pins[curPinIdx];
   if(!confirm("确认提交删除申请？其他人将可以对此投票。"))return;
@@ -534,7 +575,9 @@ function postMapComment(){
   input.value="";
 }
 
-loadCloudPins();
+initAuth();loadCloudPins();
 </script>
+
+<div id="authBar" style="position:fixed;top:10px;right:10px;z-index:9999;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;padding:6px 14px;font-size:13px"></div>
 </body>
 </html>
