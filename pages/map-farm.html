@@ -503,8 +503,10 @@ function loadCloudPins(){
     mapComments=cloudComments.slice();
     savePins();
     renderMarkers();renderMapComments();
+    // URL param jump after data ready
+    jumpToFromUrl();
   }).catch(function(){
-    try{var d=JSON.parse(localStorage.getItem("abi_farm_pins"));if(d){if(d.pins)pins=d.pins;if(d.mapComments)mapComments=d.mapComments;renderMarkers();renderMapComments();}}catch(e){}
+    try{var d=JSON.parse(localStorage.getItem("abi_farm_pins"));if(d){if(d.pins)pins=d.pins;if(d.mapComments)mapComments=d.mapComments;renderMarkers();renderMapComments();jumpToFromUrl();}}catch(e){}
   });
 }
 
@@ -622,28 +624,6 @@ window.onload=function(){console.log("ONLOAD");initAuth();loadCloudPins();update
 
 // ─── URL 参数定位 (from review.html "在地图上查看位置") ───
 function jumpToFromUrl(){
-  var s=new URLSearchParams(window.location.search);
-  var x=s.get("x"),y=s.get("y");
-  if(x&&y){
-    setTimeout(function(){
-      // find the pin that matches
-      var xf=parseFloat(x),yf=parseFloat(y);
-      for(var i=0;i<pins.length;i++){
-        var d=Math.abs(pins[i].x-xf)+Math.abs(pins[i].y-yf);
-        if(d<0.5){showPinDetail(i);return;}
-      }
-      // no exact match — show picker at that location
-      pp={x:xf,y:yf};
-      showPicker();
-    },600);
-  }
-}
-// Hook into loadCloudPins callback
-var origLoadPins=loadCloudPins;
-loadCloudPins=function(){
-  origLoadPins();
-  setTimeout(jumpToFromUrl,800);
-};
 </script>
 
 </body>
