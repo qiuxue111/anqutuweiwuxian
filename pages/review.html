@@ -216,8 +216,10 @@ function renderList(items){
     if(expired)html+=" | <span style='color:#e55'>已过期</span>";
     html+="</div>";
 
-    // Go to map button (renderList)
-    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+",\""+(p.name||"").replace(/"/g,"")+"\","+(p.type||0)+",\""+((p.ic||"").replace(/"/g,""))+"\")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置</span></div>";
+    // Go to map button (renderList) — escape all special chars safely
+    var n=(p.name||"").replace(/["'\\\n\r]/g,"");
+    var i=(p.ic||"").replace(/["'\\\n\r]/g,"");
+    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+",\""+n+"\","+(p.type||0)+",\""+i+"\")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置</span></div>";
     html+="</div>"; // close card
 
     // Images if any
@@ -276,8 +278,10 @@ function renderDels(dels){
     html+="</svg>";
     html+="</div>";
 
-    // Go to map button
-    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+",\""+(p.name||"").replace(/"/g,"")+"\","+(p.type||0)+",\""+((p.ic||"").replace(/"/g,""))+"\")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置</span></div>";
+    // Go to map button (renderDels)
+    var n=(p.name||"").replace(/["'\\\n\r]/g,"");
+    var i=(p.ic||"").replace(/["'\\\n\r]/g,"");
+    html+="<div style='margin:6px 0'><span onclick='viewOnMap("+p.x+","+p.y+",\""+n+"\","+(p.type||0)+",\""+i+"\")' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置</span></div>";
 
     html+="<div class='actions'>";
     if(!hasVoted){
