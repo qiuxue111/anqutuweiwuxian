@@ -377,23 +377,29 @@ async function toggleLike(){
 }
 
 async function loadComments(postId, containerId){
-  var el=document.getElementById(containerId);
-  if(!el)return;
   try{
     var r=await db('GET','post_comments',null,'post_id=eq.'+postId+'&order=created_at.asc');
-    if(!r.ok){el.innerHTML='<div style="color:#555;font-size:0.75rem;">加载失败</div>';return;}
+    if(!r.ok)return;
     var comments=await r.json();
-    if(!comments||comments.length===0){el.innerHTML='<div style="color:#555;font-size:0.75rem;">暂无评论</div>';return;}
-    var token=localStorage.getItem('abi_token');
+    var el=document.getElementById(containerId);
+    if(!el)return;
+    if(!comments||comments.length===0){
+      el.innerHTML='<div style="color:#555;font-size:0.8rem;padding:4px 0;">暂无评论</div>';
+      return;
+    }
     var userName=getUserName();
+    var token=localStorage.getItem('abi_token');
     el.innerHTML=comments.map(function(c){
-      var delBtn=(token&&c.author===userName)?'<button class="c-del" onclick="deleteComment('+c.id+',\''+containerId+'\','+postId+')">删除</button>':'';
+      var delBtn=(token&&c.author===userName)?'<button style="background:none;border:none;color:#f55;font-size:0.65rem;cursor:pointer;margin-left:8px;" onclick="deleteComment('+c.id+',\''+containerId+'\','+postId+')">删除</button>':'';
       var cimgs=(c.images&&typeof c.images==='string')?JSON.parse(c.images):[];
       var cimgHTML=cimgs.length?'<div style="display:flex;gap:4px;margin-top:2px;">'+cimgs.map(function(u){return '<img src="'+u+'" style="max-width:80px;max-height:60px;border-radius:4px;object-fit:cover;cursor:pointer;border:1px solid #1e1e2a;" onclick="window.open(this.src)">';}).join('')+'</div>':'';
-      return '<div class="comment"><span class="c-author">'+esc(c.author)+'</span><span class="c-text">'+esc(c.content)+cimgHTML+'</span><span class="c-time">'+(c.created_at?new Date(c.created_at).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'')+'</span>'+delBtn+'</div>'+'<div style="margin-top:4px;display:flex;gap:8px;align-items:center;">'+(p.likes_count!==undefined?'<span style="font-size:0.7rem;color:#888;">❤️ '+(p.likes_count||0)+'</span>':'')+'</div>';
+      return '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">'+
+        '<span style="color:#ffc832;font-size:0.8rem;white-space:nowrap;">'+esc(c.author)+'</span>'+
+        '<div style="flex:1;"><span style="color:#ccc;font-size:0.85rem;">'+esc(c.content)+'</span>'+cimgHTML+'</div>'+
+        '<span style="color:#555;font-size:0.65rem;">'+(c.created_at?new Date(c.created_at).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'')+'</span>'+
+        delBtn+'</div>';
     }).join('');
-
-  }catch(e){el.innerHTML='<div style="color:#555;font-size:0.75rem;">加载失败</div>';}
+  }catch(e){}
 }
 
 async function addComment(postId, inputId, containerId){
@@ -433,30 +439,28 @@ async function deleteComment(commentId, containerId, postId){
 
 async function openPostModal(postId){
   var token=localStorage.getItem('abi_token');
-  (async function(){
+  try{
+    var r=await db('GET','map_posts',null,'id=eq.'+postId+'&limit=1');
+    if(!r.ok){alert('\u52a0\u8f7d\u5931\u8d25');return;}
+    var posts=await r.json();
+    var p=posts&&posts[0];
+    if(!p){alert('\u5e16\u5b50\u4e0d\u5b58\u5728');return;}
+    currentModalPostId=postId;
+    document.getElementById('modalTitle').textContent=p.title||'\u65e0\u6807\u9898';
+    document.getElementById('modalBody').textContent=p.content||'';
+    document.getElementById('modalAuthor').textContent=(p.author||'\u533f\u540d');
+    document.getElementById('modalDate').textContent=p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'';
+    var cat=p.category||'general';
+    var catNames={'general':'\u6742\u8c08','question':'\u95ee\u7b54','guide':'\u653b\u7565','showoff':'\u70ab\u8000'};
+    var cn=catNames[cat]||'\u6742\u8c08';
+    var hue=cat==='guide'?'#4a9eff':cat==='question'?'#ff6b6b':cat==='showoff'?'#ffc832':'#888';
+    var catEl=document.getElementById('modalCategory');
+    catEl.textContent=cn;
+    catEl.style.background=hue+'22';
+    catEl.style.color=hue;
     try{
-      var r=await db('GET','map_posts',null,'id=eq.'+postId+'&limit=1');
-      if(!r.ok){alert('加载失败');return;}
-      var posts=await r.json();
-      var p=posts&&posts[0];
-      if(!p){alert('帖子不存在');return;}
-      currentModalPostId=postId;
-      document.getElementById('modalTitle').textContent=p.title||'无标题';
-      document.getElementById('modalBody').textContent=p.content||'';
-      document.getElementById('modalAuthor').textContent=(p.author||'匿名');
-      document.getElementById('modalDate').textContent=p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'';
-      var cat=p.category||'general';
-      var catNames={'general':'杂谈','question':'问答','guide':'攻略','showoff':'炫耀'};
-      var cn=catNames[cat]||'杂谈';
-      var hue=cat==='guide'?'#4a9eff':cat==='question'?'#ff6b6b':cat==='showoff'?'#ffc832':'#888';
-      var catEl=document.getElementById('modalCategory');
-      catEl.textContent=cn;
-      catEl.style.background=hue+'22';
-      catEl.style.color=hue;
-    (async function(){
       var un=getUserName();
-      if(!un||!token)return;
-      try{
+      if(un&&token){
         var lr=await db('GET','post_likes',null,'post_id=eq.'+postId+'&user_id=eq.'+encodeURIComponent(un)+'&limit=1');
         if(lr.ok){
           var likes=await lr.json();
@@ -465,19 +469,18 @@ async function openPostModal(postId){
             if(el)el.classList.add('active');
           }
         }
-      }catch(e){}
-    })();
-      var imgEl=document.getElementById('modalImages');
-      var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
-      imgEl.innerHTML=imgs.length?imgs.map(function(u){return '<img src="'+u+'" onclick="window.open(this.src)">';}).join(''):'';
-      var delBtn=document.getElementById('modalDelBtn');
-      var userName=getUserName();
-      delBtn.style.display=(token&&p.author===userName)?'inline':'none';
-      loadComments(postId,'modalComments');
-      document.getElementById('postModal').style.display='block';
-      document.body.style.overflow='hidden';
-    }catch(e){alert('加载失败: '+e.message);}
-  })();
+      }
+    }catch(e){}
+    var imgEl=document.getElementById('modalImages');
+    var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
+    imgEl.innerHTML=imgs.length?imgs.map(function(u){return '<img src="'+u+'" onclick="window.open(this.src)">';}).join(''):'';
+    var delBtn=document.getElementById('modalDelBtn');
+    var userName=getUserName();
+    delBtn.style.display=(token&&p.author===userName)?'inline':'none';
+    loadComments(postId,'modalComments');
+    document.getElementById('postModal').style.display='block';
+    document.body.style.overflow='hidden';
+  }catch(e){alert('\u52a0\u8f7d\u5931\u8d25: '+e.message);}
 }
 function closePostModal(){
   document.getElementById('postModal').style.display='none';
@@ -491,19 +494,43 @@ async function addCommentFromModal(){
   var token=localStorage.getItem('abi_token');
   if(!token){alert('请先登录');return;}
   var author=getUserName();
-  (async function(){
-    try{
-      var r=await fetch(SUPABASE_URL+'/rest/v1/post_comments',{
-        method:'POST',
-        headers:{'Authorization':'Bearer '+token,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
-        body:JSON.stringify({post_id:currentModalPostId,content:content,author:author})
-      });
-      if(!r.ok){var err=await r.json().catch(function(){});alert('评论失败: '+(err&&err.message||r.status));return;}
-      alert('\u2705 评论成功');
-      input.value='';
-      loadComments(currentModalPostId, 'modalComments');
-    }catch(e){alert('评论失败: '+e.message);}
-  })();
+  try{
+    var body={post_id:currentModalPostId,content:content,author:author};
+    if(commentImages&&commentImages.length>0){
+      var imgUrls=[];
+      for(var i=0;i<commentImages.length;i++){
+        var f=commentImages[i];
+        var fn='comment_'+Date.now()+'_'+i+'.jpg';
+        var ur=await fetch(SUPABASE_URL.replace('/rest/v1','')+'/storage/v1/object/post_images/'+fn,{
+          method:'POST',
+          headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON},
+          body:f
+        });
+        if(ur.ok){
+          imgUrls.push(SUPABASE_URL.replace('/rest/v1','')+'/storage/v1/object/public/post_images/'+fn);
+        }
+      }
+      if(imgUrls.length>0)body.images=JSON.stringify(imgUrls);
+    }
+    var r=await fetch(SUPABASE_URL+'/rest/v1/post_comments',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify(body)
+    });
+    if(!r.ok){var err=await r.json().catch(function(){});alert('评论失败: '+(err&&err.message?err.message:r.status));return;}
+    if(r.ok||r.status===204||r.status===201){
+      var ci=document.getElementById('modalCommentInput');
+      if(ci)ci.value='';
+      var fi=document.getElementById('commentImages');
+      if(fi)fi.value='';
+      var pp=document.getElementById('commentPreview');
+      if(pp)pp.innerHTML='';
+      commentImages=[];
+      loadComments(currentModalPostId,'modalComments');
+    }
+  }catch(e){
+    alert('发布失败:'+e.message);
+  }
 }
 
 async function deletePostFromModal(){

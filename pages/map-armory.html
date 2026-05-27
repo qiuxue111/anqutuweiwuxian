@@ -154,8 +154,15 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
     <!-- 容器评论区 -->
     <div class="pd-comments">
       <div class="pdc-title">💬 评论区</div>
-      <textarea id="pdcInput" placeholder="对这个容器有什么想说的？"></textarea>
-      <button class="pdc-btn" onclick="postPinComment()">发表</button>
+      <div style="display:flex;gap:4px;align-items:flex-start;">
+        <textarea id="pdcInput" placeholder="对这个容器有什么想说的？" style="flex:1;min-height:50px;"></textarea>
+        <button class="pdc-btn" onclick="submitPinComment()" style="white-space:nowrap;">发表</button>
+      </div>
+      <div class="pdc-file-row" style="display:flex;gap:6px;margin:4px 0;align-items:center;">
+        <label style="width:32px;height:32px;border-radius:50%;background:#333;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#fff;">+<input type="file" id="pdcFileInput" accept="image/*" multiple style="display:none" onchange="previewPinCommentFiles(this)"></label>
+        <span id="pdcFileCount" style="font-size:0.7rem;color:#888;">未选择图片</span>
+      </div>
+      <div id="pdcFilePreview" style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;"></div>
       <div class="pdc-list" id="pdcList"></div>
     </div>
   </div>
@@ -222,23 +229,59 @@ async function loadPinComments(pinIdx){
   var p=pins[pinIdx];
   if(!p||!p.id)return;
   try{
-    var r=await fetch(SUPABASE_URL+'/rest/v1/map_comments?order=created_at.asc&map_name=eq.'+encodeURIComponent(mapNameCN)+',{
-      headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON}
+    var r=await fetch(SUPABASE_URL+'/rest/v1/map_comments?order=created_at.asc&map_name=eq.'+encodeURIComponent(mapNameCN),{
+      headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON}
     });
     if(!r.ok)return;
     var data=await r.json();
-    pins[pinIdx].comments=data||[];
+    var filtered=(data||[]).filter(function(c){return c.pin_id===p.id;});
+    pins[pinIdx].comments=filtered;
     renderPinComments();
-  }catch(e){console.error('loadPinComments err',e);}
+  }catch(e){console.error('loadPinComments err',e);
+}
 }
 
-function renderPinComments(){var list=document.getElementById('pdcList');list.innerHTML='';if(curPinIdx===null)return;(pins[curPinIdx].comments||[]).forEach(function(c){var item=document.createElement('div');item.style.cssText='padding:8px;border-bottom:1px solid #222;font-size:13px';var time=document.createElement('span');time.style.cssText='color:#666;font-size:11px';time.textContent=c.time||'';var txt=document.createElement('div');txt.style.cssText='margin-top:4px';txt.textContent=c.text||'';item.appendChild(time);item.appendChild(txt);list.appendChild(item);});}
+function renderPinComments(){
+  var list=document.getElementById('pdcList');
+  if(!list)return;
+  if(curPinIdx===null||!pins[curPinIdx])return;
+  var token=localStorage.getItem('abi_token');
+  var userName=getUserName();
+  var cs=pins[curPinIdx].comments||[];
+  if(cs.length===0){
+    list.innerHTML='<div style="color:#555;font-size:0.75rem;padding:8px;">暂无评论</div>';
+    return;
+  }
+  var html='';
+  for(var i=0;i<cs.length;i++){
+    var c=cs[i];
+    var un=c.user_name||'匿名';
+    var txt=c.text||'';
+    var time=c.created_at?new Date(c.created_at).toLocaleString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    html+='<div class="c-item"><div class="c-hdr"><span class="c-author">'+un+'</span><span class="c-time">'+time+'</span></div><div class="c-body">'+txt+'</div>';
+    if(c.images){
+      var imgs=typeof c.images==='string'?JSON.parse(c.images):c.images;
+      if(imgs&&imgs.length){
+        html+='<div style="display:flex;gap:4px;flex-wrap:wrap;padding:4px 0;">';
+        for(var j=0;j<imgs.length;j++){
+          html+='<img src="'+imgs[j]+'" style="max-width:60px;max-height:60px;border-radius:4px;object-fit:cover;cursor:pointer;" onclick="window.open(this.src)">';
+        }
+        html+='</div>';
+      }
+    }
+    if(token&&c.user_name===userName){
+      html+='<div class="c-actions"><button class="c-del" onclick="deletePinComment('+c.id+','+curPinIdx+')">删除</button></div>';
+    }
+    html+='</div>';
+  }
+  list.innerHTML=html;
+}
 
 async function loadMapComments(){
   try{
     var enc=encodeURIComponent(mapNameCN);
     var r=await fetch(SUPABASE_URL+'/rest/v1/map_comments?map_name=eq.'+enc+'&order=created_at.asc',{
-      headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON}
+      headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON}
     });
     if(!r.ok)return;
     var data=await r.json();
@@ -247,10 +290,135 @@ async function loadMapComments(){
   }catch(e){console.error('loadMapComments err',e);}
 }
 
-function renderMapComments(){var list=document.getElementById('mcList');list.innerHTML='';mapComments.forEach(function(c){var item=document.createElement('div');item.style.cssText='padding:8px;border-bottom:1px solid #222;font-size:13px';var un=document.createElement('span');un.style.cssText='color:#ffc832;font-size:11px;font-weight:bold';un.textContent=(c.user_name||'\u533f\u540d')+' ';var time=document.createElement('span');time.style.cssText='color:#666;font-size:11px';time.textContent=c.created_at?new Date(c.created_at).toLocaleString('zh-CN'):'';var txt=document.createElement('div');txt.style.cssText='margin-top:4px';txt.textContent=c.text||'';item.appendChild(un);item.appendChild(time);item.appendChild(txt);list.appendChild(item);});}
+function esc(s){
+  if(!s)return'';
+  var d=document.createElement('div');
+  d.appendChild(document.createTextNode(s||''));
+  return d.innerHTML;
+}
+
+function renderMapComments(){
+  var list=document.getElementById('mcList');
+  if(!list)return;
+  var token=localStorage.getItem('abi_token');
+  var userName=getUserName();
+  if(!mapComments||mapComments.length===0){
+    list.innerHTML='<div style="color:#555;font-size:0.75rem;padding:8px;">\u6682\u65e0\u8bc4\u8bba</div>';
+    return;
+  }
+  var html='';
+  for(var i=0;i<mapComments.length;i++){
+    var c=mapComments[i];
+    var un=c.user_name||'\u533f\u540d';
+    var txt=c.text||'';
+    var time=c.created_at?new Date(c.created_at).toLocaleString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    html+='<div class="c-item"><div class="c-hdr"><span class="c-author">'+un+'</span><span class="c-time">'+time+'</span></div><div class="c-body">'+txt+'</div>';
+    if(token&&c.user_name===userName){
+      html+='<div class="c-actions"><button class="c-del" onclick="deleteMapComment('+c.id+')">\u5220\u9664</button></div>';
+    }
+    html+='</div>';
+  }
+  list.innerHTML=html;
+}
 function showNextCommentInput(){var inp=document.getElementById('pdcInput');var btn=document.getElementById('pdcBtn');if(inp)inp.style.display='block';if(btn)btn.style.display='none';}
-async function submitPinComment(){if(curPinIdx===null)return;var input=document.getElementById('pdcInput');var text=input.value.trim();if(!text)return;var un=getUserName();var author=un||'匿名';try{var r=await fetch(SUPABASE_URL+'/rest/v1/map_comments',{method:'POST',headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({map_name:mapNameCN,text:txt,user_name:user_name})});if(r.ok||r.status===204){input.value='';loadPinComments(curPinIdx);alert('\u2705 评论成功');}else{alert('评论失败');}}catch(e){alert('评论失败: '+e.message);}}
-async function submitMapComment(){var input=document.getElementById('mcInput');var text=input.value.trim();if(!text)return;var un=getUserName();var author=un||'匿名';try{var r=await fetch(SUPABASE_URL+'/rest/v1/map_comments',{method:'POST',headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({map_name:mapNameCN,text:txt,user_name:user_name})});if(r.ok||r.status===204){input.value='';loadMapComments();alert('\u2705 评论成功');}else{alert('评论失败');}}catch(e){alert('评论失败: '+e.message);}}
+function previewPinCommentFiles(input){
+  var preview=document.getElementById('pdcFilePreview');
+  var count=document.getElementById('pdcFileCount');
+  if(!preview||!input)return;
+  preview.innerHTML='';
+  if(!input.files||input.files.length===0){
+    if(count)count.textContent='\u672a\u9009\u62e9\u56fe\u7247';
+    return;
+  }
+  if(count)count.textContent='\u5df2\u9009\u62e9 '+input.files.length+' \u5f20\u56fe\u7247';
+  for(var i=0;i<input.files.length;i++){
+    (function(file){
+      var reader=new FileReader();
+      reader.onload=function(e){
+        var img=document.createElement('img');
+        img.src=e.target.result;
+        img.style.cssText='width:50px;height:50px;object-fit:cover;border-radius:4px;';
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    })(input.files[i]);
+  }
+}
+
+async function submitPinComment(){
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('请先登录');return;}
+  if(curPinIdx===null)return;
+  var input=document.getElementById('pdcInput');
+  var content=input.value.trim();
+  var fileInput=document.getElementById('pdcFileInput');
+  var images=[];
+  if(content==''&&(!fileInput||fileInput.files.length===0)){alert('请输入评论内容');return;}
+  if(fileInput&&fileInput.files.length>0){
+    for(var i=0;i<fileInput.files.length;i++){
+      var f=fileInput.files[i];
+      if(!f.type.startsWith('image/')){alert('只支持图片文件');return;}
+      if(f.size>5*1024*1024){alert('单张图片不能超过5MB');return;}
+      var imgName=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.jpg';
+      var formData=new FormData();
+      formData.append('file',f);
+      try{
+        var uploadRes=await fetch(SUPABASE_URL+'/storage/v1/object/map_comment_images/'+imgName,{
+          method:'POST',
+          headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'x-upsert':'false'},
+          body:formData
+        });
+        if(uploadRes.ok){
+          images.push(SUPABASE_URL+'/storage/v1/object/public/map_comment_images/'+imgName);
+        }
+      }catch(e){console.error('Upload failed',e);}
+    }
+  }
+  var user_name=getUserName()||'匿名';
+  var body={map_name:mapNameCN,text:content,user_name:user_name,pin_id:pins[curPinIdx].id};
+  if(images.length)body.images=JSON.stringify(images);
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/map_comments',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify(body)
+    });
+    if(r.ok||r.status===204||r.status===201){
+      input.value='';
+      if(fileInput){fileInput.value='';}
+      var preview=document.getElementById('pdcFilePreview');
+      if(preview)preview.innerHTML='';
+      loadPinComments(curPinIdx);
+    }else{
+      alert('评论失败');
+    }
+  }catch(e){
+    alert('评论失败: '+e.message);
+  }
+}
+async function submitMapComment(){
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('\u8bf7\u5148\u767b\u5f55');return;}
+  var input=document.getElementById('mcInput');
+  var content=input.value.trim();
+  if(!content){alert('\u8bf7\u8f93\u5165\u8bc4\u8bba\u5185\u5bb9');return;}
+  var user_name=getUserName()||'\u533f\u540d';
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/map_comments',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({map_name:mapNameCN,text:content,user_name:user_name,pin_id:pins[curPinIdx].id})
+    });
+    if(r.ok||r.status===204||r.status===201){
+      input.value='';
+      loadMapComments();
+    }else{
+      alert('\u8bc4\u8bba\u5931\u8d25');
+    }
+  }catch(e){
+    alert('\u8bc4\u8bba\u5931\u8d25: '+e.message);
+  }
+}
 function dispatchLayerCheck(){var hiddenTypes={};var hiddenNames={};var lp=document.getElementById('lp');if(!lp)return;lp.querySelectorAll('input[data-layer]').forEach(function(cb){if(!cb.checked){var t=cb.getAttribute('data-layer');if(!hiddenTypes[t])hiddenTypes[t]=true;}});lp.querySelectorAll('input[data-name]').forEach(function(cb){if(!cb.checked){hiddenNames[cb.getAttribute('data-name')]=true;}});var mv=document.getElementById('mv');if(!mv)return;mv.querySelectorAll('.pin-marker').forEach(function(el){var idx=parseInt(el.getAttribute('data-pin-idx'));if(isNaN(idx)||!pins[idx])return;var p=pins[idx];var hide=false;if(hiddenNames[p.name]){hide=true;}if(!hide){for(var ht in hiddenTypes){if(layerData[ht]&&layerData[ht].indexOf(p.name)>=0){hide=true;break;}}}el.style.display=hide?'none':'';});}
 function renderLayers(){
   var lp=document.getElementById('lp');if(!lp)return;
@@ -314,6 +482,45 @@ function loadCloudPins(){supabase('pins?map_name=eq.'+encodeURIComponent(mapName
 function loadCloudMarkers(){try{if(cloudPins.length){cloudPins.forEach(function(cp){if(cp.x!==void 0){pins.push({name:cp.name,x:cp.x,y:cp.y,id:cp.id,note:cp.note||'',images:cp.images||[],comments:cp.comments||[]});}});}if(cloudComments.length){cloudComments.forEach(function(cc){mapComments.push(cc);});}renderMarkers();renderMapComments();}catch(e){}}
 function loadFromLocal(){try{var d=JSON.parse(localStorage.getItem('abi_'+mapNameEng+'_pins'));if(d){if(d.pins)pins=d.pins;if(d.mapComments)mapComments=d.mapComments;}}catch(e){}}
 function jumpToFromUrl(){var s=new URLSearchParams(window.location.search);var x=s.get('x'),y=s.get('y');if(!x||!y)return;var xf=parseFloat(x),yf=parseFloat(y);scaleM=8;var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var img=document.getElementById('mapImg');panX=(wr.width/2)-xf/100*img.clientWidth*scaleM;panY=(wr.height/2)-yf/100*img.clientHeight*scaleM;ut();document.getElementById('zr').value=800;document.getElementById('zl').textContent='800%';var mv=document.getElementById('mv');if(!mv)return;var name=s.get('name')||'';var div=document.createElement('div');div.style.cssText='position:absolute;left:'+xf+'%;top:'+yf+'%;transform:translate(-50%,-50%);z-index:998;text-align:center;pointer-events:none;width:14px;height:14px;border:2px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.08);animation:blinkBorder 1.2s ease-in-out infinite';var inner=document.createElement('div');inner.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center';var ic=getIconUrl(name);if(ic){var imgE=document.createElement('img');imgE.src=ic;imgE.style.cssText='width:6px;height:6px;border-radius:1px;object-fit:cover';imgE.onerror=function(){var d=document.createElement('div');d.style.cssText='width:6px;height:6px;background:#ff4444;border-radius:50%';this.parentElement.replaceChild(d,this);};inner.appendChild(imgE);}else{var dot=document.createElement('div');dot.style.cssText='width:6px;height:6px;background:#ff4444;border-radius:50%';inner.appendChild(dot);}div.appendChild(inner);mv.appendChild(div);var style=document.createElement('style');style.textContent='@keyframes blinkBorder{0%,100%{border-color:#ff3333;box-shadow:0 0 4px rgba(255,50,50,.5)}50%{border-color:#ff8888;box-shadow:0 0 10px rgba(255,50,50,.9)}}';document.head.appendChild(style);}
+
+async function deleteMapComment(commentId){
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('\u8bf7\u5148\u767b\u5f55');return;}
+  if(!confirm('\u786e\u5b9a\u5220\u9664\u8bc4\u8bba\uff1f'))return;
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/delete_my_map_comment',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({comment_id:commentId})
+    });
+    if(r.ok){
+      loadMapComments();
+    }else{
+      alert('\u5220\u9664\u5931\u8d25');
+    }
+  }catch(e){
+    alert('\u5220\u9664\u5931\u8d25: '+e.message);
+  }
+}
+async function deletePinComment(commentId,pinIdx){
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('\u8bf7\u5148\u767b\u5f55');return;}
+  if(!confirm('\u786e\u5b9a\u5220\u9664\u8bc4\u8bba\uff1f'))return;
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/delete_my_map_comment',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({comment_id:commentId})
+    });
+    if(r.ok){
+      loadPinComments(parseInt(pinIdx));
+    }else{
+      alert('\u5220\u9664\u5931\u8d25');
+    }
+  }catch(e){
+    alert('\u5220\u9664\u5931\u8d25: '+e.message);
+  }
+}
 </script>
 </body>
 </html>
