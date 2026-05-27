@@ -157,13 +157,21 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
     if(t){
       try{
         var payload=JSON.parse(atob(t.split('.')[1]));
+        var user=payload.email||p.get('email')||'';
         localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',payload.email||payload.user_metadata?.email||'');location.reload();
+        localStorage.setItem('abi_user',user);
         history.replaceState(null,'',window.location.pathname);
+        location.reload();
       }catch(err){}
     }
   }
+  var token=localStorage.getItem('abi_token');
+  if(token){
+    var btns=document.querySelectorAll('#loginBtn');
+    for(var i=0;i<btns.length;i++){btns[i].style.display='none';}
+  }
 })();
+
 
 var TYPES=[
   {cat:"保险箱", items:[

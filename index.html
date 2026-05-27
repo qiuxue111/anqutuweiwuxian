@@ -165,6 +165,29 @@
 
 
 <script>
+(function authCheck(){
+  var h=window.location.hash;
+  if(h&&h.includes('access_token=')){
+    var p=new URLSearchParams(h.replace('#',''));
+    var t=p.get('access_token');
+    if(t){
+      try{
+        var payload=JSON.parse(atob(t.split('.')[1]));
+        var user=payload.email||p.get('email')||'';
+        localStorage.setItem('abi_token',t);
+        localStorage.setItem('abi_user',user);
+        history.replaceState(null,'',window.location.pathname);
+        location.reload();
+      }catch(err){}
+    }
+  }
+  var token=localStorage.getItem('abi_token');
+  if(token){
+    var btns=document.querySelectorAll('#loginBtn');
+    for(var i=0;i<btns.length;i++){btns[i].style.display='none';}
+  }
+})();
+
 async function loadHotPosts(){
   try{
     var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
@@ -199,25 +222,6 @@ function loginGitHub(){
   var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
   window.location.href=u;
 }
-(function authCheck(){
-  var h=window.location.hash;
-  if(h&&h.includes('access_token=')){
-    var p=new URLSearchParams(h.replace('#',''));
-    var t=p.get('access_token');
-    if(t){
-      try{
-        var payload=JSON.parse(atob(t.split('.')[1]));
-        localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',payload.email||payload.user_metadata?.email||'');location.reload();
-        history.replaceState(null,'',window.location.pathname);
-      }catch(err){}
-    }
-  }
-  var token=localStorage.getItem('abi_token');
-  if(token){
-    document.querySelectorAll('#loginBtn').forEach(function(b){b.style.display='none'});
-  }
-})();
 
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
 document.addEventListener('DOMContentLoaded',loadHotPosts);
