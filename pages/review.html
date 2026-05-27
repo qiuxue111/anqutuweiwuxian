@@ -131,7 +131,14 @@ function checkAuth(){
 }
 function supabase(t,m,b,q){
   var u=SUPABASE_URL+"/rest/v1/"+t;if(q)u+="?"+q;
-  var token=localStorage.getItem("abi_token")||SUPABASE_ANON_KEY;
+  var tk=localStorage.getItem("abi_token");
+  var token=SUPABASE_ANON_KEY;
+  if(tk){
+    try{
+      var p=JSON.parse(atob(tk.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+      if(p.exp&&p.exp*1000>Date.now())token=tk;
+    }catch(e){}
+  }
   var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+token,"Content-Type":"application/json"}};
   if(b&&m!=="GET")o.body=JSON.stringify(b);
   return fetch(u,o).then(function(r){
