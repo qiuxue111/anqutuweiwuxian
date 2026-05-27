@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+const fs = require('fs');
+
+// 帖子页面 - 标题+发帖区+帖子列表
+const postPage = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>暗区突围：无限 - 闲聊</title>
+  <title>暗区突围：无限 - 帖子</title>
   <link rel="icon" href="../favicon.ico" type="image/jpeg">
   <link rel="stylesheet" href="../style.css">
   <style>
@@ -41,7 +44,7 @@
 </nav>
 
 <section style="max-width:800px;margin:80px auto 0;padding:1rem;">
-  <h2 style="color:#ffc832;margin-bottom:1.5rem;">💬 闲聊</h2>
+  <h2 style="color:#ffc832;margin-bottom:1.5rem;">📝 帖子</h2>
 
   <div id="loginHint" class="login-hint" style="display:none;">
     <p style="margin-bottom:1rem;">登录后可以发布帖子</p>
@@ -140,4 +143,29 @@ async function deletePost(id){
 document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
-</html>
+</html>`;
+
+// Write 帖子 page
+fs.writeFileSync('F:\\暗区突围网站\\pages\\weapons.html', postPage);
+
+// 闲聊 page (same structure, different category label)
+const chatPage = postPage.replace('帖子', '闲聊')
+  .replace('📝 帖子', '💬 闲聊')
+  .replace('<title>暗区突围：无限 - 帖子</title>', '<title>暗区突围：无限 - 闲聊</title>')
+  .replace('<a href="weapons.html">帖子</a>', '<a href="weapons.html">帖子</a>')
+  .replace('<a href="strategy.html">闲聊</a>', '<a href="strategy.html">闲聊</a>')
+  .replace('<a href="gear.html">攻略</a>', '<a href="gear.html">攻略</a>');
+
+fs.writeFileSync('F:\\暗区突围网站\\pages\\strategy.html', chatPage);
+
+// 攻略 page (same structure, different category label)
+const guidePage = postPage.replace('帖子', '攻略')
+  .replace('📝 帖子', '📖 攻略')
+  .replace('<title>暗区突围：无限 - 帖子</title>', '<title>暗区突围：无限 - 攻略</title>')
+  .replace('<a href="weapons.html">帖子</a>', '<a href="weapons.html">帖子</a>')
+  .replace('<a href="strategy.html">闲聊</a>', '<a href="strategy.html">闲聊</a>')
+  .replace('<a href="gear.html">攻略</a>', '<a href="gear.html">攻略</a>');
+
+fs.writeFileSync('F:\\暗区突围网站\\pages\\gear.html', guidePage);
+
+console.log('Done: weapons/strategy/gear -> 纯净帖子模块');

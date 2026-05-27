@@ -1,173 +1,143 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <link rel="icon" href="../favicon.ico" type="image/jpeg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>攻略推荐 - 暗区突围攻略</title>
+  <title>暗区突围：无限 - 攻略</title>
+  <link rel="icon" href="../favicon.ico" type="image/jpeg">
   <link rel="stylesheet" href="../style.css">
   <style>
-    .gear-header { text-align: center; padding: 2rem 0 1rem; }
-    .gear-header h1 { font-size: 2rem; color: #ffc832; }
-    .gear-header p { color: #888; margin-top: 0.3rem; }
-
-    .gear-tier {
-      background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;
-      padding: 2rem; margin-bottom: 2rem;
+    .post-form { background:#12121a; border:1px solid #1e1e2a; border-radius:12px; padding:1.5rem; margin-bottom:2rem; }
+    .post-form h3 { color:#ffc832; margin-bottom:1rem; }
+    .post-form input, .post-form textarea, .post-form select {
+      width:100%; padding:0.6rem; background:#1a1a22; color:#fff; border:1px solid #333; border-radius:6px; margin-bottom:0.8rem; font-size:0.9rem;
     }
-    .gear-tier:target { border-color: #ffc832; }
-
-    .gear-tier h2 { color: #fff; font-size: 1.4rem; margin-bottom: 1rem; }
-    .gear-tier h2 .budget { font-size: 0.9rem; color: #888; font-weight: 400; }
-
-    .gear-table {
-      width: 100%; border-collapse: collapse; margin-bottom: 1rem;
-    }
-    .gear-table th {
-      text-align: left; color: #ffc832; font-size: 0.85rem;
-      padding: 0.5rem 0.8rem; border-bottom: 1px solid #1e1e2a;
-    }
-    .gear-table td {
-      padding: 0.6rem 0.8rem; color: #ccc; font-size: 0.9rem;
-      border-bottom: 1px solid #1a1a22;
-    }
-    .gear-table tr:hover td { background: #0f0f16; }
-
-    .gear-tier .desc { color: #999; font-size: 0.9rem; margin-bottom: 1rem; }
+    .post-form textarea { min-height:120px; resize:vertical; }
+    .post-form button { padding:0.5rem 1.5rem; background:#ffc832; color:#0a0a0f; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+    .post-form button:hover { background:#ffd84a; }
+    .post-card { background:#12121a; border:1px solid #1e1e2a; border-radius:10px; padding:1.2rem; margin-bottom:1rem; }
+    .post-card h3 { margin:0 0 0.3rem 0; font-size:1.1rem; }
+    .post-card h3 a { color:#ffc832; text-decoration:none; }
+    .post-card .meta { color:#666; font-size:0.8rem; margin-bottom:0.5rem; display:flex; gap:1rem; }
+    .post-card .preview { color:#aaa; font-size:0.9rem; line-height:1.5; }
+    .no-posts { color:#666; text-align:center; padding:3rem 0; font-size:1rem; }
+    .login-hint { color:#888; text-align:center; padding:2rem; background:#12121a; border:1px solid #1e1e2a; border-radius:10px; margin-bottom:2rem; }
+    .login-hint button { padding:0.4rem 1.2rem; background:#ffc832; color:#0a0a0f; border:none; border-radius:6px; cursor:pointer; }
+    .post-card .actions { margin-top:0.5rem; }
+    .post-card .actions button { padding:0.2rem 0.6rem; background:#3a1a1a; color:#f66; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem; }
   </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
-    
-        <ul class="nav-links">
-      <li><a href="../index.html">首页</a></li>
-      <li><a href="maps.html">地图</a></li>
-      <li><a href="weapons.html">枪械</a></li>
-      <li><a href="strategy.html">技术</a></li>
-      <li><a href="gear.html" style="color:#ffc832;">攻略</a></li>
-      <li><a href="../search.html">🔍</a></li>
-    </ul>
-    <button id="loginBtn" onclick="loginGitHub()" style="padding:0.2rem 0.5rem;background:#333;color:#ccc;border:1px solid #555;border-radius:4px;font-size:0.75rem;cursor:pointer;margin-left:auto;margin-left:auto;flex-shrink:0;">登录</button>
-  
-  </nav>
+<nav class="navbar">
+  <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
+  <ul class="nav-links">
+    <li><a href="maps.html">地图</a></li>
+    <li><a href="weapons.html">帖子</a></li>
+    <li><a href="strategy.html">闲聊</a></li>
+    <li><a href="gear.html">攻略</a></li>
+    <li><a href="../search.html">🔍</a></li>
+  </ul>
+  <button id="loginBtn" onclick="loginGitHub()" style="padding:0.2rem 0.5rem;background:#333;color:#ccc;border:1px solid #555;border-radius:4px;font-size:0.75rem;cursor:pointer;margin-left:auto;flex-shrink:0;">登录</button>
+</nav>
 
-  <div style="margin-top:60px;max-width:800px;margin-left:auto;margin-right:auto;padding:0 1rem;">
-    <div class="gear-header">
-      <h1>🛡?配装推荐</h1>
-      <p>不同预算、不同玩法下的装备搭</p>
-    </div>
+<section style="max-width:800px;margin:80px auto 0;padding:1rem;">
+  <h2 style="color:#ffc832;margin-bottom:1.5rem;">📖 攻略</h2>
 
-    <!-- 跑刀?-->
-    <div class="gear-tier" id="knife">
-      <h2>🔪 跑刀?<span class="budget">?0 成本</span></h2>
-      <p class="desc">爆仓/连败时回血用，目标是不花钱摸金。活着出来血赚，死了不亏</p>
-      <table class="gear-table">
-        <tr><th>部位</th><th>推荐</th><th>备注</th></tr>
-        <tr><td>主武?/td><td>✖️ 不携?/td><td>去地图里捡AI的枪</td></tr>
-        <tr><td>近战</td><td>任意匕首</td><td>切刀跑更?/td></tr>
-        <tr><td>防弹?/td><td>✖️ 不穿</td><td>跑刀穿甲亏钱</td></tr>
-        <tr><td>背包</td><td>✖️ 不背</td><td>进去?/td></tr>
-        <tr><td>安全?/td><td>✖️ 不装</td><td>死了不心?/td></tr>
-      </table>
-      <div class="tip-box" style="background:#0f0f16;border-left:3px solid #ffc832;padding:0.8rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0;font-size:0.9rem;color:#ddd;">
-        <strong>💡 打法</strong>进图先躲 2 分钟，等枪声响了再出去捡尸体。优先去容易被忽略的小房间搜刮?      </div>
-    </div>
-
-    <!-- 贫民?-->
-    <div class="gear-tier" id="budget">
-      <h2>💵 贫民?<span class="budget">?2-3 </span></h2>
-      <p class="desc">萌新过渡、日常低风险搜刮。核心思路：够用就行，死了不心疼</p>
-      <table class="gear-table">
-        <tr><th>部位</th><th>推荐</th><th>预算</th></tr>
-        <tr><td>主武?/td><td>AK74N 基础?/ SKS</td><td>1.2 ?/td></tr>
-        <tr><td>弹药</td><td>三级?60 ?/td><td>0.3 ?/td></tr>
-        <tr><td>防弹?/td><td>三级?/td><td>0.5 ?/td></tr>
-        <tr><td>头盔</td><td>三级?/ 二级?/td><td>0.3 ?/td></tr>
-        <tr><td>背包</td><td>普通背?/td><td>0.1 ?/td></tr>
-        <tr><td>医疗</td><td>绷带 ×2 + 止痛?×1</td><td>0.1 ?/td></tr>
-      </table>
-      <p style="color:#ffc832;font-weight:600;">总计 ?2.5 </p>
-    </div>
-
-    <!-- 标准?-->
-    <div class="gear-tier" id="standard">
-      <h2>⚖️ 标准?<span class="budget">?5-8 </span></h2>
-      <p class="desc">日常稳健作战，能打能抗。适合大部分地图和场景</p>
-      <table class="gear-table">
-        <tr><th>部位</th><th>推荐</th><th>预算</th></tr>
-        <tr><td>主武?/td><td>H416 / MPX / M4A1 改装</td><td>3-5 ?/td></tr>
-        <tr><td>弹药</td><td>四级?90 ?/td><td>1 ?/td></tr>
-        <tr><td>防弹?/td><td>四级?/td><td>1.2 ?/td></tr>
-        <tr><td>头盔</td><td>四级?/td><td>0.8 ?/td></tr>
-        <tr><td>背包</td><td>中型背包</td><td>0.2 ?/td></tr>
-        <tr><td>医疗</td><td>大医疗包 + 手术?+ 止痛?/td><td>0.3 ?/td></tr>
-        <tr><td>投掷?/td><td>烟雾?×1 + 闪光?×1</td><td>0.2 ?/td></tr>
-      </table>
-      <p style="color:#ffc832;font-weight:600;">总计 ?6-9 </p>
-    </div>
-
-    <!-- 满配?-->
-    <div class="gear-tier" id="premium">
-      <h2>🏆 满配?<span class="budget">?15 </span></h2>
-      <p class="desc">攻坚/决赛?堡垒等高强度对局使用。装备拉满，目标就是打穿全场</p>
-      <table class="gear-table">
-        <tr><th>部位</th><th>推荐</th><th>预算</th></tr>
-        <tr><td>主武?/td><td>满改 H416 / Vector / FAL</td><td>8-12 ?/td></tr>
-        <tr><td>弹药</td><td>五级?120 发（弹匣+备用?/td><td>3 ?/td></tr>
-        <tr><td>防弹?/td><td>五级?/ 六级?/td><td>3-5 ?/td></tr>
-        <tr><td>头盔</td><td>五级?+ 面罩</td><td>2 ?/td></tr>
-        <tr><td>耳机</td><td>战术耳机（高品质?/td><td>0.3 ?/td></tr>
-        <tr><td>背包</td><td>大型背包</td><td>0.3 ?/td></tr>
-        <tr><td>医疗</td><td>大医疗包 ×2 + 手术包? + 止痛药</td><td>0.6 ?/td></tr>
-        <tr><td>投掷?/td><td>烟雾 ×2 + 闪光 ×2 + 破片手雷 ×1</td><td>0.5 ?/td></tr>
-      </table>
-      <p style="color:#ffc832;font-weight:600;">总计 ?15-23 </p>
-    </div>
-
-    <!-- 狙击?-->
-    <div class="gear-tier" id="sniper">
-      <h2>🎯 狙击?<span class="budget">?10-12 </span></h2>
-      <p class="desc">北山/前线要塞架枪专用。核心是隐蔽+一发制敌</p>
-      <table class="gear-table">
-        <tr><th>部位</th><th>推荐</th><th>预算</th></tr>
-        <tr><td>主武?/td><td>AX50 / 满改狙击</td><td>8 ?/td></tr>
-        <tr><td>副武?/td><td>手枪 / 便宜的冲锋枪</td><td>0.5 ?/td></tr>
-        <tr><td>弹药</td><td>高级穿甲?20 ?/td><td>0.8 ?/td></tr>
-        <tr><td>防弹?/td><td>四级?/td><td>1.2 ?/td></tr>
-        <tr><td>背包</td><td>小型背包</td><td>0.1 ?/td></tr>
-        <tr><td>医疗</td><td>医疗?+ 手术?+ 止痛?/td><td>0.3 ?/td></tr>
-      </table>
-      <p style="color:#ffc832;font-weight:600;">总计 ?11-13 </p>
-    </div>
-
-    <!-- 评论?-->
-    <div style="margin: 3rem 0; padding: 2rem; background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;">
-      <h2 style="color:#ffc832; margin-bottom: 1rem;">💬 讨论</h2>
-      <p style="color:#888; margin-bottom:1rem;">你的配装方案是什么？来分享！</p>
-      <script src="https://giscus.app/client.js"
-        data-repo="qiuxue111/anqutuweiwuxian"
-        data-repo-id="R_kgDOSolC_Q"
-        data-category="Announcements"
-        data-category-id="DIC_kwDOSolC_c4C95Vo"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="dark"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-      </script>
-    </div>
+  <div id="loginHint" class="login-hint" style="display:none;">
+    <p style="margin-bottom:1rem;">登录后可以发布帖子</p>
+    <button onclick="loginGitHub()">GitHub 登录</button>
   </div>
 
-  <footer>
-    <p>暗区突围：无?攻略站 · 持续更新</p>
-    <p style="margin-top:0.3rem;">数据基于游戏版本 · 仅供参</p>
-  </footer>
+  <div id="postForm" class="post-form" style="display:none;">
+    <h3>发布帖子</h3>
+    <input id="postTitle" type="text" placeholder="标题">
+    <select id="postCategory">
+      <option value="general">杂谈</option>
+      <option value="question">问答</option>
+      <option value="guide">攻略</option>
+      <option value="showoff">炫耀</option>
+    </select>
+    <textarea id="postContent" placeholder="内容..."></textarea>
+    <button onclick="submitPost()">发布</button>
+  </div>
+
+  <div id="postList"></div>
+</section>
+
+<footer style="margin-top:3rem;">
+  <p>暗区突围：无限 攻略站 · 由 秋雪 制作 · 持续更新中</p>
+  <p style="margin-top:0.3rem;">数据基于 PC 版本 · 仅供参考</p>
+</footer>
+
 <script src="../supabase.js"></script>
+<script>
+var currentUser=null, currentToken=null;
+function supabase(method, table, body, q) {
+  var token=localStorage.getItem('abi_token');
+  var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+  var bearer=key;
+  if(token){try{var p=JSON.parse(atob(token.split('.')[1]));if(p.exp&&p.exp*1000>Date.now())bearer=token;}catch(e){}}
+  return fetch('https://hanrfbciinkhgcumvous.supabase.co/rest/v1/'+table+(q?'?'+q:''),{
+    method:method, headers:{'Authorization':'Bearer '+bearer, 'apiKey':key, 'Content-Type':'application/json'},
+    body:body?JSON.stringify(body):null});
+}
+
+function loginGitHub(){
+  var s=supabasejs.createClient('https://hanrfbciinkhgcumvous.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok');
+  s.auth.signInWithOAuth({provider:'github'});}
+
+function init(){
+  var h=window.location.hash;
+  if(h&&h.includes('access_token=')){
+    var p=new URLSearchParams(h.slice(1));
+    var t=p.get('access_token');
+    if(t){localStorage.setItem('abi_token',t);localStorage.setItem('abi_user',p.get('email')||'');window.location.hash='';location.reload();}
+  }
+  var t=localStorage.getItem('abi_token');currentToken=t;
+  var u=localStorage.getItem('abi_user');if(u)currentUser=u;
+  if(currentUser){document.getElementById('postForm').style.display='block';}
+  else{document.getElementById('loginHint').style.display='block';}
+  loadPosts();
+}
+
+async function loadPosts(){
+  try{
+    var r=await supabase('GET','map_posts',null,'order=created_at.desc');
+    if(!r.ok)return;
+    var posts=await r.json();if(!Array.isArray(posts))return;
+    var h='';
+    if(posts.length===0){h='<div class="no-posts">还没有帖子，快来发布第一条！</div>';}
+    else{posts.forEach(function(p){h+=
+      '<div class="post-card"><h3><a href="#post-'+p.id+'">'+esc(p.title)+'</a></h3>'+
+      '<div class="meta"><span>'+esc(p.author||'匿名')+'</span><span>'+p.category+'</span><span>'+new Date(p.created_at).toLocaleDateString('zh-CN')+'</span></div>'+
+      '<div class="preview">'+esc(p.content).substring(0,200)+(p.content.length>200?'...':'')+'</div>'+
+      (currentUser?'<div class="actions"><button onclick="deletePost('+p.id+')">删除</button></div>':'')+
+      '</div>';});}
+    document.getElementById('postList').innerHTML=h;
+  }catch(e){}
+}
+
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
+
+async function submitPost(){
+  var title=document.getElementById('postTitle').value.trim();
+  var content=document.getElementById('postContent').value.trim();
+  var category=document.getElementById('postCategory').value;
+  if(!title||!content){alert('标题和内容不能为空');return;}
+  try{
+    var r=await supabase('POST','map_posts',{title:title,content:content,category:category,author:currentUser||'匿名',map_name:'general'});
+    if(r.ok||r.status===201){document.getElementById('postTitle').value='';document.getElementById('postContent').value='';loadPosts();alert('发布成功！');}
+    else{var t=await r.text();alert('发布失败: '+t);}
+  }catch(e){alert('发布失败');}
+}
+
+async function deletePost(id){
+  if(!confirm('确定删除？'))return;
+  try{var r=await supabase('DELETE','map_posts',null,'id=eq.'+id);if(r.ok||r.status===204)loadPosts();else alert('删除失败');}
+  catch(e){alert('删除失败');}
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
 </body>
 </html>
-

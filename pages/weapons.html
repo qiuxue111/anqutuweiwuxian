@@ -1,358 +1,143 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <link rel="icon" href="../favicon.ico" type="image/jpeg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>帖子改装 - 暗区突围：无限攻略站</title>
+  <title>暗区突围：无限 - 帖子</title>
+  <link rel="icon" href="../favicon.ico" type="image/jpeg">
   <link rel="stylesheet" href="../style.css">
   <style>
-    .weapon-header { text-align: center; padding: 2rem 0 1rem; }
-    .weapon-header h1 { font-size: 2rem; color: #ffc832; }
-    .weapon-header p { color: #888; margin-top: 0.3rem; }
-
-    .weapon-detail {
-      background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;
-      padding: 2rem; margin-bottom: 2rem;
+    .post-form { background:#12121a; border:1px solid #1e1e2a; border-radius:12px; padding:1.5rem; margin-bottom:2rem; }
+    .post-form h3 { color:#ffc832; margin-bottom:1rem; }
+    .post-form input, .post-form textarea, .post-form select {
+      width:100%; padding:0.6rem; background:#1a1a22; color:#fff; border:1px solid #333; border-radius:6px; margin-bottom:0.8rem; font-size:0.9rem;
     }
-    .weapon-detail:target { border-color: #ffc832; }
-
-    .weapon-detail .top-row {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;
-    }
-    .weapon-detail h2 { color: #fff; font-size: 1.4rem; }
-    .weapon-type {
-      display: inline-block; padding: 0.2rem 0.8rem; border-radius: 6px;
-      font-size: 0.78rem; font-weight: 600;
-    }
-    .type-ar   { background: #3a1a1a; color: #f66; }
-    .type-smg  { background: #1a3a1a; color: #6f6; }
-    .type-sr   { background: #1a1a3a; color: #66f; }
-    .type-dmr  { background: #3a3a1a; color: #ffc832; }
-    .type-sg   { background: #3a1a3a; color: #f6f; }
-
-    .weapon-stats {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 0.8rem; margin-bottom: 1.5rem;
-    }
-    .weapon-stats .stat {
-      background: #0f0f16; border-radius: 8px; padding: 0.6rem;
-      text-align: center;
-    }
-    .weapon-stats .stat .label { font-size: 0.75rem; color: #666; }
-    .weapon-stats .stat .value { font-size: 1.1rem; color: #fff; font-weight: 600; }
-
-    .build-box {
-      background: #0f0f16; border-radius: 10px; padding: 1.2rem;
-      margin-bottom: 1rem;
-    }
-    .build-box h3 { color: #ffc832; font-size: 1rem; margin-bottom: 0.5rem; }
-    .build-box .cost { color: #6f6; font-size: 0.85rem; margin-bottom: 0.5rem; }
-    .build-box ul { list-style: none; padding: 0; }
-    .build-box ul li {
-      padding: 0.3rem 0; font-size: 0.88rem; color: #ccc;
-      border-bottom: 1px solid #1a1a22;
-    }
-    .build-box ul li:last-child { border-bottom: none; }
-    .build-box ul li .part { color: #ffc832; }
-
-    .weapon-video { margin-top: 1rem; }
-    .weapon-video h3 { color: #ffc832; font-size: 1rem; margin-bottom: 0.8rem; }
-    .video-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1rem;
-    }
-    .video-card {
-      background: #0f0f16; border-radius: 8px; overflow: hidden;
-    }
-    .video-card iframe {
-      width: 100%; aspect-ratio: 16/9; border: none;
-    }
-    .video-card .vtitle {
-      padding: 0.5rem 0.8rem; font-size: 0.82rem; color: #aaa;
-    }
+    .post-form textarea { min-height:120px; resize:vertical; }
+    .post-form button { padding:0.5rem 1.5rem; background:#ffc832; color:#0a0a0f; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+    .post-form button:hover { background:#ffd84a; }
+    .post-card { background:#12121a; border:1px solid #1e1e2a; border-radius:10px; padding:1.2rem; margin-bottom:1rem; }
+    .post-card h3 { margin:0 0 0.3rem 0; font-size:1.1rem; }
+    .post-card h3 a { color:#ffc832; text-decoration:none; }
+    .post-card .meta { color:#666; font-size:0.8rem; margin-bottom:0.5rem; display:flex; gap:1rem; }
+    .post-card .preview { color:#aaa; font-size:0.9rem; line-height:1.5; }
+    .no-posts { color:#666; text-align:center; padding:3rem 0; font-size:1rem; }
+    .login-hint { color:#888; text-align:center; padding:2rem; background:#12121a; border:1px solid #1e1e2a; border-radius:10px; margin-bottom:2rem; }
+    .login-hint button { padding:0.4rem 1.2rem; background:#ffc832; color:#0a0a0f; border:none; border-radius:6px; cursor:pointer; }
+    .post-card .actions { margin-top:0.5rem; }
+    .post-card .actions button { padding:0.2rem 0.6rem; background:#3a1a1a; color:#f66; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem; }
   </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
-    
-        <ul class="nav-links">
-      <li><a href="../index.html">首页</a></li>
-      <li><a href="maps.html">地图</a></li>
-      <li><a href="weapons.html" style="color:#ffc832;">帖子</a></li>
-      <li><a href="strategy.html">技术</a></li>
-      <li><a href="gear.html">配装</a></li>
-      <li><a href="../search.html">🔍</a></li>
-    </ul>
-    <button id="loginBtn" onclick="loginGitHub()" style="padding:0.2rem 0.5rem;background:#333;color:#ccc;border:1px solid #555;border-radius:4px;font-size:0.75rem;cursor:pointer;margin-left:auto;margin-left:auto;flex-shrink:0;">登录</button>
-  
-  </nav>
+<nav class="navbar">
+  <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
+  <ul class="nav-links">
+    <li><a href="maps.html">地图</a></li>
+    <li><a href="weapons.html">帖子</a></li>
+    <li><a href="strategy.html">闲聊</a></li>
+    <li><a href="gear.html">攻略</a></li>
+    <li><a href="../search.html">🔍</a></li>
+  </ul>
+  <button id="loginBtn" onclick="loginGitHub()" style="padding:0.2rem 0.5rem;background:#333;color:#ccc;border:1px solid #555;border-radius:4px;font-size:0.75rem;cursor:pointer;margin-left:auto;flex-shrink:0;">登录</button>
+</nav>
 
-  <div style="margin-top:60px;max-width:900px;margin-left:auto;margin-right:auto;padding:0 1rem;">
-    <div class="weapon-header">
-      <h1>🔫 枪械改装</h1>
-      <p>热门枪械数据、性价比改装与满改方案</p>
-    </div>
+<section style="max-width:800px;margin:80px auto 0;padding:1rem;">
+  <h2 style="color:#ffc832;margin-bottom:1.5rem;">📝 帖子</h2>
 
-    <!-- H416 -->
-    <div class="weapon-detail" id="h416">
-      <div class="top-row">
-        <h2>H416</h2>
-        <span class="weapon-type type-ar">AR · 突击步枪</span>
-      </div>
-      <div class="weapon-stats">
-        <div class="stat"><div class="label">射</div><div class="value">700 RPM</div></div>
-        <div class="stat"><div class="label">基础伤害</div><div class="value">41</div></div>
-        <div class="stat"><div class="label">有效射程</div><div class="value">55m</div></div>
-        <div class="stat"><div class="label">弹匣容量</div><div class="value">30/40</div></div>
-        <div class="stat"><div class="label">后坐</div><div class="value">中等</div></div>
-      </div>
-
-      <div class="build-box">
-        <h3>💵 性价比改装（?6 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>H416 长枪</li>
-          <li><span class="part">护木</span>H416 M-LOK 护木</li>
-          <li><span class="part">握把</span>RK-2 前握</li>
-          <li><span class="part">枪托</span>H416 可调枪托</li>
-          <li><span class="part">瞄具</span>全息?/ 红点</li>
-          <li><span class="part">弹匣</span>STANAG 30</li>
-        </ul>
-      </div>
-      <div class="build-box">
-        <h3>🏆 满改方案（约 12 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>H416 竞赛级长枪管</li>
-          <li><span class="part">护木</span>H416 碳纤维护</li>
-          <li><span class="part">握把</span>先锋前握?+ 后握</li>
-          <li><span class="part">枪托</span>H416 战术枪托 + 托腮</li>
-          <li><span class="part">瞄具</span>3.5x 战术?+ 侧瞄</li>
-          <li><span class="part">枪口</span>消音?/ 补偿</li>
-          <li><span class="part">弹匣</span>STANAG 40</li>
-        </ul>
-      </div>
-      <div class="weapon-video">
-        <h3>🎬 推荐视频</h3>
-        <div class="video-grid">
-          <div class="video-card">
-            <iframe src="https://player.bilibili.com/player.html?bvid=BV1GJ411x7qT" allowfullscreen></iframe>
-            <div class="vtitle">H416 满改实测与弹道控</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MPX -->
-    <div class="weapon-detail" id="mpx">
-      <div class="top-row">
-        <h2>MPX</h2>
-        <span class="weapon-type type-smg">SMG · 冲锋</span>
-      </div>
-      <div class="weapon-stats">
-        <div class="stat"><div class="label">射</div><div class="value">850 RPM</div></div>
-        <div class="stat"><div class="label">基础伤害</div><div class="value">32</div></div>
-        <div class="stat"><div class="label">有效射程</div><div class="value">30m</div></div>
-        <div class="stat"><div class="label">弹匣容量</div><div class="value">30/50</div></div>
-        <div class="stat"><div class="label">后坐</div><div class="value"></div></div>
-      </div>
-      <div class="build-box">
-        <h3>💵 性价比改装（?4 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>MPX 标准枪管</li>
-          <li><span class="part">握把</span>轻型前握</li>
-          <li><span class="part">瞄具</span>红点</li>
-          <li><span class="part">枪口</span>消音器（室内作战推荐</li>
-        </ul>
-      </div>
-      <div class="build-box">
-        <h3>🏆 满改方案（约 8 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>MPX 竞赛短枪</li>
-          <li><span class="part">握把</span>RK-2 前握?+ 后握</li>
-          <li><span class="part">枪托</span>MPX 折叠</li>
-          <li><span class="part">瞄具</span>全息?+ 侧红</li>
-          <li><span class="part">弹匣</span>MPX 50发弹</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Vector -->
-    <div class="weapon-detail" id="vector">
-      <div class="top-row">
-        <h2>Vector 9mm</h2>
-        <span class="weapon-type type-smg">SMG · 冲锋</span>
-      </div>
-      <div class="weapon-stats">
-        <div class="stat"><div class="label">射</div><div class="value">1100 RPM</div></div>
-        <div class="stat"><div class="label">基础伤害</div><div class="value">30</div></div>
-        <div class="stat"><div class="label">有效射程</div><div class="value">20m</div></div>
-        <div class="stat"><div class="label">弹匣容量</div><div class="value">20/33</div></div>
-        <div class="stat"><div class="label">后坐</div><div class="value">高（可控</div></div>
-      </div>
-      <div class="build-box">
-        <h3>💵 腰射流改装（?5 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>Vector 短枪</li>
-          <li><span class="part">握把</span>腰射专用握把</li>
-          <li><span class="part">枪托</span>无托 / 折叠</li>
-          <li><span class="part">瞄具</span>腰射镭射</li>
-          <li><span class="part">弹匣</span>33发加长弹</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- FAL -->
-    <div class="weapon-detail" id="fal">
-      <div class="top-row">
-        <h2>FAL</h2>
-        <span class="weapon-type type-dmr">DMR · 精确射手</span>
-      </div>
-      <div class="weapon-stats">
-        <div class="stat"><div class="label">射</div><div class="value">~350 RPM</div></div>
-        <div class="stat"><div class="label">基础伤害</div><div class="value">55</div></div>
-        <div class="stat"><div class="label">有效射程</div><div class="value">70m</div></div>
-        <div class="stat"><div class="label">弹匣容量</div><div class="value">20/30</div></div>
-        <div class="stat"><div class="label">后坐</div><div class="value">中等偏高</div></div>
-      </div>
-      <div class="build-box">
-        <h3>💵 推荐改装（约 7 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>FAL 精度长枪</li>
-          <li><span class="part">握把</span>RK-2 前握</li>
-          <li><span class="part">枪托</span>FAL 液压缓冲</li>
-          <li><span class="part">瞄具</span>4x 瞄准</li>
-          <li><span class="part">枪口</span>消音器（保持隐蔽</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- AK74N -->
-    <div class="weapon-detail" id="ak74n">
-      <div class="top-row">
-        <h2>AK74N</h2>
-        <span class="weapon-type type-ar">AR · 突击步枪</span>
-      </div>
-      <div class="weapon-stats">
-        <div class="stat"><div class="label">射</div><div class="value">650 RPM</div></div>
-        <div class="stat"><div class="label">基础伤害</div><div class="value">39</div></div>
-        <div class="stat"><div class="label">有效射程</div><div class="value">45m</div></div>
-        <div class="stat"><div class="label">弹匣容量</div><div class="value">30/45</div></div>
-        <div class="stat"><div class="label">后坐</div><div class="value">中等（可改）</div></div>
-      </div>
-      <div class="build-box">
-        <h3>💵 平民改装（约 3 万）</h3>
-        <ul>
-          <li><span class="part">护木</span>AK 通用导轨护木</li>
-          <li><span class="part">握把</span>AK 后握</li>
-          <li><span class="part">枪托</span>AK 可折叠枪</li>
-          <li><span class="part">瞄具</span>简易红</li>
-          <li><span class="part">弹匣</span>AK 30</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- M4A1 -->
-    <div class="weapon-detail" id="m4a1">
-      <div class="top-row">
-        <h2>M4A1</h2>
-        <span class="weapon-type type-ar">AR · 突击步枪</span>
-      </div>
-      <div class="weapon-stats">
-        <div class="stat"><div class="label">射</div><div class="value">720 RPM</div></div>
-        <div class="stat"><div class="label">基础伤害</div><div class="value">40</div></div>
-        <div class="stat"><div class="label">有效射程</div><div class="value">50m</div></div>
-        <div class="stat"><div class="label">弹匣容量</div><div class="value">30/60</div></div>
-        <div class="stat"><div class="label">后坐</div><div class="value"></div></div>
-      </div>
-      <div class="build-box">
-        <h3>🏆 全能满改（约 10 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>M4 长枪?+ 消音</li>
-          <li><span class="part">护木</span>M4 碳纤维护</li>
-          <li><span class="part">握把</span>先锋前握</li>
-          <li><span class="part">瞄具</span>3.5x 战术?+ 侧红</li>
-          <li><span class="part">弹匣</span>60发弹</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- AX50 -->
-    <div class="weapon-detail" id="ax50">
-      <div class="top-row">
-        <h2>AX50</h2>
-        <span class="weapon-type type-sr">SR · 狙击步枪</span>
-      </div>
-      <div class="weapon-stats">
-        <div class="stat"><div class="label">射</div><div class="value">手动</div></div>
-        <div class="stat"><div class="label">基础伤害</div><div class="value">95</div></div>
-        <div class="stat"><div class="label">有效射程</div><div class="value">120m+</div></div>
-        <div class="stat"><div class="label">弹匣容量</div><div class="value">5</div></div>
-        <div class="stat"><div class="label">穿</div><div class="value">极高</div></div>
-      </div>
-      <div class="build-box">
-        <h3>🏆 标准架枪配置（约 10 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>AX50 长枪</li>
-          <li><span class="part">瞄具</span>8x 战术</li>
-          <li><span class="part">脚架</span>双脚</li>
-          <li><span class="part">枪口</span>AX50 消音器（可选）</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MK14 -->
-    <div class="weapon-detail" id="mk14">
-      <div class="top-row">
-        <h2>MK14 EBR</h2>
-        <span class="weapon-type type-dmr">DMR · 精确射手</span>
-      </div>
-      <div class="weapon-stats">
-        <div class="stat"><div class="label">射</div><div class="value">~400 RPM</div></div>
-        <div class="stat"><div class="label">基础伤害</div><div class="value">58</div></div>
-        <div class="stat"><div class="label">有效射程</div><div class="value">80m</div></div>
-        <div class="stat"><div class="label">弹匣容量</div><div class="value">15/20</div></div>
-        <div class="stat"><div class="label">后坐</div><div class="value"></div></div>
-      </div>
-      <div class="build-box">
-        <h3>💵 推荐改装（约 8 万）</h3>
-        <ul>
-          <li><span class="part">枪管</span>MK14 加长枪管</li>
-          <li><span class="part">握把</span>RK-2</li>
-          <li><span class="part">枪托</span>MK14 枪托</li>
-          <li><span class="part">瞄具</span>4-6x 可变倍镜</li>
-          <li><span class="part">弹匣</span>20</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 评论?-->
-    <div style="margin: 3rem 0; padding: 2rem; background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;">
-      <h2 style="color:#ffc832; margin-bottom: 1rem;">💬 讨论</h2>
-      <script src="https://giscus.app/client.js"
-        data-repo="qiuxue111/anqutuweiwuxian"
-        data-repo-id="R_kgDOSolC_Q"
-        data-category="Announcements"
-        data-category-id="DIC_kwDOSolC_c4C95Vo"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="dark"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-      </script>
-    </div>
+  <div id="loginHint" class="login-hint" style="display:none;">
+    <p style="margin-bottom:1rem;">登录后可以发布帖子</p>
+    <button onclick="loginGitHub()">GitHub 登录</button>
   </div>
 
-  <footer>
-    <p>暗区突围：无?攻略站 · 持续更新</p>
-    <p style="margin-top:0.3rem;">数据基于游戏版本 · 仅供参</p>
-  </footer>
+  <div id="postForm" class="post-form" style="display:none;">
+    <h3>发布帖子</h3>
+    <input id="postTitle" type="text" placeholder="标题">
+    <select id="postCategory">
+      <option value="general">杂谈</option>
+      <option value="question">问答</option>
+      <option value="guide">攻略</option>
+      <option value="showoff">炫耀</option>
+    </select>
+    <textarea id="postContent" placeholder="内容..."></textarea>
+    <button onclick="submitPost()">发布</button>
+  </div>
+
+  <div id="postList"></div>
+</section>
+
+<footer style="margin-top:3rem;">
+  <p>暗区突围：无限 攻略站 · 由 秋雪 制作 · 持续更新中</p>
+  <p style="margin-top:0.3rem;">数据基于 PC 版本 · 仅供参考</p>
+</footer>
+
 <script src="../supabase.js"></script>
+<script>
+var currentUser=null, currentToken=null;
+function supabase(method, table, body, q) {
+  var token=localStorage.getItem('abi_token');
+  var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+  var bearer=key;
+  if(token){try{var p=JSON.parse(atob(token.split('.')[1]));if(p.exp&&p.exp*1000>Date.now())bearer=token;}catch(e){}}
+  return fetch('https://hanrfbciinkhgcumvous.supabase.co/rest/v1/'+table+(q?'?'+q:''),{
+    method:method, headers:{'Authorization':'Bearer '+bearer, 'apiKey':key, 'Content-Type':'application/json'},
+    body:body?JSON.stringify(body):null});
+}
+
+function loginGitHub(){
+  var s=supabasejs.createClient('https://hanrfbciinkhgcumvous.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok');
+  s.auth.signInWithOAuth({provider:'github'});}
+
+function init(){
+  var h=window.location.hash;
+  if(h&&h.includes('access_token=')){
+    var p=new URLSearchParams(h.slice(1));
+    var t=p.get('access_token');
+    if(t){localStorage.setItem('abi_token',t);localStorage.setItem('abi_user',p.get('email')||'');window.location.hash='';location.reload();}
+  }
+  var t=localStorage.getItem('abi_token');currentToken=t;
+  var u=localStorage.getItem('abi_user');if(u)currentUser=u;
+  if(currentUser){document.getElementById('postForm').style.display='block';}
+  else{document.getElementById('loginHint').style.display='block';}
+  loadPosts();
+}
+
+async function loadPosts(){
+  try{
+    var r=await supabase('GET','map_posts',null,'order=created_at.desc');
+    if(!r.ok)return;
+    var posts=await r.json();if(!Array.isArray(posts))return;
+    var h='';
+    if(posts.length===0){h='<div class="no-posts">还没有帖子，快来发布第一条！</div>';}
+    else{posts.forEach(function(p){h+=
+      '<div class="post-card"><h3><a href="#post-'+p.id+'">'+esc(p.title)+'</a></h3>'+
+      '<div class="meta"><span>'+esc(p.author||'匿名')+'</span><span>'+p.category+'</span><span>'+new Date(p.created_at).toLocaleDateString('zh-CN')+'</span></div>'+
+      '<div class="preview">'+esc(p.content).substring(0,200)+(p.content.length>200?'...':'')+'</div>'+
+      (currentUser?'<div class="actions"><button onclick="deletePost('+p.id+')">删除</button></div>':'')+
+      '</div>';});}
+    document.getElementById('postList').innerHTML=h;
+  }catch(e){}
+}
+
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
+
+async function submitPost(){
+  var title=document.getElementById('postTitle').value.trim();
+  var content=document.getElementById('postContent').value.trim();
+  var category=document.getElementById('postCategory').value;
+  if(!title||!content){alert('标题和内容不能为空');return;}
+  try{
+    var r=await supabase('POST','map_posts',{title:title,content:content,category:category,author:currentUser||'匿名',map_name:'general'});
+    if(r.ok||r.status===201){document.getElementById('postTitle').value='';document.getElementById('postContent').value='';loadPosts();alert('发布成功！');}
+    else{var t=await r.text();alert('发布失败: '+t);}
+  }catch(e){alert('发布失败');}
+}
+
+async function deletePost(id){
+  if(!confirm('确定删除？'))return;
+  try{var r=await supabase('DELETE','map_posts',null,'id=eq.'+id);if(r.ok||r.status===204)loadPosts();else alert('删除失败');}
+  catch(e){alert('删除失败');}
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
 </body>
 </html>
-
