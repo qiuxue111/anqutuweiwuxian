@@ -169,11 +169,11 @@
 </head>
 <body>
   <nav class="navbar">
-    <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略?/span></div>
+    <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略</span></div>
     <ul class="nav-links">
       <li><a href="maps.html">地图</a></li>
       <li><a href="weapons.html">枪械</a></li>
-      <li><a href="strategy.html">技?/a></li>
+      <li><a href="strategy.html">技</a></li>
       <li><a href="gear.html">配装</a></li>
       <li><a href="../search.html">🔍</a></li>
     </ul>
@@ -182,7 +182,7 @@
   <div class="editor-page">
     <div class="editor-header">
       <div>
-        <h1>🗺?地图标注编辑?/h1>
+        <h1>🗺?地图标注编辑</h1>
         <p style="color:#888;font-size:0.85rem;margin-top:0.2rem;">上传地图 ?点击打点 ?审核发布 ?导出使用</p>
       </div>
       <div class="actions">
@@ -198,7 +198,7 @@
         <div class="canvas-area" id="canvasArea">
           <div class="upload-prompt" id="uploadPrompt">
             <span class="icon">📂</span>
-            <p>拖拽地图图片到此?/p>
+            <p>拖拽地图图片到此</p>
             <p style="color:#444;font-size:0.82rem;">或点击下方按钮选择</p>
           </div>
           <div class="canvas-viewport" id="canvasViewport" style="display:none;">
@@ -227,7 +227,7 @@
       <div class="side-panel">
         <!-- 添加 -->
         <div class="panel-box">
-          <h3>📌 添加物资?/h3>
+          <h3>📌 添加物资</h3>
           <p style="color:#555;font-size:0.78rem;margin-bottom:0.8rem;">点击地图选位??填信??提交</p>
           <div class="form-group">
             <label>点位名称</label>
@@ -447,12 +447,12 @@
       let arr=markers;
       if(filter==='approved') arr=markers.filter(m=>m.status==='approved');
       if(filter==='pending') arr=markers.filter(m=>m.status==='pending');
-      if(!arr.length){el.innerHTML='<div style="color:#555;padding:1rem 0;text-align:center;font-size:0.82rem;">?/div>';return;}
+      if(!arr.length){el.innerHTML='<div style="color:#555;padding:1rem 0;text-align:center;font-size:0.82rem;"></div>';return;}
       el.innerHTML=arr.map(m=>`<div class="ml-item">
         <span class="ml-dot" style="background:${m.color}"></span>
         <span class="ml-label">${m.icon} ${m.name}</span>
         <span class="ml-status ${m.status}">${m.status==='approved'?'已发?:'待审?}</span>
-        <span class="ml-del" onclick="deleteMarker(${m.id})">?/span>
+        <span class="ml-del" onclick="deleteMarker(${m.id})"></span>
       </div>`).join('');
     }
 
