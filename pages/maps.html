@@ -1,345 +1,364 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <link rel="icon" href="../favicon.ico" type="image/jpeg">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>地图列表 - 暗区突围：无限攻略站</title>
-  <link rel="stylesheet" href="../style.css">
-  <style>
-    /* 页面专属样式 */
-    .map-header { text-align: center; padding: 2rem 0 1rem; }
-    .map-header h1 { font-size: 2rem; color: #ffc832; }
-    .map-header p { color: #888; margin-top: 0.3rem; }
-
-    .map-detail {
-      background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;
-      padding: 2rem; margin-bottom: 2rem;
-    }
-    .map-detail:target { border-color: #ffc832; }
-
-    .map-detail h2 { color: #fff; font-size: 1.4rem; margin-bottom: 1rem; }
-    .map-detail h2 .badge {
-      display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.6rem;
-      border-radius: 20px; margin-left: 0.5rem; vertical-align: middle;
-    }
-    .badge-easy { background: #1a3a1a; color: #6f6; }
-    .badge-med  { background: #3a3a1a; color: #ffc832; }
-    .badge-hard { background: #3a1a1a; color: #f66; }
-
-    .map-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
-    .map-meta .meta-item { font-size: 0.85rem; color: #999; }
-    .map-meta .meta-item strong { color: #ccc; }
-
-    .map-section { margin-top: 1.5rem; }
-    .map-section h3 { color: #ffc832; font-size: 1rem; margin-bottom: 0.5rem; }
-    .map-section ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .map-section ul li {
-      background: #1a1a22; padding: 0.4rem 0.8rem; border-radius: 6px;
-      font-size: 0.85rem; color: #ccc;
-    }
-    .map-section ul li .loot { color: #ffc832; font-weight: 600; }
-
-    .extract-points { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-    @media (max-width: 640px) { .extract-points { grid-template-columns: 1fr; } }
-    .extract-item {
-      background: #1a1a22; border-radius: 8px; padding: 0.8rem 1rem;
-    }
-    .extract-item .name { color: #fff; font-weight: 600; }
-    .extract-item .cond { color: #999; font-size: 0.82rem; margin-top: 0.2rem; }
-    .extract-item .cond.conditional { color: #ffc832; }
-  </style>
-</head>
-<body>
-  <nav class="navbar">
-    <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略�?/span></div>
-    <ul class="nav-links">
-      <li><a href="../index.html">首页</a></li>
-      <li><a href="maps.html" style="color:#ffc832;">地图</a></li>
-      <li><a href="weapons.html">枪械</a></li>
-      <li><a href="strategy.html">技�?/a></li>
-      <li><a href="gear.html">配装</a></li>
-      <li><a href="help.html">帮助</a></li>
-      <li><a href="../search.html">🔍</a></li>
-    </ul>
-  </nav>
-
-  <div style="margin-top:60px;max-width:900px;margin-left:auto;margin-right:auto;padding:0 1rem;">
-    <div class="map-header">
-      <h1>🗺�?地图攻略</h1>
-      <p>每张地图的详细点位、刷新规律、撤离条件一�?/p>
-    </div>
-
-    <!-- 北山 -->
-    <!-- 北山 (ABI) -->
-    <div class="map-detail" id="beishan">
-      <h2>北山 <span class="badge badge-med">中等</span></h2>
-      <div class="map-meta">
-        <span class="meta-item"><strong>类型�?/strong>中型户外</span>
-        <span class="meta-item"><strong>推荐人数�?/strong>三人�?/span>
-        <span class="meta-item"><strong>对局时长�?/strong>30-40min</span>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" href="../favicon.ico" type="image/jpeg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>地图列表 - 暗区突围：无限攻略站</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    /* 页面专属样式 */
+    .map-header { text-align: center; padding: 2rem 0 1rem; }
+    .map-header h1 { font-size: 2rem; color: #ffc832; }
+    .map-header p { color: #888; margin-top: 0.3rem; }
+
+    .map-detail {
+      background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;
+      padding: 2rem; margin-bottom: 2rem;
+    }
+    .map-detail:target { border-color: #ffc832; }
+
+    .map-detail h2 { color: #fff; font-size: 1.4rem; margin-bottom: 1rem; }
+    .map-detail h2 .badge {
+      display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.6rem;
+      border-radius: 20px; margin-left: 0.5rem; vertical-align: middle;
+    }
+    .badge-easy { background: #1a3a1a; color: #6f6; }
+    .badge-med  { background: #3a3a1a; color: #ffc832; }
+    .badge-hard { background: #3a1a1a; color: #f66; }
+
+    .map-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .map-meta .meta-item { font-size: 0.85rem; color: #999; }
+    .map-meta .meta-item strong { color: #ccc; }
+
+    .map-section { margin-top: 1.5rem; }
+    .map-section h3 { color: #ffc832; font-size: 1rem; margin-bottom: 0.5rem; }
+    .map-section ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .map-section ul li {
+      background: #1a1a22; padding: 0.4rem 0.8rem; border-radius: 6px;
+      font-size: 0.85rem; color: #ccc;
+    }
+    .map-section ul li .loot { color: #ffc832; font-weight: 600; }
+
+    .extract-points { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    @media (max-width: 640px) { .extract-points { grid-template-columns: 1fr; } }
+    .extract-item {
+      background: #1a1a22; border-radius: 8px; padding: 0.8rem 1rem;
+    }
+    .extract-item .name { color: #fff; font-weight: 600; }
+    .extract-item .cond { color: #999; font-size: 0.82rem; margin-top: 0.2rem; }
+    .extract-item .cond.conditional { color: #ffc832; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略�?/span></div>
+    <ul class="nav-links">
+      <li><a href="../index.html">首页</a></li>
+      <li><a href="maps.html" style="color:#ffc832;">地图</a></li>
+      <li><a href="weapons.html">枪械</a></li>
+      <li><a href="strategy.html">技�?/a></li>
+      <li><a href="gear.html">配装</a></li>
+      <li><a href="help.html">帮助</a></li>
+      <li><a href="../search.html">🔍</a></li>
+    </ul>
+  </nav>
+
+  <div style="margin-top:60px;max-width:900px;margin-left:auto;margin-right:auto;padding:0 1rem;">
+    <div class="map-header">
+      <h1>🗺�?地图攻略</h1>
+      <p>每张地图的详细点位、刷新规律、撤离条件一�?/p>
+    </div>
+
+    <!-- 北山 -->
+    <!-- 北山 (ABI) -->
+    <div class="map-detail" id="beishan">
+      <h2>北山 <span class="badge badge-med">中等</span></h2>
+      <div class="map-meta">
+        <span class="meta-item"><strong>类型�?/strong>中型户外</span>
+        <span class="meta-item"><strong>推荐人数�?/strong>三人�?/span>
+        <span class="meta-item"><strong>对局时长�?/strong>30-40min</span>
+      </div>
+      <div class="map-section">
+        <h3>📍 重点区域</h3>
+        <ul>
+          <li>🏨 北山酒店<span class="loot"> �?高价�?/span></li>
+          <li>🏭 污水处理�?/li>
+          <li>🏔�?观景�?/li>
+          <li>📡 雷达�?/li>
+          <li>🌲 伐木�?/li>
+        </ul>
+      </div>
+      <div class="map-section">
+        <h3>🚁 撤离�?/h3>
+        <div class="extract-points">
+          <div class="extract-item">
+            <div class="name">公路撤离�?/div>
+            <div class="cond">固定撤离</div>
+          </div>
+          <div class="extract-item">
+            <div class="name">直升机撤离点</div>
+            <div class="cond conditional">条件撤离 · 需信号�?/div>
+          </div>
+        </div>
+      </div>
+      <div class="map-section">
+        <h3>💡 PC 端攻略要�?/h3>
+        <ul>
+          <li>PC 版北山画面更远，观景台可以狙到酒店门�?/li>
+          <li>鼠标压枪更精准，远距离对�?AR 也能�?/li>
+          <li>建议调高视角 FOV，增加视野范�?/li>
+          <li>夜战模式记得调低亮度设置</li>
+        </ul>
+      </div>
+          <div style="margin-top:1rem;">
+        <a href="map-beishan.html" style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.5rem 1.2rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;">🗺 查看交互地图</a>
+      </div>
+    </div>
+</div>
+
+    <!-- 山谷 (ABI 专属) -->
+    <div class="map-detail" id="valley">
+      <h2>山谷 <span class="badge badge-hard">困难</span></h2>
+      <div class="map-meta">
+        <span class="meta-item"><strong>类型�?/strong>大型开放式</span>
+        <span class="meta-item"><strong>推荐人数�?/strong>三人�?/span>
+        <span class="meta-item"><strong>对局时长�?/strong>35-45min</span>
+      </div>
+      <div class="map-section">
+        <h3>📍 重点区域</h3>
+        <ul>
+          <li>🏚�?别墅�?span class="loot"> �?极高价�?/span></li>
+          <li>🏗�?坠机�?/li>
+          <li>⛰️ 雷达站高�?/li>
+          <li>🏕�?营地</li>
+          <li>🌉 桥梁�?/li>
+        </ul>
+      </div>
+      <div class="map-section">
+        <h3>🚁 撤离�?/h3>
+        <div class="extract-points">
+          <div class="extract-item">
+            <div class="name">桥头检查站</div>
+            <div class="cond">固定撤离</div>
+          </div>
+          <div class="extract-item">
+            <div class="name">直升机平�?/div>
+            <div class="cond conditional">条件撤离</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-section">
+        <h3>💡 PC 端攻略要�?/h3>
+        <ul>
+          <li>山谷�?PC 版特色大图，远距离交火极�?/li>
+          <li>推荐带高倍镜 DMR 或狙击枪</li>
+          <li>别墅区资源最丰富但争夺最激�?/li>
+          <li>利用地形起伏做掩护，不要在开阔地奔跑</li>
+          <li>PC 版草丛渲染距离更远，伏地魔更难发�?/li>
+        </ul>
+      </div>
+          <div style="margin-top:1rem;">
+        <a href="map-valley.html" style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.5rem 1.2rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;">🗺 查看交互地图</a>
+      </div>
+    </div>
+</div>
+
+    <!-- 军械�?(ABI 核心�? -->
+    <div class="map-detail" id="armory">
+      <h2>军械�?<span class="badge badge-hard">困难</span></h2>
+      <div class="map-meta">
+        <span class="meta-item"><strong>类型�?/strong>室内 CQB</span>
+        <span class="meta-item"><strong>推荐人数�?/strong>三人�?/span>
+        <span class="meta-item"><strong>对局时长�?/strong>30-40min</span>
+      </div>
+      <div class="map-section">
+        <h3>📍 重点区域</h3>
+        <ul>
+          <li>🏛�?主军械库<span class="loot"> �?极高价�?/span></li>
+          <li>🚇 地下二层</li>
+          <li>🚇 地下三层</li>
+          <li>🏗�?装卸�?/li>
+          <li>🚪 办公�?/li>
+        </ul>
+      </div>
+      <div class="map-section">
+        <h3>🚁 撤离�?/h3>
+        <div class="extract-points">
+          <div class="extract-item">
+            <div class="name">装卸区出�?/div>
+            <div class="cond">固定撤离</div>
+          </div>
+          <div class="extract-item">
+            <div class="name">地下通道撤离</div>
+            <div class="cond conditional">条件撤离</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-section">
+        <h3>💡 PC 端攻略要�?/h3>
+        <ul>
+          <li>军械库三层结构，垂直交战多，注意头顶和脚�?/li>
+          <li>PC 端听声辨位更清晰，可以精确判断楼上楼�?/li>
+          <li>推荐冲锋枪或短管 AR，转弯多长枪吃亏</li>
+          <li>手雷在室内战极其重要，清角落神器</li>
+          <li>建议带夜视仪，地下层光线极暗</li>
+        </ul>
+            <div style="margin-top:1rem;">
+        <a href="map-armory.html" style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.5rem 1.2rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;">🗺 查看交互地图</a>
       </div>
-      <div class="map-section">
-        <h3>📍 重点区域</h3>
-        <ul>
-          <li>🏨 北山酒店<span class="loot"> �?高价�?/span></li>
-          <li>🏭 污水处理�?/li>
-          <li>🏔�?观景�?/li>
-          <li>📡 雷达�?/li>
-          <li>🌲 伐木�?/li>
-        </ul>
-      </div>
-      <div class="map-section">
-        <h3>🚁 撤离�?/h3>
-        <div class="extract-points">
-          <div class="extract-item">
-            <div class="name">公路撤离�?/div>
-            <div class="cond">固定撤离</div>
-          </div>
-          <div class="extract-item">
-            <div class="name">直升机撤离点</div>
-            <div class="cond conditional">条件撤离 · 需信号�?/div>
-          </div>
-        </div>
-      </div>
-      <div class="map-section">
-        <h3>💡 PC 端攻略要�?/h3>
-        <ul>
-          <li>PC 版北山画面更远，观景台可以狙到酒店门�?/li>
-          <li>鼠标压枪更精准，远距离对�?AR 也能�?/li>
-          <li>建议调高视角 FOV，增加视野范�?/li>
-          <li>夜战模式记得调低亮度设置</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 山谷 (ABI 专属) -->
-    <div class="map-detail" id="valley">
-      <h2>山谷 <span class="badge badge-hard">困难</span></h2>
-      <div class="map-meta">
-        <span class="meta-item"><strong>类型�?/strong>大型开放式</span>
-        <span class="meta-item"><strong>推荐人数�?/strong>三人�?/span>
-        <span class="meta-item"><strong>对局时长�?/strong>35-45min</span>
-      </div>
-      <div class="map-section">
-        <h3>📍 重点区域</h3>
-        <ul>
-          <li>🏚�?别墅�?span class="loot"> �?极高价�?/span></li>
-          <li>🏗�?坠机�?/li>
-          <li>⛰️ 雷达站高�?/li>
-          <li>🏕�?营地</li>
-          <li>🌉 桥梁�?/li>
-        </ul>
-      </div>
-      <div class="map-section">
-        <h3>🚁 撤离�?/h3>
-        <div class="extract-points">
-          <div class="extract-item">
-            <div class="name">桥头检查站</div>
-            <div class="cond">固定撤离</div>
-          </div>
-          <div class="extract-item">
-            <div class="name">直升机平�?/div>
-            <div class="cond conditional">条件撤离</div>
-          </div>
-        </div>
-      </div>
-      <div class="map-section">
-        <h3>💡 PC 端攻略要�?/h3>
-        <ul>
-          <li>山谷�?PC 版特色大图，远距离交火极�?/li>
-          <li>推荐带高倍镜 DMR 或狙击枪</li>
-          <li>别墅区资源最丰富但争夺最激�?/li>
-          <li>利用地形起伏做掩护，不要在开阔地奔跑</li>
-          <li>PC 版草丛渲染距离更远，伏地魔更难发�?/li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 军械�?(ABI 核心�? -->
-    <div class="map-detail" id="armory">
-      <h2>军械�?<span class="badge badge-hard">困难</span></h2>
-      <div class="map-meta">
-        <span class="meta-item"><strong>类型�?/strong>室内 CQB</span>
-        <span class="meta-item"><strong>推荐人数�?/strong>三人�?/span>
-        <span class="meta-item"><strong>对局时长�?/strong>30-40min</span>
-      </div>
-      <div class="map-section">
-        <h3>📍 重点区域</h3>
-        <ul>
-          <li>🏛�?主军械库<span class="loot"> �?极高价�?/span></li>
-          <li>🚇 地下二层</li>
-          <li>🚇 地下三层</li>
-          <li>🏗�?装卸�?/li>
-          <li>🚪 办公�?/li>
-        </ul>
-      </div>
-      <div class="map-section">
-        <h3>🚁 撤离�?/h3>
-        <div class="extract-points">
-          <div class="extract-item">
-            <div class="name">装卸区出�?/div>
-            <div class="cond">固定撤离</div>
-          </div>
-          <div class="extract-item">
-            <div class="name">地下通道撤离</div>
-            <div class="cond conditional">条件撤离</div>
-          </div>
-        </div>
-      </div>
-      <div class="map-section">
-        <h3>💡 PC 端攻略要�?/h3>
-        <ul>
-          <li>军械库三层结构，垂直交战多，注意头顶和脚�?/li>
-          <li>PC 端听声辨位更清晰，可以精确判断楼上楼�?/li>
-          <li>推荐冲锋枪或短管 AR，转弯多长枪吃亏</li>
-          <li>手雷在室内战极其重要，清角落神器</li>
-          <li>建议带夜视仪，地下层光线极暗</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 农场 -->
-    <div class="map-detail" id="farm">
-      <h2><a href="map-farm.html" style="color:#fff;text-decoration:none;">农场</a> <span class="badge badge-easy">简�?/span></h2>
-      <div class="map-meta">
-        <span class="meta-item"><strong>类型�?/strong>小型户外</span>
-        <span class="meta-item"><strong>推荐人数�?/strong>单人/双人</span>
-        <span class="meta-item"><strong>对局时长�?/strong>20-30min</span>
-      </div>
-      <div class="map-section">
-        <h3>📍 重点区域</h3>
-        <ul>
-          <li>🏨 汽车旅馆<span class="loot"> �?高价�?/span></li>
-          <li>🏚�?仓库�?/li>
-          <li>🌾 麦田</li>
-          <li>🏠 农舍</li>
-        </ul>
-      </div>
-      <div class="map-section">
-        <h3>🚁 撤离�?/h3>
-        <div class="extract-points">
-          <div class="extract-item">
-            <div class="name">公路撤离�?/div>
-            <div class="cond">固定撤离</div>
-          </div>
-          <div class="extract-item">
-            <div class="name">麦田撤离�?/div>
-            <div class="cond conditional">条件撤离</div>
-          </div>
-        </div>
-      </div>
-      <div class="map-section">
-        <h3>💡 攻略要点</h3>
-        <ul>
-          <li>新手入门图，先熟悉基本操作和搜刮节奏</li>
-          <li>PC 端建议先打农场练手，熟悉键位和压�?/li>
-          <li>汽车旅馆是必争之地，要么第一个冲要么绕路避开</li>
-          <li>麦田开阔容易被狙，快速通过不要逗留</li>
-        </ul>
-      </div>
-      <div style="margin-top:1rem;">
-        <a href="map-farm.html" style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.5rem 1.2rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;">🗺�?查看交互地图</a>
-      </div>
-    </div>
-
-    <!-- 港口 -->
-    <div class="map-detail" id="port">
-      <h2>港口 <span class="badge badge-med">中等</span></h2>
-      <div class="map-meta">
-        <span class="meta-item"><strong>类型�?/strong>小型巷战</span>
-        <span class="meta-item"><strong>推荐人数�?/strong>双人/三人</span>
-        <span class="meta-item"><strong>对局时长�?/strong>20-30min</span>
-      </div>
-      <div class="map-section">
-        <h3>📍 重点区域</h3>
-        <ul>
-          <li>🏗�?主仓�?span class="loot"> �?高价�?/span></li>
-          <li>📦 集装箱区</li>
-          <li>�?码头</li>
-          <li>🏛�?指挥�?/li>
-        </ul>
-      </div>
-      <div class="map-section">
-        <h3>🚁 撤离�?/h3>
-        <div class="extract-points">
-          <div class="extract-item">
-            <div class="name">码头撤离�?/div>
-            <div class="cond">固定撤离</div>
-          </div>
-          <div class="extract-item">
-            <div class="name">集装箱撤离点</div>
-            <div class="cond conditional">条件撤离</div>
-          </div>
-        </div>
-      </div>
-      <div class="map-section">
-        <h3>💡 攻略要点</h3>
-        <ul>
-          <li>图小节奏快，推荐冲锋枪或霰弹�?/li>
-          <li>港口掩体多，适合迂回作战</li>
-          <li>指挥楼楼顶视野好，但容易被集�?/li>
-          <li>码头方向经常刷撤离点，提前规划路�?/li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 电视�?-->
-    <div class="map-detail" id="tvstation">
-      <h2>电视�?<span class="badge badge-med">中等</span></h2>
-      <div class="map-meta">
-        <span class="meta-item"><strong>类型�?/strong>中型室内 CQB</span>
-        <span class="meta-item"><strong>推荐人数�?/strong>三人�?/span>
-        <span class="meta-item"><strong>对局时长�?/strong>25-35min</span>
-      </div>
-      <div class="map-section">
-        <h3>📍 重点区域</h3>
-        <ul>
-          <li>🎬 演播大厅<span class="loot"> �?高价�?/span></li>
-          <li>🎛�?控制�?/li>
-          <li>🚗 地下车库</li>
-          <li>📺 导播�?/li>
-        </ul>
-      </div>
-      <div class="map-section">
-        <h3>🚁 撤离�?/h3>
-        <div class="extract-points">
-          <div class="extract-item">
-            <div class="name">正门撤离�?/div>
-            <div class="cond">固定撤离</div>
-          </div>
-          <div class="extract-item">
-            <div class="name">车库撤离�?/div>
-            <div class="cond conditional">条件撤离 · 需钥匙�?/div>
-          </div>
-        </div>
-      </div>
-      <div class="map-section">
-        <h3>💡 PC 端攻略要�?/h3>
-        <ul>
-          <li>全室内地图，狙击枪无用，推荐冲锋�?霰弹�?/li>
-          <li>PC 版脚步声方向感更准，电视台室内战利用好这�?/li>
-          <li>控制室有多个入口，守点的话要封两侧门</li>
-          <li>转角多容易遭遇，推荐腰射流配�?/li>
-        </ul>
-      </div>
-    </div>
-
-    <div style="margin-top:2rem;text-align:center;padding:1.5rem;background:#12121a;border:1px solid #1e1e2a;border-radius:12px;">
-      <p style="color:#888;margin-bottom:0.8rem;">想要自己标注物资点？用地标编辑器上传地图、打点、审核发�?/p>
-      <a href="map-editor.html" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.5rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;">✏️ 打开地图编辑�?/a>
-    </div>
-
-    <!-- 评论�?-->
-    <div style="margin: 2rem 0; padding: 2rem; background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;">
-      <h2 style="color:#ffc832; margin-bottom: 1rem;">💬 讨论</h2>
-      <p style="color:#888; margin-bottom:1rem;">对这张地图有独到见解？欢迎分享你的战术！</p>
-  </div>
-
-  <footer>
-    <p>暗区突围：无�?攻略�?· 持续更新�?/p>
-    <p style="margin-top:0.3rem;">数据基于游戏版本 · 仅供参�?/p>
-  </footer>
-</body>
-</html>
-
+    </div>
+    </div>
+
+    <!-- 农场 -->
+    <div class="map-detail" id="farm">
+      <h2><a href="map-farm.html" style="color:#fff;text-decoration:none;">农场</a> <span class="badge badge-easy">简�?/span></h2>
+      <div class="map-meta">
+        <span class="meta-item"><strong>类型�?/strong>小型户外</span>
+        <span class="meta-item"><strong>推荐人数�?/strong>单人/双人</span>
+        <span class="meta-item"><strong>对局时长�?/strong>20-30min</span>
+      </div>
+      <div class="map-section">
+        <h3>📍 重点区域</h3>
+        <ul>
+          <li>🏨 汽车旅馆<span class="loot"> �?高价�?/span></li>
+          <li>🏚�?仓库�?/li>
+          <li>🌾 麦田</li>
+          <li>🏠 农舍</li>
+        </ul>
+      </div>
+      <div class="map-section">
+        <h3>🚁 撤离�?/h3>
+        <div class="extract-points">
+          <div class="extract-item">
+            <div class="name">公路撤离�?/div>
+            <div class="cond">固定撤离</div>
+          </div>
+          <div class="extract-item">
+            <div class="name">麦田撤离�?/div>
+            <div class="cond conditional">条件撤离</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-section">
+        <h3>💡 攻略要点</h3>
+        <ul>
+          <li>新手入门图，先熟悉基本操作和搜刮节奏</li>
+          <li>PC 端建议先打农场练手，熟悉键位和压�?/li>
+          <li>汽车旅馆是必争之地，要么第一个冲要么绕路避开</li>
+          <li>麦田开阔容易被狙，快速通过不要逗留</li>
+        </ul>
+      </div>
+      <div style="margin-top:1rem;">
+        <a href="map-farm.html" style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.5rem 1.2rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;">🗺�?查看交互地图</a>
+      </div>
+    </div>
+
+    <!-- 机场 -->
+    <div class="map-detail" id="airport">
+      <h2>机场 <span class="badge badge-med">中等</span></h2>
+      <div class="map-meta">
+        <span class="meta-item"><strong>类型�?/strong>小型巷战</span>
+        <span class="meta-item"><strong>推荐人数�?/strong>双人/三人</span>
+        <span class="meta-item"><strong>对局时长�?/strong>20-30min</span>
+      </div>
+      <div class="map-section">
+        <h3>📍 重点区域</h3>
+        <ul>
+          <li>🏗�?主仓�?span class="loot"> �?高价�?/span></li>
+          <li>📦 集装箱区</li>
+          <li>�?码头</li>
+          <li>🏛�?指挥�?/li>
+        </ul>
+      </div>
+      <div class="map-section">
+        <h3>🚁 撤离�?/h3>
+        <div class="extract-points">
+          <div class="extract-item">
+            <div class="name">码头撤离�?/div>
+            <div class="cond">固定撤离</div>
+          </div>
+          <div class="extract-item">
+            <div class="name">集装箱撤离点</div>
+            <div class="cond conditional">条件撤离</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-section">
+        <h3>💡 攻略要点</h3>
+        <ul>
+          <li>图小节奏快，推荐冲锋枪或霰弹�?/li>
+          <li>港口掩体多，适合迂回作战</li>
+          <li>指挥楼楼顶视野好，但容易被集�?/li>
+          <li>码头方向经常刷撤离点，提前规划路�?/li>
+        </ul>
+      </div>
+          <div style="margin-top:1rem;">
+        <a href="map-airport.html" style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.5rem 1.2rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;">🗺 查看交互地图</a>
+      </div>
+    </div>
+</div>
+
+    <!-- 电视�?-->
+    <div class="map-detail" id="tvstation">
+      <h2>电视�?<span class="badge badge-med">中等</span></h2>
+      <div class="map-meta">
+        <span class="meta-item"><strong>类型�?/strong>中型室内 CQB</span>
+        <span class="meta-item"><strong>推荐人数�?/strong>三人�?/span>
+        <span class="meta-item"><strong>对局时长�?/strong>25-35min</span>
+      </div>
+      <div class="map-section">
+        <h3>📍 重点区域</h3>
+        <ul>
+          <li>🎬 演播大厅<span class="loot"> �?高价�?/span></li>
+          <li>🎛�?控制�?/li>
+          <li>🚗 地下车库</li>
+          <li>📺 导播�?/li>
+        </ul>
+      </div>
+      <div class="map-section">
+        <h3>🚁 撤离�?/h3>
+        <div class="extract-points">
+          <div class="extract-item">
+            <div class="name">正门撤离�?/div>
+            <div class="cond">固定撤离</div>
+          </div>
+          <div class="extract-item">
+            <div class="name">车库撤离�?/div>
+            <div class="cond conditional">条件撤离 · 需钥匙�?/div>
+          </div>
+        </div>
+      </div>
+      <div class="map-section">
+        <h3>💡 PC 端攻略要�?/h3>
+        <ul>
+          <li>全室内地图，狙击枪无用，推荐冲锋�?霰弹�?/li>
+          <li>PC 版脚步声方向感更准，电视台室内战利用好这�?/li>
+          <li>控制室有多个入口，守点的话要封两侧门</li>
+          <li>转角多容易遭遇，推荐腰射流配�?/li>
+        </ul>
+      </div>
+          <div style="margin-top:1rem;">
+        <a href="map-tvstation.html" style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.5rem 1.2rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;">🗺 查看交互地图</a>
+      </div>
+    </div>
+</div>
+
+    <div style="margin-top:2rem;text-align:center;padding:1.5rem;background:#12121a;border:1px solid #1e1e2a;border-radius:12px;">
+      <p style="color:#888;margin-bottom:0.8rem;">想要自己标注物资点？用地标编辑器上传地图、打点、审核发�?/p>
+      <a href="map-editor.html" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.5rem;background:#ffc832;color:#0a0a0f;border-radius:8px;text-decoration:none;font-weight:600;">✏️ 打开地图编辑�?/a>
+    </div>
+
+    <!-- 评论�?-->
+    <div style="margin: 2rem 0; padding: 2rem; background: #12121a; border: 1px solid #1e1e2a; border-radius: 12px;">
+      <h2 style="color:#ffc832; margin-bottom: 1rem;">💬 讨论</h2>
+      <p style="color:#888; margin-bottom:1rem;">对这张地图有独到见解？欢迎分享你的战术！</p>
+  </div>
+
+  <footer>
+    <p>暗区突围：无�?攻略�?· 持续更新�?/p>
+    <p style="margin-top:0.3rem;">数据基于游戏版本 · 仅供参�?/p>
+  </footer>
+</body>
+</html>
+
