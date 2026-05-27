@@ -425,7 +425,7 @@ var SUPABASE_ANON_KEY="sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
 var currentUser=null;
 var LS="/span";
 var L_s="/span";
-function initAuth(){ try{document.title=window.location.hash.substring(0,40)||"no-hash";}catch(e){}
+function initAuth(){
   try{
     var u=localStorage.getItem("abi_user");
     if(u){try{currentUser=JSON.parse(u);}catch(e){}}
@@ -435,15 +435,33 @@ function initAuth(){ try{document.title=window.location.hash.substring(0,40)||"n
       var token=p.get("access_token");
       if(token){
         localStorage.setItem("abi_token",token);
-        var meta=p.get("user_metadata");
-        if(meta){
-          try{var md=JSON.parse(decodeURIComponent(meta));currentUser={user_metadata:md};localStorage.setItem("abi_user",JSON.stringify(currentUser));}catch(e){}
-        }
+        fetch(SUPABASE_URL+"/auth/v1/user",{headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+token}}).then(function(r){return r.json();})["catch"](function(){return null;}).then(function(u2){
+          if(u2&&u2.id&&u2.user_metadata){
+            currentUser=u2;
+            localStorage.setItem("abi_user",JSON.stringify(u2));
+            updateAuthUI();
+          }
+        });
+        initAuthFromToken(token);
       }
       window.location.hash="";
     }
   }catch(e){}
   updateAuthUI();
+}
+function initAuthFromToken(tok){
+  try{
+    var parts=tok.split(".");
+    if(parts.length!=3)return;
+    var b64=parts[1].replace(/-/g,"+").replace(/_/g,"/");
+    var raw=atob(b64);
+    var payload=JSON.parse(raw);
+    if(payload&&payload.user_metadata){
+      currentUser={id:payload.sub,user_metadata:payload.user_metadata};
+      localStorage.setItem("abi_user",JSON.stringify(currentUser));
+      updateAuthUI();
+    }
+  }catch(e){}
 }
 function login(){
   window.location.href=SUPABASE_URL+"/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(window.location.href.split("?")[0].split("#")[0]);

@@ -6,40 +6,58 @@
 <title>审核中心 - 暗区突围：无限</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:900px;margin:0 auto}
-h1{color:#ffc832;font-size:22px;margin-bottom:12px}
-a{color:#ffc832;text-decoration:none}
-.stats{display:flex;gap:16px;margin-bottom:16px}
+body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:960px;margin:0 auto}
+h1{color:#ffc832;font-size:22px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+h1 a{color:#888;font-size:13px;text-decoration:none}
+nav{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.stats{display:flex;gap:12px;margin-bottom:16px}
 .stat{flex:1;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:12px;text-align:center}
 .stat-num{font-size:28px;font-weight:bold;color:#ffc832}
 .stat-label{font-size:12px;color:#888;margin-top:4px}
-.tabs{display:flex;gap:4px;margin-bottom:16px}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
 .tab{padding:8px 20px;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;cursor:pointer;font-size:14px;color:#888}
 .tab.active{background:#ffc832;color:#0a0a0f;font-weight:600;border-color:#ffc832}
-#list .loading{padding:40px;text-align:center;color:#888}
-#list .empty{padding:40px;text-align:center;color:#555}
-.card{background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:14px;margin-bottom:10px}
-.card-expired{opacity:0.5;border-color:#4a1a1a}
-.card h3{font-size:16px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
-.card .meta{font-size:13px;color:#888;margin-bottom:8px;line-height:1.6}
-.actions{display:flex;gap:6px;flex-wrap:wrap}
-.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
+.tab.admin{color:#e55}
+.card{background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:16px;margin-bottom:12px;position:relative}
+.card.expired{opacity:0.45;border-color:#4a1a1a}
+.card .icon{width:32px;height:32px;border-radius:6px;object-fit:cover;vertical-align:middle;margin-right:8px}
+.card .hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.card .hdr h3{font-size:16px;margin:0;display:flex;align-items:center;gap:6px}
+.card .hdr .badge{padding:2px 8px;border-radius:4px;font-size:11px;background:#333}
+.card .hdr .badge.pending{background:#4a3a00;color:#fd2}
+.card .hdr .badge.admin-passed{background:#003a00;color:#5e5}
+.card .hdr .badge.expired-badge{background:#3a0000;color:#e55}
+.card .meta{font-size:13px;color:#888;margin-bottom:8px;line-height:1.7}
+.card .meta .coord{cursor:pointer;color:#88aaff;text-decoration:underline;font-family:monospace}
+.card .meta .coord:hover{color:#aaccff}
+.card .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #1e1e2a}
+.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500}
 .btn-vote{background:#1a4a1a;color:#5e5}
+.btn-vote:hover{background:#2a5a2a}
 .btn-voted{background:#333;color:#888;cursor:default}
 .btn-pass{background:#1a3a1a;color:#5a5}
+.btn-pass:hover{background:#2a4a2a}
 .btn-reject{background:#4a1a1a;color:#e55}
+.btn-reject:hover{background:#5a2a2a}
 .btn-del{background:#222;color:#666;border:1px solid #444}
-footer{margin-top:20px;text-align:center;font-size:12px;color:#444}
-footer a{color:#444;text-decoration:none}
+.btn-del:hover{background:#333;color:#e55}
+.btn-map{background:#1a1a3a;color:#88aaff;border:1px solid #335;font-size:12px;padding:3px 8px}
+.btn-map:hover{background:#2a2a4a}
+.admin-zone{margin-top:6px;display:flex;gap:6px}
+.admin-toggle{position:fixed;bottom:20px;right:20px;background:#1a1a1a;color:#555;border:1px solid #333;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;z-index:100}
+.admin-toggle.active{color:#e55;border-color:#e55;background:#2a1a1a}
+.loading,.empty{text-align:center;padding:60px 20px;color:#555;font-size:15px}
+footer{margin-top:30px;text-align:center;font-size:12px;color:#333}
+#authArea{display:flex;align-items:center;gap:10px;font-size:14px;white-space:nowrap}
 </style>
 </head>
-<body><div id="authBar" style="position:fixed;top:10px;right:10px;z-index:999;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;padding:6px 14px;font-size:13px"></div>
-<h1>审核中心</h1>
-<a href="map-farm.html">返回地图</a>
-<div class="stats" id="stats">
-  <div class="stat"><div class="stat-num" id="scount">-</div><div class="stat-label">待审核</div></div>
-  <div class="stat"><div class="stat-num" id="vcount">-</div><div class="stat-label">已投票</div></div>
-  <div class="stat"><div class="stat-num" id="ccount">-</div><div class="stat-label">总点位</div></div>
+<body>
+<h1>审核中心 <a href="map-farm.html">← 地图</a></h1>
+<div class="stats">
+  <div class="stat"><div class="stat-num" id="sCount">-</div><div class="stat-label">待审核</div></div>
+  <div class="stat"><div class="stat-num" id="vCount">-</div><div class="stat-label">我投过</div></div>
+  <div class="stat"><div class="stat-num" id="dCount">-</div><div class="stat-label">待删除</div></div>
+  <div class="stat"><div class="stat-num" id="tCount">-</div><div class="stat-label">公开点位</div></div>
 </div>
 <div class="tabs">
   <div class="tab active" onclick="switchTab(event,'pending')">待审核</div>
@@ -48,53 +66,66 @@ footer a{color:#444;text-decoration:none}
   <div class="tab" onclick="switchTab(event,'all')">全部</div>
 </div>
 <div id="list"><div class="loading">加载中...</div></div>
-<footer><a href="javascript:toggleAdmin()">管理员登录</a></footer>
+<div class="admin-toggle" id="adminBtn" onclick="toggleAdmin()">管理员</div>
 
 <script>
 var SUPABASE_URL = "https://hanrfbciinkhgcumvous.supabase.co";
 var SUPABASE_ANON_KEY = "sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
 
-// Auth
 var currentUser=null;
-var SP="/span";
-var A="/a";
+var currentTab="pending";
+
 function initAuth(){
   var u=localStorage.getItem("abi_user");
   if(u){try{currentUser=JSON.parse(u);}catch(e){}}
   var hash=window.location.hash;
-  var p=new URLSearchParams(hash.replace("#",""));
-  var token=p.get("access_token");
-  if(token){
-    localStorage.setItem("abi_token",token);
-    var meta=p.get("user_metadata");
-    if(meta){try{var md=JSON.parse(meta);currentUser=md;}catch(e){}}
-    if(currentUser)localStorage.setItem("abi_user",JSON.stringify(currentUser));
+  if(hash&&hash.indexOf("access_token")>=0){
+    var p=new URLSearchParams(hash.replace("#",""));
+    var token=p.get("access_token");
+    if(token){
+      localStorage.setItem("abi_token",token);
+      fetch(SUPABASE_URL+"/auth/v1/user",{headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+token}}).then(function(r){return r.json();}).then(function(u2){
+        if(u2&&u2.id&&u2.user_metadata){currentUser=u2;localStorage.setItem("abi_user",JSON.stringify(u2));updateAuthUI();}
+      }).catch(function(){});
+      initAuthFromToken(token);
+    }
     window.location.hash="";
   }
   updateAuthUI();
 }
+function initAuthFromToken(tok){
+  try{
+    var parts=tok.split(".");
+    if(parts.length!=3)return;
+    var raw=atob(parts[1].replace(/-/g,"+").replace(/_/g,"/"));
+    var payload=JSON.parse(raw);
+    if(payload&&payload.user_metadata){
+      currentUser={id:payload.sub,user_metadata:payload.user_metadata};
+      localStorage.setItem("abi_user",JSON.stringify(currentUser));
+      updateAuthUI();
+    }
+  }catch(e){}
+}
 function loginGit(){
-  window.location.href="https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(window.location.href.split("?")[0].split("#")[0]);
+  window.location.href=SUPABASE_URL+"/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(window.location.href.split("?")[0].split("#")[0]);
 }
 function logoutGit(){
-  currentUser=null;
-  localStorage.removeItem("abi_user");
-  localStorage.removeItem("abi_token");
-  updateAuthUI();
+  currentUser=null;localStorage.removeItem("abi_user");localStorage.removeItem("abi_token");updateAuthUI();
+}
+function updateAuthUI(){
+  var el=document.getElementById("authArea");
+  if(!el)return;
+  if(currentUser){
+    var nm=currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登录";
+    var av=currentUser.user_metadata&&currentUser.user_metadata.avatar_url||"";
+    el.innerHTML="<img src='"+av+"' style='width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:4px'> <span style='color:#8c8;font-size:13px'>"+nm+"</span> <span onclick='logoutGit()' style='cursor:pointer;color:#e55;font-size:11px;margin-left:6px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退出</span>";
+  }else{
+    el.innerHTML="<span onclick='loginGit()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:3px 10px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录</span>";
+  }
 }
 function checkAuth(){
   if(!currentUser){loginGit();return false;}
   return true;
-}
-function updateAuthUI(){
-  var el=document.getElementById("authBar");
-  if(!el)return;
-  if(currentUser){
-    var nm=currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登录";
-    el.innerHTML='<span style="color:#8c8">'+nm+'<'+SP+'> <a href="javascript:logoutGit()" style="color:#e55;font-size:12px">退出<'+A+'>';
-  }else{
-    el.innerHTML='<a href="javascript:loginGit()" style="color:#ffc832;font-size:13px">GitHub 登录<'+A+'>';
-  }
 }
 function supabase(t,m,b,q){
   var u=SUPABASE_URL+"/rest/v1/"+t;if(q)u+="?"+q;
@@ -104,71 +135,51 @@ function supabase(t,m,b,q){
 }
 
 function getUserId(){
+  if(currentUser&&currentUser.id)return currentUser.id;
   var id=localStorage.getItem("abi_user_id");
   if(!id){id="u_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);localStorage.setItem("abi_user_id",id);}
   return id;
 }
 
-var currentTab="pending";
+function switchTab(e,tab){
+  currentTab=tab;
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  e.target.classList.add("active");
+  loadData();
+}
+
+function loadData(){
+  document.getElementById("list").innerHTML="<div class='loading'>加载中...</div>";
+  var p=supabase("pending_pins","GET",null,"order=created_at.desc");
+  var d=supabase("deletion_requests","GET",null,"order=created_at.desc");
+  var pin=supabase("pins","GET",null,"order=created_at.desc");
+  Promise.all([p,d,pin]).then(function(res){
+    var items=res[0]||[];
+    var dels=res[1]||[];
+    var pins=res[2]||[];
+    if(currentTab==="deletion"){renderDels(dels);return;}
+    updateStats(items,dels,pins);
+    renderList(items);
+  }).catch(function(){
+    document.getElementById("list").innerHTML="<div class='empty'>加载失败，请检查网络</div>";
+  });
+}
+
+function updateStats(items,dels,pins){
+  var uid=getUserId();
+  var voted=0;
+  items.forEach(function(p){if(p.voters&&p.voters.indexOf(uid)>=0)voted++;});
+  document.getElementById("sCount").textContent=items.length;
+  document.getElementById("vCount").textContent=voted;
+  document.getElementById("dCount").textContent=dels.length;
+  document.getElementById("tCount").textContent=(pins&&pins.length)||0;
+}
 
 function switchTab(e,tab){
   currentTab=tab;
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
   e.target.classList.add("active");
-  initAuth();loadPending();
-}
-
-function loadPending(){
-  document.getElementById("list").innerHTML="<div class='loading'>"+LS+"...<"+LS+"div>";
-  var p=supabase("pending_pins","GET",null,"order=created_at.desc");
-  var d=supabase("deletion_requests","GET",null,"order=created_at.desc");
-  Promise.all([p,d]).then(function(res){
-    var items=res[0]||[];
-    var dels=res[1]||[];
-    if(currentTab==="deletion"){
-      renderDeletionList(dels);return;
-    }
-    updateStats(items);
-    renderList(items);
-  })["catch"](function(){
-    document.getElementById("list").innerHTML="<div class='empty'>"+FL+"<"+LS+"div>";
-  });
-}
-
-function updateStats(items){
-  var uid=getUserId();
-  var total=items.length;
-  var voted=0;
-  items.forEach(function(p){if(p.voters&&p.voters.indexOf(uid)>=0)voted++;});
-  document.getElementById("scount").textContent=total;
-  document.getElementById("vcount").textContent=voted;
-  supabase("pins","GET").then(function(pin){document.getElementById("ccount").textContent=(pin&&pin.length)||0;})["catch"](function(){});
-}
-
-function renderDeletionList(dels){
-  var uid=getUserId();
-  var html="";
-  if(!dels||!dels.length){html="<div class='empty'>"+NE+"<"+LS+"div>";document.getElementById("list").innerHTML=html;return;}
-  dels.forEach(function(p){
-    var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
-    var votes=p.votes||0;
-    var isAdmin=localStorage.getItem("abi_is_admin")==="true";
-    html+="<div class='card'>";
-    html+="<h3><span style='color:#e55'>"+DT+"<"+LS+"span> "+p.name+"<"+LS+"h3>";
-    html+="<div class='meta'>"+CORD+" ("+p.x+"%, "+p.y+"%) | "+votes+"/10 "+DV+"<"+LS+"div>";
-    html+="<div class='actions'>";
-    if(!hasVoted){
-      html+="<button class='btn btn-vote' onclick='voteDelete("+p.id+")'>"+AGREE+" ("+(votes+1)+"/10)<"+LS+"button>";
-    }else{
-      html+="<button class='btn btn-voted'>"+VOTED+"<"+LS+"button>";
-    }
-    if(isAdmin){
-      html+="<button class='btn btn-pass' onclick='adminExecDelete("+p.id+","+p.pin_id+")'>"+EXEC_DEL+"<"+LS+"button>";
-      html+="<button class='btn btn-reject' onclick='adminRejectDelete("+p.id+")'>"+REJECT+"<"+LS+"button>";
-    }
-    html+="<"+LS+"div><"+LS+"div>";
-  });
-  document.getElementById("list").innerHTML=html;
+  loadData();
 }
 
 function renderList(items){
@@ -176,7 +187,7 @@ function renderList(items){
   var html="";
   var filtered=items;
   if(currentTab==="voted"){filtered=items.filter(function(p){return p.voters&&p.voters.indexOf(uid)>=0;});}
-  if(filtered.length===0){html="<div class='empty'>"+NE+"<"+LS+"div>";}
+  if(filtered.length===0){html="<div class='empty'>没有匹配的项目</div>";}
   filtered.forEach(function(p){
     var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
     var votes=p.votes||0;
@@ -185,39 +196,89 @@ function renderList(items){
     var created=new Date(p.created_at||now).getTime();
     var hoursOld=(now-created)/3600000;
     var expired=hoursOld>=24;
-    html+="<div class='card"+(expired?" card-expired":"")+"'>";
-    html+="<h3>"+(p.ic&&p.ic.indexOf("emoji:")===0?p.ic.replace("emoji:",""):"<img src='"+p.ic+"' style='width:18px;height:18px;border-radius:3px;vertical-align:middle'>")+" "+p.name+"<"+LS+"h3>";
-    html+="<div class='meta'>"+CORD+" ("+p.x+"%, "+p.y+"%)";
+    var passed=p.admin_passed||false;
+    html+="<div class='card"+(expired?" expired":"")+"'>";
+    html+="<div class='hdr'>";
+    html+="<img src='"+(p.ic||"")+"' class='icon' onerror='this.remove()'>";
+    html+="<h3>"+p.name+"</h3>";
+    html+=passed?"<span class='badge admin-passed'>已通过</span>":"<span class='badge pending'>待审核</span>";
+    if(expired)html+="<span class='badge expired-badge'>已过期</span>";
+    if(p.submitter)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+p.submitter+"</span>";
+    html+="</div>";
+    html+="<div class='meta'>";
+    html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+")'>("+p.x+"%, "+p.y+"%)</span>";
     if(p.note)html+=" | "+p.note;
-    html+=" | "+votes+"/10 "+TICK;
-    if(expired)html+=" | <span style='color:#e55'>"+EXP+"<"+LS+"span>";
-    if(p.admin_passed)html+=" | "+ADMIN_OK;
-    html+="<"+LS+"div>";
+    html+=" | "+votes+"/10 票";
+    if(expired)html+=" | <span style='color:#e55'>已过期</span>";
+    html+="</div>";
+
+    // Images if any
+    if(p.images&&p.images.length>0){
+      html+="<div style='display:flex;gap:6px;margin:6px 0;flex-wrap:wrap'>";
+      p.images.forEach(function(img){
+        if(img&&img.startsWith("data:"))html+="<img src='"+img+"' style='width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #333;cursor:pointer' onclick='window.open(this.src)'>";
+      });
+      html+="</div>";
+    }
+
     html+="<div class='actions'>";
     if(!expired){
       if(!hasVoted){
-        html+="<button class='btn btn-vote' onclick='vote("+p.id+")'>"+AGREE+" ("+(votes+1)+"/10)<"+LS+"button>";
+        html+="<button class='btn btn-vote' onclick='vote("+p.id+")'>同意投票 ("+(votes+1)+"/10)</button>";
       }else{
-        html+="<button class='btn btn-voted'>"+VOTED+"<"+LS+"button>";
+        html+="<button class='btn btn-voted'>已投票</button>";
       }
-      if(isAdmin&&!p.admin_passed){
-        html+="<button class='btn btn-pass' onclick='adminPass("+p.id+")'>"+PASS+"<"+LS+"button>";
-        html+="<button class='btn btn-reject' onclick='adminReject("+p.id+")'>"+REJECT+"<"+LS+"button>";
+      if(isAdmin&&!passed){
+        html+="<button class='btn btn-pass' onclick='adminPass("+p.id+")'>通过</button>";
+        html+="<button class='btn btn-reject' onclick='adminReject("+p.id+")'>拒绝</button>";
       }
     }
-    html+="<button class='btn btn-del' onclick='userDelete("+p.id+")'>"+DELETE+"<"+LS+"button>";
-    html+="<"+LS+"div><"+LS+"div>";
+    if(isAdmin&&!passed&&!expired){
+      html+="<button class='btn btn-del' onclick='userDelete("+p.id+")'>删除此提交</button>";
+    }
+    html+="</div></div>";
   });
   document.getElementById("list").innerHTML=html;
 }
 
-function vote(id){if(!checkAuth())return;
+function renderDels(dels){
+  var uid=getUserId();
+  var html="";
+  if(!dels||!dels.length){html="<div class='empty'>没有删除请求</div>";}
+  dels.forEach(function(p){
+    var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
+    var votes=p.votes||0;
+    var isAdmin=localStorage.getItem("abi_is_admin")==="true";
+    html+="<div class='card'><div class='hdr'>";
+    html+="<span style='color:#e55;font-size:14px'>删除请求</span>";
+    html+="<h3>"+p.name+"</h3>"
+    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>请求人: "+p.submitted_by+"</span>";
+    html+="</div>";
+    html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+")'>("+p.x+"%, "+p.y+"%)</span>";
+    html+=" | "+votes+"/10 票（同意删除）</div>";
+    html+="<div class='actions'>";
+    if(!hasVoted){
+      html+="<button class='btn btn-vote' onclick='voteDelete("+p.id+")'>同意删除 ("+(votes+1)+"/10)</button>";
+    }else{
+      html+="<button class='btn btn-voted'>已投票</button>";
+    }
+    if(isAdmin){
+      html+="<button class='btn btn-pass' onclick='adminExecDelete("+p.id+","+p.pin_id+")'>执行删除</button>";
+      html+="<button class='btn btn-reject' onclick='adminRejectDelete("+p.id+")'>驳回</button>";
+    }
+    html+="</div></div>";
+  });
+  document.getElementById("list").innerHTML=html;
+}
+
+function vote(id){
+  if(!checkAuth())return;
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
     var voters=p.voters||[];
     var uid=getUserId();
-    if(voters.indexOf(uid)>=0){alert(ALREADY_VOTED);initAuth();loadPending();return;}
+    if(voters.indexOf(uid)>=0){alert("你已经投过票了");loadData();return;}
     voters.push(uid);
     var newVotes=(p.votes||0)+1;
     var shouldPass=newVotes>=10;
@@ -229,24 +290,25 @@ function vote(id){if(!checkAuth())return;
           if(approved&&approved.length){
             var a=approved[0];
             supabase("pins","POST",{x:a.x,y:a.y,name:a.name,type:a.type,ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[]}).then(function(){
-              supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
+              supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
             });
           }
         });
       }else{
-        initAuth();loadPending();
+        loadData();
       }
     });
   });
 }
 
-function voteDelete(id){if(!checkAuth())return;
+function voteDelete(id){
+  if(!checkAuth())return;
   supabase("deletion_requests","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
     var voters=p.voters||[];
     var uid=getUserId();
-    if(voters.indexOf(uid)>=0){alert(ALREADY_VOTED);initAuth();loadPending();return;}
+    if(voters.indexOf(uid)>=0){alert("你已经投过票了");loadData();return;}
     voters.push(uid);
     var newVotes=(p.votes||0)+1;
     var update={votes:newVotes,voters:voters};
@@ -254,85 +316,65 @@ function voteDelete(id){if(!checkAuth())return;
     supabase("deletion_requests","PATCH",update,"id=eq."+id).then(function(){
       if(newVotes>=10){
         supabase("pins","DELETE",null,"id=eq."+p.pin_id).then(function(){
-          supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
+          supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){loadData();});
         });
       }else{
-        initAuth();loadPending();
+        loadData();
       }
     });
   });
 }
 
-function adminPass(id){if(!checkAuth())return;
-  if(!confirm(CONFIRM_PASS))return;
+function adminPass(id){
+  if(!checkAuth())return;
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
     supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[]}).then(function(){
-      supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
+      supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
     });
   });
 }
 
-function adminReject(id){if(!checkAuth())return;
-  if(!confirm(CONFIRM_REJECT))return;
-  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
+function adminReject(id){
+  if(!checkAuth())return;
+  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
 }
 
-function adminExecDelete(reqId,pinId){if(!checkAuth())return;
-  if(!confirm(CONFIRM_EXEC_DEL))return;
+function adminExecDelete(reqId,pinId){
+  if(!checkAuth())return;
   supabase("pins","DELETE",null,"id=eq."+pinId).then(function(){
-    supabase("deletion_requests","DELETE",null,"id=eq."+reqId).then(function(){initAuth();loadPending();});
+    supabase("deletion_requests","DELETE",null,"id=eq."+reqId).then(function(){loadData();});
   });
 }
 
-function adminRejectDelete(id){if(!checkAuth())return;
-  if(!confirm(CONFIRM_REJECT_DEL))return;
-  supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
+function adminRejectDelete(id){
+  if(!checkAuth())return;
+  supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){loadData();});
 }
 
-function userDelete(id){if(!checkAuth())return;
-  if(!confirm(CONFIRM_USER_DEL))return;
-  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){initAuth();loadPending();});
+function userDelete(id){
+  if(!checkAuth())return;
+  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
+}
+
+function viewOnMap(x,y){
+  window.open("map-farm.html?x="+x+"&y="+y,"_blank");
 }
 
 function toggleAdmin(){
   var isAdmin=localStorage.getItem("abi_is_admin")==="true";
   if(isAdmin){
     localStorage.setItem("abi_is_admin","false");
+    document.getElementById("adminBtn").classList.remove("active");
   }else{
-    var pass=prompt(ADMIN_PROMPT);
-    if(pass==="admin888"){localStorage.setItem("abi_is_admin","true");}else{alert(ADMIN_FAIL);return;}
+    var pass=prompt("请输入管理员密码");
+    if(pass==="admin888"){localStorage.setItem("abi_is_admin","true");document.getElementById("adminBtn").classList.add("active");}else{alert("密码错误");return;}
   }
-  initAuth();loadPending();
+  loadData();
 }
 
-// Text constants (avoid </ in JS strings)
-var LS = "/div";
-var DT = "删除请求";
-var CORD = "坐标:";
-var DV = "票（同意删除）";
-var AGREE = "同意";
-var VOTED = "已投票";
-var EXEC_DEL = "执行删除";
-var REJECT = "驳回";
-var NE = "没有匹配的项目";
-var FL = "加载失败，请检查网络";
-var TICK = "票";
-var EXP = "已过期（超过24小时）";
-var ADMIN_OK = "管理员已通过";
-var PASS = "通过";
-var DELETE = "删除此提交";
-var ALREADY_VOTED = "\\u4F60\\u5DF2\\u7ECF\\u6295\\u8FC7票\\u4E86";
-var CONFIRM_PASS = "\\u786E\\u8BA4\\u76F4\\u63A5通过\\u8FD9\\u4E2A\\u70B9\\u4F4D\\uFF1F";
-var CONFIRM_REJECT = "确认拒绝这个点位？会永久删除！";
-var CONFIRM_EXEC_DEL = "确认删除这个点位？";
-var CONFIRM_REJECT_DEL = "驳回\\u5220\\u9664\\u8BF7\\u6C42\\uFF1F";
-var CONFIRM_USER_DEL = "确认删除这条提交？";
-var ADMIN_PROMPT = "请输入管理员密码";
-var ADMIN_FAIL = "密码错误";
-
-initAuth();loadPending();
+initAuth();loadData();
 </script>
 </body>
 </html>
