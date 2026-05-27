@@ -56,7 +56,7 @@
 
 <section class="hero">
   <h1>暗区突围：无限</h1>
-  <p>PC 端最硬核的撤离射击攻略站<br>地图点位 · 帖子改装 · 战术闲聊 · 攻略推荐</p>
+  <p>PC 端最硬核的撤离射击攻略站<br>地图点位 · 帖子改装 · 战术闲聊 · 装备推荐</p>
   <div class="hero-features">
     <a href="pages/maps.html" class="cta">🗺️ 地图攻略</a>
     <a href="pages/weapons.html" class="cta">🔫 帖子改装</a>
@@ -119,87 +119,15 @@
   </div>
 </section>
 
-<section id="weapons">
-  <h2>🔫 热门帖子</h2>
-  <p class="subtitle">点击查看详细改装方案</p>
-  <div class="card-grid">
-    <a href="pages/weapons.html#h416" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">🔧</span>
-      <h3>H416 满改方案</h3>
-      <p>PC 端后坐力控制更严，满改 H416 是中距离之王。预算约 10-15 万。</p>
-      <span class="tag tag-weapon">AR</span>
-    </a>
-    <a href="pages/weapons.html#m4a1" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">🔧</span>
-      <h3>M4A1 泛用改</h3>
-      <p>PC 端最稳 AR 之一，压枪轻松，新手友好。</p>
-      <span class="tag tag-weapon">AR</span>
-    </a>
-    <a href="pages/weapons.html#vector" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">🔧</span>
-      <h3>Vector 9mm</h3>
-      <p>极致射速，贴脸一秒融化。PC 端腰射精度更好。</p>
-      <span class="tag tag-weapon">SMG</span>
-    </a>
-    <a href="pages/weapons.html#ax50" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">🔧</span>
-      <h3>AX50 狙击</h3>
-      <p>一发入魂，山谷/北山架枪首选。配高倍镜+双脚架。</p>
-      <span class="tag tag-weapon">SR</span>
-    </a>
-    <a href="pages/weapons.html#fal" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">🔧</span>
-      <h3>FAL 精确射手</h3>
-      <p>半自动高伤害，PC 端点射节奏更好控制。</p>
-      <span class="tag tag-weapon">DMR</span>
-    </a>
-    <a href="pages/weapons.html#ak74n" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">🔧</span>
-      <h3>AK74N 平民改</h3>
-      <p>3-5 万预算入门改装，PC 端压枪练手好选择。</p>
-      <span class="tag tag-weapon">AR</span>
-    </a>
+<section id="hot-posts">
+  <h2>📌 热门帖子</h2>
+  <p class="subtitle">最新的帖子动态</p>
+  <div id="hotPostList" style="display:flex;flex-direction:column;gap:0.8rem;margin-bottom:2rem;">
+    <div style="text-align:center;color:#666;padding:2rem;">加载中...</div>
   </div>
-</section>
-
-<div class="video-section">
-  <h2>🎬 攻略视频</h2>
-  <p class="subtitle" style="color:#888;margin-top:0.5rem;font-size:0.95rem;">把你的 B 站视频 BVID 发给我，我帮你嵌入到这里</p>
-  <div class="video-grid">
-    <div class="video-card">
-      <div class="placeholder">
-        <span>🎥</span>
-        <span>发我 B 站视频链接</span>
-      </div>
-      <div class="vbody">
-        <h4>你的攻略视频标题</h4>
-        <p>BV 号发我，立即嵌入</p>
-      </div>
-    </div>
-    <div class="video-card">
-      <div class="placeholder">
-        <span>🎥</span>
-        <span>发我 B 站视频链接</span>
-      </div>
-      <div class="vbody">
-        <h4>你的攻略视频标题</h4>
-        <p>BV 号发我，立即嵌入</p>
-      </div>
-    </div>
-    <div class="video-card">
-      <div class="placeholder">
-        <span>🎥</span>
-        <span>发我 B 站视频链接</span>
-      </div>
-      <div class="vbody">
-        <h4>你的攻略视频标题</h4>
-        <p>BV 号发我，立即嵌入</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<section id="gear">
+  <div style="text-align:center;margin-top:1rem;">
+    <a href="pages/weapons.html" style="display:inline-block;padding:0.5rem 1.5rem;background:#1a1a22;color:#ffc832;border:1px solid #333;border-radius:8px;text-decoration:none;font-size:0.9rem;">查看全部帖子 →</a>
+  </div>id="gear">
   <h2>🛡️ 攻略推荐</h2>
   <p class="subtitle">PC 端不同预算下的装备搭配方案</p>
   <div class="card-grid">
@@ -236,5 +164,37 @@
 </footer>
 
 <script src="supabase.js"></script>
+<script>
+async function loadHotPosts(){
+  try{
+    var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+    var r=await fetch('https://hanrfbciinkhgcumvous.supabase.co/rest/v1/map_posts?order=created_at.desc&limit=5',{
+      headers:{'Authorization':'Bearer '+key,'apiKey':key}
+    });
+    if(!r.ok)throw new Error(r.status);
+    var posts=await r.json();
+    if(!Array.isArray(posts)||posts.length===0){
+      document.getElementById('hotPostList').innerHTML='<div style="text-align:center;color:#666;padding:2rem;">还没有帖子，<a href="pages/weapons.html" style="color:#ffc832;">去发布第一条</a></div>';
+      return;
+    }
+    var html='';
+    posts.forEach(function(p){
+      var preview=(p.content||'').substring(0,150);
+      if((p.content||'').length>150)preview+='...';
+      html+='<div style="background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:1rem;">'+
+        '<h3 style="margin:0 0 0.3rem 0;font-size:1rem;"><a href="pages/weapons.html" style="color:#ffc832;text-decoration:none;">'+esc(p.title||'无标题')+'</a></h3>'+
+        '<div style="color:#666;font-size:0.8rem;margin-bottom:0.4rem;display:flex;gap:1rem;">'+
+        '<span>'+esc(p.author||'匿名')+'</span><span>'+esc(p.category||'杂谈')+'</span>'+
+        '<span>'+(p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'')+'</span></div>'+
+        '<div style="color:#aaa;font-size:0.85rem;line-height:1.5;">'+esc(preview)+'</div></div>';
+    });
+    document.getElementById('hotPostList').innerHTML=html;
+  }catch(e){
+    document.getElementById('hotPostList').innerHTML='<div style="text-align:center;color:#666;padding:2rem;">加载失败</div>';
+  }
+}
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
+document.addEventListener('DOMContentLoaded',loadHotPosts);
+</script>
 </body>
 </html>
