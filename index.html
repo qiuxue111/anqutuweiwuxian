@@ -208,7 +208,7 @@ function loginGitHub(){
       try{
         var payload=JSON.parse(atob(t.split('.')[1]));
         localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',payload.email||payload.user_metadata?.email||'');
+        localStorage.setItem('abi_user',payload.email||payload.user_metadata?.email||'');location.reload();
         history.replaceState(null,'',window.location.pathname);
       }catch(err){}
     }

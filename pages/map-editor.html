@@ -525,7 +525,7 @@
       try{
         var payload=JSON.parse(atob(t.split('.')[1]));
         localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',p.get('email')||payload.email||'');
+        localStorage.setItem('abi_user',p.get('email')||payload.email||'');location.reload();
         history.replaceState(null,'',window.location.pathname);
       }catch(err){}
     }
