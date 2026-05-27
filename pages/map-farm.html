@@ -551,12 +551,17 @@ function deleteCurrentPin(){
   if(!currentUser){login();return;}
   if(curPinIdx===null)return;
   var p=pins[curPinIdx];
-  if(!confirm("确认提交删除申请？其他人将可以对此投票。"))return;
+  if(!confirm("确认提交删除申请？其他人将可以对此投票，审核通过后该点位才会被移除。"))return;
   if(p.id){
-    supabase("deletion_requests","POST",{pin_id:p.id,name:p.name,type:p.type,x:p.x,y:p.y,reason:"用户提交",votes:0,voters:[]});
+    supabase("deletion_requests","POST",{pin_id:p.id,name:p.name,type:p.type,x:p.x,y:p.y,submitted_by:currentUser.user_metadata&&currentUser.user_metadata.user_name||"匿名",reason:"用户提交",votes:0,voters:[]}).then(function(){
+      alert("删除申请已提交，等待审核投票。");
+    }).catch(function(){
+      alert("提交删除申请失败，请重试。");
+    });
+  }else{
+    pins.splice(curPinIdx,1);curPinIdx=null;
+    savePins();renderMarkers();closePinDetail();
   }
-  pins.splice(curPinIdx,1);curPinIdx=null;
-  savePins();renderMarkers();closePinDetail();
 }
 
 // ─── 容器点位评论区 ───

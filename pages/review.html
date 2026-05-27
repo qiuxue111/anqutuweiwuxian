@@ -131,7 +131,10 @@ function supabase(t,m,b,q){
   var u=SUPABASE_URL+"/rest/v1/"+t;if(q)u+="?"+q;
   var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"}};
   if(b&&m!=="GET")o.body=JSON.stringify(b);
-  return fetch(u,o).then(function(r){return r.json();});
+  return fetch(u,o).then(function(r){
+    if(!r.ok){throw new Error("HTTP "+r.status+" for "+t);}
+    return r.json().catch(function(){return [];});
+  });
 }
 
 function getUserId(){
@@ -150,9 +153,9 @@ function switchTab(e,tab){
 
 function loadData(){
   document.getElementById("list").innerHTML="<div class='loading'>加载中...</div>";
-  var p=supabase("pending_pins","GET",null,"order=created_at.desc");
-  var d=supabase("deletion_requests","GET",null,"order=created_at.desc");
-  var pin=supabase("pins","GET",null,"order=created_at.desc");
+  var p=supabase("pending_pins","GET",null,"order=created_at.desc").catch(function(){return [];});
+  var d=supabase("deletion_requests","GET",null,"order=created_at.desc").catch(function(){return [];});
+  var pin=supabase("pins","GET",null,"order=created_at.desc").catch(function(){return [];});
   Promise.all([p,d,pin]).then(function(res){
     var items=res[0]||[];
     var dels=res[1]||[];
@@ -160,7 +163,7 @@ function loadData(){
     if(currentTab==="deletion"){renderDels(dels);return;}
     updateStats(items,dels,pins);
     renderList(items);
-  }).catch(function(){
+  }).catch(function(e){
     document.getElementById("list").innerHTML="<div class='empty'>加载失败，请检查网络</div>";
   });
 }
