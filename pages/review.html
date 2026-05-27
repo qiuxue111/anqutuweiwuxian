@@ -267,28 +267,28 @@ function toggleAdmin(){
 
 // Text constants (avoid </ in JS strings)
 var LS = "/div";
-var DT = "\\uD83D\\uDDD1 \\u5220\\u9664\\u8BF7\\u6C42";
-var CORD = "\\u5750\\u6807:";
-var DV = "\\u7968\\uFF08\\u540C\\u610F\\u5220\\u9664\\uFF09";
-var AGREE = "\\u540C\\u610F";
-var VOTED = "\\u5DF2\\u6295\\u7968";
-var EXEC_DEL = "\\u6267\\u884C\\u5220\\u9664";
-var REJECT = "\\u62B3\\u56DE";
-var NE = "\\u6CA1\\u6709\\u5339\\u914D\\u7684\\u9879\\u76EE";
-var FL = "\\u52A0\\u8F7D\\u5931\\u8D25\\uFF0C\\u8BF7\\u68C0\\u67E5\\u7F51\\u7EDC";
-var TICK = "\\u7968";
-var EXP = "\\u5DF2\\u8FC7\\u671F\\uFF08\\u8D85\\u8FC724\\u5C0F\\u65F6\\uFF09";
-var ADMIN_OK = "\\u7BA1\\u7406\\u5458\\u5DF2\\u901A\\u8FC7";
-var PASS = "\\u901A\\u8FC7";
-var DELETE = "\\u5220\\u9664\\u6B64\\u63D0\\u4EA4";
-var ALREADY_VOTED = "\\u4F60\\u5DF2\\u7ECF\\u6295\\u8FC7\\u7968\\u4E86";
-var CONFIRM_PASS = "\\u786E\\u8BA4\\u76F4\\u63A5\\u901A\\u8FC7\\u8FD9\\u4E2A\\u70B9\\u4F4D\\uFF1F";
-var CONFIRM_REJECT = "\\u786E\\u8BA4\\u62D2\\u7EDD\\u8FD9\\u4E2A\\u70B9\\u4F4D\\uFF1F\\u4F1A\\u6C38\\u4E45\\u5220\\u9664\\uFF01";
-var CONFIRM_EXEC_DEL = "\\u786E\\u8BA4\\u5220\\u9664\\u8FD9\\u4E2A\\u70B9\\u4F4D\\uFF1F";
-var CONFIRM_REJECT_DEL = "\\u62B3\\u56DE\\u5220\\u9664\\u8BF7\\u6C42\\uFF1F";
-var CONFIRM_USER_DEL = "\\u786E\\u8BA4\\u5220\\u9664\\u8FD9\\u6761\\u63D0\\u4EA4\\uFF1F";
-var ADMIN_PROMPT = "\\u8BF7\\u8F93\\u5165\\u7BA1\\u7406\\u5458\\u5BC6\\u7801";
-var ADMIN_FAIL = "\\u5BC6\\u7801\\u9519\\u8BEF";
+var DT = "删除请求";
+var CORD = "坐标:";
+var DV = "票（同意删除）";
+var AGREE = "同意";
+var VOTED = "已投票";
+var EXEC_DEL = "执行删除";
+var REJECT = "驳回";
+var NE = "没有匹配的项目";
+var FL = "加载失败，请检查网络";
+var TICK = "票";
+var EXP = "已过期（超过24小时）";
+var ADMIN_OK = "管理员已通过";
+var PASS = "通过";
+var DELETE = "删除此提交";
+var ALREADY_VOTED = "\\u4F60\\u5DF2\\u7ECF\\u6295\\u8FC7票\\u4E86";
+var CONFIRM_PASS = "\\u786E\\u8BA4\\u76F4\\u63A5通过\\u8FD9\\u4E2A\\u70B9\\u4F4D\\uFF1F";
+var CONFIRM_REJECT = "确认拒绝这个点位？会永久删除！";
+var CONFIRM_EXEC_DEL = "确认删除这个点位？";
+var CONFIRM_REJECT_DEL = "驳回\\u5220\\u9664\\u8BF7\\u6C42\\uFF1F";
+var CONFIRM_USER_DEL = "确认删除这条提交？";
+var ADMIN_PROMPT = "请输入管理员密码";
+var ADMIN_FAIL = "密码错误";
 
 loadPending();
 </script>
