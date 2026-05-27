@@ -662,16 +662,21 @@ function jumpToFromUrl(){
 
 // Show a non-editable pin info popup (for review center jumps)
 function showPinInfo(x,y,name,type,ic){
-  var overlay=document.getElementById("pd");
-  overlay.style.display="flex";
-  document.getElementById("pdTitle").innerHTML="<img src='"+(ic||"")+"' style='width:28px;height:28px;border-radius:4px;object-fit:cover'> "+(name||"未知");
-  document.getElementById("pdCoord").textContent="位置： "+x+"%, "+y+"%";
-  document.getElementById("pdNote").value="";
-  document.getElementById("pdNote").disabled=true;
-  document.querySelectorAll("#pd .pd-img-grid,#pd .pd-comments,.pd-save-note,#pd .pd-upload-label").forEach(function(el){if(el)el.style.display="none";});
-  // Hide delete button if shown
-  var q=document.querySelector("#pd .pd-actions");
-  if(q)q.style.display="none";
+  // Remove existing info card if any
+  var old=document.getElementById("pinInfoCard");
+  if(old)old.remove();
+  // Create floating card at top-right corner (non-blocking)
+  var card=document.createElement("div");
+  card.id="pinInfoCard";
+  card.innerHTML="<div style='background:rgba(18,18,26,.96);border:1px solid #1e1e2a;border-radius:12px;padding:16px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,.5);position:relative'>"+
+    "<button onclick='this.parentElement.parentElement.remove()' style='position:absolute;top:8px;right:10px;color:#666;font-size:16px;cursor:pointer;background:none;border:none'>X<\/button>"+
+    "<div style='display:flex;align-items:center;gap:10px;margin-bottom:8px'>"+
+      "<img src='"+(ic||"")+"' style='width:36px;height:36px;border-radius:6px;object-fit:cover'>"+
+      "<div><div style='color:#ffc832;font-weight:600;font-size:15px'>"+(name||"未知")+"<\/div>"+
+      "<div style='color:#999;font-size:12px'>位置: "+x+"%, "+y+"%<\/div><\/div>"+
+    "<\/div><div style='color:#888;font-size:12px;border-top:1px solid #1e1e2a;padding-top:8px;margin-top:4px'>审核中 - 此点位尚未公开<\/div><\/div>";
+  card.style.cssText="position:fixed;top:12px;right:12px;z-index:9999";
+  document.body.appendChild(card);
 }
 </script>
 
