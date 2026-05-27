@@ -216,6 +216,12 @@ function renderList(items){
     if(expired)html+=" | <span style='color:#e55'>已过期</span>";
     html+="</div>";
 
+    // Map thumbnail
+    html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:1200/900;background:#0a0a0f;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
+    html+="<img src='../assets/maps/farm.png' style='width:100%;height:100%;object-fit:contain;display:block' onerror='this.parentElement.remove()'>";
+    html+="<div style='position:absolute;left:"+p.x+"%;top:"+p.y+"%;transform:translate(-50%,-50%);width:10px;height:10px;background:#ff4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(255,0,0,.6);pointer-events:none'></div>";
+    html+="</div>";
+
     // Images if any
     if(p.images&&p.images.length>0){
       html+="<div style='display:flex;gap:6px;margin:6px 0;flex-wrap:wrap'>";
@@ -260,6 +266,13 @@ function renderDels(dels){
     html+="</div>";
     html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+")'>("+p.x+"%, "+p.y+"%)</span>";
     html+=" | "+votes+"/10 票（同意删除）</div>";
+
+    // Map thumbnail
+    html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:1200/900;background:#0a0a0f;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
+    html+="<img src='../assets/maps/farm.png' style='width:100%;height:100%;object-fit:contain;display:block' onerror='this.parentElement.remove()'>";
+    html+="<div style='position:absolute;left:"+p.x+"%;top:"+p.y+"%;transform:translate(-50%,-50%);width:10px;height:10px;background:#ff4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(255,0,0,.6);pointer-events:none'></div>";
+    html+="</div>";
+
     html+="<div class='actions'>";
     if(!hasVoted){
       html+="<button class='btn btn-vote' onclick='voteDelete("+p.id+")'>同意删除 ("+(votes+1)+"/10)</button>";
