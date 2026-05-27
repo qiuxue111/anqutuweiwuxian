@@ -550,12 +550,14 @@ function renderPinImages(){
 }
 function addPinImages(files){
   if(curPinIdx===null||!files.length)return;
+  var done=0,total=files.length;
   for(var i=0;i<files.length;i++){
     (function(file){
       var reader=new FileReader();
       reader.onload=function(e){
         pins[curPinIdx].images.push(e.target.result);
-        if(i===files.length-1){savePins();renderPinImages();}
+        done++;
+        if(done===total){savePins();renderPinImages();}
       };
       reader.readAsDataURL(file);
     })(files[i]);
