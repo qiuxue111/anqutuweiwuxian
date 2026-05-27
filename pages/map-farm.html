@@ -496,7 +496,7 @@ function supabase(t,m,b,q){
 var cloudPins=[],cloudComments=[];
 function loadCloudPins(){
   var a=[];
-  a.push(supabase("pins","GET").then(function(d){if(d&&d.length){cloudPins=d;cloudPins.forEach(function(p){delete p.id;delete p.created_at;});}}));
+  a.push(supabase("pins","GET").then(function(d){if(d&&d.length){cloudPins=d;cloudPins.forEach(function(p){delete p.created_at;});}}));
   a.push(supabase("map_comments","GET").then(function(d){if(d&&d.length){cloudComments=d;cloudComments.forEach(function(c){delete c.id;delete c.created_at;});}}));
   Promise.all(a).then(function(){
     pins=cloudPins.slice();
