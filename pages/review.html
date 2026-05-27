@@ -405,21 +405,24 @@ function drawMapThumbs(){
     var img=new Image();
     img.crossOrigin="anonymous";
     img.onload=function(){
+      // The map uses percentage coords based on DISPLAYED size (css width:100%).
+      // We display at 200px wide → img scale = 200 / img.naturalWidth
       var x=parseFloat(c.dataset.x),y=parseFloat(c.dataset.y);
+      var displayScale=200/img.naturalWidth; // since map is width:100%
+      var displayH=img.naturalHeight*displayScale;
+      // Source crop (at natural resolution) centered on the point
+      var px=img.naturalWidth*x/100, py=img.naturalHeight*y/100;
+      var cropSz=200/displayScale; // crop area at natural res that maps to 200px display
+      var sx=px-cropSz/2, sy=py-cropSz/2;
+      sx=Math.max(0,Math.min(sx,img.naturalWidth-cropSz));
+      sy=Math.max(0,Math.min(sy,img.naturalHeight-cropSz));
       var ctx=c.getContext("2d");
-      // Draw full map scaled down to fit 200x200
-      var scaleX=200/img.naturalWidth, scaleY=200/img.naturalHeight;
-      var s=Math.min(scaleX,scaleY); // fit inside
-      var offX=(200-img.naturalWidth*s)/2, offY=(200-img.naturalHeight*s)/2;
-      ctx.fillStyle="#0f0f16";ctx.fillRect(0,0,200,200);
-      ctx.drawImage(img,0,0,img.naturalWidth*s,img.naturalHeight*s);
-      // Red dot at percentage position (relative to displayed image)
-      var dotX=offX+img.naturalWidth*s*x/100;
-      var dotY=offY+img.naturalHeight*s*y/100;
-      ctx.beginPath();ctx.arc(dotX,dotY,6,0,Math.PI*2);
+      ctx.drawImage(img,sx,sy,cropSz,cropSz,0,0,200,200);
+      // Red dot at center
+      ctx.beginPath();ctx.arc(100,100,6,0,Math.PI*2);
       ctx.fillStyle="#ff4444";ctx.fill();
       ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();
-      // Coord label bottom-right
+      // Coord label
       ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(130,184,68,14);
       ctx.fillStyle="#ff4444";ctx.font="10px monospace";
       ctx.fillText("("+x+"%, "+y+"%)",133,195);
