@@ -217,9 +217,14 @@ function renderList(items){
     html+="</div>";
 
     // Map thumbnail
-    html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:1200/900;background:#0a0a0f;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
-    html+="<img src='../assets/maps/farm.png' style='width:100%;height:100%;object-fit:contain;display:block' onerror='this.parentElement.remove()'>";
-    html+="<div style='position:absolute;left:"+p.x+"%;top:"+p.y+"%;transform:translate(-50%,-50%);width:10px;height:10px;background:#ff4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(255,0,0,.6);pointer-events:none'></div>";
+    html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:2/1.5;background:#0f0f16;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
+    html+="<svg viewBox='0 0 200 150' style='width:100%;height:100%;display:block'>";
+    html+="<rect x='0' y='0' width='200' height='150' fill='#0f0f16'/>";
+    html+="<line x1='0' y1='75' x2='200' y2='75' stroke='#1a1a24' stroke-width='0.5'/>";
+    html+="<line x1='100' y1='0' x2='100' y2='150' stroke='#1a1a24' stroke-width='0.5'/>";
+    html+="<circle cx='"+(p.x*2)+"' cy='"+(p.y*1.5)+"' r='5' fill='#ff4444' stroke='#fff' stroke-width='1.5' opacity='0.9'/>";
+    html+="<text x='"+(p.x*2+8)+"' y='"+(p.y*1.5+4)+"' fill='#ff4444' font-size='8' font-family='monospace'>("+p.x+"%, "+p.y+"%)</text>";
+    html+="</svg>";
     html+="</div>";
 
     // Images if any
@@ -268,9 +273,14 @@ function renderDels(dels){
     html+=" | "+votes+"/10 票（同意删除）</div>";
 
     // Map thumbnail
-    html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:1200/900;background:#0a0a0f;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
-    html+="<img src='../assets/maps/farm.png' style='width:100%;height:100%;object-fit:contain;display:block' onerror='this.parentElement.remove()'>";
-    html+="<div style='position:absolute;left:"+p.x+"%;top:"+p.y+"%;transform:translate(-50%,-50%);width:10px;height:10px;background:#ff4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(255,0,0,.6);pointer-events:none'></div>";
+    html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:2/1.5;background:#0f0f16;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
+    html+="<svg viewBox='0 0 200 150' style='width:100%;height:100%;display:block'>";
+    html+="<rect x='0' y='0' width='200' height='150' fill='#0f0f16'/>";
+    html+="<line x1='0' y1='75' x2='200' y2='75' stroke='#1a1a24' stroke-width='0.5'/>";
+    html+="<line x1='100' y1='0' x2='100' y2='150' stroke='#1a1a24' stroke-width='0.5'/>";
+    html+="<circle cx='"+(p.x*2)+"' cy='"+(p.y*1.5)+"' r='5' fill='#ff4444' stroke='#fff' stroke-width='1.5' opacity='0.9'/>";
+    html+="<text x='"+(p.x*2+8)+"' y='"+(p.y*1.5+4)+"' fill='#ff4444' font-size='8' font-family='monospace'>("+p.x+"%, "+p.y+"%)</text>";
+    html+="</svg>";
     html+="</div>";
 
     html+="<div class='actions'>";
