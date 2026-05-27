@@ -319,14 +319,14 @@ function logout(){
   updateAuthUI();
 }
 function updateAuthUI(){
-  var el=document.getElementById("authBar");
+  var el=document.getElementById("authArea");
   if(!el)return;
-  var sp="/span",ae="/a";
   if(currentUser){
     var nm=currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登录";
-    el.innerHTML="<span style='color:#8c8'>"+nm+"<"+sp+"> <a href='javascript:logout()' style='color:#e55;font-size:12px'>退出<"+ae+">";
+    var av=currentUser.user_metadata&&currentUser.user_metadata.avatar_url||"";
+    el.innerHTML="<img src='"+av+"' style='width:26px;height:26px;border-radius:50%;vertical-align:middle;margin-right:6px'> <span style='color:#8c8;font-size:13px'>"+nm+"</span> <span onclick='logout()' style='cursor:pointer;color:#e55;font-size:12px;margin-left:8px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退出</span>";
   }else{
-    el.innerHTML="<a href='javascript:login()' style='color:#ffc832;font-size:13px'>GitHub 登录<"+ae+">";
+    el.innerHTML="<span onclick='login()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:4px 12px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录</span>";
   }
 }
 function supabase(t,m,b,q){
