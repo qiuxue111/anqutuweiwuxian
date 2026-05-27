@@ -44,6 +44,9 @@ footer a{color:#444;text-decoration:none}
 <div class="tabs">
   <div class="tab active" onclick="switchTab(event,'pending')">待审核</div>
   <div class="tab" onclick="switchTab(event,'voted')">我投过票</div>
+  <div class="tab" onclick="switchTab(event,'deletion')">待删除</div>
+  <div class="tab" onclick="switchTab(event,'all')">全部</div>
+  <div class="tab" onclick="switchTab(event,'voted')">我投过票</div>
   <div class="tab" onclick="switchTab(event,'all')">全部</div>
 </div>
 <div id="list"><div class="loading">加载中...</div></div>
@@ -77,6 +80,22 @@ function switchTab(e,tab){
 
 function loadPending(){
   document.getElementById("list").innerHTML="<div class='loading'>加载中...</div>";
+  var p=supabase("pending_pins","GET",null,"order=created_at.desc");
+  var d=supabase("deletion_requests","GET",null,"order=created_at.desc");
+  Promise.all([p,d]).then(function(res){
+    var items=res[0]||[];
+    var dels=res[1]||[];
+    if(currentTab==="deletion"){
+      renderDeletionList(dels);return;
+    }
+    if(!items||!items.length){document.getElementById("list").innerHTML="<div class='empty'>暂无待审核项目</div>";updateStats(items);return;}
+    updateStats(items);
+    renderList(items);
+  }).catch(function(){
+    document.getElementById("list").innerHTML="<div class='empty'>加载失败，请检查网络</div>";
+  });
+}
+  document.getElementById("list").innerHTML="<div class='loading'>加载中...</div>";
   supabase("pending_pins","GET",null,"order=created_at.desc").then(function(items){
     if(!items||!items.length){document.getElementById("list").innerHTML="<div class='empty'>暂无待审核项目</div>";updateStats([]);return;}
     updateStats(items);
@@ -94,6 +113,33 @@ function updateStats(items){
   document.getElementById("scount").textContent=total;
   document.getElementById("vcount").textContent=voted;
   supabase("pins","GET").then(function(p){document.getElementById("ccount").textContent=(p&&p.length)||0;}).catch(function(){});
+}
+
+function renderDeletionList(dels){
+  var uid=getUserId();
+  var html="";
+  if(!dels||!dels.length){html="<div class='empty'>暂无删除请求</div>";document.getElementById("list").innerHTML=html;updateStats([]);return;}
+  dels.forEach(function(p){
+    var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
+    var votes=p.votes||0;
+    var isAdmin=localStorage.getItem("abi_is_admin")==="true";
+    html+="<div class='card'>";
+    html+="<h3><span style='color:#e55'>🗑 删除请求</span> "+p.name+"</h3>";
+    html+="<div class='meta'>坐标: ("+p.x+"%, "+p.y+"%) | "+votes+"/10 票（同意删除）</div>";
+    html+="<div class='actions'>";
+    if(!hasVoted){
+      html+="<button class='btn btn-vote' onclick='voteDelete("+p.id+")'>同意删除 ("+(votes+1)+"/10)</button>";
+    }else{
+      html+="<button class='btn btn-voted'>已投票</button>";
+    }
+    if(isAdmin){
+      html+="<button class='btn btn-pass' onclick='adminExecDelete("+p.id+","+p.pin_id+")'>执行删除</button>";
+      html+="<button class='btn btn-reject' onclick='adminRejectDelete("+p.id+")'>驳回</button>";
+    }
+    html+="</div></div>";
+  });
+  document.getElementById("list").innerHTML=html;
+  updateStats([]);
 }
 
 function renderList(items){
@@ -187,6 +233,38 @@ function userDelete(id){
   supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
 }
 
+function voteDelete(id){
+  supabase("deletion_requests","GET",null,"id=eq."+id).then(function(items){
+    if(!items||!items.length)return;
+    var p=items[0];
+    var voters=p.voters||[];
+    var uid=getUserId();
+    if(voters.indexOf(uid)>=0){alert("你已经投过票了");loadPending();return;}
+    voters.push(uid);
+    var newVotes=(p.votes||0)+1;
+    var update={votes:newVotes,voters:voters};
+    if(newVotes>=10)update.approved=true;
+    supabase("deletion_requests","PATCH",update,"id=eq."+id).then(function(){
+      if(newVotes>=10){
+        supabase("pins","DELETE",null,"id=eq."+p.pin_id).then(function(){
+          supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+        });
+      }else{
+        loadPending();
+      }
+    });
+  });
+}
+function adminExecDelete(reqId,pinId){
+  if(!confirm("确认删除这个点位？"))return;
+  supabase("pins","DELETE",null,"id=eq."+pinId).then(function(){
+    supabase("deletion_requests","DELETE",null,"id=eq."+reqId).then(function(){loadPending();})).then(function(){loadPending();});
+  });
+}
+function adminRejectDelete(id){
+  if(!confirm("驳回删除请求？"))return;
+  supabase("deletion_requests","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+}
 function toggleAdmin(){
   var isAdmin=localStorage.getItem("abi_is_admin")==="true";
   if(isAdmin){

@@ -475,7 +475,11 @@ function addPinImages(files){
 }
 function deleteCurrentPin(){
   if(curPinIdx===null)return;
-  if(!confirm("确认删除这个点位？"))return;
+  var p=pins[curPinIdx];
+  if(!confirm("确认提交删除申请？其他人将可以对此投票。"))return;
+  if(p.id){
+    supabase("deletion_requests","POST",{pin_id:p.id,name:p.name,type:p.type,x:p.x,y:p.y,reason:"用户提交",votes:0,voters:[]});
+  }
   pins.splice(curPinIdx,1);curPinIdx=null;
   savePins();renderMarkers();closePinDetail();
 }
