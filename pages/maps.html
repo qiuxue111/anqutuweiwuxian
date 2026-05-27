@@ -196,7 +196,7 @@
     <p>暗区突围：无?攻略站 · 持续更新</p>
     <p style="margin-top:0.3rem;">数据基于游戏版本 · 仅供参</p>
   </footer>
-<script src="../supabase.js"></script>
+
 <script>
 var currentUser=null,currentToken=null,selectedMapId=null;
 function initAuth(){
@@ -213,8 +213,8 @@ function initAuth(){
     var l=document.getElementById('loginBtn');if(l)l.style.display='none';}
   loadAllVideos();}
 function loginGitHub(){
-  var s=supabasejs.createClient('https://hanrfbciinkhgcumvous.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok');
-  s.auth.signInWithOAuth({provider:'github'});}
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(window.location.origin+'/anqutuweiwuxian/'+(f.startsWith('pages')?'pages/':'')+(f.endsWith('.html')?f:'index.html'));
+  window.location.href=u;});}
 function toggleVideoPanel(){
   var p=document.getElementById('videoPanel');
   p.style.display=p.style.display==='none'?'block':'none';

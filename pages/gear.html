@@ -71,7 +71,6 @@
   <p style="margin-top:0.3rem;">数据基于 PC 版本 · 仅供参考</p>
 </footer>
 
-<script src="../supabase.js"></script>
 <script>
 var currentUser=null, currentToken=null;
 function supabase(method, table, body, q) {
@@ -85,13 +84,21 @@ function supabase(method, table, body, q) {
 }
 
 function loginGitHub(){
-  var s=supabasejs.createClient('https://hanrfbciinkhgcumvous.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok');
-  s.auth.signInWithOAuth({provider:'github'});}
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(window.location.origin+'/anqutuweiwuxian/pages/gear.html');
+  window.location.href=u;});}
 
 
   function fabOpenPostForm(){
     var pf=document.getElementById('postForm');
     if(pf)pf.style.display=pf.style.display==='none'?'block':'none';
+  }
+
+  // OAuth callback handler
+  var h=window.location.hash||window.location.search;
+  if(h.includes('access_token=')){
+    var params=new URLSearchParams(h.replace('#','').replace('?',''));
+    var t=params.get('access_token');
+    if(t){localStorage.setItem('abi_token',t);localStorage.setItem('abi_user',params.get('email')||params.get('user_name')||'');window.location.hash='';window.location.search='';}
   }
 function init(){
   var h=window.location.hash;
