@@ -216,15 +216,11 @@ function renderList(items){
     if(expired)html+=" | <span style='color:#e55'>已过期</span>";
     html+="</div>";
 
-    // Map thumbnail
-    html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:2/1.5;background:#0f0f16;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
-    html+="<svg viewBox='0 0 200 150' style='width:100%;height:100%;display:block'>";
-    html+="<rect x='0' y='0' width='200' height='150' fill='#0f0f16'/>";
-    html+="<line x1='0' y1='75' x2='200' y2='75' stroke='#1a1a24' stroke-width='0.5'/>";
-    html+="<line x1='100' y1='0' x2='100' y2='150' stroke='#1a1a24' stroke-width='0.5'/>";
-    html+="<circle cx='"+(p.x*2)+"' cy='"+(p.y*1.5)+"' r='5' fill='#ff4444' stroke='#fff' stroke-width='1.5' opacity='0.9'/>";
-    html+="<text x='"+(p.x*2+8)+"' y='"+(p.y*1.5+4)+"' fill='#ff4444' font-size='8' font-family='monospace'>("+p.x+"%, "+p.y+"%)</text>";
-    html+="</svg>";
+    // Map thumbnail (200x200 zoomed around point)
+    html+="<div style='margin:6px 0;width:200px;height:200px;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a;flex-shrink:0;background:#0f0f16;position:relative'>";
+    html+="<div style='width:100%;height:100%;background:url(../assets/maps/farm.png) no-repeat;background-size:5000px auto;background-position:calc("+p.x+"% * -50 + 100px) calc("+p.y+"% * -50 + 100px);opacity:0.5'></div>";
+    html+="<div style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#ff4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px rgba(255,0,0,.8);pointer-events:none;z-index:2'></div>";
+    html+="<div style='position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.6);color:#ff4444;font-size:10px;padding:1px 5px;border-radius:3px;z-index:2'>("+p.x+"%, "+p.y+"%)</div>";
     html+="</div>";
 
     // Images if any
@@ -281,6 +277,13 @@ function renderDels(dels){
     html+="<circle cx='"+(p.x*2)+"' cy='"+(p.y*1.5)+"' r='5' fill='#ff4444' stroke='#fff' stroke-width='1.5' opacity='0.9'/>";
     html+="<text x='"+(p.x*2+8)+"' y='"+(p.y*1.5+4)+"' fill='#ff4444' font-size='8' font-family='monospace'>("+p.x+"%, "+p.y+"%)</text>";
     html+="</svg>";
+    html+="</div>";
+
+    // Map thumbnail (200x200 zoomed around point)
+    html+="<div style='margin:6px 0;width:200px;height:200px;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a;flex-shrink:0;background:#0f0f16;position:relative'>";
+    html+="<div style='width:100%;height:100%;background:url(../assets/maps/farm.png) no-repeat;background-size:5000px auto;background-position:calc("+p.x+"% * -50 + 100px) calc("+p.y+"% * -50 + 100px);opacity:0.5'></div>";
+    html+="<div style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#ff4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px rgba(255,0,0,.8);pointer-events:none;z-index:2'></div>";
+    html+="<div style='position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.6);color:#ff4444;font-size:10px;padding:1px 5px;border-radius:3px;z-index:2'>("+p.x+"%, "+p.y+"%)</div>";
     html+="</div>";
 
     html+="<div class='actions'>";
