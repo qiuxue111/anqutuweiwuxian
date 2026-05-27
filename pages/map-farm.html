@@ -640,6 +640,8 @@ function jumpToFromUrl(){
   updateTransform();
   document.getElementById("zr").value=800;
   document.getElementById("zl").textContent="800%";
+  // Add a temporary marker pin at the target location
+  addTempMarker(xf,yf,ic);
   // If we have name+type+ic, show a preview popup directly
   if(name){
     // Find if this exact pin exists
@@ -661,6 +663,24 @@ function jumpToFromUrl(){
 }
 
 // Show a non-editable pin info popup (for review center jumps)
+// Add a temporary red marker dot at percentage coords
+function addTempMarker(x,y,ic){
+  var box=document.getElementById("mb")||document.querySelector(".map-wrap div:last-child");
+  if(!box)return;
+  var el=document.createElement("div");
+  if(ic){
+    el.style.cssText="position:absolute;left:"+x+"%;top:"+y+"%;transform:translate(-50%,-50%);width:32px;height:32px;z-index:999;pointer-events:none;background-image:url("+ic+");background-size:cover;border:2px solid #ff4444;border-radius:6px;box-shadow:0 0 12px rgba(255,0,0,.8)";
+  }else{
+    el.style.cssText="position:absolute;left:"+x+"%;top:"+y+"%;transform:translate(-50%,-50%);width:16px;height:16px;z-index:999;pointer-events:none;background:#ff4444;border:3px solid #fff;border-radius:50%;box-shadow:0 0 12px rgba(255,0,0,.8)";
+  }
+  box.appendChild(el);
+  // Pulsing animation via keyframe
+  var sty=document.createElement("style");
+  sty.textContent="@keyframes pulseMarker{0%{opacity:1}50%{opacity:0.4}100%{opacity:1}}";
+  if(!document.getElementById("pulseStyle")){sty.id="pulseStyle";document.head.appendChild(sty);}
+  el.style.animation="pulseMarker 1.5s infinite";
+}
+
 function showPinInfo(x,y,name,type,ic){
   // Remove existing info card if any
   var old=document.getElementById("pinInfoCard");
