@@ -132,7 +132,7 @@ function checkAuth(){
 function supabase(t,m,b,q){
   var u=SUPABASE_URL+"/rest/v1/"+t;if(q)u+="?"+q;
   var token=localStorage.getItem("abi_token")||SUPABASE_ANON_KEY;
-  var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+token,"Content-Type":"application/json","Prefer":"return=representation"}};
+  var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+token,"Content-Type":"application/json"}};
   if(b&&m!=="GET")o.body=JSON.stringify(b);
   return fetch(u,o).then(function(r){
     if(!r.ok){throw new Error("HTTP "+r.status+" for "+t);}
