@@ -421,10 +421,9 @@ function loadCloudPins(){
   a.push(supabase("pins","GET").then(function(d){if(d&&d.length){cloudPins=d;cloudPins.forEach(function(p){delete p.id;delete p.created_at;});}}));
   a.push(supabase("map_comments","GET").then(function(d){if(d&&d.length){cloudComments=d;cloudComments.forEach(function(c){delete c.id;delete c.created_at;});}}));
   Promise.all(a).then(function(){
-    var lp=null;try{var ld=JSON.parse(localStorage.getItem("abi_farm_pins"));if(ld&&ld.pins)lp=ld.pins;}catch(e){}
-    pins=lp||cloudPins.slice();
-    var lc=null;try{var ld2=JSON.parse(localStorage.getItem("abi_farm_pins"));if(ld2&&ld2.mapComments)lc=ld2.mapComments;}catch(e){}
-    mapComments=lc||cloudComments.slice();
+    pins=cloudPins.slice();
+    mapComments=cloudComments.slice();
+    savePins();
     renderMarkers();renderMapComments();
   }).catch(function(){
     try{var d=JSON.parse(localStorage.getItem("abi_farm_pins"));if(d){if(d.pins)pins=d.pins;if(d.mapComments)mapComments=d.mapComments;renderMarkers();renderMapComments();}}catch(e){}
