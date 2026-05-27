@@ -107,7 +107,8 @@ function initAuthFromToken(tok){
   }catch(e){}
 }
 function loginGit(){
-  window.location.href=SUPABASE_URL+"/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(window.location.href.split("?")[0].split("#")[0]);
+  var redirect = window.location.origin + window.location.pathname;
+  window.location.href=SUPABASE_URL+"/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(redirect);
 }
 function logoutGit(){
   currentUser=null;localStorage.removeItem("abi_user");localStorage.removeItem("abi_token");updateAuthUI();
