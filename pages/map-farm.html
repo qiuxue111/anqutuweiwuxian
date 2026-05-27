@@ -649,14 +649,8 @@ function jumpToFromUrl(){
   document.getElementById("zl").textContent="800%";
   // Add a temporary marker pin at the target location
   addTempMarker(xf,yf,ic);
-  // If we have name+type+ic, show a preview popup directly
+  // If we have name+type+ic, show floating info card (no pin detail popup)
   if(name){
-    // Find if this exact pin exists
-    for(var i=0;i<pins.length;i++){
-      var d=Math.abs(pins[i].x-xf)+Math.abs(pins[i].y-yf);
-      if(d<3){showPinDetail(i);return;}
-    }
-    // Not found — show info popup for the pending/deletion pin
     showPinInfo(xf,yf,name,type,ic);
     return;
   }
