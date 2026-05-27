@@ -74,10 +74,8 @@
 <script>
 var currentUser=null, currentToken=null;
 function supabase(method, table, body, q) {
-  var token=localStorage.getItem('abi_token');
   var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
   var bearer=key;
-  if(token){try{var p=JSON.parse(atob(token.split('.')[1]));if(p.exp&&p.exp*1000>Date.now())bearer=token;}catch(e){}}
   return fetch('https://hanrfbciinkhgcumvous.supabase.co/rest/v1/'+table+(q?'?'+q:''),{
     method:method, headers:{'Authorization':'Bearer '+bearer, 'apiKey':key, 'Content-Type':'application/json'},
     body:body?JSON.stringify(body):null});
