@@ -41,18 +41,41 @@
   </style>
 </head>
 <body>
-
 <nav class="navbar">
-  <div class="logo"><a href="index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
-    <ul class="nav-links">
-    <li><a href="pages/maps.html">地图</a></li>
-    <li><a href="pages/weapons.html">帖子</a></li>
-    <li><a href="pages/strategy.html">闲聊</a></li>
-    <li><a href="pages/gear.html">攻略</a></li>
-    <li><a href="search.html">🔍</a></li>
-  </ul>
-  <button id="loginBtn" onclick="loginGitHub()" style="padding:0.2rem 0.5rem;background:#333;color:#ccc;border:1px solid #555;border-radius:4px;font-size:0.75rem;cursor:pointer;margin-left:auto;flex-shrink:0;">登录</button>
+  <div class="logo"><a href="index.html" style="color:#ffc832;text-decoration:none;font-weight:bold;">暗区无限</a><span style="color:#888;font-size:0.8rem;"> 攻略站</span></div>
+  <div id="userArea" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+    <span id="userName" style="color:#ffc832;font-size:0.85rem;display:none;"></span>
+    <button id="loginBtn" onclick="loginGitHub()" style="padding:4px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-size:0.8rem;cursor:pointer;font-weight:bold;">登录</button>
+    <button id="menuBtn" onclick="toggleMenu()" style="width:32px;height:32px;background:#1e1e2a;color:#ccc;border:1px solid #333;border-radius:6px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#9776;</button>
+  </div>
+  <div id="sideMenu" style="display:none;position:fixed;top:0;right:0;width:260px;height:100vh;background:#0f0f18;border-left:1px solid #1e1e2a;z-index:9999;padding:1rem;box-shadow:-4px 0 20px rgba(0,0,0,0.5);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #1e1e2a;">
+      <span style="color:#ffc832;font-weight:bold;">菜单</span>
+      <button onclick="toggleMenu()" style="width:28px;height:28px;background:transparent;color:#888;border:1px solid #333;border-radius:4px;cursor:pointer;font-size:1rem;">&#10005;</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <a href="pages/maps.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F5FA; 地图选图</a>
+      <a href="pages/weapons.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F527; 改枪</a>
+      <a href="pages/strategy.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4AC; 聊天</a>
+      <a href="pages/gear.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4D6; 攻略</a>
+      <a href="search.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F50D; 搜索</a>
+      <div style="border-top:1px solid #1e1e2a;margin:8px 0;padding-top:8px;">
+        <a href="#" onclick="showUserCenter()" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F464; 用户中心</a>
+        <a href="#" onclick="logout()" style="display:block;padding:10px 12px;color:#e74c3c;border-radius:6px;text-decoration:none;font-size:0.9rem;">退出登录</a>
+      </div>
+    </div>
+  </div>
 </nav>
+
+<style>
+.navbar{display:flex;align-items:center;padding:0.5rem 1rem;background:#0a0a10;border-bottom:1px solid #1a1a28;position:relative;z-index:100;}
+.navbar a{transition:color 0.2s;}
+.navbar a:hover{color:#ffc832!important;}
+#sideMenu a:hover{background:#1a1a28;}
+</style>
+
+
+
 
 <section class="hero">
   <h1>暗区突围：无限</h1>
@@ -165,66 +188,60 @@
 
 
 <script>
-(function authCheck(){
-  var h=window.location.hash;
-  if(h&&h.includes('access_token=')){
-    var p=new URLSearchParams(h.replace('#',''));
-    var t=p.get('access_token');
-    if(t){
-      try{
-        var payload=JSON.parse(atob(t.split('.')[1]));
-        var user=payload.email||p.get('email')||'';
-        localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',user);
-        history.replaceState(null,'',window.location.pathname);
-        location.reload();
-      }catch(err){}
-    }
-  }
-  var token=localStorage.getItem('abi_token');
-  if(token){
-    var btns=document.querySelectorAll('#loginBtn');
-    for(var i=0;i<btns.length;i++){btns[i].style.display='none';}
-  }
-})();
 
-async function loadHotPosts(){
-  try{
-    var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
-    var r=await fetch('https://hanrfbciinkhgcumvous.supabase.co/rest/v1/map_posts?order=created_at.desc&limit=5',{
-      headers:{'Authorization':'Bearer '+key,'apiKey':key}
-    });
-    if(!r.ok)throw new Error(r.status);
-    var posts=await r.json();
-    if(!Array.isArray(posts)||posts.length===0){
-      document.getElementById('hotPostList').innerHTML='<div style="text-align:center;color:#666;padding:2rem;">还没有帖子，<a href="pages/weapons.html" style="color:#ffc832;">去发布第一条</a></div>';
-      return;
-    }
-    var html='';
-    posts.forEach(function(p){
-      var preview=(p.content||'').substring(0,150);
-      if((p.content||'').length>150)preview+='...';
-      html+='<div style="background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:1rem;">'+
-        '<h3 style="margin:0 0 0.3rem 0;font-size:1rem;"><a href="pages/weapons.html" style="color:#ffc832;text-decoration:none;">'+esc(p.title||'无标题')+'</a></h3>'+
-        '<div style="color:#666;font-size:0.8rem;margin-bottom:0.4rem;display:flex;gap:1rem;">'+
-        '<span>'+esc(p.author||'匿名')+'</span><span>'+esc(p.category||'杂谈')+'</span>'+
-        '<span>'+(p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'')+'</span></div>'+
-        '<div style="color:#aaa;font-size:0.85rem;line-height:1.5;">'+esc(preview)+'</div></div>';
-    });
-    document.getElementById('hotPostList').innerHTML=html;
-  }catch(e){
-    document.getElementById('hotPostList').innerHTML='<div style="text-align:center;color:#666;padding:2rem;">加载失败</div>';
-  }
-}
-
+// ========== GLOBAL AUTH & NAV ==========
 function loginGitHub(){
   var cb=window.location.origin+window.location.pathname;
   var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
   window.location.href=u;
 }
 
-function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
-document.addEventListener('DOMContentLoaded',loadHotPosts);
+(function initAuth(){
+  var h=window.location.hash;
+  if(h&&h.indexOf('access_token=')>=0){
+    var p=new URLSearchParams(h.replace('#',''));
+    var t=p.get('access_token');
+    if(t){
+      try{
+        var payload=JSON.parse(atob(t.split('.')[1]));
+        localStorage.setItem('abi_token',t);
+        var email=payload.email||p.get('email')||'';
+        localStorage.setItem('abi_user',email);
+        history.replaceState(null,'',window.location.pathname);
+        location.reload();
+      }catch(e){}
+    }
+  }
+  var token=localStorage.getItem('abi_token');
+  if(token){
+    var u=document.getElementById('userName');
+    var b=document.getElementById('loginBtn');
+    if(u){u.style.display='';u.textContent=localStorage.getItem('abi_user')||'已登录';}
+    if(b){b.style.display='none';}
+  }
+})();
+
+function toggleMenu(){
+  var m=document.getElementById('sideMenu');
+  if(!m)return;
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+
+function logout(){
+  localStorage.removeItem('abi_token');
+  localStorage.removeItem('abi_user');
+  location.reload();
+}
+
+function showUserCenter(){
+  toggleMenu();
+  var u=localStorage.getItem('abi_user');
+  if(!u){alert('请先登录');return;}
+  var info='[用户中心]\n用户名: '+u+'\n(更多功能开发中)';
+  alert(info);
+}
+
+
 </script>
 </body>
 </html>

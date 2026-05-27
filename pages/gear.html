@@ -29,16 +29,39 @@
 </head>
 <body>
 <nav class="navbar">
-  <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;">暗区无限</a> <span>攻略站</span></div>
-  <ul class="nav-links">
-    <li><a href="maps.html">地图</a></li>
-    <li><a href="weapons.html">帖子</a></li>
-    <li><a href="strategy.html">闲聊</a></li>
-    <li><a href="gear.html">攻略</a></li>
-    <li><a href="../search.html">🔍</a></li>
-  </ul>
-  <button id="loginBtn" onclick="loginGitHub()" style="padding:0.2rem 0.5rem;background:#333;color:#ccc;border:1px solid #555;border-radius:4px;font-size:0.75rem;cursor:pointer;margin-left:auto;flex-shrink:0;">登录</button>
+  <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;font-weight:bold;">暗区无限</a><span style="color:#888;font-size:0.8rem;"> 攻略站</span></div>
+  <div id="userArea" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+    <span id="userName" style="color:#ffc832;font-size:0.85rem;display:none;"></span>
+    <button id="loginBtn" onclick="loginGitHub()" style="padding:4px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-size:0.8rem;cursor:pointer;font-weight:bold;">登录</button>
+    <button id="menuBtn" onclick="toggleMenu()" style="width:32px;height:32px;background:#1e1e2a;color:#ccc;border:1px solid #333;border-radius:6px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#9776;</button>
+  </div>
+  <div id="sideMenu" style="display:none;position:fixed;top:0;right:0;width:260px;height:100vh;background:#0f0f18;border-left:1px solid #1e1e2a;z-index:9999;padding:1rem;box-shadow:-4px 0 20px rgba(0,0,0,0.5);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #1e1e2a;">
+      <span style="color:#ffc832;font-weight:bold;">菜单</span>
+      <button onclick="toggleMenu()" style="width:28px;height:28px;background:transparent;color:#888;border:1px solid #333;border-radius:4px;cursor:pointer;font-size:1rem;">&#10005;</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <a href="maps.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F5FA; 地图选图</a>
+      <a href="weapons.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F527; 改枪</a>
+      <a href="strategy.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4AC; 聊天</a>
+      <a href="gear.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4D6; 攻略</a>
+      <a href="../search.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F50D; 搜索</a>
+      <div style="border-top:1px solid #1e1e2a;margin:8px 0;padding-top:8px;">
+        <a href="#" onclick="showUserCenter()" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F464; 用户中心</a>
+        <a href="#" onclick="logout()" style="display:block;padding:10px 12px;color:#e74c3c;border-radius:6px;text-decoration:none;font-size:0.9rem;">退出登录</a>
+      </div>
+    </div>
+  </div>
 </nav>
+
+<style>
+.navbar{display:flex;align-items:center;padding:0.5rem 1rem;background:#0a0a10;border-bottom:1px solid #1a1a28;position:relative;z-index:100;}
+.navbar a{transition:color 0.2s;}
+.navbar a:hover{color:#ffc832!important;}
+#sideMenu a:hover{background:#1a1a28;}
+</style>
+
+
 
 <section style="max-width:800px;margin:80px auto 0;padding:1rem;">
 <div style="display:flex;align-items:center;">  <h2 style="color:#ffc832;margin-bottom:1.5rem;">📖 攻略</h2>
@@ -72,96 +95,60 @@
 </footer>
 
 <script>
-(function authCheck(){
+
+// ========== GLOBAL AUTH & NAV ==========
+function loginGitHub(){
+  var cb=window.location.origin+window.location.pathname;
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
+  window.location.href=u;
+}
+
+(function initAuth(){
   var h=window.location.hash;
-  if(h&&h.includes('access_token=')){
+  if(h&&h.indexOf('access_token=')>=0){
     var p=new URLSearchParams(h.replace('#',''));
     var t=p.get('access_token');
     if(t){
       try{
         var payload=JSON.parse(atob(t.split('.')[1]));
-        var user=payload.email||p.get('email')||'';
         localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',user);
+        var email=payload.email||p.get('email')||'';
+        localStorage.setItem('abi_user',email);
         history.replaceState(null,'',window.location.pathname);
         location.reload();
-      }catch(err){}
+      }catch(e){}
     }
   }
   var token=localStorage.getItem('abi_token');
   if(token){
-    var btns=document.querySelectorAll('#loginBtn');
-    for(var i=0;i<btns.length;i++){btns[i].style.display='none';}
+    var u=document.getElementById('userName');
+    var b=document.getElementById('loginBtn');
+    if(u){u.style.display='';u.textContent=localStorage.getItem('abi_user')||'已登录';}
+    if(b){b.style.display='none';}
   }
 })();
 
-var currentUser=null, currentToken=null;
-function supabase(method, table, body, q) {
-  var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
-  var bearer=key;
-  return fetch('https://hanrfbciinkhgcumvous.supabase.co/rest/v1/'+table+(q?'?'+q:''),{
-    method:method, headers:{'Authorization':'Bearer '+bearer, 'apiKey':key, 'Content-Type':'application/json'},
-    body:body?JSON.stringify(body):null});
+function toggleMenu(){
+  var m=document.getElementById('sideMenu');
+  if(!m)return;
+  m.style.display=m.style.display==='none'?'block':'none';
 }
 
-function loginGitHub(){
-  var cb=window.location.origin+window.location.pathname;
-  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
-  window.location.href=u;}
-
-
-  function init(){
-  var h=window.location.hash;
-  if(h&&h.includes('access_token=')){
-    var p=new URLSearchParams(h.slice(1));
-    var t=p.get('access_token');
-    if(t){localStorage.setItem('abi_token',t);localStorage.setItem('abi_user',p.get('email')||'');window.location.hash='';location.reload();}
-  }
-  var t=localStorage.getItem('abi_token');currentToken=t;
-  var u=localStorage.getItem('abi_user');if(u)currentUser=u;
-  if(currentUser){var fb=document.getElementById('fabBtn-gear');if(fb)fb.style.display='';}
-  else{document.getElementById('loginHint').style.display='block';}
-  loadPosts();
+function logout(){
+  localStorage.removeItem('abi_token');
+  localStorage.removeItem('abi_user');
+  location.reload();
 }
 
-async function loadPosts(){
-  try{
-    var r=await supabase('GET','map_posts',null,'order=created_at.desc');
-    if(!r.ok)return;
-    var posts=await r.json();if(!Array.isArray(posts))return;
-    var h='';
-    if(posts.length===0){h='<div class="no-posts">还没有帖子，快来发布第一条！</div>';}
-    else{posts.forEach(function(p){h+=
-      '<div class="post-card"><h3><a href="#post-'+p.id+'">'+esc(p.title)+'</a></h3>'+
-      '<div class="meta"><span>'+esc(p.author||'匿名')+'</span><span>'+p.category+'</span><span>'+new Date(p.created_at).toLocaleDateString('zh-CN')+'</span></div>'+
-      '<div class="preview">'+esc(p.content).substring(0,200)+(p.content.length>200?'...':'')+'</div>'+
-      (currentUser?'<div class="actions"><button onclick="deletePost('+p.id+')">删除</button></div>':'')+
-      '</div>';});}
-    document.getElementById('postList').innerHTML=h;
-  }catch(e){}
+function showUserCenter(){
+  toggleMenu();
+  var u=localStorage.getItem('abi_user');
+  if(!u){alert('请先登录');return;}
+  var info='[用户中心]\n用户名: '+u+'\n(更多功能开发中)';
+  alert(info);
 }
 
-function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
 
-async function submitPost(){
-  var title=document.getElementById('postTitle').value.trim();
-  var content=document.getElementById('postContent').value.trim();
-  var category=document.getElementById('postCategory').value;
-  if(!title||!content){alert('标题和内容不能为空');return;}
-  try{
-    var r=await supabase('POST','map_posts',{title:title,content:content,category:category,author:currentUser||'匿名',map_name:'general'});
-    if(r.ok||r.status===201){document.getElementById('postTitle').value='';document.getElementById('postContent').value='';loadPosts();alert('发布成功！');}
-    else{var t=await r.text();alert('发布失败: '+t);}
-  }catch(e){alert('发布失败');}
-}
-
-async function deletePost(id){
-  if(!confirm('确定删除？'))return;
-  try{var r=await supabase('DELETE','map_posts',null,'id=eq.'+id);if(r.ok||r.status===204)loadPosts();else alert('删除失败');}
-  catch(e){alert('删除失败');}
-}
-
-document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
