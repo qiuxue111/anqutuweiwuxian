@@ -1,56 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>审核中心 - 暗区突围：无限</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:900px;margin:0 auto}
-h1{color:#ffc832;font-size:22px;margin-bottom:12px}
-a{color:#ffc832;text-decoration:none}
-.stats{display:flex;gap:16px;margin-bottom:16px}
-.stat{flex:1;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:12px;text-align:center}
-.stat-num{font-size:28px;font-weight:bold;color:#ffc832}
-.stat-label{font-size:12px;color:#888;margin-top:4px}
-.tabs{display:flex;gap:4px;margin-bottom:16px}
-.tab{padding:8px 20px;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;cursor:pointer;font-size:14px;color:#888}
-.tab.active{background:#ffc832;color:#0a0a0f;font-weight:600;border-color:#ffc832}
-#list .loading{padding:40px;text-align:center;color:#888}
-#list .empty{padding:40px;text-align:center;color:#555}
-.card{background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:14px;margin-bottom:10px}
-.card-expired{opacity:0.5;border-color:#4a1a1a}
-.card h3{font-size:16px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
-.card .meta{font-size:13px;color:#888;margin-bottom:8px;line-height:1.6}
-.actions{display:flex;gap:6px;flex-wrap:wrap}
-.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
-.btn-vote{background:#1a4a1a;color:#5e5}
-.btn-voted{background:#333;color:#888;cursor:default}
-.btn-pass{background:#1a3a1a;color:#5a5}
-.btn-reject{background:#4a1a1a;color:#e55}
-.btn-del{background:#222;color:#666;border:1px solid #444}
-footer{margin-top:20px;text-align:center;font-size:12px;color:#444}
-footer a{color:#444;text-decoration:none}
-</style>
-</head>
-<body><div id="authBar" style="position:fixed;top:10px;right:10px;z-index:999;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;padding:6px 14px;font-size:13px"></div>
-<h1>审核中心</h1>
-<a href="map-farm.html">返回地图</a>
-<div class="stats" id="stats">
-  <div class="stat"><div class="stat-num" id="scount">-</div><div class="stat-label">待审核</div></div>
-  <div class="stat"><div class="stat-num" id="vcount">-</div><div class="stat-label">已投票</div></div>
-  <div class="stat"><div class="stat-num" id="ccount">-</div><div class="stat-label">总点位</div></div>
-</div>
-<div class="tabs">
-  <div class="tab active" onclick="switchTab(event,'pending')">待审核</div>
-  <div class="tab" onclick="switchTab(event,'voted')">我投过票</div>
-  <div class="tab" onclick="switchTab(event,'deletion')">待删除</div>
-  <div class="tab" onclick="switchTab(event,'all')">全部</div>
-</div>
-<div id="list"><div class="loading">加载中...</div></div>
-<footer><a href="javascript:toggleAdmin()">管理员登录</a></footer>
 
-<script>
 var SUPABASE_URL = "https://hanrfbciinkhgcumvous.supabase.co";
 var SUPABASE_ANON_KEY = "sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
 
@@ -334,6 +282,3 @@ var ADMIN_PROMPT = "请输入管理员密码";
 var ADMIN_FAIL = "密码错误";
 
 initAuth();loadPending();
-</script>
-</body>
-</html>
