@@ -428,13 +428,25 @@ function initAuth(){
   var u=localStorage.getItem("abi_user");
   if(u){try{currentUser=JSON.parse(u);}catch(e){}}
   var hash=window.location.hash;
-  var p=new URLSearchParams(hash.replace("#",""));
-  var token=p.get("access_token");
-  if(token){
-    localStorage.setItem("abi_token",token);
-    var meta=p.get("user_metadata");
-    if(meta){try{var md=JSON.parse(meta);currentUser=md;}catch(e){}}
-    if(currentUser)localStorage.setItem("abi_user",JSON.stringify(currentUser));
+  if(hash&&hash.indexOf("access_token")>=0){
+    try{
+      var p=new URLSearchParams(hash.replace("#",""));
+      var token=p.get("access_token");
+      if(token){
+        localStorage.setItem("abi_token",token);
+        var parts=token.split(".");
+        if(parts.length==3){
+          var payload=JSON.parse(atob(parts[1]));
+          if(payload&&payload.user_metadata){
+            currentUser=payload;
+            localStorage.setItem("abi_user",JSON.stringify(payload));
+          }else if(payload&&payload.sub){
+            currentUser={user_metadata:{user_name:payload.sub}};
+            localStorage.setItem("abi_user",JSON.stringify(currentUser));
+          }
+        }
+      }
+    }catch(e){}
     window.location.hash="";
   }
   updateAuthUI();
