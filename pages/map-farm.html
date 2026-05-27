@@ -599,7 +599,7 @@ function postPinComment(){
   var tz=now.toLocaleString("zh-CN",{hour12:false,timeZone:"Asia/Shanghai"});
   var p=pins[curPinIdx];
   if(p.id){
-    supabase("map_comments","POST",{pin_type:p.type,pin_x:p.x,pin_y:p.y,text:text,time:tz});
+    supabase("map_comments","POST",{text:text,time:tz});
   }
   p.comments.push({text:text,time:tz});
   savePins();renderPinComments();
@@ -622,7 +622,7 @@ function postMapComment(){
   if(!text)return;
   var now=new Date();
   var tz=now.toLocaleString("zh-CN",{hour12:false,timeZone:"Asia/Shanghai"});
-  supabase("map_comments","POST",{pin_type:"map",pin_x:0,pin_y:0,text:text,time:tz});
+  supabase("map_comments","POST",{text:text,time:tz});
   mapComments.push({text:text,time:tz});
   savePins();renderMapComments();
   input.value="";
