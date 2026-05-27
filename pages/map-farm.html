@@ -401,7 +401,17 @@ function closePicker(){document.getElementById("po").style.display="none";}
 function addPin(tid){
   if(!currentUser){login();return;}
   if(!pp)return;
-  supabase("pending_pins","POST",{x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[],admin_passed:false,votes:0,voters:[]});
+  var sdata={x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[],admin_passed:false,votes:0,voters:[]};
+  sdata.submitter=currentUser.user_metadata&&currentUser.user_metadata.user_name||"unknown";
+  supabase("pending_pins","POST",sdata).then(function(){
+    var el=document.getElementById("ab");
+    if(el)el.innerHTML="<span style='color:#9e9;font-size:14px;margin-left:10px'>投稿成功，等待审核<"+LS+">";
+    setTimeout(function(){if(el)el.innerHTML="";},3000);
+  })["catch"](function(){
+    var el=document.getElementById("ab");
+    if(el)el.innerHTML="<span style='color:#e99;font-size:14px;margin-left:10px'>投稿失败，请重试<"+LS+">";
+    setTimeout(function(){if(el)el.innerHTML="";},3000);
+  });
   pins.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[]});
   savePins();renderMarkers();
   pp=null;document.getElementById("cv").textContent="未选择";document.getElementById("ab").style.display="none";closePicker();
@@ -413,6 +423,7 @@ var SUPABASE_ANON_KEY="sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
 f
 // --- Supabase Auth ---
 var currentUser=null;
+var LS="/span";
 function initAuth(){
   var u=localStorage.getItem("abi_user");
   if(u){try{currentUser=JSON.parse(u);}catch(e){}}
