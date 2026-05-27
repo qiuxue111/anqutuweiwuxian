@@ -625,7 +625,7 @@ window.onload=function(){console.log("ONLOAD");initAuth();loadCloudPins();update
 // ─── URL 参数定位 (from review.html "在地图上查看位置") ───
 function jumpToFromUrl(){
   var s=new URLSearchParams(window.location.search);
-  var x=s.get("x"),y=s.get("y"),pid=s.get("pin_id"),src=s.get("src");
+  var x=s.get("x"),y=s.get("y"),name=s.get("name"),type=s.get("type"),ic=s.get("ic");
   if(!x||!y)return;
   var xf=parseFloat(x),yf=parseFloat(y);
   // Zoom to 800% and center on the point
@@ -640,14 +640,38 @@ function jumpToFromUrl(){
   updateTransform();
   document.getElementById("zr").value=800;
   document.getElementById("zl").textContent="800%";
-  // Try to find matching pin (allow wider tolerance)
+  // If we have name+type+ic, show a preview popup directly
+  if(name){
+    // Find if this exact pin exists
+    for(var i=0;i<pins.length;i++){
+      var d=Math.abs(pins[i].x-xf)+Math.abs(pins[i].y-yf);
+      if(d<3){showPinDetail(i);return;}
+    }
+    // Not found — show info popup for the pending/deletion pin
+    showPinInfo(xf,yf,name,type,ic);
+    return;
+  }
+  // Try to find matching pin
   for(var i=0;i<pins.length;i++){
     var d=Math.abs(pins[i].x-xf)+Math.abs(pins[i].y-yf);
     if(d<3){showPinDetail(i);return;}
   }
-  // Show add-picker centered on that spot
   pp={x:xf,y:yf};
   showPicker();
+}
+
+// Show a non-editable pin info popup (for review center jumps)
+function showPinInfo(x,y,name,type,ic){
+  var overlay=document.getElementById("pd");
+  overlay.style.display="flex";
+  document.getElementById("pdTitle").innerHTML="<img src='"+(ic||"")+"' style='width:28px;height:28px;border-radius:4px;object-fit:cover'> "+(name||"未知");
+  document.getElementById("pdCoord").textContent="位置： "+x+"%, "+y+"%";
+  document.getElementById("pdNote").value="";
+  document.getElementById("pdNote").disabled=true;
+  document.querySelectorAll("#pd .pd-img-grid,#pd .pd-comments,.pd-save-note,#pd .pd-upload-label").forEach(function(el){if(el)el.style.display="none";});
+  // Hide delete button if shown
+  var q=document.querySelector("#pd .pd-actions");
+  if(q)q.style.display="none";
 }
 </script>
 
