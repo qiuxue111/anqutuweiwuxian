@@ -205,7 +205,7 @@ function loginGitHub(){
       try{
         var payload=JSON.parse(atob(t.split('.')[1]));
         localStorage.setItem('abi_token',t);
-        var email=payload.email||p.get('email')||'';
+        var email=payload.preferred_username||payload.user_metadata?.preferred_username||payload.email||p.get('email')||'';
         localStorage.setItem('abi_user',email);
         history.replaceState(null,'',window.location.pathname);
         location.reload();
