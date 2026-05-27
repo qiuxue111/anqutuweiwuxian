@@ -164,7 +164,7 @@ function loadData(){
   var p=supabase("pending_pins","GET",null,"order=created_at.desc").catch(function(){return [];});
   var d=supabase("deletion_requests","GET",null,"order=created_at.desc").catch(function(){return [];});
   var pin=supabase("pins","GET",null,"order=created_at.desc").catch(function(){return [];});
-  Promise.all([p,d,pin]).then(function(res){
+  Promise.all([p,d,pin]).then(function(res){window.__reviewPending=res[0];window.__reviewDels=res[1];
     var items=res[0]||[];
     var dels=res[1]||[];
     var pins=res[2]||[];
@@ -224,7 +224,7 @@ function renderList(items){
     html+="<\/div>";
 
     // Go to map button (renderList) — use data attributes + click listener to avoid quoting hell
-    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
+    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' data-map-name='\+(p.map_name||"")+\' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
     html+="<\/div>"; // close card
 
     // Images if any
@@ -254,6 +254,12 @@ function renderList(items){
     html+="<\/div><\/div>";
   });
   document.getElementById("list").innerHTML=html;
+  // Fix data-map-name from window.__reviewData
+  var __cards=document.querySelectorAll('.view-on-map-btn');
+  var __data=window.__reviewPending||[];
+  __cards.forEach(function(btn,i){
+    if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
+  });
 }
 
 function renderDels(dels){
@@ -273,7 +279,7 @@ function renderDels(dels){
     html+=" | "+votes+"/10 票（同意删除）<\/div>";
 
     // Go to map button (renderDels) — use data attributes
-    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
+    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' data-map-name='\+(p.map_name||"")+\' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
 
     html+="<div class='actions'>";
     if(!hasVoted){
@@ -288,6 +294,12 @@ function renderDels(dels){
     html+="<\/div><\/div>";
   });
   document.getElementById("list").innerHTML=html;
+  // Fix data-map-name from window.__reviewData
+  var __cards=document.querySelectorAll('.view-on-map-btn');
+  var __data=window.__reviewPending||[];
+  __cards.forEach(function(btn,i){
+    if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
+  });
 }
 
 function vote(id){
@@ -391,17 +403,21 @@ function userDelete(id){
 document.addEventListener("click",function(e){
   var btn=e.target.closest(".view-on-map-btn");
   if(btn){
-    var x=parseFloat(btn.dataset.x);
+    var x=parseFloat(btn.dataset.x);var mapName=btn.dataset.mapName||"";
     var y=parseFloat(btn.dataset.y);
     var name=btn.dataset.name||"";
     var type=btn.dataset.type||"";
     var ic=btn.dataset.ic||"";
-    viewOnMap(x,y,name,type,ic);
+    
+    viewOnMap(x,y,name,type,ic,mapName);
   }
 });
 
-function viewOnMap(x,y,name,type,ic){
-  window.open("map-farm.html?x="+x+"&y="+y+"&name="+encodeURIComponent(name||"")+"&type="+(type||"")+"&ic="+encodeURIComponent(ic||""),"mapView");
+function viewOnMap(x,y,name,type,ic,mapName){
+  var mapPage=mapName||"map-farm";
+  var mapFiles={"\u519c\u573a":"map-farm","\u5317\u5c71":"map-beishan","\u5c71\u8c37":"map-valley","\u519b\u68b0\u5e93":"map-armory","\u7535\u89c6\u53f0":"map-tvstation","\u963f\u8d3e\u514b\u65af\u6e2f\u53e3":"map-airport"};
+  if(mapPage.indexOf("map-")!==0){mapPage=mapFiles[mapPage]||"map-farm"};
+  window.open(mapPage+".html?x="+x+"&y="+y+"&name="+encodeURIComponent(name||"")+"&type="+encodeURIComponent(type||"")+"&ic="+encodeURIComponent(ic||""),"mapView");
 }
 
 function toggleAdmin(){
