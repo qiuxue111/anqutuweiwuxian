@@ -1,1039 +1,204 @@
 <!DOCTYPE html>
-
-
-
-
 <html lang="zh-CN">
-
-
-
-
 <head>
-
-
-
-
 <meta charset="UTF-8">
-
-
-
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
-
 <title>审核中心 - 暗区突围：无限</title>
-
-
-
-
 <style>
-
-
-
-
 *{margin:0;padding:0;box-sizing:border-box}
-
-
-
-
 body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:900px;margin:0 auto}
-
-
-
-
-h1{color:#ffc832;font-size:22px;margin-bottom:16px}
-
-
-
-
-h2{color:#ffc832;font-size:16px;margin:20px 0 10px}
-
-
-
-
-.stats{display:flex;gap:12px;margin-bottom:20px}
-
-
-
-
-.stat{background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:12px 16px;flex:1;text-align:center}
-
-
-
-
+h1{color:#ffc832;font-size:22px;margin-bottom:12px}
+a{color:#ffc832;text-decoration:none}
+.stats{display:flex;gap:16px;margin-bottom:16px}
+.stat{flex:1;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:12px;text-align:center}
 .stat-num{font-size:28px;font-weight:bold;color:#ffc832}
-
-
-
-
-.stat-label{font-size:12px;color:#888;margin-top:2px}
-
-
-
-
+.stat-label{font-size:12px;color:#888;margin-top:4px}
+.tabs{display:flex;gap:4px;margin-bottom:16px}
+.tab{padding:8px 20px;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;cursor:pointer;font-size:14px;color:#888}
+.tab.active{background:#ffc832;color:#0a0a0f;font-weight:600;border-color:#ffc832}
+#list .loading{padding:40px;text-align:center;color:#888}
+#list .empty{padding:40px;text-align:center;color:#555}
 .card{background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:14px;margin-bottom:10px}
-
-
-
-
-.card h3{font-size:14px;margin-bottom:6px}
-
-
-
-
-.card .meta{font-size:12px;color:#888;margin-bottom:8px}
-
-
-
-
-.card .actions{display:flex;gap:8px}
-
-
-
-
-.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600}
-
-
-
-
-.btn-pass{background:#1a5a1a;color:#6f6}
-
-
-
-
-.btn-pass:hover{background:#2a7a2a}
-
-
-
-
-.btn-vote{background:#1a3a5a;color:#6af}
-
-
-
-
-.btn-vote:hover{background:#2a5a7a}
-
-
-
-
-.btn-voted{background:#2a2a3a;color:#888;cursor:default}
-
-
-
-
-.btn-reject{background:#5a1a1a;color:#f66}
-
-
-
-
-.btn-reject:hover{background:#7a2a2a}
-
-
-
-
-.loading{color:#888;font-size:14px;padding:40px;text-align:center}
-
-
-
-
-.empty{color:#888;font-size:14px;padding:20px;text-align:center}
-
-
-
-
-.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #1e1e2a}
-
-
-
-
-.nav a{color:#888;font-size:13px;text-decoration:none}
-
-
-
-
-.nav a:hover{color:#ffc832}
-
-
-
-
-.tabs{display:flex;gap:8px;margin-bottom:16px}
-
-
-
-
-.tab{background:#12121a;border:1px solid #1e1e2a;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;color:#888}
-
-
-
-
-.tab.active{background:#2a1a0a;border-color:#ffc832;color:#ffc832}
-
-
-
-
-.badge{display:inline-block;background:#e55;color:#fff;border-radius:10px;padding:0 6px;font-size:11px;margin-left:4px}
-
-
-
-
+.card-expired{opacity:0.5;border-color:#4a1a1a}
+.card h3{font-size:16px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.card .meta{font-size:13px;color:#888;margin-bottom:8px;line-height:1.6}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
+.btn-vote{background:#1a4a1a;color:#5e5}
+.btn-voted{background:#333;color:#888;cursor:default}
+.btn-pass{background:#1a3a1a;color:#5a5}
+.btn-reject{background:#4a1a1a;color:#e55}
+.btn-del{background:#222;color:#666;border:1px solid #444}
+footer{margin-top:20px;text-align:center;font-size:12px;color:#444}
+footer a{color:#444;text-decoration:none}
 </style>
-
-
-
-
 </head>
-
-
-
-
 <body>
-
-
-
-
-
-
-
-
-
-<div class="nav">
-
-
-
-
-  <h1>📋 审核中心</h1>
-
-
-
-
-  <a href="map-farm.html">← 返回地图</a>
-
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
+<h1>审核中心</h1>
+<a href="map-farm.html">返回地图</a>
 <div class="stats" id="stats">
-
-
-
-
-  <div class="stat"><div class="stat-num" id="scount">-</div><div class="stat-label">待审核点数</div></div>
-
-
-
-
-  <div class="stat"><div class="stat-num" id="vcount">-</div><div class="stat-label">已投票数</div></div>
-
-
-
-
-  <div class="stat"><div class="stat-num" id="ccount">-</div><div class="stat-label">总点数</div></div>
-
-
-
-
+  <div class="stat"><div class="stat-num" id="scount">-</div><div class="stat-label">待审核</div></div>
+  <div class="stat"><div class="stat-num" id="vcount">-</div><div class="stat-label">已投票</div></div>
+  <div class="stat"><div class="stat-num" id="ccount">-</div><div class="stat-label">总点位</div></div>
 </div>
-
-
-
-
-
-
-
-
-
 <div class="tabs">
-
-
-
-
-  <div class="tab active" onclick="switchTab('pending')">待审核</div>
-
-
-
-
-  <div class="tab" onclick="switchTab('voted')">我投过票的</div>
-
-
-
-
-  <div class="tab" onclick="switchTab('all')">全部</div>
-
-
-
-
+  <div class="tab active" onclick="switchTab(event,'pending')">待审核</div>
+  <div class="tab" onclick="switchTab(event,'voted')">我投过票</div>
+  <div class="tab" onclick="switchTab(event,'all')">全部</div>
 </div>
-
-
-
-
-
-
-
-
-
-<div id="list"></div>
-
-
-
-
-
-
-
-
+<div id="list"><div class="loading">加载中...</div></div>
+<footer><a href="javascript:toggleAdmin()">管理员登录</a></footer>
 
 <script>
-
-
-
-
-// Supabase 配置（和 map-farm.html 一致）
-
-
-
-
 var SUPABASE_URL = "https://hanrfbciinkhgcumvous.supabase.co";
-
-
-
-
 var SUPABASE_ANON_KEY = "sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
 
-
-
-
-
-
-
-
-
-function supabase(table, method, body, query){
-
-
-
-
-  var url=SUPABASE_URL+"/rest/v1/"+table;
-
-
-
-
-  if(query)url+="?"+query;
-
-
-
-
-  var opt={method:method||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"}};
-
-
-
-
-  if(body&&method!=="GET")opt.body=JSON.stringify(body);
-
-
-
-
-  return fetch(url,opt).then(function(r){return r.json();});
-
-
-
-
+function supabase(t,m,b,q){
+  var u=SUPABASE_URL+"/rest/v1/"+t;if(q)u+="?"+q;
+  var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"}};
+  if(b&&m!=="GET")o.body=JSON.stringify(b);
+  return fetch(u,o).then(function(r){return r.json();});
 }
 
-
-
-
-
-
-
-
-
-// 获取用户唯一标识（存在 localStorage）function getUserId(){
-
-
-
-
+function getUserId(){
   var id=localStorage.getItem("abi_user_id");
-
-
-
-
   if(!id){id="u_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);localStorage.setItem("abi_user_id",id);}
-
-
-
-
   return id;
-
-
-
-
 }
-
-
-
-
-
-
-
-
 
 var currentTab="pending";
 
-
-
-
-
-
-
-
-
-function switchTab(tab){
-
-
-
-
+function switchTab(e,tab){
   currentTab=tab;
-
-
-
-
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
-
-
-
-
-  event.target.classList.add("active");
-
-
-
-
+  e.target.classList.add("active");
   loadPending();
-
-
-
-
 }
-
-
-
-
-
-
-
-
 
 function loadPending(){
-
-
-
-
   document.getElementById("list").innerHTML="<div class='loading'>加载中...</div>";
-
-
-
-
-  supabase("pending_pins","GET","order=created_at.desc").then(function(items){
-
-
-
-
+  supabase("pending_pins","GET",null,"order=created_at.desc").then(function(items){
     if(!items||!items.length){document.getElementById("list").innerHTML="<div class='empty'>暂无待审核项目</div>";updateStats([]);return;}
-
-
-
-
     updateStats(items);
-
-
-
-
     renderList(items);
-
-
-
-
   }).catch(function(){
-
-
-
-
     document.getElementById("list").innerHTML="<div class='empty'>加载失败，请检查网络</div>";
-
-
-
-
   });
-
-
-
-
 }
-
-
-
-
-
-
-
-
 
 function updateStats(items){
-
-
-
-
   var uid=getUserId();
-
-
-
-
   var total=items.length;
-
-
-
-
   var voted=0;
-
-
-
-
   items.forEach(function(p){if(p.voters&&p.voters.indexOf(uid)>=0)voted++;});
-
-
-
-
   document.getElementById("scount").textContent=total;
-
-
-
-
   document.getElementById("vcount").textContent=voted;
-
-
-
-
-  // 总点位从 pins 表获取
   supabase("pins","GET").then(function(p){document.getElementById("ccount").textContent=(p&&p.length)||0;}).catch(function(){});
-
-
-
-
 }
-
-
-
-
-
-
-
-
 
 function renderList(items){
-
-
-
-
   var uid=getUserId();
-
-
-
-
   var html="";
-
-
-
-
   var filtered=items;
-
-
-
-
   if(currentTab==="voted"){filtered=items.filter(function(p){return p.voters&&p.voters.indexOf(uid)>=0;});}
-
-
-
-
   if(filtered.length===0){html="<div class='empty'>没有匹配的项目</div>";}
-
-
-
-
   filtered.forEach(function(p){
-
-
-
-
     var hasVoted=p.voters&&p.voters.indexOf(uid)>=0;
-
-
-
-
     var votes=p.votes||0;
-
-
-
-
     var isAdmin=localStorage.getItem("abi_is_admin")==="true";
+    var now=Date.now();
+    var created=new Date(p.created_at||now).getTime();
+    var hoursOld=(now-created)/3600000;
+    var expired=hoursOld>=24;
 
-
-
-
-    html+="<div class='card'>";
-
-
-
-
+    html+="<div class='card"+(expired?" card-expired":"")+"'>";
     html+="<h3>"+(p.ic&&p.ic.indexOf("emoji:")===0?p.ic.replace("emoji:",""):"<img src='"+p.ic+"' style='width:18px;height:18px;border-radius:3px;vertical-align:middle'>")+" "+p.name+"</h3>";
-
-
-
-
     html+="<div class='meta'>坐标: ("+p.x+"%, "+p.y+"%)";
-
-
-
-
-    if(p.note)html+=" | 📝 "+p.note;
-
-
-
-
-    html+=" | 🗳 "+votes+"/10 票;
-
-
-
-
-    if(p.admin_passed)html+=" | ✓ 管理员已通过";
-
-
-
-
+    if(p.note)html+=" | "+p.note;
+    html+=" | "+votes+"/10 票";
+    if(expired)html+=" | <span style='color:#e55'>已过期（超过24小时）</span>";
+    if(p.admin_passed)html+=" | 管理员已通过";
     html+="</div>";
-
-
-
-
     html+="<div class='actions'>";
-
-
-
-
-    if(!hasVoted){
-
-
-
-
-      html+="<button class='btn btn-vote' onclick='vote("+p.id+")'>👍 同意 ("+(votes+1)+"/10)</button>";
-
-
-
-
-    }else{
-
-
-
-
-      html+="<button class='btn btn-voted'>✓ 已投票数</button>";
-
-
-
-
+    if(!expired){
+      if(!hasVoted){
+        html+="<button class='btn btn-vote' onclick='vote("+p.id+")'>同意 ("+(votes+1)+"/10)</button>";
+      }else{
+        html+="<button class='btn btn-voted'>已投票</button>";
+      }
     }
-
-
-
-
-    if(isAdmin&&!p.admin_passed){
-
-
-
-
-      html+="<button class='btn btn-pass' onclick='adminPass("+p.id+")'>👑 管理员直接通过</button>";
-
-
-
-
-      html+="<button class='btn btn-reject' onclick='adminReject("+p.id+")' >✕ 拒绝</button>";
-
-
-
-
+    if(isAdmin&&!p.admin_passed&&!expired){
+      html+="<button class='btn btn-pass' onclick='adminPass("+p.id+")'>通过</button>";
+      html+="<button class='btn btn-reject' onclick='adminReject("+p.id+")'>拒绝</button>";
     }
-
-
-
-
+    html+="<button class='btn btn-del' onclick='userDelete("+p.id+")'>删除此提交</button>";
     html+="</div></div>";
-
-
-
-
   });
-
-
-
-
   document.getElementById("list").innerHTML=html;
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-// 用户投票
-
-
-
 
 function vote(id){
-
-
-
-
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
-
-
-
-
     if(!items||!items.length)return;
-
-
-
-
     var p=items[0];
-
-
-
-
     var voters=p.voters||[];
-
-
-
-
     var uid=getUserId();
-
-
-
-
-    if(voters.indexOf(uid)>=0){alert("你已经投过票了);loadPending();return;}
-
-
-
-
+    if(voters.indexOf(uid)>=0){alert("你已经投过票了");loadPending();return;}
     voters.push(uid);
-
-
-
-
     var newVotes=(p.votes||0)+1;
-
-
-
-
     var shouldPass=newVotes>=10;
-
-
-
-
     var update={votes:newVotes,voters:voters};
-
-
-
-
     if(shouldPass)update.admin_passed=true;
-
-
-
-
     supabase("pending_pins","PATCH",update,"id=eq."+id).then(function(){
-
-
-
-
       if(shouldPass){
-
-
-
-
-        // 转移到正式表
-
-
-
-
         supabase("pending_pins","GET",null,"id=eq."+id).then(function(approved){
-
-
-
-
           if(approved&&approved.length){
-
-
-
-
             var a=approved[0];
-
-
-
-
             supabase("pins","POST",{x:a.x,y:a.y,name:a.name,type:a.type,ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[]}).then(function(){
-
-
-
-
               supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
-
-
-
-
             });
-
-
-
-
           }
-
-
-
-
         });
-
-
-
-
       }else{
-
-
-
-
         loadPending();
-
-
-
-
       }
-
-
-
-
     });
-
-
-
-
   });
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-// 管理员直接通过
-
-
-
 
 function adminPass(id){
-
-
-
-
-  if(!confirm("确认直接通过这个点位？))return;
-
-
-
-
+  if(!confirm("确认直接通过这个点位？"))return;
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
-
-
-
-
     if(!items||!items.length)return;
-
-
-
-
     var p=items[0];
-
-
-
-
     supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[]}).then(function(){
-
-
-
-
       supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
-
-
-
-
     });
-
-
-
-
   });
-
-
-
-
 }
 
-
-
-
-
-
-
-
-
-// 管理员拒绝
 function adminReject(id){
-
-
-
-
-  if(!confirm("确认拒绝这个点位？会永久删除！))return;
-
-
-
-
+  if(!confirm("确认拒绝这个点位？会永久删除！"))return;
   supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
-
-
-
-
 }
 
-
-
-
-
-
-
-
-
-// 管理员身份开关（存在 localStorage）
+function userDelete(id){
+  if(!confirm("确认删除这条提交？"))return;
+  supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadPending();});
+}
 
 function toggleAdmin(){
-
-
-
-
   var isAdmin=localStorage.getItem("abi_is_admin")==="true";
-
-
-
-
   if(isAdmin){
-
-
-
-
     localStorage.setItem("abi_is_admin","false");
-
-
-
-
   }else{
-
-
-
-
-    var pass=prompt("请输入管理员密码);
-
-
-
-
+    var pass=prompt("请输入管理员密码");
     if(pass==="admin888"){localStorage.setItem("abi_is_admin","true");}else{alert("密码错误");return;}
-
-
-
-
   }
-
-
-
-
   loadPending();
-
-
-
-
 }
 
-
-
-
-
-
-
-
-
 loadPending();
-
-
-
-
 </script>
-
-
-
-
-
-
-
-
-
-<div style="text-align:center;margin:30px 0;color:#666;font-size:12px">
-
-
-
-
-  <a href="javascript:toggleAdmin()" style="color:#444;text-decoration:none">管理员登录</a>
-
-
-
-
-</div>
-
-
-
-
 </body>
-
-
-
-
 </html>
-
-
-
-
