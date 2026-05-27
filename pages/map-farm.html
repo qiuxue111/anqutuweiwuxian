@@ -404,8 +404,7 @@ function addPin(tid){
   if(!currentUser){login();return;}
   if(!pp)return;
   var sdata={x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[],admin_passed:false,votes:0,voters:[]};
-  sdata.submitter=currentUser.user_metadata&&currentUser.user_metadata.user_name||"unknown";
-  supabase("pending_pins","POST",sdata).then(function(){
+supabase("pending_pins","POST",sdata).then(function(){
     var el=document.getElementById("ab");
     if(el)el.innerHTML="<span style='color:#9e9;font-size:14px;margin-left:10px'>投稿成功，等待审核<"+LS+">";
     setTimeout(function(){if(el)el.innerHTML="";},3000);
@@ -427,7 +426,7 @@ f
 var currentUser=null;
 var LS="/span";
 var L_s="/span";
-function initAuth(){
+function initAuth(){ console.log("initAuth: hash=",window.location.hash.substring(0,60));
   try{
     var u=localStorage.getItem("abi_user");
     if(u){try{currentUser=JSON.parse(u);}catch(e){}}
