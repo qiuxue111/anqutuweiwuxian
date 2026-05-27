@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <link rel="icon" href="../favicon.ico" type="image/jpeg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>农场地图 - 暗区突围：无限</title>
+<title>农场地图 - 暗区突围：无�?/title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif}
@@ -65,7 +66,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 .pd-comments .pdc-list{margin-top:8px;max-height:200px;overflow-y:auto}
 .pd-comments .pdc-item{padding:6px 8px;background:#0a0a10;border-radius:6px;margin-bottom:4px;font-size:13px;color:#ccc}
 .pd-comments .pdc-item .pdc-time{color:#666;font-size:11px;float:right}
-/* ─── 地图全局评论区 ─── */
+/* ─── 地图全局评论�?─── */
 .map-comments{margin:1rem auto;max-width:1200px;background:#12121a;border:1px solid #1e1e2a;border-radius:12px;padding:16px}
 .map-comments h3{color:#ffc832;font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .map-comments textarea{width:100%;min-height:60px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:8px;color:#ddd;padding:10px;font-size:14px;resize:vertical;font-family:inherit}
@@ -81,7 +82,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 <body>
 <nav>
   <a href="../index.html" class="logo">暗区无限</a>
-  <a href="maps.html" style="color:#888;font-size:13px;text-decoration:none">← 返回地图</a>
+  <a href="maps.html" style="color:#888;font-size:13px;text-decoration:none">�?返回地图</a>
 
   <div id="authArea" style="display:flex;align-items:center;gap:10px;margin-left:auto;font-size:14px"><span onclick="login()" style="cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:4px 12px;border-radius:4px;border:1px solid #ffc83244">GitHub 登录</span></div>
 </nav>
@@ -101,41 +102,41 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
   </div>
 <div class="ly-pop" id="lp"></div>
 <div class="crosshair" id="ch"><div class="ch-v"></div><div class="ch-h"></div><div class="ch-dot"></div></div>
-<div id="vm"><span>当前位置：</span><span class="coord" id="cv">未选择</span><button class="sel-btn" id="ab">选择容器类型 →</button></div>
+<div id="vm"><span>当前位置�?/span><span class="coord" id="cv">未选择</span><button class="sel-btn" id="ab">选择容器类型 �?/button></div>
 
 <!-- 容器详情弹窗 -->
 <div class="pd-overlay" id="pd">
   <div class="pd-box">
-    <button class="pd-close" onclick="closePinDetail()">✕</button>
+    <button class="pd-close" onclick="closePinDetail()">�?/button>
     <div class="pd-title" id="pdTitle">容器名称</div>
     <div class="pd-coord" id="pdCoord">位置</div>
 
     <div class="pd-section-title">📝 备注</div>
-    <textarea class="pd-note" id="pdNote" placeholder="写下关于这个容器的备注……"></textarea>
+    <textarea class="pd-note" id="pdNote" placeholder="写下关于这个容器的备注…�?></textarea>
     <button class="pd-save-note" onclick="savePinNote()">保存备注</button>
 
-    <div class="pd-section-title">🖼️ 图片</div>
+    <div class="pd-section-title">🖼�?图片</div>
     <div class="pd-img-grid" id="pdImgGrid"></div>
     <input type="file" id="pdImgInput" accept="image/*" style="display:none" multiple onchange="addPinImages(this.files)">
 
     <div style="margin-top:16px;display:flex;gap:8px">
-      <button onclick="deleteCurrentPin()" style="padding:6px 14px;background:#4a1a1a;color:#e55;border:none;border-radius:6px;cursor:pointer;font-size:13px">🗑 删除此点位</button>
+      <button onclick="deleteCurrentPin()" style="padding:6px 14px;background:#4a1a1a;color:#e55;border:none;border-radius:6px;cursor:pointer;font-size:13px">🗑 删除此点�?/button>
     </div>
 
-    <!-- 容器评论区 -->
+    <!-- 容器评论�?-->
     <div class="pd-comments">
-      <div class="pdc-title">💬 评论区</div>
-      <textarea id="pdcInput" placeholder="对这个容器有什么想说的？"></textarea>
+      <div class="pdc-title">💬 评论�?/div>
+      <textarea id="pdcInput" placeholder="对这个容器有什么想说的�?></textarea>
       <button class="pdc-btn" onclick="postPinComment()">发表</button>
       <div class="pdc-list" id="pdcList"></div>
     </div>
   </div>
 </div>
 
-<!-- 地图评论区 -->
+<!-- 地图评论�?-->
 <div class="map-comments">
-  <h3>💬 地图讨论区</h3>
-  <textarea id="mcInput" placeholder="对这张地图有什么想说的？"></textarea>
+  <h3>💬 地图讨论�?/h3>
+  <textarea id="mcInput" placeholder="对这张地图有什么想说的�?></textarea>
   <div class="mc-actions">
     <button onclick="postMapComment()">发表评论</button>
   </div>
@@ -144,60 +145,60 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 
 <script>
 var TYPES=[
-  {cat:"保险箱", items:[
-    {id:"safe",name:"保险箱",ic:"../assets/icons/保险.png"},
+  {cat:"保险�?, items:[
+    {id:"safe",name:"保险�?,ic:"../assets/icons/保险.png"},
     {id:"safe2",name:"电子保险",ic:"../assets/icons/电子保险.png"},
     {id:"safe3",name:"滴滴保险",ic:"../assets/icons/滴滴保险.png"},
   ]},
-  {cat:"武器箱", items:[
-    {id:"weapon",name:"武器箱",ic:"../assets/icons/武器箱.png"},
-    {id:"中型武器箱",name:"中型武器箱",ic:"../assets/icons/中型武器箱.png"},
-    {id:"largeWeapon",name:"大型武器箱",ic:"../assets/icons/大型武器箱.png"},
-    {id:"woodWeapon",name:"木质武器箱",ic:"../assets/icons/木质武器箱.png"},
-    {id:"高级武器箱",name:"高级武器箱",ic:"../assets/icons/高级武器箱.png"},
+  {cat:"武器�?, items:[
+    {id:"weapon",name:"武器�?,ic:"../assets/icons/武器�?png"},
+    {id:"中型武器�?,name:"中型武器�?,ic:"../assets/icons/中型武器�?png"},
+    {id:"largeWeapon",name:"大型武器�?,ic:"../assets/icons/大型武器�?png"},
+    {id:"woodWeapon",name:"木质武器�?,ic:"../assets/icons/木质武器�?png"},
+    {id:"高级武器�?,name:"高级武器�?,ic:"../assets/icons/高级武器�?png"},
   ]},
-  {cat:"工具箱", items:[
-    {id:"tool",name:"工具箱",ic:"../assets/icons/工具箱.png"},
-    {id:"高级工具箱",name:"高级工具箱",ic:"../assets/icons/高级工具箱.png"},
+  {cat:"工具�?, items:[
+    {id:"tool",name:"工具�?,ic:"../assets/icons/工具�?png"},
+    {id:"高级工具�?,name:"高级工具�?,ic:"../assets/icons/高级工具�?png"},
   ]},
-  {cat:"医疗箱", items:[
-    {id:"med",name:"小医疗",ic:"../assets/icons/小医疗.png"},
+  {cat:"医疗�?, items:[
+    {id:"med",name:"小医�?,ic:"../assets/icons/小医�?png"},
     {id:"中级医疗",name:"中级医疗",ic:"../assets/icons/中级医疗.png"},
     {id:"高级医疗",name:"高级医疗",ic:"../assets/icons/高级医疗.png"},
   ]},
-  {cat:"弹药箱", items:[
-    {id:"ammo",name:"子弹箱",ic:"../assets/icons/子弹箱.png"},
+  {cat:"弹药�?, items:[
+    {id:"ammo",name:"子弹�?,ic:"../assets/icons/子弹�?png"},
   ]},
   {cat:"生活箱包", items:[
-    {id:"suitcase",name:"旅行箱",ic:"../assets/icons/商务旅行箱.png"},
-    {id:"运动包",name:"运动包",ic:"../assets/icons/运动包.png"},
+    {id:"suitcase",name:"旅行�?,ic:"../assets/icons/商务旅行�?png"},
+    {id:"运动�?,name:"运动�?,ic:"../assets/icons/运动�?png"},
     {id:"白旅",name:"白旅",ic:"../assets/icons/白旅.png"},
     {id:"蓝领",name:"蓝领",ic:"../assets/icons/蓝领.png"},
   ]},
-  {cat:"机箱/置物箱", items:[
-    {id:"置物箱",name:"置物箱",ic:"../assets/icons/置物箱.png"},
+  {cat:"机箱/置物�?, items:[
+    {id:"置物�?,name:"置物�?,ic:"../assets/icons/置物�?png"},
     {id:"黑置物箱",name:"黑置物箱",ic:"../assets/icons/黑置物箱.png"},
     {id:"军用主机",name:"军用主机",ic:"../assets/icons/军用主机.png"},
     {id:"家用机箱",name:"家用机箱",ic:"../assets/icons/家用机箱.png"},
   ]},
   {cat:"衣服", items:[
-    {id:"小衣服",name:"小衣服",ic:"../assets/icons/小衣服.png"},
+    {id:"小衣�?,name:"小衣�?,ic:"../assets/icons/小衣�?png"},
     {id:"大衣",name:"大衣",ic:"../assets/icons/大衣.png"},
   ]},
   {cat:"特殊容器", items:[
     {id:"drawer",name:"抽屉",ic:"../assets/icons/抽屉.png"},
-    {id:"文件箱",name:"文件箱",ic:"../assets/icons/文件箱.png"},
-    {id:"配件箱",name:"配件箱",ic:"../assets/icons/配件箱.png"},
-    {id:"收银机",name:"收银机",ic:"../assets/icons/收银机.png"},
-    {id:"手雷箱",name:"手雷箱",ic:"../assets/icons/手雷箱.png"},
-    {id:"刮刮乐",name:"刮刮乐",ic:"../assets/icons/刮刮乐.png"},
+    {id:"文件�?,name:"文件�?,ic:"../assets/icons/文件�?png"},
+    {id:"配件�?,name:"配件�?,ic:"../assets/icons/配件�?png"},
+    {id:"收银�?,name:"收银�?,ic:"../assets/icons/收银�?png"},
+    {id:"手雷�?,name:"手雷�?,ic:"../assets/icons/手雷�?png"},
+    {id:"刮刮�?,name:"刮刮�?,ic:"../assets/icons/刮刮�?png"},
   ]},
   {cat:"其他", items:[
-    {id:"extract",name:"撤离点",ic:"emoji:🚁"},
-    {id:"other",name:"其他",ic:"emoji:🏷️"},
+    {id:"extract",name:"撤离�?,ic:"emoji:🚁"},
+    {id:"other",name:"其他",ic:"emoji:🏷�?},
   ]}
 ];
-// 平铺所有 item 方便查找
+// 平铺所�?item 方便查找
 var TYPE={},ALL_ITEMS=[];
 TYPES.forEach(function(g){g.items.forEach(function(t){TYPE[t.id]=t;ALL_ITEMS.push(t);});});
 var layerSt={};ALL_ITEMS.forEach(function(t){layerSt[t.id]=true;});
@@ -207,16 +208,16 @@ var mv=document.getElementById("mv");
 
 function renderLayers(){
   var list=document.getElementById("lp");list.innerHTML="";
-  // 全选按钮
+  // 全选按�?
   var allOn=true;ALL_ITEMS.forEach(function(t){if(!layerSt[t.id])allOn=false;});
   var al=document.createElement("label");al.className="all-label";
   var ac=document.createElement("input");ac.type="checkbox";ac.checked=allOn;
   ac.onchange=function(){var v=ac.checked;ALL_ITEMS.forEach(function(t){layerSt[t.id]=v;});renderMarkers();renderLayers();};
-  al.appendChild(ac);al.appendChild(document.createTextNode(" 全选"));list.appendChild(al);
+  al.appendChild(ac);al.appendChild(document.createTextNode(" 全�?));list.appendChild(al);
   // 分组卡片
   TYPES.forEach(function(g){
     var card=document.createElement("div");card.className="ly-card";
-    // 组标题 + 组全选
+    // 组标�?+ 组全�?
     var hdr=document.createElement("div");hdr.className="ly-card-hdr";
     var hc=document.createElement("input");hc.type="checkbox";
     var gAllOn=true;g.items.forEach(function(t){if(!layerSt[t.id])gAllOn=false;});
@@ -252,7 +253,7 @@ function renderMarkers(){
   pins.forEach(function(p,i){
     if(layerSt[p.type]===false)return;
     var el=document.createElement("div");
-    var td=TYPE[p.type]||{name:p.name,ic:p.ic||"emoji:❓"};
+    var td=TYPE[p.type]||{name:p.name,ic:p.ic||"emoji:�?};
     var ic=td.ic||p.ic;
     var isEmoji=ic&&ic.indexOf("emoji:")===0;
     if(isEmoji){
@@ -344,7 +345,7 @@ document.getElementById("mdBtn").onclick=function(){
     mv.style.cursor="crosshair";
   }else{
     mode="view";
-    document.getElementById("mdBtn").textContent="👁️ 浏览";
+    document.getElementById("mdBtn").textContent="👁�?浏览";
     document.getElementById("mdBtn").style.color="#ffc832";
     document.getElementById("mdBtn").style.borderColor="rgba(255,200,50,.2)";
     ch.classList.remove("show");
@@ -352,7 +353,7 @@ document.getElementById("mdBtn").onclick=function(){
   }
 };
 
-// 贡献模式鼠标跟随（准星 + 位置显示）
+// 贡献模式鼠标跟随（准�?+ 位置显示�?
 mv.addEventListener("mousemove",function(e){
   if(mode!=="contribute")return;
   var ch=document.getElementById("ch");
@@ -366,18 +367,18 @@ mv.addEventListener("mousemove",function(e){
 });
 
 function showPicker(){
-  // 创建弹出层
+  // 创建弹出�?
   var overlay=document.getElementById("po");
   if(!overlay){
     overlay=document.createElement("div");overlay.id="po";
     overlay.style.cssText="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9998;padding:16px";
-    overlay.innerHTML="<div style='background:#12121a;border:1px solid #1e1e2a;border-radius:14px;width:100%;max-width:600px;max-height:80vh;overflow-y:auto;padding:16px;position:relative;margin:0 0 0 auto;box-shadow:0 8px 32px rgba(0,0,0,.6)'><button onclick='closePicker()' style='position:absolute;top:8px;right:10px;color:#666;font-size:18px;cursor:pointer;background:none;border:none'>X<"+"/button><p style='color:#ffc832;font-size:15px;margin:0 0 4px;text-align:center'>选择容器类型<"+"/p><p id='pc' style='text-align:center;color:#888;font-size:13px;margin-bottom:12px'>位置：<"+"/p><div id='pg' style='display:grid;grid-template-columns:repeat(6,1fr);gap:8px'><"+"/div><"+"/div>";
+    overlay.innerHTML="<div style='background:#12121a;border:1px solid #1e1e2a;border-radius:14px;width:100%;max-width:600px;max-height:80vh;overflow-y:auto;padding:16px;position:relative;margin:0 0 0 auto;box-shadow:0 8px 32px rgba(0,0,0,.6)'><button onclick='closePicker()' style='position:absolute;top:8px;right:10px;color:#666;font-size:18px;cursor:pointer;background:none;border:none'>X<"+"/button><p style='color:#ffc832;font-size:15px;margin:0 0 4px;text-align:center'>选择容器类型<"+"/p><p id='pc' style='text-align:center;color:#888;font-size:13px;margin-bottom:12px'>位置�?"+"/p><div id='pg' style='display:grid;grid-template-columns:repeat(6,1fr);gap:8px'><"+"/div><"+"/div>";
     document.body.appendChild(overlay);
   }
-  document.getElementById("pc").textContent="位置： "+pp.x+"%, "+pp.y+"%";
+  document.getElementById("pc").textContent="位置�?"+pp.x+"%, "+pp.y+"%";
   var grid=document.getElementById("pg");grid.innerHTML="";
   TYPES.forEach(function(g){
-    // 组标题
+    // 组标�?
     var gTitle=document.createElement("div");gTitle.textContent=g.cat;
     gTitle.style.cssText="grid-column:1/-1;color:#ffc832;font-size:13px;font-weight:600;padding:4px 0 2px;border-bottom:1px solid rgba(255,200,50,.15);margin-top:4px";
     grid.appendChild(gTitle);
@@ -484,9 +485,9 @@ function updateAuthUI(){
   var el=document.getElementById("authArea");
   if(!el)return;
   if(currentUser){
-    var nm=currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登录";
+    var nm=currentUser.user_metadata&&currentUser.user_metadata.user_name||"已登�?;
     var av=currentUser.user_metadata&&currentUser.user_metadata.avatar_url||"";
-    el.innerHTML="<img src='"+av+"' style='width:26px;height:26px;border-radius:50%;vertical-align:middle;margin-right:6px'> <span style='color:#8c8;font-size:13px'>"+nm+"</span> <span onclick='logout()' style='cursor:pointer;color:#e55;font-size:12px;margin-left:8px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退出</span>";
+    el.innerHTML="<img src='"+av+"' style='width:26px;height:26px;border-radius:50%;vertical-align:middle;margin-right:6px'> <span style='color:#8c8;font-size:13px'>"+nm+"</span> <span onclick='logout()' style='cursor:pointer;color:#e55;font-size:12px;margin-left:8px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退�?/span>";
   }else{
     el.innerHTML="<span onclick='login()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:4px 12px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录</span>";
   }
@@ -523,7 +524,7 @@ function showPinDetail(idx){
   curPinIdx=idx;
   var p=pins[idx];
   document.getElementById("pdTitle").innerHTML="<img src='"+(p.ic||"")+"' style='width:28px;height:28px;border-radius:4px;object-fit:cover'> "+p.name;
-  document.getElementById("pdCoord").textContent="位置： "+p.x+"%, "+p.y+"%";
+  document.getElementById("pdCoord").textContent="位置�?"+p.x+"%, "+p.y+"%";
   document.getElementById("pdNote").value=p.note||"";
   renderPinImages();
   renderPinComments();
@@ -567,12 +568,12 @@ function deleteCurrentPin(){
   if(!currentUser){login();return;}
   if(curPinIdx===null)return;
   var p=pins[curPinIdx];
-  if(!confirm("确认提交删除申请？其他人将可以对此投票，审核通过后该点位才会被移除。"))return;
+  if(!confirm("确认提交删除申请？其他人将可以对此投票，审核通过后该点位才会被移除�?))return;
   if(p.id){
     supabase("deletion_requests","POST",{pin_id:p.id,name:p.name,x:p.x,y:p.y,submitted_by:(currentUser.user_metadata&&(currentUser.user_metadata.user_name||currentUser.user_metadata.name||currentUser.user_metadata.preferred_username||"匿名"))||"匿名",reason:"用户提交",votes:0}).then(function(){
-      alert("删除申请已提交，等待审核投票。");
+      alert("删除申请已提交，等待审核投票�?);
     }).catch(function(){
-      alert("提交删除申请失败，请重试。");
+      alert("提交删除申请失败，请重试�?);
     });
   }else{
     pins.splice(curPinIdx,1);curPinIdx=null;
@@ -580,7 +581,7 @@ function deleteCurrentPin(){
   }
 }
 
-// ─── 容器点位评论区 ───
+// ─── 容器点位评论�?───
 function renderPinComments(){
   var list=document.getElementById("pdcList");list.innerHTML="";
   if(curPinIdx===null)return;
@@ -610,7 +611,7 @@ function postPinComment(){
   input.value="";
 }
 
-// ─── 地图评论区 ───
+// ─── 地图评论�?───
 function renderMapComments(){
   var list=document.getElementById("mcList");list.innerHTML="";
   mapComments.forEach(function(c){
@@ -703,7 +704,7 @@ function showPinInfo(x,y,name,type,ic){
       "<img src='"+(ic||"")+"' style='width:36px;height:36px;border-radius:6px;object-fit:cover'>"+
       "<div><div style='color:#ffc832;font-weight:600;font-size:15px'>"+(name||"未知")+"<\/div>"+
       "<div style='color:#999;font-size:12px'>位置: "+x+"%, "+y+"%<\/div><\/div>"+
-    "<\/div><div style='color:#888;font-size:12px;border-top:1px solid #1e1e2a;padding-top:8px;margin-top:4px'>审核中 - 此点位尚未公开<\/div><\/div>";
+    "<\/div><div style='color:#888;font-size:12px;border-top:1px solid #1e1e2a;padding-top:8px;margin-top:4px'>审核�?- 此点位尚未公开<\/div><\/div>";
   card.style.cssText="position:fixed;top:12px;right:12px;z-index:9999";
   document.body.appendChild(card);
 }
@@ -711,3 +712,4 @@ function showPinInfo(x,y,name,type,ic){
 
 </body>
 </html>
+
