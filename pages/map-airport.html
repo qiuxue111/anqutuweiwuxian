@@ -408,7 +408,7 @@ function addPin(tid){
   // Show "submitting" state
   var el=document.getElementById("ab");
   if(el){el.innerHTML="<span style='color:#ffc832;font-size:14px'>\u23f3 \u63d0\u4ea4\u4e2d...</span>";el.disabled=true;}
-supabase("pending_pins","POST",sdata).then(function(){
+supabase("pending_pins","POST",Object.assign({map_name:MAP_NAME},sdata)).then(function(){
     pins.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[]});
     savePins();renderMarkers();
     pp=null;document.getElementById("cv").textContent="\u672a\u9009\u62e9";closePicker();
@@ -426,6 +426,7 @@ supabase("pending_pins","POST",sdata).then(function(){
   });
 }
 function savePins(){try{localStorage.setItem("abi_airport_pins",JSON.stringify({pins:pins,mapComments:mapComments}));}catch(e){}}
+var MAP_NAME = '机场';
 // --- Supabase cloud ---
 var SUPABASE_URL="https://hanrfbciinkhgcumvous.supabase.co";
 var SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok";
@@ -512,8 +513,8 @@ function supabase(t,m,b,q){
 var cloudPins=[],cloudComments=[];
 function loadCloudPins(){
   var a=[];
-  a.push(supabase("pins","GET").then(function(d){if(d&&d.length){cloudPins=d;cloudPins.forEach(function(p){delete p.created_at;});}}));
-  a.push(supabase("map_comments","GET").then(function(d){if(d&&d.length){cloudComments=d;cloudComments.forEach(function(c){delete c.id;delete c.created_at;});}}));
+  a.push(supabase("pins","GET",null,"map_name=eq.%E6%9C%BA%E5%9C%BA").then(function(d){if(d&&d.length){cloudPins=d;cloudPins.forEach(function(p){delete p.created_at;});}}));
+  a.push(supabase("map_comments","GET",null,"map_name=eq.%E6%9C%BA%E5%9C%BA").then(function(d){if(d&&d.length){cloudComments=d;cloudComments.forEach(function(c){delete c.id;delete c.created_at;});}}));
   Promise.all(a).then(function(){
     pins=cloudPins.slice();
     mapComments=cloudComments.slice();
