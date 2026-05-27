@@ -1,230 +1,148 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <link rel="icon" href="favicon.ico" type="image/jpeg">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>暗区突围：无限 - 攻略站</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .hero-features {
-      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-    }
-    .feature-icon {
-      font-size: 2.5rem; margin-bottom: 1rem; display: block;
-    }
-    .video-section {
-      max-width: 1100px; margin: 0 auto; padding: 4rem 2rem;
-    }
-    .video-section h2 {
-      font-size: 1.8rem; color: #ffc832;
-      margin-bottom: 0.5rem; border-left: 4px solid #ffc832;
-      padding-left: 1rem;
-    }
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.2rem; margin-top: 2rem;
-    }
-    .video-card {
-      background: #12121a; border: 1px solid #1e1e2a;
-      border-radius: 12px; overflow: hidden;
-    }
-    .video-card .placeholder {
-      background: #1a1508; width: 100%; aspect-ratio: 16/9;
-      display: flex; align-items: center; justify-content: center;
-      color: #555; font-size: 0.9rem; flex-direction: column; gap: 0.5rem;
-    }
-    .video-card .vbody { padding: 0.8rem 1rem; }
-    .video-card .vbody h4 { color: #fff; font-size: 0.92rem; margin-bottom: 0.3rem; }
-    .video-card .vbody p { color: #888; font-size: 0.8rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>首页 - 暗区无限攻略站</title>
+
 </head>
 <body>
-<nav class="navbar">
-  <div class="logo"><a href="index.html" style="color:#ffc832;text-decoration:none;font-weight:bold;">暗区无限</a><span style="color:#888;font-size:0.8rem;"> 攻略站</span></div>
-  <div id="userArea" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-    <span id="userName" style="color:#ffc832;font-size:0.85rem;display:none;"></span>
-    <button id="loginBtn" onclick="loginGitHub()" style="padding:4px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-size:0.8rem;cursor:pointer;font-weight:bold;">登录</button>
-    <button id="menuBtn" onclick="toggleMenu()" style="width:32px;height:32px;background:#1e1e2a;color:#ccc;border:1px solid #333;border-radius:6px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#9776;</button>
-  </div>
-  <div id="sideMenu" style="display:none;position:fixed;top:0;right:0;width:260px;height:100vh;background:#0f0f18;border-left:1px solid #1e1e2a;z-index:9999;padding:1rem;box-shadow:-4px 0 20px rgba(0,0,0,0.5);">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #1e1e2a;">
-      <span style="color:#ffc832;font-weight:bold;">菜单</span>
-      <button onclick="toggleMenu()" style="width:28px;height:28px;background:transparent;color:#888;border:1px solid #333;border-radius:4px;cursor:pointer;font-size:1rem;">&#10005;</button>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <a href="pages/maps.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F5FA; 地图选图</a>
-      <a href="pages/weapons.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F527; 改枪</a>
-      <a href="pages/strategy.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4AC; 聊天</a>
-      <a href="pages/gear.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4D6; 攻略</a>
-      <a href="search.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F50D; 搜索</a>
-      <div style="border-top:1px solid #1e1e2a;margin:8px 0;padding-top:8px;">
-        <a href="#" onclick="showUserCenter()" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F464; 用户中心</a>
-        <a href="#" onclick="logout()" style="display:block;padding:10px 12px;color:#e74c3c;border-radius:6px;text-decoration:none;font-size:0.9rem;">退出登录</a>
-      </div>
-    </div>
-  </div>
-</nav>
+<script>if(location.hash.indexOf('access_token')>=0||location.search.indexOf('access_token')>=0){
+  var raw=(location.hash||location.search).replace(/^[#?]/,'');
+  var idx=raw.indexOf('access_token=');
+  if(idx>=0){
+    var t=raw.substring(idx+13);
+    var amp=t.indexOf('&');
+    if(amp>=0)t=t.substring(0,amp);
+    try{
+      var b64=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+      while(b64.length%4)b64+='=';
+      localStorage.setItem('abi_token',t);
+      localStorage.setItem('abi_user',JSON.stringify(JSON.parse(atob(b64))));
+      history.replaceState(null,'',location.pathname+location.search);
+      location.href=location.pathname+location.search;
+    }catch(e){}
+  }
+}</script>
+<style>/* Reset & base */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#08080e;color:#ccc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+a{color:#ffc832;text-decoration:none;}
+a:hover{opacity:0.8;}
 
-<style>
-.navbar{display:flex;align-items:center;padding:0.5rem 1rem;background:#0a0a10;border-bottom:1px solid #1a1a28;position:relative;z-index:100;}
-.navbar a{transition:color 0.2s;}
-.navbar a:hover{color:#ffc832!important;}
-#sideMenu a:hover{background:#1a1a28;}
+/* Floating menu button - upper left, semi-transparent */
+
+/* User area - top right */
+#userArea{position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;}
+#userName{color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:none;}
+#loginBtn{padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+#loginBtn:hover{background:rgba(255,200,50,0.25);}
+
+/* Page content area */
+.content{padding:60px 16px 20px;max-width:900px;margin:0 auto;}
+
+#menuBtn{position:fixed;top:12px;left:12px;z-index:9999;width:38px;height:38px;border-radius:10px;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);color:#ccc;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+#menuBtn:hover{background:rgba(255,200,50,0.15);color:#ffc832;}
+#bubbleMenu{display:block;position:fixed;top:56px;left:12px;z-index:9998;background:rgba(15,15,24,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:8px;min-width:180px;box-shadow:0 8px 40px rgba(0,0,0,0.6);overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.2s ease,transform 0.2s ease;}
+#menuBtn:hover + #bubbleMenu,#bubbleMenu:hover{opacity:1;pointer-events:all;transform:translateY(0);}
+#bubbleMenu a{display:flex;align-items:center;gap:10px;padding:10px 14px;color:#ccc;border-radius:8px;font-size:0.95rem;text-decoration:none;transition:all 0.15s;}
+#bubbleMenu a:hover{background:rgba(255,200,50,0.08);color:#ffc832;}
+#bubbleMenu .sep{height:1px;background:rgba(255,255,255,0.06);margin:4px 8px;}
+
+
+    #postModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);overflow-y:auto;}
+    #postModal .modal-content{max-width:650px;margin:60px auto;background:#12121a;border:1px solid #1e1e2a;border-radius:14px;padding:1.5rem;position:relative;}
+    #postModal .close-btn{position:absolute;top:12px;right:14px;background:none;border:none;color:#888;font-size:1.5rem;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+    #postModal .close-btn:hover{background:rgba(255,255,255,0.06);color:#ffc832;}
+    #postModal h2{color:#ffc832;margin:0 0 0.5rem 0;font-size:1.2rem;}
+    #postModal .post-meta{display:flex;gap:12px;align-items:center;font-size:0.8rem;color:#666;margin-bottom:1rem;}
+    #postModal .post-body{color:#ccc;font-size:0.95rem;line-height:1.7;margin-bottom:1.5rem;white-space:pre-wrap;word-break:break-word;}
+    #postModal .post-images{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;}
+    #postModal .post-images img{max-width:100%;max-height:300px;border-radius:8px;object-fit:contain;background:#0a0a0f;}
+    #postModal h4{color:#aaa;font-size:0.9rem;margin:0 0 0.5rem 0;}
+    .like-btn{cursor:pointer;padding:2px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#aaa;font-size:0.8rem;display:inline-flex;align-items:center;gap:4px;}
+    .like-btn:hover{border-color:#ffc83244;color:#ffc832;}
+    .like-btn.active{background:rgba(255,200,50,0.1);border-color:#ffc83255;color:#ffc832;}
+
 </style>
+<button id="menuBtn" onclick="toggleMenu()">☰</button>
+<div id="userArea"><span id="loginDot" style="display:none;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span><span id="userName" style="display:none;color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);"></span><button id="loginBtn" onclick="loginGitHub()" style="padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;">登录</button></div>
+<div id="bubbleMenu"><a href="index.html" style="color:#ffc832;">🏠 首页</a><a href="pages/maps.html">🗺 地图选图</a><a href="pages/weapons.html">🔧 改枪</a><a href="pages/strategy.html">💬 聊天</a><a href="pages/gear.html">📖 攻略</a><a href="search.html">🔍 搜索</a><div class="sep"></div><a id="reviewBtn" href="pages/review.html" style="display:none;">✅ 审核中心</a><a href="#" onclick="showUserCenter()">👤 用户中心</a><a href="#" onclick="logout()">🚪 退出登录</a></div>
+<div class="content">
 
+  <h1 style="color:#ffc832;font-size:1.8rem;margin-bottom:0.5rem;">暗区无限攻略站</h1>
+  <p style="color:#888;margin-bottom:2rem;">暗区突围：无限 玩家社区</p>
 
-
-
-<section class="hero">
-  <h1>暗区突围：无限</h1>
-  <p>PC 端最硬核的撤离射击攻略站<br>地图点位 · 帖子改装 · 战术闲聊 · 装备推荐</p>
-  <div class="hero-features">
-    <a href="pages/maps.html" class="cta">🗺️ 地图攻略</a>
-    <a href="pages/weapons.html" class="cta">🔫 帖子改装</a>
-    <a href="search.html" class="cta secondary">🔍 搜索</a>
+  <div id="hotPosts" style="margin-bottom:2rem;">
+    <h2 style="color:#ffc832;font-size:1.1rem;margin-bottom:1rem;">📌 最新帖子</h2>
+    <div id="postList" style="display:flex;flex-direction:column;gap:10px;"></div>
   </div>
-</section>
 
-<section id="maps">
-  <h2>🗺️ 地图攻略</h2>
-  <p class="subtitle">每张地图的关键点位、撤离点、刷新规律</p>
-  <div class="map-list">
-    <a href="pages/maps.html#beishan" class="map-item" style="text-decoration:none;">
-      <div class="map-icon">🏙️</div>
-      <div class="map-info">
-        <h4>北山</h4>
-        <p>中型地图 · 北山酒店、污水处理厂、观景台</p>
-      </div>
-      <span class="diff diff-med">中等</span>
-    </a>
-    <a href="pages/maps.html#valley" class="map-item" style="text-decoration:none;">
-      <div class="map-icon">🏞️</div>
-      <div class="map-info">
-        <h4>山谷</h4>
-        <p>PC 版专属 · 开放式大地图，适合远距离交火</p>
-      </div>
-      <span class="diff diff-hard">困难</span>
-    </a>
-    <a href="pages/maps.html#armory" class="map-item" style="text-decoration:none;">
-      <div class="map-icon">🏛️</div>
-      <div class="map-info">
-        <h4>军械库</h4>
-        <p>高强度室内 CQB · 地下三层结构，资源密集</p>
-      </div>
-      <span class="diff diff-hard">困难</span>
-    </a>
-    <a href="pages/map-farm.html" class="map-item" style="text-decoration:none;">
-      <div class="map-icon">🏚️</div>
-      <div class="map-info">
-        <h4>农场</h4>
-        <p>新手入门 · 汽车旅馆、仓库区、麦田</p>
-      </div>
-      <span class="diff diff-easy">简单</span>
-    </a>
-    <a href="pages/maps.html#port" class="map-item" style="text-decoration:none;">
-      <div class="map-icon">⚓</div>
-      <div class="map-info">
-        <h4>港口</h4>
-        <p>近距离巷战 · 仓库、码头、集装箱区域</p>
-      </div>
-      <span class="diff diff-med">中等</span>
-    </a>
-    <a href="pages/maps.html#tvstation" class="map-item" style="text-decoration:none;">
-      <div class="map-icon">📺</div>
-      <div class="map-info">
-        <h4>电视台</h4>
-        <p>室内 CQB · 演播大厅、控制室、地下车库</p>
-      </div>
-      <span class="diff diff-med">中等</span>
-    </a>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:2rem;">
+    <a href="pages/maps.html" style="flex:1;min-width:120px;padding:16px;background:rgba(20,20,30,0.6);border-radius:10px;border:1px solid rgba(255,255,255,0.06);text-align:center;">🗺 地图选图</a>
+    <a href="pages/weapons.html" style="flex:1;min-width:120px;padding:16px;background:rgba(20,20,30,0.6);border-radius:10px;border:1px solid rgba(255,255,255,0.06);text-align:center;">🔧 改枪</a>
+    <a href="pages/strategy.html" style="flex:1;min-width:120px;padding:16px;background:rgba(20,20,30,0.6);border-radius:10px;border:1px solid rgba(255,255,255,0.06);text-align:center;">💬 聊天</a>
+    <a href="pages/gear.html" style="flex:1;min-width:120px;padding:16px;background:rgba(20,20,30,0.6);border-radius:10px;border:1px solid rgba(255,255,255,0.06);text-align:center;">📖 攻略</a>
   </div>
-</section>
 
-<section id="hot-posts">
-  <h2>📌 热门帖子</h2>
-  <p class="subtitle">最新的帖子动态</p>
-  <div id="hotPostList" style="display:flex;flex-direction:column;gap:0.8rem;margin-bottom:2rem;">
-    <div style="text-align:center;color:#666;padding:2rem;">加载中...</div>
-  </div>
-  <div style="text-align:center;margin-top:1rem;">
-    <a href="pages/weapons.html" style="display:inline-block;padding:0.5rem 1.5rem;background:#1a1a22;color:#ffc832;border:1px solid #333;border-radius:8px;text-decoration:none;font-size:0.9rem;">查看全部帖子 →</a>
-  </div>id="gear">
-  <h2>🛡️ 攻略推荐</h2>
-  <p class="subtitle">PC 端不同预算下的装备搭配方案</p>
-  <div class="card-grid">
-    <a href="pages/gear.html#knife" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">🔪</span>
-      <h3>跑刀装 (0 成本)</h3>
-      <p>爆仓回血专用，空手进去摸金，死了不亏。</p>
-      <span class="tag tag-tip">经济</span>
-    </a>
-    <a href="pages/gear.html#budget" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">💵</span>
-      <h3>贫民装 (3-5万)</h3>
-      <p>PC 端基础作战配置。AK74N/AKS + 三级甲。</p>
-      <span class="tag tag-tip">经济</span>
-    </a>
-    <a href="pages/gear.html#standard" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">⚖️</span>
-      <h3>标准装 (8-12万)</h3>
-      <p>PC 日常稳健作战。H416/M4A1 + 四级甲 + 四级弹。</p>
-      <span class="tag tag-tip">均衡</span>
-    </a>
-    <a href="pages/gear.html#premium" class="card" style="text-decoration:none;display:block;">
-      <span class="icon">🏆</span>
-      <h3>满攻略 (20万+)</h3>
-      <p>PC 攻坚战。满改枪 + 五/六级甲 + 高级弹。</p>
-      <span class="tag tag-tip">攻坚</span>
-    </a>
-  </div>
-</section>
-
-<footer>
-  <p>暗区突围：无限 攻略站 · 由 秋雪 制作 · 持续更新中</p>
-  <p style="margin-top:0.3rem;">数据基于 PC 版本 · 仅供参考</p>
-</footer>
-
-
+</div>
 <script>
 
-// ========== GLOBAL AUTH & NAV ==========
+var SUPABASE_URL='https://hanrfbciinkhgcumvous.supabase.co';
+var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+function db(method,table,body,query){
+  var token=localStorage.getItem('abi_token');
+  var useToken=(method==='POST'||method==='PATCH'||method==='DELETE');
+  var auth=useToken&&token?'Bearer '+token:'Bearer '+SUPABASE_ANON;
+  return fetch(SUPABASE_URL+'/rest/v1/'+table+(query?'?'+query:''),{
+    method:method,
+    headers:{'Authorization':auth,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:body?JSON.stringify(body):null
+  });
+}
+
+
+// ===== GLOBAL AUTH =====
+function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
+function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return localStorage.getItem('abi_user')||'已登录';}}
 function loginGitHub(){
-  var cb=window.location.origin+window.location.pathname;
+  var p=window.location.pathname;
+  var i=p.lastIndexOf('/pages/');
+  var isSub=i>=0;
+  var cb=window.location.origin+(isSub?p.substring(0,i+1)+'index.html':p.replace(/index\.html$/,'')+'index.html');
   var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
   window.location.href=u;
 }
 
-(function initAuth(){
-  var h=window.location.hash;
-  if(h&&h.indexOf('access_token=')>=0){
-    var p=new URLSearchParams(h.replace('#',''));
-    var t=p.get('access_token');
-    if(t){
-      try{
-        var payload=JSON.parse(atob(t.split('.')[1]));
-        localStorage.setItem('abi_token',t);
-        var email=payload.preferred_username||payload.user_metadata?.preferred_username||payload.email||p.get('email')||'';
-        localStorage.setItem('abi_user',email);
-        history.replaceState(null,'',window.location.pathname);
-        location.reload();
-      }catch(e){}
-    }
-  }
+(function(){
   var token=localStorage.getItem('abi_token');
   if(token){
-    var u=document.getElementById('userName');
-    var b=document.getElementById('loginBtn');
-    if(u){u.style.display='';u.textContent=localStorage.getItem('abi_user')||'已登录';}
-    if(b){b.style.display='none';}
+    var un=document.getElementById('userName');
+    var lb=document.getElementById('loginBtn');
+    var dot=document.getElementById('loginDot');if(dot)dot.style.display='inline-block';if(un){un.style.display='inline';un.textContent=getUserName();}
+    if(lb)lb.style.display='none';
+    var rb=document.getElementById('reviewBtn');if(rb)rb.style.display='flex';
   }
+  // Safety check again after DOM ready
+  function checkAgain(){
+    var tok=localStorage.getItem('abi_token');
+    var un2=document.getElementById('userName');
+    var lb2=document.getElementById('loginBtn');
+    if(tok&&un2){un2.style.display='inline';un2.textContent=getUserName();}
+    if(tok&&lb2)lb2.style.display='none';
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',checkAgain);}
+  else{setTimeout(checkAgain,100);}
+  setTimeout(checkAgain,1000);
 })();
 
 function toggleMenu(){
-  var m=document.getElementById('sideMenu');
+  var m=document.getElementById('bubbleMenu');
   if(!m)return;
-  m.style.display=m.style.display==='none'?'block':'none';
+  var vis=m.style.opacity==='1'||m.style.opacity==='';
+  m.style.opacity=vis?'0':'1';
+  m.style.pointerEvents=vis?'none':'all';
+  m.style.transform=vis?'translateY(-8px)':'translateY(0)';
 }
 
 function logout(){
@@ -237,11 +155,297 @@ function showUserCenter(){
   toggleMenu();
   var u=localStorage.getItem('abi_user');
   if(!u){alert('请先登录');return;}
-  var info='[用户中心]\n用户名: '+u+'\n(更多功能开发中)';
-  alert(info);
+  alert('用户: '+getUserName()+'\n(更多功能开发中)');
 }
 
 
+async function loadHotPosts(){
+  try{
+    var r=await db('GET','map_posts',null,'order=likes_count.desc.nullslast,created_at.desc&limit=20');
+    if(!r.ok)throw new Error(r.status);
+    var posts=await r.json();
+    var el=document.getElementById('postList');
+    if(!posts||posts.length===0){
+      el.innerHTML='<div style="text-align:center;color:#555;padding:2rem;">暂无帖子</div>';
+      return;
+    }
+    el.innerHTML=posts.map(function(p){
+      var prev=(p.content||'').substring(0,120);
+      var cat=p.category||'杂谈';
+      var cn={'general':'杂谈','question':'问答','guide':'攻略','showoff':'炫耀'}[cat]||'杂谈';
+      var hue=cat==='guide'?'#4a9eff':cat==='question'?'#ff6b6b':cat==='showoff'?'#ffc832':'#888';
+      var pId=p.id;
+      var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
+      var imgHTML=imgs.length?'<div style="display:flex;gap:4px;margin-top:4px;">'+imgs.slice(0,3).map(function(u){return '<img src="'+u+'" style="width:40px;height:40px;border-radius:4px;object-fit:cover;border:1px solid #1e1e2a;">';}).join('')+(imgs.length>3?'<span style="color:#555;font-size:0.7rem;align-self:center;">+'+imgs.length+'</span>':'')+'</div>':'';
+      var likes=p.likes_count||0;
+      return '<div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px;cursor:pointer;" onclick="openPostModal('+pId+')">'+
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'+
+        '<span style="font-size:0.7rem;padding:2px 6px;border-radius:4px;background:'+hue+'22;color:'+hue+';">'+cn+'</span>'+
+        '<span style="font-size:0.7rem;color:#555;">'+(p.author||'匿名')+'</span>'+
+        '<span style="font-size:0.7rem;color:#444;">'+(p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'')+'</span>'+
+        '<span style="margin-left:auto;font-size:0.7rem;color:#888;">❤️ '+likes+'</span></div>'+
+        '<div style="color:#ddd;font-size:0.95rem;font-weight:500;">'+esc(p.title||'无标题')+'</div>'+
+        '<div style="color:#777;font-size:0.8rem;margin-top:4px;">'+esc(prev)+(prev.length>=120?'...':'')+'</div>'+
+        imgHTML+'</div>';
+    }).join('');
+  }catch(e){
+    var lel=document.getElementById('postList');
+    if(lel)lel.innerHTML='<div style="text-align:center;color:#555;padding:2rem;">加载失败</div>';
+  }
+}
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
+document.addEventListener('DOMContentLoaded',loadHotPosts);
+
+
+  // Safety: force check login state after 500ms
+  setTimeout(function(){
+    var token=localStorage.getItem('abi_token');
+    var un=document.getElementById('userName');
+    var lb=document.getElementById('loginBtn');
+    if(token){
+      if(un){un.style.display='inline';un.textContent=getUserName();}
+      if(lb)lb.style.display='none';
+      var rb=document.getElementById('reviewBtn');if(rb)rb.style.display='flex';
+    }else{
+      var dot=document.getElementById('loginDot');if(dot)dot.style.display='none';if(un)un.style.display='none';
+      if(lb)lb.style.display='inline-block';
+      var rb=document.getElementById('reviewBtn');if(rb)rb.style.display='none';
+    }
+  },500);
+
+
+var currentModalPostId = null;
+
+async function openPostModal(postId){
+  var token=localStorage.getItem('abi_token');
+  try{
+    var r=await db('GET','map_posts',null,'id=eq.'+postId+'&limit=1');
+    if(!r.ok){alert('加载失败');return;}
+    var posts=await r.json();
+    var p=posts&&posts[0];
+    if(!p){alert('帖子不存在');return;}
+    currentModalPostId=postId;
+    document.getElementById('modalTitle').textContent=p.title||'无标题';
+    document.getElementById('modalBody').textContent=p.content||'';
+    document.getElementById('modalAuthor').textContent=(p.author||'匿名');
+    document.getElementById('modalDate').textContent=p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'';
+    var cat=p.category||'general';
+    var catNames={'general':'杂谈','question':'问答','guide':'攻略','showoff':'炫耀'};
+    var cn=catNames[cat]||'杂谈';
+    var hue=cat==='guide'?'#4a9eff':cat==='question'?'#ff6b6b':cat==='showoff'?'#ffc832':'#888';
+    var catEl=document.getElementById('modalCategory');
+    catEl.textContent=cn;
+    catEl.style.background=hue+'22';
+    catEl.style.color=hue;
+    (async function(){
+      var un=getUserName();
+      if(!un||!token)return;
+      try{
+        var lr=await db('GET','post_likes',null,'post_id=eq.'+postId+'&user_id=eq.'+encodeURIComponent(un)+'&limit=1');
+        if(lr.ok){
+          var likes=await lr.json();
+          if(likes&&likes.length>0){
+            var el=document.getElementById('modalLikes');
+            if(el)el.classList.add('active');
+          }
+        }
+      }catch(e){}
+    })();
+    var imgEl=document.getElementById('modalImages');
+    var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
+    imgEl.innerHTML=imgs.length?imgs.map(function(u){return '<img src="'+u+'" onclick="window.open(this.src)">';}).join(''):'';
+    var delBtn=document.getElementById('modalDelBtn');
+    var userName=getUserName();
+    delBtn.style.display=(token&&p.author===userName)?'inline':'none';
+    document.getElementById('modalLikes').textContent='❤️ '+(p.likes_count||0);
+    document.getElementById('modalLikes').className='like-btn'+(p.liked_by?'':''); // could add active class later
+    loadComments(postId,'modalComments');
+    document.getElementById('postModal').style.display='block';
+    document.body.style.overflow='hidden';
+  }catch(e){alert('加载失败: '+e.message);}
+}
+
+function closePostModal(){
+  document.getElementById('postModal').style.display='none';
+  document.body.style.overflow='';
+}
+
+async function toggleLike(){
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('请先登录');return;}
+  var id=currentModalPostId;
+  try{
+    // Just increment likes_count via RPC (needs function)
+    // Fallback: PATCH the map_posts record to increment
+    var userName=getUserName();
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/like_post',{
+      method:'POST',
+      headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({post_id:id,user_name:userName})
+    });
+    if(r.ok){
+      var newCount=await r.json();
+      var el=document.getElementById('modalLikes');
+      if(el){
+        var isLiked=el.classList.contains('active');
+        if(isLiked)el.classList.remove('active');else el.classList.add('active');
+        el.textContent='❤️ '+(newCount||0);
+      }
+      loadHotPosts();
+    }else{
+      alert('点赞失败');
+    }
+  }catch(e){alert('点赞失败: '+e.message);}
+}
+
+async function addCommentFromModal(){
+  var input=document.getElementById('modalCommentInput');
+  var content=input?input.value.trim():'';
+  if(!content){alert('请输入评论内容');return;}
+  var author=getUserName();
+  (async function(){
+    var fileInput=document.getElementById('commentImages');
+    var images=[];
+    if(fileInput&&fileInput.files.length>0){
+      for(var i=0;i<fileInput.files.length;i++){
+        var f=fileInput.files[i];
+        if(!f.type.startsWith('image/')){alert('只支持图片文件');return;}
+        if(f.size>5*1024*1024){alert('单张图片不能超过5MB');return;}
+        var imgName='c_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.jpg';
+        var formData=new FormData();
+        formData.append('file',f);
+        try{
+          var uploadRes=await fetch(SUPABASE_URL+'/storage/v1/object/post_images/'+imgName,{
+            method:'POST',
+            headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'x-upsert':'false'},
+            body:formData
+          });
+          if(uploadRes.ok){
+            images.push(SUPABASE_URL+'/storage/v1/object/public/post_images/'+imgName);
+          }
+        }catch(e){console.error('Upload failed',e);}
+      }
+    }
+    try{
+      var body={post_id:currentModalPostId,content:content,author:author};
+      if(images.length)body.images=JSON.stringify(images);
+      var r=await fetch(SUPABASE_URL+'/rest/v1/post_comments',{
+        method:'POST',
+        headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify(body)
+      });
+      if(!r.ok){var err=await r.json().catch(function(){});alert('评论失败: '+(err&&err.message||r.status));return;}
+      alert('\u2705 评论成功');
+      input.value='';
+      if(fileInput)fileInput.value='';
+      document.getElementById('commentFilePreview').innerHTML='';
+      loadComments(currentModalPostId, 'modalComments');
+    }catch(e){alert('评论失败: '+e.message);}
+  })();
+}
+
+async function loadComments(postId, containerId){
+  try{
+    var r=await db('GET','post_comments',null,'post_id=eq.'+postId+'&order=created_at.asc');
+    if(!r.ok)return;
+    var comments=await r.json();
+    var el=document.getElementById(containerId);
+    if(!el)return;
+    if(!comments||comments.length===0){
+      el.innerHTML='<div style="color:#555;font-size:0.8rem;padding:4px 0;">暂无评论</div>';
+      return;
+    }
+    var userName=getUserName();
+    var token=localStorage.getItem('abi_token');
+    el.innerHTML=comments.map(function(c){
+      var delBtn=(token&&c.author===userName)?'<button style="background:none;border:none;color:#f55;font-size:0.65rem;cursor:pointer;margin-left:8px;" onclick="deleteComment('+c.id+',\''+containerId+'\','+postId+')">删除</button>':'';
+      var cimgs=(c.images&&typeof c.images==='string')?JSON.parse(c.images):[];
+      var cimgHTML=cimgs.length?'<div style="display:flex;gap:4px;margin-top:2px;">'+cimgs.map(function(u){return '<img src="'+u+'" style="max-width:80px;max-height:60px;border-radius:4px;object-fit:cover;cursor:pointer;border:1px solid #1e1e2a;" onclick="window.open(this.src)">';}).join('')+'</div>':'';
+      return '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">'+
+        '<span style="color:#ffc832;font-size:0.8rem;white-space:nowrap;">'+esc(c.author)+'</span>'+
+        '<div style="flex:1;"><span style="color:#ccc;font-size:0.85rem;">'+esc(c.content)+'</span>'+cimgHTML+'</div>'+
+        '<span style="color:#555;font-size:0.65rem;">'+(c.created_at?new Date(c.created_at).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'')+'</span>'+
+        delBtn+'</div>';
+    }).join('');
+  }catch(e){}
+}
+
+async function deleteComment(commentId, containerId, postId){
+  if(!confirm('确定删除这条评论？'))return;
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/delete_my_comment',{
+      method:'POST',
+      headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({comment_id:commentId})
+    });
+    if(r.ok||r.status===204){
+      alert('评论已删除');
+      loadComments(postId, containerId);
+    }else alert('删除评论失败');
+  }catch(e){alert('删除失败: '+e.message);}
+}
+
+async function deletePostFromModal(){
+  if(!confirm('确定删除这条帖子？'))return;
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/delete_my_post',{
+      method:'POST',
+      headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({post_id:currentModalPostId})
+    });
+    if(r.ok||r.status===204){
+      alert('\uD83D\uDDD1 帖子已删除');
+      closePostModal();
+      loadHotPosts();
+    }else alert('删除失败');
+  }catch(e){alert('删除失败: '+e.message);}
+}
+
+function previewCommentFiles(input){
+  var preview=document.getElementById('commentFilePreview');
+  if(!preview)return;
+  if(!input.files||!input.files.length){preview.innerHTML='';return;}
+  preview.innerHTML='';
+  for(var i=0;i<input.files.length;i++){
+    (function(file){
+      var reader=new FileReader();
+      reader.onload=function(e){
+        var img=document.createElement('img');
+        img.style.cssText='width:50px;height:50px;border-radius:4px;object-fit:cover;border:1px solid #1e1e2a;';
+        img.src=e.target.result;
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    })(input.files[i]);
+  }
+}
+
 </script>
+
+<div id="postModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);overflow-y:auto;">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closePostModal()">✕</button>
+    <h2 id="modalTitle"></h2>
+    <div class="post-meta">
+      <span id="modalCategory" style="font-size:0.7rem;padding:2px 6px;border-radius:4px;"></span>
+      <span id="modalAuthor"></span>
+      <span id="modalDate"></span>
+      <span id="modalLikes" class="like-btn" onclick="toggleLike()">❤️ 0</span>
+      <button id="modalDelBtn" style="margin-left:auto;padding:2px 8px;background:#3a1a1a;color:#f66;border:none;border-radius:4px;cursor:pointer;font-size:0.7rem;display:none;" onclick="deletePostFromModal()">删除</button>
+    </div>
+    <div id="modalImages" class="post-images"></div>
+    <div id="modalBody" class="post-body"></div>
+    <h4>💬 评论</h4>
+    <div id="modalComments" class="post-comments"></div>
+    <div style="display:flex;gap:6px;align-items:center;margin-top:8px;">
+      <input id="modalCommentInput" placeholder="输入评论..." style="flex:1;padding:8px 12px;background:#1a1a22;color:#fff;border:1px solid #333;border-radius:8px;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addCommentFromModal()">
+      <button class="file-btn" style="width:34px;height:34px;border-radius:50%;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);font-size:1.2rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" onclick="document.getElementById('commentImages').click()">+</button>
+      <input id="commentImages" type="file" accept="image/*" multiple style="display:none;" onchange="previewCommentFiles(this)">
+      <button style="padding:8px 16px;background:#ffc832;color:#0a0a0f;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.85rem;" onclick="addCommentFromModal()">评论</button>
+    </div>
+    <div id="commentFilePreview" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;"></div>
+  </div>
+</div>
+
 </body>
 </html>

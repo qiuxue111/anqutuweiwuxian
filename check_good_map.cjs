@@ -1,0 +1,10 @@
+const fs = require('fs');
+var good = fs.readFileSync('F:\\temp_map_good.html', 'utf8');
+console.log('zoomTo:', good.includes('function zoomTo'));
+console.log('zoom:', good.includes('function zoom'));
+console.log('supabase:', good.includes('function supabase'));
+console.log('SUPABASE_ANON_KEY:', good.includes('SUPABASE_ANON_KEY'));
+console.log('loadCloudPins:', good.includes('function loadCloudPins'));
+console.log('addPin:', good.includes('function addPin'));
+console.log('saveComment:', good.includes('function saveComment'));
+console.log('size:', good.length, 'bytes');

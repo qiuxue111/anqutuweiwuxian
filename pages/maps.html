@@ -68,37 +68,32 @@
 </style>
 </head>
 <body>
-<nav class="navbar">
-  <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;font-weight:bold;">暗区无限</a><span style="color:#888;font-size:0.8rem;"> 攻略站</span></div>
-  <div id="userArea" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-    <span id="userName" style="color:#ffc832;font-size:0.85rem;display:none;"></span>
-    <button id="loginBtn" onclick="loginGitHub()" style="padding:4px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-size:0.8rem;cursor:pointer;font-weight:bold;">登录</button>
-    <button id="menuBtn" onclick="toggleMenu()" style="width:32px;height:32px;background:#1e1e2a;color:#ccc;border:1px solid #333;border-radius:6px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#9776;</button>
-  </div>
-  <div id="sideMenu" style="display:none;position:fixed;top:0;right:0;width:260px;height:100vh;background:#0f0f18;border-left:1px solid #1e1e2a;z-index:9999;padding:1rem;box-shadow:-4px 0 20px rgba(0,0,0,0.5);">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #1e1e2a;">
-      <span style="color:#ffc832;font-weight:bold;">菜单</span>
-      <button onclick="toggleMenu()" style="width:28px;height:28px;background:transparent;color:#888;border:1px solid #333;border-radius:4px;cursor:pointer;font-size:1rem;">&#10005;</button>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <a href="maps.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F5FA; 地图选图</a>
-      <a href="weapons.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F527; 改枪</a>
-      <a href="strategy.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4AC; 聊天</a>
-      <a href="gear.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4D6; 攻略</a>
-      <a href="../search.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F50D; 搜索</a>
-      <div style="border-top:1px solid #1e1e2a;margin:8px 0;padding-top:8px;">
-        <a href="#" onclick="showUserCenter()" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F464; 用户中心</a>
-        <a href="#" onclick="logout()" style="display:block;padding:10px 12px;color:#e74c3c;border-radius:6px;text-decoration:none;font-size:0.9rem;">退出登录</a>
-      </div>
-    </div>
-  </div>
-</nav>
+<button id="menuBtn" onclick="toggleMenu()">☰</button>
+<div id="userArea"><span id="loginDot" style="display:none;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span><span id="userName" style="display:none;color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);"></span><button id="loginBtn" onclick="loginGitHub()" style="padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;">登录</button></div>
+<div id="bubbleMenu"><a href="../index.html">🏠 首页</a><a href="maps.html">🗺 地图选图</a><a href="weapons.html">🔧 改枪</a><a href="strategy.html">💬 聊天</a><a href="gear.html">📖 攻略</a><a href="../search.html">🔍 搜索</a><div class="sep"></div><a href="#" onclick="showUserCenter()">👤 用户中心</a><a href="#" onclick="logout()">🚪 退出登录</a></div>
+
 
 <style>
 .navbar{display:flex;align-items:center;padding:0.5rem 1rem;background:#0a0a10;border-bottom:1px solid #1a1a28;position:relative;z-index:100;}
 .navbar a{transition:color 0.2s;}
 .navbar a:hover{color:#ffc832!important;}
 #sideMenu a:hover{background:#1a1a28;}
+
+
+
+#userArea{position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;}
+#userName{order:1;color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);}
+#loginDot{order:2;width:8px;height:8px;border-radius:50%;display:none;margin-right:2px;}
+
+
+#menuBtn{position:fixed;top:12px;left:12px;z-index:9999;width:38px;height:38px;border-radius:10px;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);color:#ccc;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+#menuBtn:hover{background:rgba(255,200,50,0.15);color:#ffc832;}
+#bubbleMenu{display:block;position:fixed;top:56px;left:12px;z-index:9998;background:rgba(15,15,24,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:8px;min-width:180px;box-shadow:0 8px 40px rgba(0,0,0,0.6);overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.2s ease,transform 0.2s ease;}
+#menuBtn:hover + #bubbleMenu,#bubbleMenu:hover{opacity:1;pointer-events:all;transform:translateY(0);}
+#bubbleMenu a{display:flex;align-items:center;gap:10px;padding:10px 14px;color:#ccc;border-radius:8px;font-size:0.95rem;text-decoration:none;transition:all 0.15s;}
+#bubbleMenu a:hover{background:rgba(255,200,50,0.08);color:#ffc832;}
+#bubbleMenu .sep{height:1px;background:rgba(255,255,255,0.06);margin:4px 8px;}
+
 </style>
 
   
@@ -218,8 +213,10 @@
 <script>
 
 // ========== GLOBAL AUTH & NAV ==========
+function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
+function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.email||'已登录');}catch(e){return localStorage.getItem('abi_user')||'已登录';}}
 function loginGitHub(){
-  var cb=window.location.origin+window.location.pathname;
+  var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var cb=window.location.origin+(i>=0?p.substring(0,i+1)+'index.html':p.replace(/index\.html$/,'')+'index.html');
   var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
   window.location.href=u;
 }
@@ -234,9 +231,9 @@ function loginGitHub(){
         var payload=JSON.parse(atob(t.split('.')[1]));
         localStorage.setItem('abi_token',t);
         var email=payload.preferred_username||payload.user_metadata?.preferred_username||payload.email||p.get('email')||'';
-        localStorage.setItem('abi_user',email);
-        history.replaceState(null,'',window.location.pathname);
-        location.reload();
+        localStorage.setItem('abi_user',JSON.stringify(payload));
+        history.replaceState(null,'',window.location.pathname+window.location.search);
+        window.location.href=window.location.pathname+window.location.search;
       }catch(e){}
     }
   }
@@ -244,15 +241,17 @@ function loginGitHub(){
   if(token){
     var u=document.getElementById('userName');
     var b=document.getElementById('loginBtn');
-    if(u){u.style.display='';u.textContent=localStorage.getItem('abi_user')||'已登录';}
+    if(u){u.style.display='';u.textContent=getUserName();}
     if(b){b.style.display='none';}
   }
 })();
 
 function toggleMenu(){
-  var m=document.getElementById('sideMenu');
+  var m=document.getElementById('bubbleMenu');
   if(!m)return;
-  m.style.display=m.style.display==='none'?'block':'none';
+  m.style.opacity=m.style.opacity==='1'||m.style.opacity===''?'0':'1';
+  m.style.pointerEvents=m.style.opacity==='1'?'all':'none';
+  m.style.transform=m.style.opacity==='1'?'translateY(0)':'translateY(-8px)';
 }
 
 function logout(){

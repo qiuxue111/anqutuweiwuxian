@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地图选图 - 暗区无限攻略站</title>
+
+</head>
+<body>
+<style>/* Reset & base */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#08080e;color:#ccc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+a{color:#ffc832;text-decoration:none;}
+a:hover{opacity:0.8;}
+
+/* Floating menu button - upper left, semi-transparent */
+#menuBtn{position:fixed;top:12px;left:12px;z-index:9999;width:38px;height:38px;border-radius:10px;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);color:#ccc;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+#menuBtn:hover{background:rgba(255,200,50,0.15);color:#ffc832;}
+
+/* Bubble menu */
+#bubbleMenu{display:none;position:fixed;top:56px;left:12px;z-index:9998;background:rgba(15,15,24,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:8px;min-width:180px;box-shadow:0 8px 40px rgba(0,0,0,0.6);overflow:hidden;}
+#bubbleMenu a{display:flex;align-items:center;gap:10px;padding:10px 14px;color:#ccc;border-radius:8px;font-size:0.95rem;transition:all 0.15s;}
+#bubbleMenu a:hover{background:rgba(255,200,50,0.08);color:#ffc832;}
+#bubbleMenu .sep{height:1px;background:rgba(255,255,255,0.06);margin:4px 8px;}
+
+/* User area - top right */
+#userArea{position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;}
+#userName{color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:none;}
+#loginBtn{padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+#loginBtn:hover{background:rgba(255,200,50,0.25);}
+
+/* Page content area */
+.content{padding:60px 16px 20px;max-width:900px;margin:0 auto;}
+</style>
+<button id="menuBtn" onclick="toggleMenu()">☰</button>
+<div id="userArea">
+  <span id="userName"></span>
+  <button id="loginBtn" onclick="loginGitHub()">登录</button>
+</div>
+<div id="bubbleMenu"><a href="../index.html">🏠 首页</a><a href="maps.html" style="color:#ffc832;">🗺 地图选图</a><a href="weapons.html">🔧 改枪</a><a href="strategy.html">💬 聊天</a><a href="gear.html">📖 攻略</a><a href="../search.html">🔍 搜索</a><div class="sep"></div><a href="#" onclick="showUserCenter()">👤 用户中心</a><a href="#" onclick="logout()">🚪 退出登录</a></div>
+<div class="content">
+
+  <h1 style="color:#ffc832;font-size:1.5rem;margin-bottom:0.5rem;">🗺 地图选图</h1>
+  <p style="color:#666;margin-bottom:1.5rem;">选择地图查看详细的交互式地图</p>
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:1.1rem;font-weight:500;color:#ddd;">🌾 农场</div><div style="font-size:0.8rem;color:#666;margin-top:2px;">新手首选，资源丰富</div></div><a href="map-farm.html" style="padding:8px 16px;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);border-radius:8px;color:#ffc832;font-size:0.85rem;">🗺 交互地图</a></div><div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:1.1rem;font-weight:500;color:#ddd;">⛰️ 北山</div><div style="font-size:0.8rem;color:#666;margin-top:2px;">山地战，远程对决</div></div><a href="map-beishan.html" style="padding:8px 16px;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);border-radius:8px;color:#ffc832;font-size:0.85rem;">🗺 交互地图</a></div><div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:1.1rem;font-weight:500;color:#ddd;">🏞️ 山谷</div><div style="font-size:0.8rem;color:#666;margin-top:2px;">峡谷穿梭，近距离</div></div><a href="map-valley.html" style="padding:8px 16px;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);border-radius:8px;color:#ffc832;font-size:0.85rem;">🗺 交互地图</a></div><div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:1.1rem;font-weight:500;color:#ddd;">🏪 军械库</div><div style="font-size:0.8rem;color:#666;margin-top:2px;">仓库争夺，高回报</div></div><a href="map-armory.html" style="padding:8px 16px;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);border-radius:8px;color:#ffc832;font-size:0.85rem;">🗺 交互地图</a></div><div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:1.1rem;font-weight:500;color:#ddd;">🛩️ 港口</div><div style="font-size:0.8rem;color:#666;margin-top:2px;">港口攻防，大战场</div></div><a href="map-airport.html" style="padding:8px 16px;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);border-radius:8px;color:#ffc832;font-size:0.85rem;">🗺 交互地图</a></div><div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:1.1rem;font-weight:500;color:#ddd;">📺 电视台</div><div style="font-size:0.8rem;color:#666;margin-top:2px;">室内CQB，战术决胜</div></div><a href="map-tvstation.html" style="padding:8px 16px;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);border-radius:8px;color:#ffc832;font-size:0.85rem;">🗺 交互地图</a></div>
+  </div>
+  <div style="margin-top:2rem;">
+    <h2 style="color:#ffc832;font-size:1rem;margin-bottom:0.8rem;">📹 玩家攻略视频</h2>
+    <div id="videos-farm" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div><div id="videos-beishan" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div><div id="videos-valley" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div><div id="videos-armory" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div><div id="videos-airport" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div><div id="videos-tvstation" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+  </div>
+
+</div>
+<script>
+
+var SUPABASE_URL='https://hanrfbciinkhgcumvous.supabase.co';
+var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+function db(method,table,body,query){
+  return fetch(SUPABASE_URL+'/rest/v1/'+table+(query?'?'+query:''),{
+    method:method,
+    headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:body?JSON.stringify(body):null
+  });
+}
+
+
+// ===== GLOBAL AUTH =====
+function loginGitHub(){
+  var cb=window.location.origin+window.location.pathname;
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
+  window.location.href=u;
+}
+
+(function(){
+  var h=window.location.hash;
+  if(h&&h.indexOf('access_token=')>=0){
+    var p=new URLSearchParams(h.replace('#',''));
+    var t=p.get('access_token');
+    if(t){
+      try{
+        var payload=JSON.parse(atob(t.split('.')[1]));
+        localStorage.setItem('abi_token',t);
+        var uname=payload.preferred_username||payload.user_metadata?.preferred_username||payload.email||'';
+        localStorage.setItem('abi_user',uname);
+        history.replaceState(null,'',window.location.pathname);
+        location.reload();
+      }catch(e){}
+    }
+  }
+  var token=localStorage.getItem('abi_token');
+  if(token){
+    var un=document.getElementById('userName');
+    var lb=document.getElementById('loginBtn');
+    if(un){un.style.display='';un.textContent=localStorage.getItem('abi_user')||'已登录';}
+    if(lb)lb.style.display='none';
+  }
+})();
+
+function toggleMenu(){
+  var m=document.getElementById('bubbleMenu');
+  if(!m)return;
+  m.style.display=m.style.display==='none'?'block':'none';
+  // Close on outside click
+  if(m.style.display==='block'){
+    setTimeout(function(){
+      document.addEventListener('click', function closeMenu(e){
+        if(!m.contains(e.target) && e.target.id!=='menuBtn'){
+          m.style.display='none';
+          document.removeEventListener('click', closeMenu);
+        }
+      });
+    }, 10);
+  }
+}
+
+function logout(){
+  localStorage.removeItem('abi_token');
+  localStorage.removeItem('abi_user');
+  location.reload();
+}
+
+function showUserCenter(){
+  toggleMenu();
+  var u=localStorage.getItem('abi_user');
+  if(!u){alert('请先登录');return;}
+  alert('用户: '+u+'\n(更多功能开发中)');
+}
+
+
+// Load B站 videos
+(async function loadAllVideos(){
+  try{
+    var r=await db('GET','map_videos',null,'order=created_at.desc&limit=50');
+    if(!r.ok)return;
+    var videos=await r.json();
+    if(!Array.isArray(videos))return;
+    ['farm','beishan','valley','armory','airport','tvstation'].forEach(function(k){
+      var ct=document.getElementById('videos-'+k);
+      if(!ct)return;
+      var list=videos.filter(function(v){return v.map_name===k;});
+      ct.innerHTML=list.map(function(v){
+        var cover=v.cover||'';
+        var thumbs='';
+        if(cover) thumbs='<img src="'+cover+'" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" alt="">';
+        return '<div style="width:200px;flex-shrink:0;"><a href="'+v.url+'" target="_blank" style="color:#ccc;text-decoration:none;">'+
+          '<div style="width:100%;height:110px;background:#1a1a28;border-radius:6px;margin-bottom:4px;overflow:hidden;">'+thumbs+'</div>'+
+          '<div style="font-size:0.8rem;line-height:1.3;">'+esc(v.title||'视频')+'</div></a></div>';
+      }).join('');
+    });
+  }catch(e){}
+  function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
+})();
+
+</script>
+</body>
+</html>

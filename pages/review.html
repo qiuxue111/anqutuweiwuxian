@@ -107,10 +107,7 @@ function initAuthFromToken(tok){
     }
   }catch(e){}
 }
-function loginGit(){
-  var redirect = window.location.origin + window.location.pathname;
-  window.location.href=SUPABASE_URL+"/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(redirect);
-}
+function loginGit(){var p=window.location.pathname;var i=p.lastIndexOf("/pages/");var cb=window.location.origin+(i>=0?p.substring(0,i+1)+"index.html":p.replace(/index\.html$/,"")+"index.html");window.location.href=SUPABASE_URL+"/auth/v1/authorize?provider=github&redirect_to="+encodeURIComponent(cb);}
 function logoutGit(){
   currentUser=null;localStorage.removeItem("abi_user");localStorage.removeItem("abi_token");updateAuthUI();
 }
@@ -275,17 +272,6 @@ function renderDels(dels){
     html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\")'>("+p.x+"%, "+p.y+"%)<\/span>";
     html+=" | "+votes+"/10 票（同意删除）<\/div>";
 
-    // Map thumbnail
-    html+="<div style='position:relative;margin:6px 0;width:100%;aspect-ratio:2/1.5;background:#0f0f16;border-radius:6px;overflow:hidden;border:1px solid #1e1e2a'>";
-    html+="<svg viewBox='0 0 200 150' style='width:100%;height:100%;display:block'>";
-    html+="<rect x='0' y='0' width='200' height='150' fill='#0f0f16'/>";
-    html+="<line x1='0' y1='75' x2='200' y2='75' stroke='#1a1a24' stroke-width='0.5'/>";
-    html+="<line x1='100' y1='0' x2='100' y2='150' stroke='#1a1a24' stroke-width='0.5'/>";
-    html+="<circle cx='"+(p.x*2)+"' cy='"+(p.y*1.5)+"' r='5' fill='#ff4444' stroke='#fff' stroke-width='1.5' opacity='0.9'/>";
-    html+="<text x='"+(p.x*2+8)+"' y='"+(p.y*1.5+4)+"' fill='#ff4444' font-size='8' font-family='monospace'>("+p.x+"%, "+p.y+"%)<\/text>";
-    html+="<\/svg>";
-    html+="<\/div>";
-
     // Go to map button (renderDels) — use data attributes
     html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
 
@@ -322,7 +308,7 @@ function vote(id){
         supabase("pending_pins","GET",null,"id=eq."+id).then(function(approved){
           if(approved&&approved.length){
             var a=approved[0];
-            supabase("pins","POST",{x:a.x,y:a.y,name:a.name,type:a.type,ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[]}).then(function(){
+            supabase("pins","POST",{x:a.x,y:a.y,name:a.name,type:a.type,map_name:a.map_name||"农场",ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[]}).then(function(){
               supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
             });
           }
@@ -363,7 +349,7 @@ function adminPass(id){
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
-    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[]}).then(function(){
+    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,map_name:p.map_name||"农场",ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[]}).then(function(){
       supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
     });
   });
@@ -376,9 +362,19 @@ function adminReject(id){
 
 function adminExecDelete(reqId,pinId){
   if(!checkAuth())return;
-  supabase("pins","DELETE",null,"id=eq."+pinId).then(function(){
-    supabase("deletion_requests","DELETE",null,"id=eq."+reqId).then(function(){loadData();});
-  });
+  fetch(SUPABASE_URL+"/rest/v1/pins?id=eq."+pinId,{
+    method:"DELETE",
+    headers:{"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"}
+  }).then(function(r){
+    if(!r.ok)throw new Error("HTTP "+r.status+" for pins");
+    return fetch(SUPABASE_URL+"/rest/v1/deletion_requests?id=eq."+reqId,{
+      method:"DELETE",
+      headers:{"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"}
+    });
+  }).then(function(r){
+    if(!r.ok)throw new Error("HTTP "+r.status+" for deletion_requests");
+    loadData();
+  }).catch(function(e){alert("Err: "+e.message);});
 }
 
 function adminRejectDelete(id){

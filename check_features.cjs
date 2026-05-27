@@ -1,0 +1,10 @@
+const fs = require('fs');
+var c = fs.readFileSync('F:\\暗区突围网站\\pages\\map-farm.html', 'utf8');
+console.log('ab button:', c.indexOf('id="ab"') >= 0);
+console.log('ly-pop:', c.indexOf('id="lp"') >= 0);
+console.log('chooseContainer:', c.includes('chooseContainer'));
+console.log('pinTypeMenu:', c.includes('pinTypeMenu'));
+console.log('deletion_requests:', c.includes('deletion_requests'));
+console.log('layers:', c.includes('Layers') || c.includes('layers'));
+console.log('layerToggle:', c.includes('layerToggle'));
+console.log('layerData:', c.includes('layerData'));

@@ -292,9 +292,9 @@
         var payload=JSON.parse(atob(t.split('.')[1]));
         var user=payload.email||p.get('email')||'';
         localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',user);
-        history.replaceState(null,'',window.location.pathname);
-        location.reload();
+        localStorage.setItem('abi_user',JSON.stringify(payload));
+        history.replaceState(null,'',window.location.pathname+window.location.search);
+        window.location.href=window.location.pathname+window.location.search;
       }catch(err){}
     }
   }
@@ -548,8 +548,9 @@
       try{
         var payload=JSON.parse(atob(t.split('.')[1]));
         localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',p.get('email')||payload.email||'');location.reload();
-        history.replaceState(null,'',window.location.pathname);
+        localStorage.setItem('abi_user',JSON.stringify(payload));
+        history.replaceState(null,'',window.location.pathname+window.location.search);
+        window.location.href=window.location.pathname+window.location.search;
       }catch(err){}
     }
   }

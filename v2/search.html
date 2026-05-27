@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>搜索 - 暗区无限攻略站</title>
+<style>.searchBox{width:100%;padding:12px;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;color:#ccc;font-size:1rem;}</style>
+</head>
+<body>
+<style>/* Reset & base */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#08080e;color:#ccc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+a{color:#ffc832;text-decoration:none;}
+a:hover{opacity:0.8;}
+
+/* Floating menu button - upper left, semi-transparent */
+#menuBtn{position:fixed;top:12px;left:12px;z-index:9999;width:38px;height:38px;border-radius:10px;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);color:#ccc;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+#menuBtn:hover{background:rgba(255,200,50,0.15);color:#ffc832;}
+
+/* Bubble menu */
+#bubbleMenu{display:none;position:fixed;top:56px;left:12px;z-index:9998;background:rgba(15,15,24,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:8px;min-width:180px;box-shadow:0 8px 40px rgba(0,0,0,0.6);overflow:hidden;}
+#bubbleMenu a{display:flex;align-items:center;gap:10px;padding:10px 14px;color:#ccc;border-radius:8px;font-size:0.95rem;transition:all 0.15s;}
+#bubbleMenu a:hover{background:rgba(255,200,50,0.08);color:#ffc832;}
+#bubbleMenu .sep{height:1px;background:rgba(255,255,255,0.06);margin:4px 8px;}
+
+/* User area - top right */
+#userArea{position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;}
+#userName{color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:none;}
+#loginBtn{padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+#loginBtn:hover{background:rgba(255,200,50,0.25);}
+
+/* Page content area */
+.content{padding:60px 16px 20px;max-width:900px;margin:0 auto;}
+</style>
+<button id="menuBtn" onclick="toggleMenu()">☰</button>
+<div id="userArea">
+  <span id="userName"></span>
+  <button id="loginBtn" onclick="loginGitHub()">登录</button>
+</div>
+<div id="bubbleMenu"><a href="index.html">🏠 首页</a><a href="pages/maps.html">🗺 地图选图</a><a href="pages/weapons.html">🔧 改枪</a><a href="pages/strategy.html">💬 聊天</a><a href="pages/gear.html">📖 攻略</a><a href="search.html" style="color:#ffc832;">🔍 搜索</a><div class="sep"></div><a href="#" onclick="showUserCenter()">👤 用户中心</a><a href="#" onclick="logout()">🚪 退出登录</a></div>
+<div class="content">
+
+  <h1 style="color:#ffc832;font-size:1.5rem;margin-bottom:0.5rem;">🔍 搜索</h1>
+  <p style="color:#666;margin-bottom:1.5rem;">搜索帖子、攻略和讨论</p>
+  <input id="searchInput" class="searchBox" type="text" placeholder="输入关键词搜索..." oninput="doSearch()">
+  <div id="searchResults" style="margin-top:1.5rem;display:flex;flex-direction:column;gap:10px;"></div>
+
+</div>
+<script>
+
+var SUPABASE_URL='https://hanrfbciinkhgcumvous.supabase.co';
+var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+function db(method,table,body,query){
+  return fetch(SUPABASE_URL+'/rest/v1/'+table+(query?'?'+query:''),{
+    method:method,
+    headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:body?JSON.stringify(body):null
+  });
+}
+
+
+// ===== GLOBAL AUTH =====
+function loginGitHub(){
+  var cb=window.location.origin+window.location.pathname;
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
+  window.location.href=u;
+}
+
+(function(){
+  var h=window.location.hash;
+  if(h&&h.indexOf('access_token=')>=0){
+    var p=new URLSearchParams(h.replace('#',''));
+    var t=p.get('access_token');
+    if(t){
+      try{
+        var payload=JSON.parse(atob(t.split('.')[1]));
+        localStorage.setItem('abi_token',t);
+        var uname=payload.preferred_username||payload.user_metadata?.preferred_username||payload.email||'';
+        localStorage.setItem('abi_user',uname);
+        history.replaceState(null,'',window.location.pathname);
+        location.reload();
+      }catch(e){}
+    }
+  }
+  var token=localStorage.getItem('abi_token');
+  if(token){
+    var un=document.getElementById('userName');
+    var lb=document.getElementById('loginBtn');
+    if(un){un.style.display='';un.textContent=localStorage.getItem('abi_user')||'已登录';}
+    if(lb)lb.style.display='none';
+  }
+})();
+
+function toggleMenu(){
+  var m=document.getElementById('bubbleMenu');
+  if(!m)return;
+  m.style.display=m.style.display==='none'?'block':'none';
+  // Close on outside click
+  if(m.style.display==='block'){
+    setTimeout(function(){
+      document.addEventListener('click', function closeMenu(e){
+        if(!m.contains(e.target) && e.target.id!=='menuBtn'){
+          m.style.display='none';
+          document.removeEventListener('click', closeMenu);
+        }
+      });
+    }, 10);
+  }
+}
+
+function logout(){
+  localStorage.removeItem('abi_token');
+  localStorage.removeItem('abi_user');
+  location.reload();
+}
+
+function showUserCenter(){
+  toggleMenu();
+  var u=localStorage.getItem('abi_user');
+  if(!u){alert('请先登录');return;}
+  alert('用户: '+u+'\n(更多功能开发中)');
+}
+
+
+async function doSearch(){
+  var q=document.getElementById('searchInput').value.trim();
+  var el=document.getElementById('searchResults');
+  if(!q){el.innerHTML='';return;}
+  try{
+    var r=await db('GET','map_posts',null,'title=ilike.*'+encodeURIComponent(q)+'*&order=created_at.desc&limit=20');
+    if(!r.ok){el.innerHTML='<div style="text-align:center;color:#555;">搜索失败</div>';return;}
+    var posts=await r.json();
+    if(!posts||posts.length===0){el.innerHTML='<div style="text-align:center;color:#555;">未找到相关帖子</div>';return;}
+    el.innerHTML=posts.map(function(p){
+      return '<div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px;">'+
+        '<div style="font-size:0.8rem;color:#555;margin-bottom:4px;">'+esc(p.author||'匿名')+' · '+(p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'')+'</div>'+
+        '<div style="color:#ddd;font-weight:500;">'+esc(p.title||'无标题')+'</div>'+
+        '<div style="color:#777;font-size:0.85rem;margin-top:4px;">'+esc((p.content||'').substring(0,200))+'</div></div>';
+    }).join('');
+  }catch(e){el.innerHTML='<div style="text-align:center;color:#555;">搜索失败</div>';}
+}
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
+
+</script>
+</body>
+</html>

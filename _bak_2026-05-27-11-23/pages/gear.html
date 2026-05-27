@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>暗区突围：无限 - 攻略</title>
+  <link rel="icon" href="../favicon.ico" type="image/jpeg">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .post-form { background:#12121a; border:1px solid #1e1e2a; border-radius:12px; padding:1.5rem; margin-bottom:2rem; }
+    .post-form h3 { color:#ffc832; margin-bottom:1rem; }
+    .post-form input, .post-form textarea, .post-form select {
+      width:100%; padding:0.6rem; background:#1a1a22; color:#fff; border:1px solid #333; border-radius:6px; margin-bottom:0.8rem; font-size:0.9rem;
+    }
+    .post-form textarea { min-height:120px; resize:vertical; }
+    .post-form button { padding:0.5rem 1.5rem; background:#ffc832; color:#0a0a0f; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+    .post-form button:hover { background:#ffd84a; }
+    .post-card { background:#12121a; border:1px solid #1e1e2a; border-radius:10px; padding:1.2rem; margin-bottom:1rem; }
+    .post-card h3 { margin:0 0 0.3rem 0; font-size:1.1rem; }
+    .post-card h3 a { color:#ffc832; text-decoration:none; }
+    .post-card .meta { color:#666; font-size:0.8rem; margin-bottom:0.5rem; display:flex; gap:1rem; }
+    .post-card .preview { color:#aaa; font-size:0.9rem; line-height:1.5; }
+    .no-posts { color:#666; text-align:center; padding:3rem 0; font-size:1rem; }
+    .login-hint { color:#888; text-align:center; padding:2rem; background:#12121a; border:1px solid #1e1e2a; border-radius:10px; margin-bottom:2rem; }
+    .login-hint button { padding:0.4rem 1.2rem; background:#ffc832; color:#0a0a0f; border:none; border-radius:6px; cursor:pointer; }
+    .post-card .actions { margin-top:0.5rem; }
+    .post-card .actions button { padding:0.2rem 0.6rem; background:#3a1a1a; color:#f66; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;font-weight:bold;">暗区无限</a><span style="color:#888;font-size:0.8rem;"> 攻略站</span></div>
+  <div id="userArea" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+    <span id="userName" style="color:#ffc832;font-size:0.85rem;display:none;"></span>
+    <button id="loginBtn" onclick="loginGitHub()" style="padding:4px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-size:0.8rem;cursor:pointer;font-weight:bold;">登录</button>
+    <button id="menuBtn" onclick="toggleMenu()" style="width:32px;height:32px;background:#1e1e2a;color:#ccc;border:1px solid #333;border-radius:6px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#9776;</button>
+  </div>
+  <div id="sideMenu" style="display:none;position:fixed;top:0;right:0;width:260px;height:100vh;background:#0f0f18;border-left:1px solid #1e1e2a;z-index:9999;padding:1rem;box-shadow:-4px 0 20px rgba(0,0,0,0.5);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #1e1e2a;">
+      <span style="color:#ffc832;font-weight:bold;">菜单</span>
+      <button onclick="toggleMenu()" style="width:28px;height:28px;background:transparent;color:#888;border:1px solid #333;border-radius:4px;cursor:pointer;font-size:1rem;">&#10005;</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <a href="maps.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F5FA; 地图选图</a>
+      <a href="weapons.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F527; 改枪</a>
+      <a href="strategy.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4AC; 聊天</a>
+      <a href="gear.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4D6; 攻略</a>
+      <a href="../search.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F50D; 搜索</a>
+      <div style="border-top:1px solid #1e1e2a;margin:8px 0;padding-top:8px;">
+        <a href="#" onclick="showUserCenter()" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F464; 用户中心</a>
+        <a href="#" onclick="logout()" style="display:block;padding:10px 12px;color:#e74c3c;border-radius:6px;text-decoration:none;font-size:0.9rem;">退出登录</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+.navbar{display:flex;align-items:center;padding:0.5rem 1rem;background:#0a0a10;border-bottom:1px solid #1a1a28;position:relative;z-index:100;}
+.navbar a{transition:color 0.2s;}
+.navbar a:hover{color:#ffc832!important;}
+#sideMenu a:hover{background:#1a1a28;}
+</style>
+
+
+
+<section style="max-width:800px;margin:80px auto 0;padding:1rem;">
+<div style="display:flex;align-items:center;">  <h2 style="color:#ffc832;margin-bottom:1.5rem;">📖 攻略</h2>
+  <button id="fabBtn-gear" onclick="window.fabOpenPostForm()" style="display:none;width:36px;height:36px;border-radius:50%;background:#ffc832;color:#0a0a0f;border:none;font-size:1.5rem;cursor:pointer;line-height:1;margin-left:auto;flex-shrink:0;" title="发布帖子">+</button></div>
+
+
+  <div id="loginHint" class="login-hint" style="display:none;">
+    <p style="margin-bottom:1rem;">登录后可以发布帖子</p>
+    <button onclick="loginGitHub()">GitHub 登录</button>
+  </div>
+
+  <div id="postForm" class="post-form" style="display:none;">
+    <h3>发布帖子</h3>
+    <input id="postTitle" type="text" placeholder="标题">
+    <select id="postCategory">
+      <option value="general">杂谈</option>
+      <option value="question">问答</option>
+      <option value="guide">攻略</option>
+      <option value="showoff">炫耀</option>
+    </select>
+    <textarea id="postContent" placeholder="内容..."></textarea>
+    <button onclick="submitPost()">发布</button>
+  </div>
+
+  <div id="postList"></div>
+</section>
+
+<footer style="margin-top:3rem;">
+  <p>暗区突围：无限 攻略站 · 由 秋雪 制作 · 持续更新中</p>
+  <p style="margin-top:0.3rem;">数据基于 PC 版本 · 仅供参考</p>
+</footer>
+
+<script>
+
+// ========== GLOBAL AUTH & NAV ==========
+function loginGitHub(){
+  var cb=window.location.origin+window.location.pathname;
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
+  window.location.href=u;
+}
+
+(function initAuth(){
+  var h=window.location.hash;
+  if(h&&h.indexOf('access_token=')>=0){
+    var p=new URLSearchParams(h.replace('#',''));
+    var t=p.get('access_token');
+    if(t){
+      try{
+        var payload=JSON.parse(atob(t.split('.')[1]));
+        localStorage.setItem('abi_token',t);
+        var email=payload.preferred_username||payload.user_metadata?.preferred_username||payload.email||p.get('email')||'';
+        localStorage.setItem('abi_user',email);
+        history.replaceState(null,'',window.location.pathname);
+        location.reload();
+      }catch(e){}
+    }
+  }
+  var token=localStorage.getItem('abi_token');
+  if(token){
+    var u=document.getElementById('userName');
+    var b=document.getElementById('loginBtn');
+    if(u){u.style.display='';u.textContent=localStorage.getItem('abi_user')||'已登录';}
+    if(b){b.style.display='none';}
+  }
+})();
+
+function toggleMenu(){
+  var m=document.getElementById('sideMenu');
+  if(!m)return;
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+
+function logout(){
+  localStorage.removeItem('abi_token');
+  localStorage.removeItem('abi_user');
+  location.reload();
+}
+
+function showUserCenter(){
+  toggleMenu();
+  var u=localStorage.getItem('abi_user');
+  if(!u){alert('请先登录');return;}
+  var info='[用户中心]\n用户名: '+u+'\n(更多功能开发中)';
+  alert(info);
+}
+
+
+</script>
+</body>
+</html>
