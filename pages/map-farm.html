@@ -404,19 +404,21 @@ function addPin(tid){
   if(!currentUser){login();return;}
   if(!pp)return;
   var sdata={x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[],admin_passed:false,votes:0,voters:[]};
+  // Show "submitting" state
+  var el=document.getElementById("ab");
+  if(el){el.innerHTML="<span style='color:#ffc832;font-size:14px'>⏳ 提交中...</span>";el.disabled=true;}
 supabase("pending_pins","POST",sdata).then(function(){
     var el=document.getElementById("ab");
-    if(el)el.innerHTML="<span style='color:#9e9;font-size:14px;margin-left:10px'>投稿成功，等待审核<"+LS+">";
-    setTimeout(function(){if(el)el.innerHTML="";},3000);
+    if(el){el.innerHTML="<span style='color:#9e9;font-size:14px'>✅ 投稿成功，等待审核</span>";el.disabled=false;}
+    setTimeout(function(){if(el){el.innerHTML="选择容器类型 →";el.style.display="";}},4000);
+pins.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[]});
+  savePins();renderMarkers();
+  pp=null;document.getElementById("cv").textContent="未选择";closePicker();
   })["catch"](function(){
     var el=document.getElementById("ab");
-    if(el)el.innerHTML="<span style='color:#e99;font-size:14px;margin-left:10px'>投稿失败，请重试<"+LS+">";
-    setTimeout(function(){if(el)el.innerHTML="";},3000);
+    if(el){el.innerHTML="<span style='color:#e99;font-size:14px'>❌ 投稿失败，请重试</span>";el.disabled=false;}
+    setTimeout(function(){if(el){el.innerHTML="选择容器类型 →";}},4000);
   });
-  pins.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[]});
-  savePins();renderMarkers();
-  pp=null;document.getElementById("cv").textContent="未选择";document.getElementById("ab").style.display="none";closePicker();
-}
 function savePins(){try{localStorage.setItem("abi_farm_pins",JSON.stringify({pins:pins,mapComments:mapComments}));}catch(e){}}
 // --- Supabase cloud ---
 var SUPABASE_URL="https://hanrfbciinkhgcumvous.supabase.co";
