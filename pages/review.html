@@ -164,7 +164,7 @@ function loadData(){
   var p=supabase("pending_pins","GET",null,"order=created_at.desc").catch(function(){return [];});
   var d=supabase("deletion_requests","GET",null,"order=created_at.desc").catch(function(){return [];});
   var pin=supabase("pins","GET",null,"order=created_at.desc").catch(function(){return [];});
-  Promise.all([p,d,pin]).then(function(res){window.__reviewPending=res[0];window.__reviewDels=res[1];
+  Promise.all([p,d,pin]).then(function(res){window.__reviewPending=res[0];window.__reviewDels=res[1];window.__reviewPending=res[0];window.__reviewDels=res[1];
     var items=res[0]||[];
     var dels=res[1]||[];
     var pins=res[2]||[];
@@ -224,7 +224,7 @@ function renderList(items){
     html+="<\/div>";
 
     // Go to map button (renderList) — use data attributes + click listener to avoid quoting hell
-    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' data-map-name='\+(p.map_name||"")+\' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
+    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
     html+="<\/div>"; // close card
 
     // Images if any
@@ -254,6 +254,13 @@ function renderList(items){
     html+="<\/div><\/div>";
   });
   document.getElementById("list").innerHTML=html;
+  setTimeout(function(){
+    var __cards=document.querySelectorAll('.view-on-map-btn');
+    var __data=window.__reviewPending||window.__reviewDels||[];
+    __cards.forEach(function(btn,i){
+      if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
+    });
+  },0);
   // Fix data-map-name from window.__reviewData
   var __cards=document.querySelectorAll('.view-on-map-btn');
   var __data=window.__reviewPending||[];
@@ -279,7 +286,7 @@ function renderDels(dels){
     html+=" | "+votes+"/10 票（同意删除）<\/div>";
 
     // Go to map button (renderDels) — use data attributes
-    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' data-map-name='\+(p.map_name||"")+\' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
+    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
 
     html+="<div class='actions'>";
     if(!hasVoted){
@@ -294,6 +301,13 @@ function renderDels(dels){
     html+="<\/div><\/div>";
   });
   document.getElementById("list").innerHTML=html;
+  setTimeout(function(){
+    var __cards=document.querySelectorAll('.view-on-map-btn');
+    var __data=window.__reviewPending||window.__reviewDels||[];
+    __cards.forEach(function(btn,i){
+      if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
+    });
+  },0);
   // Fix data-map-name from window.__reviewData
   var __cards=document.querySelectorAll('.view-on-map-btn');
   var __data=window.__reviewPending||[];
