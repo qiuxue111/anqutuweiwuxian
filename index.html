@@ -193,16 +193,13 @@ async function loadHotPosts(){
     document.getElementById('hotPostList').innerHTML='<div style="text-align:center;color:#666;padding:2rem;">加载失败</div>';
   }
 }
-function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
-document.addEventListener('DOMContentLoaded',loadHotPosts);
 
 function loginGitHub(){
   var cb=window.location.origin+window.location.pathname;
   var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
   window.location.href=u;
 }
-
-(function(){
+(function authCheck(){
   var h=window.location.hash;
   if(h&&h.includes('access_token=')){
     var p=new URLSearchParams(h.replace('#',''));
@@ -211,13 +208,19 @@ function loginGitHub(){
       try{
         var payload=JSON.parse(atob(t.split('.')[1]));
         localStorage.setItem('abi_token',t);
-        localStorage.setItem('abi_user',p.get('email')||payload.email||'');
+        localStorage.setItem('abi_user',payload.email||payload.user_metadata?.email||'');
         history.replaceState(null,'',window.location.pathname);
       }catch(err){}
     }
   }
+  var token=localStorage.getItem('abi_token');
+  if(token){
+    document.querySelectorAll('#loginBtn').forEach(function(b){b.style.display='none'});
+  }
 })();
 
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
+document.addEventListener('DOMContentLoaded',loadHotPosts);
 </script>
 </body>
 </html>
