@@ -121,7 +121,7 @@ var selectedConnFrom = null;
 var undoStack = [];
 
 /* Canvas transform */
-var scale = 0.6;
+var scale = 1.0;
 var panX = 0, panY = 0;
 var isPanning = false, panStartX = 0, panStartY = 0, panOX = 0, panOY = 0;
 
@@ -477,7 +477,7 @@ vp.addEventListener("wheel", function(e){
 
   var oldScale = scale;
   var delta = e.deltaY < 0 ? 1.12 : 0.89;
-  scale = Math.max(0.15, Math.min(3, scale * delta));
+  scale = Math.max(0.15, Math.min(10, scale * delta));
 
   /* Zoom toward mouse cursor */
   panX = mx - (mx - panX) * (scale / oldScale);
