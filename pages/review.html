@@ -225,7 +225,7 @@ function renderList(items){
     html+="<\/div>";
 
     // Go to map button (renderList) — use data attributes + click listener to avoid quoting hell
-    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
+    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-floor='"+(p.floor||0)+"' data-mapname='"+(p.map_name||"")+"' data-floor='"+(p.floor||0)+"' data-mapname='"+(p.map_name||"")+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
     html+="<\/div>"; // close card
 
     // Images if any
@@ -453,15 +453,18 @@ document.addEventListener("click",function(e){
     var type=btn.dataset.type||"";
     var ic=btn.dataset.ic||"";
     
-    viewOnMap(x,y,name,type,ic,mapName);
+    var floor=+btn.dataset.floor||0;
+    var mapName2=btn.dataset.mapname||mapName;
+    viewOnMap(x,y,name,type,ic,mapName2,floor);
   }
 });
 
-function viewOnMap(x,y,name,type,ic,mapName){
+function viewOnMap(x,y,name,type,ic,mapName,floor){
   var mapPage=mapName||"map-farm";
   var mapFiles={"\u519c\u573a":"map-farm","\u5317\u5c71":"map-beishan","\u5c71\u8c37":"map-valley","\u519b\u68b0\u5e93":"map-armory","\u7535\u89c6\u53f0":"map-tvstation","\u963f\u8d3e\u514b\u65af\u6e2f\u53e3":"map-airport"};
   if(mapPage.indexOf("map-")!==0){mapPage=mapFiles[mapPage]||"map-farm"};
-  window.open(mapPage+".html?x="+x+"&y="+y+"&name="+encodeURIComponent(name||"")+"&type="+encodeURIComponent(type||"")+"&ic="+encodeURIComponent(ic||""),"mapView");
+  var floorParam=floor&&floor>0?"&floor="+floor:"";
+  window.open(mapPage+".html?x="+x+"&y="+y+"&name="+encodeURIComponent(name||"")+"&type="+encodeURIComponent(type||"")+"&ic="+encodeURIComponent(ic||"")+floorParam,"mapView");
 }
 
 function toggleAdmin(){
