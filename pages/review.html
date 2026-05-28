@@ -450,54 +450,47 @@ document.addEventListener("click",function(e){
 });
 
 function viewOnMap(x,y,name,type,ic,mapName,floor){
-  // Remove existing overlay if any
   var old=document.getElementById('mapViewOverlay');
   if(old)old.remove();
 
   var mapImages={
-    "\u519c\u573a":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/farm.png",
-    "\u5317\u5c71":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/beishan.png",
-    "\u5c71\u8c37":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/valley.png",
-    "\u519b\u68b0\u5e93":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/armory.png",
-    "\u7535\u89c6\u53f0":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/tvstation.png",
-    "\u963f\u8d3e\u514b\u65af\u6e2f\u53e3":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/airport.png"
+    '\u519c\u573a':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/farm.png',
+    '\u5317\u5c71':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/beishan.png',
+    '\u5c71\u8c37':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/valley.png',
+    '\u519b\u68b0\u5e93':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/armory.png',
+    '\u7535\u89c6\u53f0':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/tvstation.png',
+    '\u963f\u8d3e\u514b\u65af\u6e2f\u53e3':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/airport.png'
   };
-  var floorImages={}; // Could be populated per map if needed
-  var imgSrc=mapImages[mapName]||"";
+  var imgSrc=mapImages[mapName]||'';
 
-  // Overlay container
   var ov=document.createElement('div');
   ov.id='mapViewOverlay';
   ov.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.92);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center';
 
-  // Close button
   var closeBtn=document.createElement('button');
   closeBtn.textContent='\u2716 \u5173\u95ed';
   closeBtn.style.cssText='position:absolute;top:16px;right:20px;background:rgba(255,255,255,.1);border:none;color:#ddd;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:14px;z-index:10';
   closeBtn.onclick=function(){ov.remove();};
   ov.appendChild(closeBtn);
 
-  // Map bg
+  var wrap=document.createElement('div');
+  wrap.style.cssText='position:relative;width:90vw;max-width:1200px;height:80vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#111';
   wrap.style.backgroundImage='url('+imgSrc+')';
   wrap.style.backgroundSize='contain';
   wrap.style.backgroundPosition='center';
   wrap.style.backgroundRepeat='no-repeat';
-  wrap.style.background='#111';
 
-  // Pin marker (absolute overlay on the map)  // Pin marker (absolute overlay on the map)
   var pin=document.createElement('div');
   pin.style.cssText='position:absolute;left:'+x+'%;top:'+y+'%;transform:translate(-50%,-50%);z-index:5;width:16px;height:16px;border:2px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5);pointer-events:none';
   wrap.appendChild(pin);
 
-  // Info label below pin
   var label=document.createElement('div');
   label.style.cssText='position:absolute;left:'+x+'%;top:'+(y+1.5)+'%;transform:translateX(-50%);z-index:5;color:#ffc832;font-size:13px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap';
-  label.textContent=name||"";
+  label.textContent=name||'';
   wrap.appendChild(label);
 
   ov.appendChild(wrap);
 
-  // Info bar
   var info=document.createElement('div');
   info.style.cssText='margin-top:10px;color:#888;font-size:13px;text-align:center';
   info.innerHTML='\u5730\u56fe: '+mapName+' | \u5750\u6807: ('+x+'%, '+y+'%)'+(floor!==undefined&&floor!==null&&floor!==0?' | \u697c\u5c42: '+floor:'');
@@ -505,7 +498,6 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
 
   document.body.appendChild(ov);
 }
-
 function closeMapView(){
   var ov=document.getElementById('mapViewOverlay');
   if(ov)ov.remove();
