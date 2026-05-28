@@ -476,7 +476,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   var labels=floorLabelsMap[mapName]||['\u5730\u56fe'];
   var curFloor=Math.min(Math.max(0,floor||0), imgs.length-1);
 
-  var zm=2;
+  var zm=3;
   var offsetX=0, offsetY=0;
   var dragging=false, dsx=0, dsy=0, dox=0, doy=0;
 
@@ -527,7 +527,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   resetBtn.title='\u5f52\u4f4d';
   resetBtn.style.cssText='padding:3px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:16px';
   resetBtn.onclick=function(){
-    zm=2;offsetX=0;offsetY=0;
+    zm=3;offsetX=0;offsetY=0;
     reposition();
   };
   zoomBar.appendChild(resetBtn);
@@ -543,7 +543,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     btn.onclick=function(fi){return function(){
       curFloor=fi;
       mapImg.src=imgs[fi];
-      zm=2;offsetX=0;offsetY=0;
+      zm=3;offsetX=0;offsetY=0;
       floorBtns.forEach(function(b,j){b.style.background=j==fi?'#ffc832':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
       info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[fi];
       // Re-center on pin after image loads
