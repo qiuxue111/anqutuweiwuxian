@@ -304,7 +304,7 @@ body{overflow:hidden;background:#0a0a0f}
 <div class="hamburger" id="hamburger" onclick="toggleHamburger()">☰</div>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar"><a href="../index.html" class="logo">暗区无限</a><div class="sep"></div><button class="btn" onclick="resetView()">复位</button>
-<button class="btn" onclick="resetPositions()">↺ 归位</button><div class="sep"></div><span class="user-name" id="userName2"></span><button class="btn" id="loginBtn2" onclick="loginGitHub()">登录</button><button class="btn" id="reviewBtn2" onclick="window.location.href='review.html'" style="display:none">审核</button></div>
+<button class="btn" onclick="resetPositions()">↺ 归位</button><div class="sep"></div><span class="user-name" id="userName2"></span><button class="btn" id="loginBtn2" onclick="loginGitHub()">登录</button><button class="btn" id="reviewBtn2" onclick="window.location.href='review.html?from=map-valley'" style="display:none">审核</button></div>
 <div class="mat-panel" id="matPanel"><button class="mat-btn" id="matBtn" onclick="toggleMat()">📦 物资</button><div class="mat-content" id="matContent"></div></div>
 <div class="floor-wrap" id="floorWrap" style="display:none"
 <div class="action-bar" id="actionBar"><button class="action-btn" onclick="toggleMode()">📦<span class="ab-tip"></span></button><button class="action-btn" onclick="toggleFullscreen()">⛶<span class="ab-tip">全屏</span></button></div>
@@ -990,7 +990,7 @@ var navGroups = [
   { label: '💬 聊天', url: '../chat.html' },
   { label: '📖 攻略', url: '../guides.html' },
   { label: '🔍 搜索', url: '../search.html' },
-  { label: '✅ 审核中心', url: 'review.html' },
+  { label: '✅ 审核中心', url: 'review.html?from=map-valley' },
   { label: '👤 用户中心', url: '../profile.html' },
   { sep: true },
   { label: '🚪 退出登录', action: 'logout' }
