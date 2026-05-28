@@ -116,8 +116,8 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 
 <div class="map-wrap">
 <!-- 楼层切换 -->
-<div position:absolute;top:8px;left:8px;z-index:9999;background:rgba(0,0,0,0.6);padding:5px 6px;border-radius:8px;20;display:flex;gap:4px;flex-wrap:wrap;max-width:400px;">
-  <button class="floor-btn active" data-floor="0" onclick="switchFloor(0)">阿贾克斯港口全境</button>
+<div style="position:absolute;top:8px;left:8px;z-index:9999;display:flex;gap:4px;flex-wrap:wrap;max-width:400px;background:rgba(0,0,0,0.6);padding:5px 6px;border-radius:8px;">
+  <button class="floor-btn active" data-floor="0" onclick="switchFloor(0)">机场全境</button>
   <button class="floor-btn" data-floor="1" onclick="switchFloor(1)">机场塔内一层</button>
   <button class="floor-btn" data-floor="2" onclick="switchFloor(2)">机场塔内二层</button>
 </div>
@@ -504,7 +504,7 @@ var floorImages = [
   '../assets/maps/airport_机场塔内一层.png',
   '../assets/maps/airport_机场塔内二层.png'
 ];
-var floorLabels = ['阿贾克斯港口全境', '机场塔内一层', '机场塔内二层'];
+var floorLabels = ['机场全境', '机场塔内一层', '机场塔内二层'];
 var currentFloor = 0;
 
 function filterPinsByFloor(fl){var mv=document.getElementById('mv');if(!mv)return;mv.querySelectorAll('.pin-marker').forEach(function(el){var pi=parseInt(el.getAttribute('data-pin-idx'));if(!isNaN(pi)&&pins[pi]){var pf=(pins[pi].floor!==undefined&&pins[pi].floor!==null)?pins[pi].floor:0;el.style.display=pf===fl?'':'none';}});}
