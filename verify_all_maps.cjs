@@ -1,5 +1,5 @@
 const fs = require('fs');
-['beishan','armory','airport','tvstation'].forEach(e => {
+['farm','beishan','valley','armory','airport','tvstation'].forEach(e => {
   const c = fs.readFileSync('F:\\暗区突围网站\\pages\\map-'+e+'.html','utf-8');
   const m = c.match(/<script>([\s\S]*?)<\/script>/);
   if (m) {
