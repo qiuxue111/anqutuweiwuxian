@@ -368,15 +368,6 @@ document.addEventListener("mousemove", function(e){
   connLine.setAttribute("d", "M " + fx + " " + fy + " C " + midX + " " + fy + ", " + midX + " " + cy + ", " + cx + " " + cy);
 });
 
-document.addEventListener("mouseup", function(e){
-  if(!connFrom) return;
-  var target = e.target;
-  if(target && target.classList && target.classList.contains("dot-blue")){
-    return;
-  }
-  cancelConnect();
-});
-
 /* Also clear on scroll/pan */
 document.addEventListener("mousedown", function(e){
   var dot = e.target.closest(".dot-green");
