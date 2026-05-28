@@ -932,8 +932,9 @@ switchFloor = function(idx){
   resetView();
   if(typeof renderMarkers==='function') renderMarkers();
 
-  // Re-center after floor switch
+  // Re-center after floor switch (unless jumping to a marker)
   setTimeout(function(){
+    if(_jumpingMarker)return;
     var mv=document.getElementById("mv");
     var im=document.getElementById("mapImg");
     if(mv&&im&&im.complete){
