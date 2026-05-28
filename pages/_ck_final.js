@@ -1,75 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <link rel="icon" href="../favicon.ico" type="image/jpeg">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>审核中心 - 暗区突围：无限</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:960px;margin:0 auto}
-h1{color:#ffc832;font-size:22px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
-h1 a{color:#888;font-size:13px;text-decoration:none}
-nav{display:flex;align-items:center;gap:16px;margin-bottom:16px}
-.stats{display:flex;gap:12px;margin-bottom:16px}
-.stat{flex:1;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:12px;text-align:center}
-.stat-num{font-size:28px;font-weight:bold;color:#ffc832}
-.stat-label{font-size:12px;color:#888;margin-top:4px}
-.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
-.tab{padding:8px 20px;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;cursor:pointer;font-size:14px;color:#888}
-.tab.active{background:#ffc832;color:#0a0a0f;font-weight:600;border-color:#ffc832}
-.tab.admin{color:#e55}
-.card{background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:16px;margin-bottom:12px;position:relative}
-.card.expired{opacity:0.45;border-color:#4a1a1a}
-.card .icon{width:32px;height:32px;border-radius:6px;object-fit:cover;vertical-align:middle;margin-right:8px}
-.card .hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.card .hdr h3{font-size:16px;margin:0;display:flex;align-items:center;gap:6px}
-.card .hdr .badge{padding:2px 8px;border-radius:4px;font-size:11px;background:#333}
-.card .hdr .badge.pending{background:#4a3a00;color:#fd2}
-.card .hdr .badge.admin-passed{background:#003a00;color:#5e5}
-.card .hdr .badge.expired-badge{background:#3a0000;color:#e55}
-.card .meta{font-size:13px;color:#888;margin-bottom:8px;line-height:1.7}
-.card .meta .coord{cursor:pointer;color:#88aaff;text-decoration:underline;font-family:monospace}
-.card .meta .coord:hover{color:#aaccff}
-.card .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #1e1e2a}
-.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500}
-.btn-vote{background:#1a4a1a;color:#5e5}
-.btn-vote:hover{background:#2a5a2a}
-.btn-voted{background:#333;color:#888;cursor:default}
-.btn-pass{background:#1a3a1a;color:#5a5}
-.btn-pass:hover{background:#2a4a2a}
-.btn-reject{background:#4a1a1a;color:#e55}
-.btn-reject:hover{background:#5a2a2a}
-.btn-del{background:#222;color:#666;border:1px solid #444}
-.btn-del:hover{background:#333;color:#e55}
-.btn-map{background:#1a1a3a;color:#88aaff;border:1px solid #335;font-size:12px;padding:3px 8px}
-.btn-map:hover{background:#2a2a4a}
-.admin-zone{margin-top:6px;display:flex;gap:6px}
-.admin-toggle{position:fixed;bottom:20px;right:20px;background:#1a1a1a;color:#555;border:1px solid #333;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;z-index:100}
-.admin-toggle.active{color:#e55;border-color:#e55;background:#2a1a1a}
-.loading,.empty{text-align:center;padding:60px 20px;color:#555;font-size:15px}
-footer{margin-top:30px;text-align:center;font-size:12px;color:#333}
-#authArea{display:flex;align-items:center;gap:10px;font-size:14px;white-space:nowrap}
-</style>
-</head>
-<body>
-<h1>审核中心 <a href="map-farm.html">← 地图</a></h1>
-<div class="stats">
-  <div class="stat"><div class="stat-num" id="sCount">-</div><div class="stat-label">待审核</div></div>
-  <div class="stat"><div class="stat-num" id="vCount">-</div><div class="stat-label">我投过</div></div>
-  <div class="stat"><div class="stat-num" id="dCount">-</div><div class="stat-label">待删除</div></div>
-  <div class="stat"><div class="stat-num" id="tCount">-</div><div class="stat-label">公开点位</div></div>
-</div>
-<div class="tabs">
-  <div class="tab active" onclick="switchTab(event,'pending')">待审核</div>
-  <div class="tab" onclick="switchTab(event,'voted')">我投过票</div>
-  <div class="tab" onclick="switchTab(event,'deletion')">待删除</div>
-  <div class="tab" onclick="switchTab(event,'all')">全部</div>
-</div>
-<div id="list"><div class="loading">加载中...</div></div>
-<div class="admin-toggle" id="adminBtn" onclick="toggleAdmin()">管理员</div>
 
-<script>
 var SUPABASE_URL = "https://hanrfbciinkhgcumvous.supabase.co";
 var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok";
 
@@ -170,7 +99,6 @@ function loadData(){
     var items=res[0]||[];
     var dels=res[1]||[];
     var pins=res[2]||[];
-    window.__reviewPins=pins;
     if(currentTab==="deletion"){renderDels(dels);return;}
     if(currentTab==="all"){renderPins(pins);return;}
     updateStats(items,dels,pins);
@@ -260,11 +188,17 @@ function renderList(items){
   document.getElementById("list").innerHTML=html;
   setTimeout(function(){
     var __cards=document.querySelectorAll('.view-on-map-btn');
-    var __data=window.__reviewDels||[];
+    var __data=window.__reviewPending||window.__reviewDels||[];
     __cards.forEach(function(btn,i){
       if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
     });
   },0);
+  // Fix data-map-name from window.__reviewData
+  var __cards=document.querySelectorAll('.view-on-map-btn');
+  var __data=window.__reviewPending||[];
+  __cards.forEach(function(btn,i){
+    if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
+  });
 }
 
 
@@ -330,11 +264,17 @@ function renderDels(dels){
   document.getElementById("list").innerHTML=html;
   setTimeout(function(){
     var __cards=document.querySelectorAll('.view-on-map-btn');
-    var __data=window.__reviewPending||[];
+    var __data=window.__reviewPending||window.__reviewDels||[];
     __cards.forEach(function(btn,i){
-      if(__data[i])btn.dataset.mapName=__data[i].map_name||(window.__reviewPins||[]).reduce(function(m,pi){return pi.id===__data[i].pin_id?pi.map_name:m;},'')||''||'';
+      if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
     });
   },0);
+  // Fix data-map-name from window.__reviewData
+  var __cards=document.querySelectorAll('.view-on-map-btn');
+  var __data=window.__reviewPending||[];
+  __cards.forEach(function(btn,i){
+    if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
+  });
 }
 
 function vote(id){
@@ -445,13 +385,14 @@ document.addEventListener("click",function(e){
     var ic=btn.dataset.ic||"";
     
     var floor=+btn.dataset.floor||0;
-    viewOnMap(x,y,name,type,ic,mapName,floor);
+    var mapName2=btn.dataset.mapname||mapName;
+    viewOnMap(x,y,name,type,ic,mapName2,floor);
   }
 });
 
 function viewOnMap(x,y,name,type,ic,mapName,floor){
   var mapFiles={"\u519c\u573a":"map-farm","\u5317\u5c71":"map-beishan","\u5c71\u8c37":"map-valley","\u519b\u68b0\u5e93":"map-armory","\u7535\u89c6\u53f0":"map-tvstation","\u963f\u8d3e\u514b\u65af\u6e2f\u53e3":"map-airport"};
-  var mapPage=mapFiles[mapName]||mapName||"";
+  var mapPage=mapFiles[mapName]||mapName||"map-farm";
   if(!mapPage||mapPage===""||mapPage.indexOf("map-")!==0){
     var fromMap=new URLSearchParams(location.search).get("from");
     if(!fromMap||fromMap.indexOf("map-")!==0){
@@ -459,9 +400,8 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
       var m=ref&&ref.match(/map-(\w+)\.html/);
       fromMap=m?m[0].replace(/\.html$/,''):null;
     }
-    if(fromMap&&fromMap.indexOf("map-")===0){mapPage=fromMap;}
-  }
-  if(!mapPage||mapPage.indexOf("map-")!==0){mapPage="map-farm"};
+    mapPage=fromMap&&fromMap.indexOf("map-")===0?fromMap:"map-farm";
+  };
   if(mapPage.indexOf("map-")!==0){mapPage=mapFiles[mapPage]||"map-farm"};
   var floorParam=floor!==undefined&&floor!==null?"&floor="+floor:"";
   window.open(mapPage+".html?x="+x+"&y="+y+"&name="+encodeURIComponent(name||"")+"&type="+encodeURIComponent(type||"")+"&ic="+encodeURIComponent(ic||"")+floorParam,"mapView");
@@ -480,7 +420,4 @@ function toggleAdmin(){
 }
 
 initAuth();loadData();
-</script>
-<script src="../supabase.js"></script>
-</body>
-</html>
+
