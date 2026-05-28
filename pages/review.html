@@ -462,18 +462,17 @@ document.addEventListener("click",function(e){
 });
 
 function viewOnMap(x,y,name,type,ic,mapName,floor){
-  var mapPage=mapName||"map-farm";
+  var mapFiles={"\u519c\u573a":"map-farm","\u5317\u5c71":"map-beishan","\u5c71\u8c37":"map-valley","\u519b\u68b0\u5e93":"map-armory","\u7535\u89c6\u53f0":"map-tvstation","\u963f\u8d3e\u514b\u65af\u6e2f\u53e3":"map-airport"};
+  var mapPage=mapFiles[mapName]||mapName||"map-farm";
   if(!mapPage||mapPage===""||mapPage.indexOf("map-")!==0){
     var fromMap=new URLSearchParams(location.search).get("from");
     if(!fromMap||fromMap.indexOf("map-")!==0){
-      // Try referrer (e.g. navigated from map-farm.html → review.html)
       var ref=document.referrer;
       var m=ref&&ref.match(/map-(\w+)\.html/);
       fromMap=m?m[0].replace(/\.html$/,''):null;
     }
     mapPage=fromMap&&fromMap.indexOf("map-")===0?fromMap:"map-farm";
   };
-  var mapFiles={"\u519c\u573a":"map-farm","\u5317\u5c71":"map-beishan","\u5c71\u8c37":"map-valley","\u519b\u68b0\u5e93":"map-armory","\u7535\u89c6\u53f0":"map-tvstation","\u963f\u8d3e\u514b\u65af\u6e2f\u53e3":"map-airport"};
   if(mapPage.indexOf("map-")!==0){mapPage=mapFiles[mapPage]||"map-farm"};
   var floorParam=floor!==undefined&&floor!==null?"&floor="+floor:"";
   window.open(mapPage+".html?x="+x+"&y="+y+"&name="+encodeURIComponent(name||"")+"&type="+encodeURIComponent(type||"")+"&ic="+encodeURIComponent(ic||"")+floorParam,"mapView");
