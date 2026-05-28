@@ -122,6 +122,8 @@ function updateAuthUI(){
     el.innerHTML="<span onclick='loginGit()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:3px 10px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录<\/span>";
   }
 }
+function displayUser(u){try{var j=JSON.parse(u);if(j&&j.user_metadata&&j.user_metadata.user_name)return j.user_metadata.user_name;if(j&&j.user_metadata&&j.user_metadata.preferred_username)return j.user_metadata.preferred_username;if(j&&j.email)return j.email.split('@')[0];}catch(e){}return u;}
+
 function checkAuth(){
   if(!currentUser){loginGit();return false;}
   return true;
@@ -215,10 +217,10 @@ function renderList(items){
     html+="<h3>"+p.name+"<\/h3>";
     html+=passed?"<span class='badge admin-passed'>已通过<\/span>":"<span class='badge pending'>待审核<\/span>";
     if(expired)html+="<span class='badge expired-badge'>已过期<\/span>";
-    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+p.submitted_by+"<\/span>";
+    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+displayUser(p.submitted_by)+"<\/span>";
     html+="<\/div>";
     html+="<div class='meta'>";
-    html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\")'>("+p.x+"%, "+p.y+"%)<\/span>";
+    html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\",\"+(p.map_name||\"\")+\","+(p.floor||0)+"'>("+p.x+"%, "+p.y+"%,\"+(p.map_name||\"\")+\","+(p.floor||0)+"<\/span>";
     if(p.note)html+=" | "+p.note;
     html+=" | "+votes+"/10 票";
     if(expired)html+=" | <span style='color:#e55'>已过期<\/span>";
@@ -310,9 +312,9 @@ function renderDels(dels){
     html+="<div class='card'><div class='hdr'>";
     html+="<span style='color:#e55;font-size:14px'>删除请求<\/span>";
     html+="<h3>"+p.name+"<\/h3>"
-    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>请求人: "+p.submitted_by+"<\/span>";
+    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>请求人: "+displayUser(p.submitted_by)+"<\/span>";
     html+="<\/div>";
-    html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\")'>("+p.x+"%, "+p.y+"%)<\/span>";
+    html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\",\"+(p.map_name||\"\")+\","+(p.floor||0)+"'>("+p.x+"%, "+p.y+"%)<\/span>";
     html+=" | "+votes+"/10 票（同意删除）<\/div>";
 
     // Go to map button (renderDels) — use data attributes

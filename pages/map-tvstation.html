@@ -949,7 +949,7 @@ function placePin(tp,noteText){
   var cv=document.getElementById('cv'); if(!cv||cv.textContent==='-'){ alert('Click map first'); return; }
   var parts=cv.textContent.split(','); var x=parseFloat(parts[0]),y=parseFloat(parts[1]);
   if(isNaN(x)||isNaN(y)){ alert('Invalid pos'); return; }
-  var uname=localStorage.getItem('abi_user')||'Anon';
+  var uj=localStorage.getItem('abi_user');var uname='Anon';try{if(uj){var uo=JSON.parse(uj);uname=uo.user_metadata&&(uo.user_metadata.user_name||uo.user_metadata.preferred_username)||uo.email&&uo.email.split('@')[0]||'Anon';}}catch(e){}
   var cf=typeof currentFloor==='number'?currentFloor:0;
   var p={name:tp,x:x,y:y,note:noteText||'',images:[],comments:[]}; pins.push(p); renderMarkers();
   cv.textContent='-'; document.getElementById('ab').style.display='none';
