@@ -565,17 +565,17 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   var mapImg=document.createElement('img');
   mapImg.style.cssText='display:block;width:100%;height:100%;object-fit:contain;pointer-events:none';
 
-  // Pin - use container icon if available
+  // Pin - red circle + container icon
   var pin=document.createElement('div');
   pin.style.cssText='position:absolute;z-index:5;pointer-events:none;transform:translate(-50%,-50%)';
+  // Red circle (always)
+  pin.innerHTML='<div style="width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5)"></div>';
+  // Container icon (if available)
   if(ic){
     var pinImg=document.createElement('img');
     pinImg.src=ic;
-    pinImg.style.cssText='width:48px;height:48px;border-radius:8px;object-fit:cover;border:2px solid #ffc832;box-shadow:0 0 10px rgba(255,200,50,.5)';
-    pinImg.onerror=function(){this.outerHTML='<div style="width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5)"></div>';};
+    pinImg.style.cssText='display:block;margin-top:-54px;margin-left:auto;margin-right:auto;width:48px;height:48px;border-radius:8px;object-fit:cover;border:2px solid #ffc832;box-shadow:0 0 10px rgba(255,200,50,.5)';
     pin.appendChild(pinImg);
-  }else{
-    pin.innerHTML='<div style="width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5)"></div>';
   }
 
   var label=document.createElement('div');
