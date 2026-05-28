@@ -477,17 +477,14 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   closeBtn.onclick=function(){ov.remove();};
   ov.appendChild(closeBtn);
 
-  // Map image container
-  var wrap=document.createElement('div');
-  wrap.style.cssText='position:relative;width:90vw;max-width:1200px;height:80vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#111';
+  // Map bg
+  wrap.style.backgroundImage='url('+imgSrc+')';
+  wrap.style.backgroundSize='contain';
+  wrap.style.backgroundPosition='center';
+  wrap.style.backgroundRepeat='no-repeat';
+  wrap.style.background='#111';
 
-  // Map image
-  var img=document.createElement('img');
-  img.style.cssText='width:100%;height:100%;object-fit:contain';
-  img.alt=mapName||"\u5730\u56fe";
-  img.src=imgSrc;
-
-  // Pin marker (absolute overlay on the map)
+  // Pin marker (absolute overlay on the map)  // Pin marker (absolute overlay on the map)
   var pin=document.createElement('div');
   pin.style.cssText='position:absolute;left:'+x+'%;top:'+y+'%;transform:translate(-50%,-50%);z-index:5;width:16px;height:16px;border:2px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5);pointer-events:none';
   wrap.appendChild(pin);
