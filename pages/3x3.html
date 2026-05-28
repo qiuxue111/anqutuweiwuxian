@@ -16,43 +16,39 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .btn-save{background:#1a4a1a;color:#4f4}
 .btn-cancel{background:#3a1a1a;color:#f44}
 
-.canvas-wrap{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:hidden;background:#0f0f16;cursor:grab}
-.canvas-wrap.dragging{cursor:grabbing}
-.canvas-inner{position:absolute;top:0;left:0;transform-origin:0 0}
-#connSvg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
-#connSvg path{stroke:#ff8833;stroke-width:3;fill:none;stroke-linecap:round;opacity:0.85;filter:drop-shadow(0 0 3px rgba(255,136,51,.3))}
-#connSvg polygon{fill:#ff8833;opacity:0.85}
-
-.card{position:absolute;width:200px;min-height:200px;background:rgba(20,20,30,.95);border:1px solid #333;border-radius:12px;cursor:pointer;z-index:2;overflow:hidden;transition:box-shadow .2s,border-color .2s;user-select:none}
+.canvas-wrap{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:auto;background:#0f0f16}
+.grid-container{display:grid;grid-template-columns:repeat(3,220px);grid-template-rows:repeat(3,280px);gap:60px 80px;padding:40px;justify-content:center;align-content:center;min-height:100%}
+.card{position:relative;width:220px;height:280px;background:rgba(20,20,30,.95);border:1px solid #333;border-radius:14px;overflow:hidden;transition:box-shadow .2s,border-color .2s;user-select:none;z-index:2}
 .card:hover{box-shadow:0 0 20px rgba(255,200,50,.15);border-color:#555}
-.card.editing{border-color:#ffc832;box-shadow:0 0 30px rgba(255,200,50,.3)}
-.card-img-wrap{width:100%;height:120px;overflow:hidden;background:#0a0a12;display:flex;align-items:center;justify-content:center}
+.card.dragging{opacity:0.9;border-color:#ffc832;box-shadow:0 0 40px rgba(255,200,50,.4);z-index:100}
+.card-swap-target{border-color:#ff8833!important;box-shadow:0 0 30px rgba(255,136,51,.5)!important}
+.card-img-wrap{width:100%;height:140px;overflow:hidden;background:#0a0a12;display:flex;align-items:center;justify-content:center}
 .card-img-wrap img{width:100%;height:100%;object-fit:cover}
-.card-name{padding:8px 10px 4px;font-size:13px;font-weight:600;color:#ffc832}
-.card-desc{padding:0 10px 10px;font-size:11px;color:#999;line-height:1.4;word-break:break-all}
-.card-edit-btn{position:absolute;top:4px;right:4px;z-index:10;background:rgba(0,0,0,.6);border:none;border-radius:4px;color:#aaa;cursor:pointer;padding:2px 6px;font-size:11px;display:none}
+.card-name{padding:8px 12px 4px;font-size:14px;font-weight:600;color:#ffc832;text-align:center}
+.card-desc{padding:0 12px 8px;font-size:11px;color:#999;line-height:1.4;text-align:center;word-break:break-all}
+.card-edit-btn{position:absolute;top:6px;right:6px;z-index:10;background:rgba(0,0,0,.6);border:none;border-radius:4px;color:#aaa;cursor:pointer;padding:3px 7px;font-size:11px;display:none}
 .card.editing .card-edit-btn{display:block}
 .card-edit-btn:hover{color:#ffc832}
-.card-del-btn{position:absolute;top:4px;left:4px;z-index:10;background:rgba(0,0,0,.6);border:none;border-radius:4px;color:#f66;cursor:pointer;padding:2px 6px;font-size:11px;display:none}
+.card-del-btn{position:absolute;top:6px;left:6px;z-index:10;background:rgba(0,0,0,.6);border:none;border-radius:4px;color:#f66;cursor:pointer;padding:3px 7px;font-size:11px;display:none}
 .card.editing .card-del-btn{display:block}
 .card-del-btn:hover{color:#ff3333}
+.card-idx{position:absolute;top:6px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#888;font-size:10px;padding:2px 8px;border-radius:4px;display:none}
+.card.editing .card-idx{display:block}
+.card-empty{position:relative;width:220px;height:280px;border:2px dashed #333;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px;z-index:2;background:transparent}
 
-.conn-dot{position:absolute;z-index:10;width:14px;height:14px;border-radius:50%;border:3px solid #111;cursor:crosshair;display:none;transition:transform .15s,box-shadow .15s}
-.conn-dot:hover{transform:scale(1.3);box-shadow:0 0 10px currentColor}
-.card.editing .conn-dot{display:block}
-.conn-out{right:-7px;top:50%;transform:translateY(-50%);background:#22cc66;border-color:#0a3318;box-shadow:0 0 6px rgba(34,204,102,.4)}
-.conn-out:hover{background:#33ee77}
-.conn-out.active{background:#ff4444;box-shadow:0 0 12px rgba(255,68,68,.6)}
-.conn-in{left:-7px;top:50%;transform:translateY(-50%);background:#4488ff;border-color:#0a1a33;box-shadow:0 0 6px rgba(68,136,255,.4)}
-.conn-in:hover{background:#66aaff}
+/* SVG 连线（放在 grid 上方绝对定位） */
+.conn-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.conn-layer svg{width:100%;height:100%}
+.conn-layer path{stroke:#ff8833;stroke-width:3.5;fill:none;stroke-linecap:round;opacity:0.8;filter:drop-shadow(0 0 4px rgba(255,136,51,.3))}
+.conn-layer polygon{fill:#ff8833;opacity:0.8}
 
-.toolbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:none;gap:8px;background:rgba(10,10,15,.92);border:1px solid #333;border-radius:12px;padding:8px 14px;backdrop-filter:blur(8px);white-space:nowrap}
-.toolbar button{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;color:#ddd;transition:background .15s}
-.toolbar .add-card-btn{background:#1a3a1a;color:#4f4}
-.toolbar .conn-mode-btn{background:#2a3a2a;color:#aaf}
-.toolbar .undo-btn{background:#2a2a3a;color:#aaa}
-.toolbar .del-conn-btn{background:#3a1a1a;color:#f66}
-.toolbar button:hover{filter:brightness(1.2)}
+.edit-controls{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:none;gap:8px;background:rgba(10,10,15,.92);border:1px solid #333;border-radius:12px;padding:8px 14px;backdrop-filter:blur(8px);white-space:nowrap}
+.edit-controls button{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;color:#ddd;transition:background .15s}
+.edit-controls .add-btn{background:#1a3a1a;color:#4f4}
+.edit-controls .conn-toggle{background:#2a3a2a;color:#aaf}
+.edit-controls .undo-btn{background:#2a2a3a;color:#aaa}
+.edit-controls .clear-conn{background:#3a1a1a;color:#f66}
+.edit-controls button:hover{filter:brightness(1.2)}
 
 .modal-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.8);z-index:9999;display:none;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
@@ -80,16 +76,18 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 </div>
 
 <div id="canvas" class="canvas-wrap">
-  <div id="canvasInner" class="canvas-inner">
-    <svg id="connSvg"></svg>
+  <div class="grid-container" id="grid">
+    <div class="conn-layer" id="connLayer">
+      <svg id="connSvg"></svg>
+    </div>
   </div>
 </div>
 
-<div id="toolbar" class="toolbar">
-  <button class="add-card-btn" onclick="addCard()">+ 新建</button>
-  <button class="conn-mode-btn" id="connModeBtn" onclick="toggleConnMode()">连线</button>
+<div class="edit-controls" id="editControls">
+  <button class="add-btn" onclick="addCard()">+ 新建</button>
+  <button class="conn-toggle" id="connToggle" onclick="toggleConn()">连线</button>
   <button class="undo-btn" onclick="undoLast()">撤销</button>
-  <button class="del-conn-btn" onclick="clearAllConns()">清空连线</button>
+  <button class="clear-conn" onclick="clearConns()">清空连线</button>
 </div>
 
 <div id="modal" class="modal-overlay">
@@ -100,7 +98,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
     <label>任务图片链接</label>
     <input id="edImg" placeholder="图片 URL（可选）">
     <label>任务内容</label>
-    <textarea id="edDesc" placeholder="描述任务细节..." style="min-height:80px"></textarea>
+    <textarea id="edDesc" placeholder="描述任务细节..."></textarea>
     <div class="btn-row">
       <button class="btn-cancel-m" onclick="closeModal()">取消</button>
       <button class="btn-save-m" onclick="saveCard()">保存</button>
@@ -113,16 +111,13 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 <script>
 var LS = "\\/";
 
-var cards = [];
-var connections = [];
+var cards = [];        // {id, name, img, desc}
+var connections = [];  // {from, to} 用卡片 id
 var editMode = false;
 var connMode = false;
 var editingCardId = null;
 var selectedConnFrom = null;
 var undoStack = [];
-
-var panX = 0, panY = 0;
-var isPanning = false, panStartX = 0, panStartY = 0, panOX = 0, panOY = 0;
 
 /* ====== Load / Save ====== */
 function loadData(){
@@ -151,93 +146,113 @@ function escHtml(s){
 }
 
 function renderAll(){
-  var inner = document.getElementById("canvasInner");
-  inner.querySelectorAll(".card").forEach(function(el){el.remove();});
-  cards.forEach(function(c){ renderCard(c); });
-  renderConnections();
-  updatePan();
+  renderGrid();
+  renderConns();
 }
 
-function renderCard(c){
-  var inner = document.getElementById("canvasInner");
-  var div = document.createElement("div");
-  div.className = "card" + (editMode ? " editing" : "");
-  div.id = "card_" + c.id;
-  div.style.left = c.x + "px";
-  div.style.top = c.y + "px";
+function renderGrid(){
+  var grid = document.getElementById("grid");
+  grid.querySelectorAll(".card, .card-empty").forEach(function(el){el.remove();});
 
-  var html = "";
+  // 先渲染按位置排序
+  for(var i = 0; i < 9; i++){
+    var c = cards[i];
+    var div;
+    if(c){
+      div = document.createElement("div");
+      div.className = "card" + (editMode ? " editing" : "");
+      div.id = "card_" + c.id;
+      div.setAttribute("data-card-idx", i);
 
-  /* 编辑按钮（右上角） */
-  html += "<button class='card-edit-btn' onclick=\"event.stopPropagation();openEditCard('"+c.id+"')\">\\u270e<"+LS+"button>";
+      var html = "";
+      html += "<button class='card-edit-btn' onclick=\"event.stopPropagation();openEditCard('"+c.id+"')\">\\u270e<"+LS+"button>";
+      html += "<button class='card-del-btn' onclick=\"event.stopPropagation();deleteCard('"+c.id+"')\">\\u2716<"+LS+"button>";
+      html += "<div class='card-idx'>#" + (i+1) + "<"+LS+"div>";
 
-  /* 删除按钮（左上角） */
-  html += "<button class='card-del-btn' onclick=\"event.stopPropagation();delCardDirect('"+c.id+"')\">\\u2716<"+LS+"button>";
-
-  /* 图片区域 */
-  if(c.img){
-    html += "<div class='card-img-wrap'><img src='"+c.img+"' style='width:100%;height:100%;object-fit:cover'><"+LS+"div>";
-  } else {
-    html += "<div class='card-img-wrap' style='background:#111;color:#555;font-size:24px'>?</div>";
-  }
-
-  /* 任务名 */
-  html += "<div class='card-name'>" + escHtml(c.name || "未命名") + "<"+LS+"div>";
-
-  /* 任务内容 */
-  if(c.desc){
-    html += "<div class='card-desc'>" + escHtml(c.desc) + "<"+LS+"div>";
-  }
-
-  /* 连接点 */
-  html += "<div class='conn-dot conn-out' onclick=\"event.stopPropagation();onConnClick('"+c.id+"')\" title='连线起点'><"+LS+"div>";
-  html += "<div class='conn-dot conn-in' onclick=\"event.stopPropagation();onConnClick('"+c.id+"')\" title='连线终点'><"+LS+"div>";
-
-  div.innerHTML = html;
-
-  /* 拖拽卡片 */
-  if(editMode){
-    div.addEventListener("mousedown", function(e){
-      if(e.target.closest(".card-edit-btn,.card-del-btn,.conn-dot")) return;
-      if(e.button !== 0) return;
-      var sx = e.clientX, sy = e.clientY;
-      var ox = c.x, oy = c.y;
-      var moved = false;
-      function mm(ev){
-        c.x = Math.max(0, ox + ev.clientX - sx);
-        c.y = Math.max(0, oy + ev.clientY - sy);
-        div.style.left = c.x + "px";
-        div.style.top = c.y + "px";
-        moved = true;
-        renderConnections();
+      if(c.img){
+        html += "<div class='card-img-wrap'><img src='"+c.img+"' style='width:100%;height:100%;object-fit:cover'><"+LS+"div>";
+      } else {
+        html += "<div class='card-img-wrap' style='background:#111;color:#555;font-size:28px;display:flex;align-items:center;justify-content:center'>?<"+LS+"div>";
       }
-      function mu(){
-        document.removeEventListener("mousemove", mm);
-        document.removeEventListener("mouseup", mu);
-        if(moved) pushUndo();
+      html += "<div class='card-name'>" + escHtml(c.name || "") + "<"+LS+"div>";
+      if(c.desc){
+        html += "<div class='card-desc'>" + escHtml(c.desc) + "<"+LS+"div>";
       }
-      document.addEventListener("mousemove", mm);
-      document.addEventListener("mouseup", mu);
-      e.preventDefault();
-    });
-  }
+      div.innerHTML = html;
 
-  inner.appendChild(div);
+      // 编辑模式：拖拽交换
+      if(editMode){
+        div.draggable = true;
+        div.addEventListener("dragstart", function(e){
+          e.dataTransfer.setData("text/plain", this.getAttribute("data-card-idx"));
+          this.classList.add("dragging");
+        });
+        div.addEventListener("dragend", function(){
+          this.classList.remove("dragging");
+          document.querySelectorAll(".card-swap-target").forEach(function(el){el.classList.remove("card-swap-target");});
+        });
+        div.addEventListener("dragover", function(e){
+          e.preventDefault();
+          document.querySelectorAll(".card-swap-target").forEach(function(el){el.classList.remove("card-swap-target");});
+          this.classList.add("card-swap-target");
+        });
+        div.addEventListener("dragleave", function(){
+          this.classList.remove("card-swap-target");
+        });
+        div.addEventListener("drop", function(e){
+          e.preventDefault();
+          this.classList.remove("card-swap-target");
+          var fromIdx = parseInt(e.dataTransfer.getData("text/plain"));
+          var toIdx = parseInt(this.getAttribute("data-card-idx"));
+          if(fromIdx !== toIdx && fromIdx >= 0 && toIdx >= 0){
+            swapCards(fromIdx, toIdx);
+          }
+        });
+      }
+    } else {
+      div = document.createElement("div");
+      div.className = "card-empty";
+      div.textContent = "空";
+      if(editMode){
+        div.style.cursor = "pointer";
+        div.onclick = function(){ addCardAt(i); };
+      }
+    }
+    grid.appendChild(div);
+  }
 }
 
-function renderConnections(){
+function renderConns(){
   var svg = document.getElementById("connSvg");
   svg.innerHTML = "";
+  var grid = document.getElementById("grid");
+
+  var gapX = 80, gapY = 60;
+  var cardW = 220, cardH = 280;
+  var padding = 40;
+  var cols = 3;
+
   connections.forEach(function(conn){
-    var fromEl = document.getElementById("card_" + conn.from);
-    var toEl = document.getElementById("card_" + conn.to);
-    if(!fromEl || !toEl) return;
+    // 找到 from 和 to 的位置
+    var fromIdx = -1, toIdx = -1;
+    for(var i = 0; i < cards.length; i++){
+      if(cards[i].id === conn.from){ fromIdx = i; }
+      if(cards[i].id === conn.to){ toIdx = i; }
+    }
+    if(fromIdx < 0 || toIdx < 0) return;
 
-    var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
-    var fy = parseFloat(fromEl.style.top) + fromEl.offsetHeight / 2;
-    var tx = parseFloat(toEl.style.left);
-    var ty = parseFloat(toEl.style.top) + toEl.offsetHeight / 2;
+    var fromRow = Math.floor(fromIdx / cols);
+    var fromCol = fromIdx % cols;
+    var toRow = Math.floor(toIdx / cols);
+    var toCol = toIdx % cols;
 
+    // 计算 SVG 坐标（相对于 grid 容器）
+    var fx = padding + fromCol * (cardW + gapX) + cardW;
+    var fy = padding + fromRow * (cardH + gapY) + cardH / 2;
+    var tx = padding + toCol * (cardW + gapX);
+    var ty = padding + toRow * (cardH + gapY) + cardH / 2;
+
+    // 贝塞尔曲线
     var midX = (fx + tx) / 2;
     var d = "M " + fx + " " + fy + " C " + midX + " " + fy + ", " + midX + " " + ty + ", " + tx + " " + ty;
 
@@ -245,6 +260,7 @@ function renderConnections(){
     path.setAttribute("d", d);
     svg.appendChild(path);
 
+    // 箭头
     var angle = Math.atan2(ty - fy, tx - fx);
     var a = 12, w = 8;
     var p1x = tx - a * Math.cos(angle - w * Math.PI / 180);
@@ -257,9 +273,13 @@ function renderConnections(){
   });
 }
 
-function updatePan(){
-  var inner = document.getElementById("canvasInner");
-  inner.style.transform = "translate(" + panX + "px," + panY + "px)";
+/* ====== Swap ====== */
+function swapCards(fromIdx, toIdx){
+  var temp = cards[fromIdx];
+  cards[fromIdx] = cards[toIdx];
+  cards[toIdx] = temp;
+  pushUndo();
+  renderAll();
 }
 
 /* ====== Edit Mode ====== */
@@ -268,8 +288,7 @@ function toggleEdit(){
   document.getElementById("editToggle").style.display = editMode ? "none" : "inline-block";
   document.getElementById("saveBtn").style.display = editMode ? "inline-block" : "none";
   document.getElementById("cancelBtn").style.display = editMode ? "inline-block" : "none";
-  document.getElementById("toolbar").style.display = editMode ? "flex" : "none";
-  document.getElementById("canvas").style.cursor = editMode ? "default" : "grab";
+  document.getElementById("editControls").style.display = editMode ? "flex" : "none";
   if(!editMode){
     connMode = false; selectedConnFrom = null;
     saveData();
@@ -282,94 +301,113 @@ function toggleEdit(){
 
 function cancelEdit(){
   editMode = false;
+  connMode = false; selectedConnFrom = null;
   document.getElementById("editToggle").style.display = "inline-block";
   document.getElementById("saveBtn").style.display = "none";
   document.getElementById("cancelBtn").style.display = "none";
-  document.getElementById("toolbar").style.display = "none";
-  document.getElementById("canvas").style.cursor = "grab";
-  connMode = false; selectedConnFrom = null;
+  document.getElementById("editControls").style.display = "none";
   document.getElementById("editToggle").textContent = "进入编辑";
   loadData();
 }
 
 /* ====== Connect ====== */
-function toggleConnMode(){
+function toggleConn(){
   connMode = !connMode;
-  document.getElementById("connModeBtn").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
-  document.getElementById("connModeBtn").textContent = connMode ? "退出连线" : "连线";
+  document.getElementById("connToggle").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
+  document.getElementById("connToggle").textContent = connMode ? "退出连线" : "连线";
   selectedConnFrom = null;
-  document.querySelectorAll(".conn-out").forEach(function(el){el.classList.remove("active");});
 }
 
-function onConnClick(cardId){
-  if(!connMode) return;
-  var dot = event.target;
+function onCardClick(cardId){
+  if(!connMode || !editMode) return;
   if(!selectedConnFrom){
-    if(dot.classList.contains("conn-out")){
-      selectedConnFrom = cardId;
-      dot.classList.add("active");
-    }
+    selectedConnFrom = cardId;
   } else {
-    if(dot.classList.contains("conn-in") && selectedConnFrom !== cardId){
+    if(selectedConnFrom !== cardId){
       var dup = connections.some(function(c){ return c.from === selectedConnFrom && c.to === cardId; });
       if(!dup){
         connections.push({from:selectedConnFrom, to:cardId});
         pushUndo();
-        renderConnections();
+        renderConns();
       }
     }
     selectedConnFrom = null;
-    document.querySelectorAll(".conn-out").forEach(function(el){el.classList.remove("active");});
   }
 }
 
-function clearAllConns(){
+function clearConns(){
   if(!confirm("确定清空所有连线？")) return;
   connections = [];
   pushUndo();
-  renderConnections();
+  renderConns();
 }
 
 /* ====== Card CRUD ====== */
 function addCard(){
+  // 找空位
+  var idx = -1;
+  for(var i = 0; i < 9; i++){
+    if(!cards[i]){ idx = i; break; }
+  }
+  if(idx < 0){
+    alert("9 格已满，请先删除一个卡片再添加");
+    return;
+  }
+  addCardAt(idx);
+}
+
+function addCardAt(idx){
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
-  var x = (window.innerWidth - 200) / 2;
-  var y = (window.innerHeight - 220) / 2;
-  cards.push({id:id, name:"新任务", img:"", desc:"", x:x, y:y});
+  cards[idx] = {id:id, name:"新任务", img:"", desc:""};
   pushUndo();
   renderAll();
   openEditCard(id);
 }
 
-function delCardDirect(id){
+function deleteCard(id){
   if(!confirm("确定删除这张卡片？")) return;
-  var idx = cards.findIndex(function(c){ return c.id === id; });
-  if(idx >= 0) cards.splice(idx, 1);
-  connections = connections.filter(function(c){ return c.from !== id && c.to !== id; });
+  var idx = -1;
+  for(var i = 0; i < cards.length; i++){
+    if(cards[i] && cards[i].id === id){ idx = i; break; }
+  }
+  if(idx >= 0){
+    cards[idx] = undefined;
+    connections = connections.filter(function(c){ return c.from !== id && c.to !== id; });
+  }
+  // 压缩数组
+  cards = cards.filter(function(c){ return c !== undefined; });
   pushUndo();
   renderAll();
 }
 
 function openEditCard(id){
-  var c = cards.find(function(card){ return card.id === id; });
-  if(!c) return;
-  editingCardId = id;
-  document.getElementById("modalTitle").textContent = "编辑任务";
-  document.getElementById("edName").value = c.name || "";
-  document.getElementById("edImg").value = c.img || "";
-  document.getElementById("edDesc").value = c.desc || "";
-  document.getElementById("modal").classList.add("show");
+  for(var i = 0; i < cards.length; i++){
+    if(cards[i] && cards[i].id === id){
+      var c = cards[i];
+      editingCardId = id;
+      document.getElementById("modalTitle").textContent = "编辑任务 " + (i+1);
+      document.getElementById("edName").value = c.name || "";
+      document.getElementById("edImg").value = c.img || "";
+      document.getElementById("edDesc").value = c.desc || "";
+      document.getElementById("modal").classList.add("show");
+      return;
+    }
+  }
 }
 
 function saveCard(){
-  var c = cards.find(function(card){ return card.id === editingCardId; });
-  if(!c) return;
-  c.name = document.getElementById("edName").value;
-  c.img = document.getElementById("edImg").value;
-  c.desc = document.getElementById("edDesc").value;
-  pushUndo();
-  closeModal();
-  renderAll();
+  for(var i = 0; i < cards.length; i++){
+    if(cards[i] && cards[i].id === editingCardId){
+      var c = cards[i];
+      c.name = document.getElementById("edName").value;
+      c.img = document.getElementById("edImg").value;
+      c.desc = document.getElementById("edDesc").value;
+      pushUndo();
+      closeModal();
+      renderAll();
+      return;
+    }
+  }
 }
 
 function closeModal(){
@@ -392,52 +430,18 @@ function undoLast(){
   renderAll();
 }
 
-/* ====== Right-click Add ====== */
-document.getElementById("canvas").addEventListener("contextmenu", function(e){
-  if(!editMode) return;
-  e.preventDefault();
-  var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
-  var inner = document.getElementById("canvasInner");
-  var rect = inner.getBoundingClientRect();
-  var ix = (e.clientX - rect.left - 100);
-  var iy = (e.clientY - rect.top - 100);
-  cards.push({id:id, name:"新任务", img:"", desc:"", x:ix, y:iy});
-  pushUndo();
-  renderAll();
-  openEditCard(id);
-});
-
-/* ====== Canvas Pan ====== */
-document.getElementById("canvas").addEventListener("mousedown", function(e){
-  if(editMode) return;
-  if(e.button !== 0) return;
-  if(e.target.closest(".card")) return;
-  isPanning = true;
-  panStartX = e.clientX;
-  panStartY = e.clientY;
-  panOX = panX;
-  panOY = panY;
-  this.classList.add("dragging");
-});
-
-document.addEventListener("mousemove", function(e){
-  if(!isPanning) return;
-  panX = panOX + e.clientX - panStartX;
-  panY = panOY + e.clientY - panStartY;
-  updatePan();
-});
-
-document.addEventListener("mouseup", function(){
-  if(isPanning){
-    isPanning = false;
-    document.getElementById("canvas").classList.remove("dragging");
-  }
+/* ====== Card Click (connect mode) ====== */
+document.getElementById("grid").addEventListener("click", function(e){
+  var cardEl = e.target.closest(".card");
+  if(!cardEl) return;
+  var id = cardEl.id.replace("card_", "");
+  onCardClick(id);
 });
 
 /* ====== Init ====== */
 document.getElementById("editToggle").style.display = "inline-block";
 loadData();
-window.addEventListener("resize", function(){ renderConnections(); });
+window.addEventListener("resize", function(){ renderConns(); });
 </script>
 </body>
 </html>
