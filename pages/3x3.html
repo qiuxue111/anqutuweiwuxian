@@ -28,21 +28,15 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .card:hover{box-shadow:0 0 20px rgba(255,200,50,.18);border-color:rgba(255,200,50,.3)}
 .card.editing{border-color:#ffc832;box-shadow:0 0 30px rgba(255,200,50,.35)}
 
-/* 名称（居中） */
 .card-title{padding:12px 14px 4px;font-size:15px;font-weight:600;color:#fff;text-align:center;letter-spacing:1px}
-
-/* 描述（居左） */
 .card-desc{padding:0 14px 14px;font-size:12px;color:#999;line-height:1.5;text-align:left;word-break:break-all;min-height:24px}
 
-/* 底部操作栏 */
 .card-actions{position:absolute;bottom:0;left:0;right:0;height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;z-index:5}
 .card-dot{width:22px;height:22px;border-radius:50%;border:3px solid #111;cursor:crosshair;display:none;transition:transform .15s,box-shadow .15s;z-index:6}
 .card.editing .card-dot{display:block}
 .card-dot:hover{transform:scale(1.2);box-shadow:0 0 10px currentColor}
 .dot-blue{background:#4488ff;margin-left:6px}
 .dot-green{background:#22cc66;margin-right:6px}
-.dot-blue.active{box-shadow:0 0 14px rgba(68,136,255,.8)}
-.dot-green.active{box-shadow:0 0 14px rgba(34,204,102,.8)}
 
 .card-edit-btn{position:absolute;top:6px;right:6px;z-index:10;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);border-radius:5px;color:#aaa;cursor:pointer;padding:3px 7px;font-size:11px;display:none}
 .card.editing .card-edit-btn{display:block}
@@ -114,8 +108,6 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 <div class="loading" id="loading">加载中...</div>
 
 <script>
-var LS = "\\/";
-
 var cards = [];
 var connections = [];
 var editMode = false;
@@ -167,46 +159,80 @@ function renderCard(c){
   div.style.left = c.x + "px";
   div.style.top = c.y + "px";
 
-  var html = "";
-  html += "<button class='card-edit-btn' onclick=\"event.stopPropagation();openEditCard('"+c.id+"')\">\\u270e<"+LS+"button>";
-  html += "<button class='card-del-btn' onclick=\"event.stopPropagation();deleteCard('"+c.id+"')\">\\u2716<"+LS+"button>";
+  // Edit button
+  var editBtn = document.createElement("button");
+  editBtn.className = "card-edit-btn";
+  editBtn.textContent = "\u270e";
+  editBtn.addEventListener("click", function(e){ e.stopPropagation(); openEditCard(c.id); });
+  div.appendChild(editBtn);
 
-  html += "<div class='card-title'>" + escHtml(c.name || "") + "<"+LS+"div>";
+  // Delete button
+  var delBtn = document.createElement("button");
+  delBtn.className = "card-del-btn";
+  delBtn.textContent = "\u2716";
+  delBtn.addEventListener("click", function(e){ e.stopPropagation(); deleteCard(c.id); });
+  div.appendChild(delBtn);
+
+  // Title
+  var title = document.createElement("div");
+  title.className = "card-title";
+  title.textContent = c.name || "";
+  div.appendChild(title);
+
+  // Description
   if(c.desc){
-    html += "<div class='card-desc'>" + escHtml(c.desc) + "<"+LS+"div>";
+    var descEl = document.createElement("div");
+    descEl.className = "card-desc";
+    descEl.textContent = c.desc;
+    div.appendChild(descEl);
   }
 
-  html += "<div class='card-actions'>";
-  html += "<div class='card-dot dot-blue' onclick=\"event.stopPropagation();onDotClick('"+c.id+"','in')\" title='连线终点'><"+LS+"div>";
-  html += "<div class='card-dot dot-green' onclick=\"event.stopPropagation();onDotClick('"+c.id+"','out')\" title='连线起点'><"+LS+"div>";
-  html += "<"+LS+"div>";
+  // Actions bar
+  var actions = document.createElement("div");
+  actions.className = "card-actions";
 
-  div.innerHTML = html;
+  var blueDot = document.createElement("div");
+  blueDot.className = "card-dot dot-blue";
+  blueDot.title = "\u8fde\u7ebf\u7ec8\u70b9";
+  var self = c;
+  blueDot.addEventListener("click", function(e){ e.stopPropagation(); onDotClick(self.id, "in"); });
+  actions.appendChild(blueDot);
 
+  var greenDot = document.createElement("div");
+  greenDot.className = "card-dot dot-green";
+  greenDot.title = "\u8fde\u7ebf\u8d77\u70b9";
+  greenDot.addEventListener("click", function(e){ e.stopPropagation(); onDotClick(self.id, "out"); });
+  actions.appendChild(greenDot);
+
+  div.appendChild(actions);
+
+  // Drag
   if(editMode){
-    div.addEventListener("mousedown", function(e){
-      if(e.target.closest(".card-edit-btn,.card-del-btn,.card-dot")) return;
-      if(e.button !== 0) return;
-      var sx = e.clientX, sy = e.clientY;
-      var ox = c.x, oy = c.y;
-      var moved = false;
-      function mm(ev){
-        c.x = Math.max(0, ox + ev.clientX - sx);
-        c.y = Math.max(0, oy + ev.clientY - sy);
-        div.style.left = c.x + "px";
-        div.style.top = c.y + "px";
-        moved = true;
-        renderConns();
-      }
-      function mu(){
-        document.removeEventListener("mousemove", mm);
-        document.removeEventListener("mouseup", mu);
-        if(moved) pushUndo();
-      }
-      document.addEventListener("mousemove", mm);
-      document.addEventListener("mouseup", mu);
-      e.preventDefault();
-    });
+    (function(card, cardData){
+      div.addEventListener("mousedown", function(e){
+        if(e.target.closest(".card-edit-btn,.card-del-btn,.card-dot")) return;
+        if(e.button !== 0) return;
+        var sx = e.clientX, sy = e.clientY;
+        var ox = cardData.x, oy = cardData.y;
+        var moved = false;
+        function mm(ev){
+          cardData.x = Math.max(0, ox + ev.clientX - sx);
+          cardData.y = Math.max(0, oy + ev.clientY - sy);
+          card.style.left = cardData.x + "px";
+          card.style.top = cardData.y + "px";
+          moved = true;
+          renderConns();
+        }
+        function mu(){
+          document.removeEventListener("mousemove", mm);
+          document.removeEventListener("mouseup", mu);
+          if(moved) pushUndo();
+        }
+        document.addEventListener("mousemove", mm);
+        document.addEventListener("mouseup", mu);
+        e.preventDefault();
+      });
+    })(div, c);
   }
 
   inner.appendChild(div);
@@ -260,9 +286,9 @@ function toggleEdit(){
   if(!editMode){
     connMode = false; selectedConnFrom = null;
     saveData();
-    document.getElementById("editToggle").textContent = "进入编辑";
+    document.getElementById("editToggle").textContent = "\u8fdb\u5165\u7f16\u8f91";
   } else {
-    document.getElementById("editToggle").textContent = "退出编辑";
+    document.getElementById("editToggle").textContent = "\u9000\u51fa\u7f16\u8f91";
   }
   renderAll();
 }
@@ -275,14 +301,14 @@ function cancelEdit(){
   document.getElementById("cancelBtn").style.display = "none";
   document.getElementById("toolbar").style.display = "none";
   document.getElementById("canvas").style.cursor = "grab";
-  document.getElementById("editToggle").textContent = "进入编辑";
+  document.getElementById("editToggle").textContent = "\u8fdb\u5165\u7f16\u8f91";
   loadData();
 }
 
 function toggleConn(){
   connMode = !connMode;
   document.getElementById("connToggle").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
-  document.getElementById("connToggle").textContent = connMode ? "退出连线" : "连线";
+  document.getElementById("connToggle").textContent = connMode ? "\u9000\u51fa\u8fde\u7ebf" : "\u8fde\u7ebf";
   selectedConnFrom = null;
   document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
 }
@@ -309,7 +335,7 @@ function onDotClick(cardId, type){
 }
 
 function clearConns(){
-  if(!confirm("确定清空所有连线？")) return;
+  if(!confirm("\u786e\u5b9a\u6e05\u7a7a\u6240\u6709\u8fde\u7ebf\uff1f")) return;
   connections = [];
   pushUndo();
   renderConns();
@@ -319,14 +345,14 @@ function addCard(){
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
   var x = (window.innerWidth - 240) / 2;
   var y = (window.innerHeight - 130) / 2;
-  cards.push({id:id, name:"新任务", desc:"", x:x, y:y});
+  cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:x, y:y});
   pushUndo();
   renderAll();
   openEditCard(id);
 }
 
 function deleteCard(id){
-  if(!confirm("确定删除这张卡片？")) return;
+  if(!confirm("\u786e\u5b9a\u5220\u9664\u8fd9\u5f20\u5361\u7247\uff1f")) return;
   var idx = cards.findIndex(function(c){ return c.id === id; });
   if(idx >= 0) cards.splice(idx, 1);
   connections = connections.filter(function(c){ return c.from !== id && c.to !== id; });
@@ -338,7 +364,7 @@ function openEditCard(id){
   var c = cards.find(function(card){ return card.id === id; });
   if(!c) return;
   editingCardId = id;
-  document.getElementById("modalTitle").textContent = "编辑任务";
+  document.getElementById("modalTitle").textContent = "\u7f16\u8f91\u4efb\u52a1";
   document.getElementById("edName").value = c.name || "";
   document.getElementById("edDesc").value = c.desc || "";
   document.getElementById("modal").classList.add("show");
@@ -381,7 +407,7 @@ document.getElementById("canvas").addEventListener("contextmenu", function(e){
   var rect = inner.getBoundingClientRect();
   var ix = e.clientX - rect.left - 120;
   var iy = e.clientY - rect.top - 65;
-  cards.push({id:id, name:"新任务", desc:"", x:ix, y:iy});
+  cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:ix, y:iy});
   pushUndo();
   renderAll();
   openEditCard(id);
