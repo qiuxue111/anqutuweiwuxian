@@ -491,6 +491,48 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   ov.appendChild(closeBtn);
 
   // Floor buttons
+  // Zoom controls
+  var zoomBar=document.createElement('div');
+  zoomBar.style.cssText='display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;justify-content:center';
+  var zoomInBtn=document.createElement('button');
+  zoomInBtn.textContent='\u2795';
+  zoomInBtn.title='\u653e\u5927';
+  zoomInBtn.style.cssText='padding:3px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:16px;font-weight:600';
+  zoomInBtn.onclick=function(){
+    var newZm=zm*1.5;
+    if(newZm>20)newZm=20;
+    var cw=wrap.clientWidth, ch=wrap.clientHeight;
+    offsetX=offsetX + (1-newZm/zm)*(cw/2 - offsetX);
+    offsetY=offsetY + (1-newZm/zm)*(ch/2 - offsetY);
+    zm=newZm;
+    inner.style.transform='translate('+offsetX+'px,'+offsetY+'px) scale('+zm+')';
+  };
+  zoomBar.appendChild(zoomInBtn);
+  var zoomOutBtn=document.createElement('button');
+  zoomOutBtn.textContent='\u2796';
+  zoomOutBtn.title='\u7f29\u5c0f';
+  zoomOutBtn.style.cssText='padding:3px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:16px;font-weight:600';
+  zoomOutBtn.onclick=function(){
+    var newZm=zm/1.5;
+    if(newZm<0.2)newZm=0.2;
+    var cw=wrap.clientWidth, ch=wrap.clientHeight;
+    offsetX=offsetX + (1-newZm/zm)*(cw/2 - offsetX);
+    offsetY=offsetY + (1-newZm/zm)*(ch/2 - offsetY);
+    zm=newZm;
+    inner.style.transform='translate('+offsetX+'px,'+offsetY+'px) scale('+zm+')';
+  };
+  zoomBar.appendChild(zoomOutBtn);
+  var resetBtn=document.createElement('button');
+  resetBtn.textContent='\u21ba';
+  resetBtn.title='\u5f52\u4f4d';
+  resetBtn.style.cssText='padding:3px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:16px';
+  resetBtn.onclick=function(){
+    zm=2;offsetX=0;offsetY=0;
+    reposition();
+  };
+  zoomBar.appendChild(resetBtn);
+  ov.appendChild(zoomBar);
+
   var floorBar=document.createElement('div');
   floorBar.style.cssText='display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;justify-content:center';
   var floorBtns=[];
