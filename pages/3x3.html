@@ -19,44 +19,54 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .canvas-wrap{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:hidden;background:#0f0f16;cursor:grab}
 .canvas-wrap.dragging{cursor:grabbing}
 .canvas-inner{position:absolute;top:0;left:0;transform-origin:0 0}
+
 #connSvg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
-#connSvg path{stroke:#ff8833;stroke-width:3;fill:none;stroke-linecap:round;opacity:0.85;filter:drop-shadow(0 0 3px rgba(255,136,51,.3))}
+#connSvg path{stroke:#ff8833;stroke-width:3.5;fill:none;stroke-linecap:round;opacity:0.85;filter:drop-shadow(0 0 4px rgba(255,136,51,.3))}
 #connSvg polygon{fill:#ff8833;opacity:0.85}
 
-.card{position:absolute;width:200px;min-height:200px;background:rgba(20,20,30,.95);border:1px solid #333;border-radius:12px;cursor:pointer;z-index:2;overflow:hidden;transition:box-shadow .2s,border-color .2s;user-select:none}
-.card:hover{box-shadow:0 0 20px rgba(255,200,50,.15);border-color:#555}
-.card.editing{border-color:#ffc832;box-shadow:0 0 30px rgba(255,200,50,.3)}
-.card-img-wrap{width:100%;height:120px;overflow:hidden;background:#0a0a12;display:flex;align-items:center;justify-content:center}
-.card-img-wrap img{width:100%;height:100%;object-fit:cover}
-.card-name{padding:8px 10px 4px;font-size:13px;font-weight:600;color:#ffc832}
-.card-desc{padding:0 10px 10px;font-size:11px;color:#999;line-height:1.4;word-break:break-all}
-.card-edit-btn{position:absolute;top:4px;right:4px;z-index:10;background:rgba(0,0,0,.6);border:none;border-radius:4px;color:#aaa;cursor:pointer;padding:2px 6px;font-size:11px;display:none}
-.card.editing .card-edit-btn{display:block}
-.card-edit-btn:hover{color:#ffc832}
-.card-del-btn{position:absolute;top:4px;left:4px;z-index:10;background:rgba(0,0,0,.6);border:none;border-radius:4px;color:#f66;cursor:pointer;padding:2px 6px;font-size:11px;display:none}
-.card.editing .card-del-btn{display:block}
-.card-del-btn:hover{color:#ff3333}
+.card{position:absolute;width:220px;min-height:300px;background:rgba(18,18,28,.96);border:1.5px solid rgba(255,255,255,.08);border-radius:16px;cursor:pointer;z-index:2;overflow:hidden;transition:box-shadow .2s,border-color .2s;user-select:none}
+.card:hover{box-shadow:0 0 24px rgba(255,200,50,.18);border-color:rgba(255,200,50,.3)}
+.card.editing{border-color:#ffc832;box-shadow:0 0 36px rgba(255,200,50,.35)}
+.card.editing:hover{border-color:#ffc832}
 
-.conn-dot{position:absolute;z-index:10;width:14px;height:14px;border-radius:50%;border:3px solid #111;cursor:crosshair;display:none;transition:transform .15s,box-shadow .15s}
-.conn-dot:hover{transform:scale(1.3);box-shadow:0 0 10px currentColor}
-.card.editing .conn-dot{display:block}
-.conn-out{right:-7px;top:50%;transform:translateY(-50%);background:#22cc66;border-color:#0a3318;box-shadow:0 0 6px rgba(34,204,102,.4)}
-.conn-out:hover{background:#33ee77}
-.conn-out.active{background:#ff4444;box-shadow:0 0 12px rgba(255,68,68,.6)}
-.conn-in{left:-7px;top:50%;transform:translateY(-50%);background:#4488ff;border-color:#0a1a33;box-shadow:0 0 6px rgba(68,136,255,.4)}
-.conn-in:hover{background:#66aaff}
+/* 图片区域 */
+.card-img{z-index:1}
+.card-img img{width:100%;height:160px;object-fit:cover;display:block}
+.card-img .no-img{width:100%;height:160px;background:linear-gradient(135deg,#0d0d16,#181828);display:flex;align-items:center;justify-content:center;color:#444;font-size:32px}
+
+/* 任务名 — 居中，覆盖在图片底部或图片下方 */
+.card-title{padding:8px 14px 4px;font-size:15px;font-weight:600;color:#fff;text-align:center;letter-spacing:1px}
+/* 任务描述 — 左侧对齐 */
+.card-desc{padding:0 14px 14px;font-size:12px;color:#999;line-height:1.5;text-align:left;word-break:break-all;min-height:30px}
+
+/* 底部操作栏 */
+.card-actions{position:absolute;bottom:0;left:0;right:0;height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;z-index:5}
+.card-dot{width:28px;height:28px;border-radius:50%;border:3px solid #111;cursor:crosshair;display:none;transition:transform .15s,box-shadow .15s;z-index:6}
+.card.editing .card-dot{display:block}
+.card-dot:hover{transform:scale(1.2);box-shadow:0 0 12px currentColor}
+.dot-blue{background:#4488ff;margin-left:8px}
+.dot-green{background:#22cc66;margin-right:8px}
+.dot-blue.active{box-shadow:0 0 16px rgba(68,136,255,.8)}
+.dot-green.active{box-shadow:0 0 16px rgba(34,204,102,.8)}
+
+.card-edit-btn{position:absolute;top:8px;right:8px;z-index:10;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#aaa;cursor:pointer;padding:4px 8px;font-size:11px;display:none}
+.card.editing .card-edit-btn{display:block}
+.card-edit-btn:hover{color:#ffc832;background:rgba(255,200,50,.15)}
+.card-del-btn{position:absolute;top:8px;left:8px;z-index:10;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#f66;cursor:pointer;padding:4px 8px;font-size:11px;display:none}
+.card.editing .card-del-btn{display:block}
+.card-del-btn:hover{color:#ff3333;background:rgba(255,50,50,.15)}
 
 .toolbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:none;gap:8px;background:rgba(10,10,15,.92);border:1px solid #333;border-radius:12px;padding:8px 14px;backdrop-filter:blur(8px);white-space:nowrap}
 .toolbar button{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;color:#ddd;transition:background .15s}
-.toolbar .add-card-btn{background:#1a3a1a;color:#4f4}
-.toolbar .conn-mode-btn{background:#2a3a2a;color:#aaf}
+.toolbar .add-btn{background:#1a3a1a;color:#4f4}
+.toolbar .conn-toggle{background:#2a3a2a;color:#aaf}
 .toolbar .undo-btn{background:#2a2a3a;color:#aaa}
-.toolbar .del-conn-btn{background:#3a1a1a;color:#f66}
+.toolbar .clear-btn{background:#3a1a1a;color:#f66}
 .toolbar button:hover{filter:brightness(1.2)}
 
 .modal-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.8);z-index:9999;display:none;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
-.modal{background:#1a1a24;border:1px solid #333;border-radius:14px;padding:20px;width:380px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal{background:#1a1a24;border:1px solid #333;border-radius:14px;padding:20px;width:400px;max-width:90vw;max-height:80vh;overflow-y:auto}
 .modal h2{color:#ffc832;font-size:16px;margin-bottom:14px}
 .modal label{display:block;color:#aaa;font-size:12px;margin:8px 0 4px}
 .modal input,.modal textarea{width:100%;padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:8px;color:#ddd;font-size:12px;outline:none}
@@ -86,21 +96,21 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 </div>
 
 <div id="toolbar" class="toolbar">
-  <button class="add-card-btn" onclick="addCard()">+ 新建</button>
-  <button class="conn-mode-btn" id="connModeBtn" onclick="toggleConnMode()">连线</button>
+  <button class="add-btn" onclick="addCard()">+ 新建</button>
+  <button class="conn-toggle" id="connToggle" onclick="toggleConn()">连线</button>
   <button class="undo-btn" onclick="undoLast()">撤销</button>
-  <button class="del-conn-btn" onclick="clearAllConns()">清空连线</button>
+  <button class="clear-btn" onclick="clearConns()">清空连线</button>
 </div>
 
 <div id="modal" class="modal-overlay">
   <div class="modal">
     <h2 id="modalTitle">编辑任务</h2>
     <label>任务名称</label>
-    <input id="edName" placeholder="例: 首轮搜索">
-    <label>任务图片链接</label>
-    <input id="edImg" placeholder="图片 URL（可选）">
-    <label>任务内容</label>
-    <textarea id="edDesc" placeholder="描述任务细节..." style="min-height:80px"></textarea>
+    <input id="edName" placeholder="居中显示的任务名">
+    <label>任务描述（左侧对齐）</label>
+    <textarea id="edDesc" placeholder="填写任务描述..." style="min-height:80px"></textarea>
+    <label>图片链接</label>
+    <input id="edImg" placeholder="图片 URL">
     <div class="btn-row">
       <button class="btn-cancel-m" onclick="closeModal()">取消</button>
       <button class="btn-save-m" onclick="saveCard()">保存</button>
@@ -124,7 +134,7 @@ var undoStack = [];
 var panX = 0, panY = 0;
 var isPanning = false, panStartX = 0, panStartY = 0, panOX = 0, panOY = 0;
 
-/* ====== Load / Save ====== */
+/* ====== Load/Save ====== */
 function loadData(){
   var saved = localStorage.getItem("abi_3x3_data");
   if(saved){
@@ -154,7 +164,7 @@ function renderAll(){
   var inner = document.getElementById("canvasInner");
   inner.querySelectorAll(".card").forEach(function(el){el.remove();});
   cards.forEach(function(c){ renderCard(c); });
-  renderConnections();
+  renderConns();
   updatePan();
 }
 
@@ -167,38 +177,37 @@ function renderCard(c){
   div.style.top = c.y + "px";
 
   var html = "";
-
-  /* 编辑按钮（右上角） */
+  /* 编辑/删除按钮 */
   html += "<button class='card-edit-btn' onclick=\"event.stopPropagation();openEditCard('"+c.id+"')\">\\u270e<"+LS+"button>";
-
-  /* 删除按钮（左上角） */
-  html += "<button class='card-del-btn' onclick=\"event.stopPropagation();delCardDirect('"+c.id+"')\">\\u2716<"+LS+"button>";
+  html += "<button class='card-del-btn' onclick=\"event.stopPropagation();deleteCard('"+c.id+"')\">\\u2716<"+LS+"button>";
 
   /* 图片区域 */
+  html += "<div class='card-img'>";
   if(c.img){
-    html += "<div class='card-img-wrap'><img src='"+c.img+"' style='width:100%;height:100%;object-fit:cover'><"+LS+"div>";
+    html += "<img src='"+c.img+"' style='width:100%;height:160px;object-fit:cover' onerror='this.className+=\" no-img\";this.src=\"\";this.style.display=\"none\";this.parentElement.innerHTML=\"<div class=no-img>?</div>\"'>";
   } else {
-    html += "<div class='card-img-wrap' style='background:#111;color:#555;font-size:24px'>?</div>";
+    html += "<div class='no-img'>?<"+LS+"div>";
   }
+  html += "<"+LS+"div>";
 
-  /* 任务名 */
-  html += "<div class='card-name'>" + escHtml(c.name || "未命名") + "<"+LS+"div>";
+  /* 任务名（居中） */
+  html += "<div class='card-title'>" + escHtml(c.name || "") + "<"+LS+"div>";
 
-  /* 任务内容 */
-  if(c.desc){
-    html += "<div class='card-desc'>" + escHtml(c.desc) + "<"+LS+"div>";
-  }
+  /* 任务描述（左侧对齐） */
+  html += "<div class='card-desc'>" + escHtml(c.desc || "") + "<"+LS+"div>";
 
-  /* 连接点 */
-  html += "<div class='conn-dot conn-out' onclick=\"event.stopPropagation();onConnClick('"+c.id+"')\" title='连线起点'><"+LS+"div>";
-  html += "<div class='conn-dot conn-in' onclick=\"event.stopPropagation();onConnClick('"+c.id+"')\" title='连线终点'><"+LS+"div>";
+  /* 底部操作栏：蓝点（左下）← 连线 → 绿点（右下） */
+  html += "<div class='card-actions'>";
+  html += "<div class='card-dot dot-blue' onclick=\"event.stopPropagation();onDotClick('"+c.id+"','in')\" title='连线终点'><"+LS+"div>";
+  html += "<div class='card-dot dot-green' onclick=\"event.stopPropagation();onDotClick('"+c.id+"','out')\" title='连线起点'><"+LS+"div>";
+  html += "<"+LS+"div>";
 
   div.innerHTML = html;
 
-  /* 拖拽卡片 */
+  /* 拖拽 */
   if(editMode){
     div.addEventListener("mousedown", function(e){
-      if(e.target.closest(".card-edit-btn,.card-del-btn,.conn-dot")) return;
+      if(e.target.closest(".card-edit-btn,.card-del-btn,.card-dot,.card-img")) return;
       if(e.button !== 0) return;
       var sx = e.clientX, sy = e.clientY;
       var ox = c.x, oy = c.y;
@@ -209,7 +218,7 @@ function renderCard(c){
         div.style.left = c.x + "px";
         div.style.top = c.y + "px";
         moved = true;
-        renderConnections();
+        renderConns();
       }
       function mu(){
         document.removeEventListener("mousemove", mm);
@@ -225,7 +234,7 @@ function renderCard(c){
   inner.appendChild(div);
 }
 
-function renderConnections(){
+function renderConns(){
   var svg = document.getElementById("connSvg");
   svg.innerHTML = "";
   connections.forEach(function(conn){
@@ -234,9 +243,9 @@ function renderConnections(){
     if(!fromEl || !toEl) return;
 
     var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
-    var fy = parseFloat(fromEl.style.top) + fromEl.offsetHeight / 2;
+    var fy = parseFloat(fromEl.style.top) + fromEl.offsetHeight - 18; // 对齐底部绿点
     var tx = parseFloat(toEl.style.left);
-    var ty = parseFloat(toEl.style.top) + toEl.offsetHeight / 2;
+    var ty = parseFloat(toEl.style.top) + toEl.offsetHeight - 18; // 对齐底部蓝点
 
     var midX = (fx + tx) / 2;
     var d = "M " + fx + " " + fy + " C " + midX + " " + fy + ", " + midX + " " + ty + ", " + tx + " " + ty;
@@ -282,66 +291,67 @@ function toggleEdit(){
 
 function cancelEdit(){
   editMode = false;
+  connMode = false; selectedConnFrom = null;
   document.getElementById("editToggle").style.display = "inline-block";
   document.getElementById("saveBtn").style.display = "none";
   document.getElementById("cancelBtn").style.display = "none";
   document.getElementById("toolbar").style.display = "none";
   document.getElementById("canvas").style.cursor = "grab";
-  connMode = false; selectedConnFrom = null;
   document.getElementById("editToggle").textContent = "进入编辑";
   loadData();
 }
 
 /* ====== Connect ====== */
-function toggleConnMode(){
+function toggleConn(){
   connMode = !connMode;
-  document.getElementById("connModeBtn").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
-  document.getElementById("connModeBtn").textContent = connMode ? "退出连线" : "连线";
+  document.getElementById("connToggle").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
+  document.getElementById("connToggle").textContent = connMode ? "退出连线" : "连线";
   selectedConnFrom = null;
-  document.querySelectorAll(".conn-out").forEach(function(el){el.classList.remove("active");});
+  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
 }
 
-function onConnClick(cardId){
+function onDotClick(cardId, type){
   if(!connMode) return;
-  var dot = event.target;
-  if(!selectedConnFrom){
-    if(dot.classList.contains("conn-out")){
-      selectedConnFrom = cardId;
-      dot.classList.add("active");
-    }
-  } else {
-    if(dot.classList.contains("conn-in") && selectedConnFrom !== cardId){
+  if(type === "out"){
+    // 绿点：设为起点
+    selectedConnFrom = cardId;
+    document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
+    var el = document.querySelector("#card_" + cardId + " .dot-green");
+    if(el) el.classList.add("active");
+  } else if(type === "in" && selectedConnFrom){
+    // 蓝点：设为终点
+    if(selectedConnFrom !== cardId){
       var dup = connections.some(function(c){ return c.from === selectedConnFrom && c.to === cardId; });
       if(!dup){
         connections.push({from:selectedConnFrom, to:cardId});
         pushUndo();
-        renderConnections();
+        renderConns();
       }
     }
     selectedConnFrom = null;
-    document.querySelectorAll(".conn-out").forEach(function(el){el.classList.remove("active");});
+    document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
   }
 }
 
-function clearAllConns(){
+function clearConns(){
   if(!confirm("确定清空所有连线？")) return;
   connections = [];
   pushUndo();
-  renderConnections();
+  renderConns();
 }
 
 /* ====== Card CRUD ====== */
 function addCard(){
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
-  var x = (window.innerWidth - 200) / 2;
-  var y = (window.innerHeight - 220) / 2;
+  var x = (window.innerWidth - 220) / 2;
+  var y = (window.innerHeight - 300) / 2;
   cards.push({id:id, name:"新任务", img:"", desc:"", x:x, y:y});
   pushUndo();
   renderAll();
   openEditCard(id);
 }
 
-function delCardDirect(id){
+function deleteCard(id){
   if(!confirm("确定删除这张卡片？")) return;
   var idx = cards.findIndex(function(c){ return c.id === id; });
   if(idx >= 0) cards.splice(idx, 1);
@@ -356,8 +366,8 @@ function openEditCard(id){
   editingCardId = id;
   document.getElementById("modalTitle").textContent = "编辑任务";
   document.getElementById("edName").value = c.name || "";
-  document.getElementById("edImg").value = c.img || "";
   document.getElementById("edDesc").value = c.desc || "";
+  document.getElementById("edImg").value = c.img || "";
   document.getElementById("modal").classList.add("show");
 }
 
@@ -365,8 +375,8 @@ function saveCard(){
   var c = cards.find(function(card){ return card.id === editingCardId; });
   if(!c) return;
   c.name = document.getElementById("edName").value;
-  c.img = document.getElementById("edImg").value;
   c.desc = document.getElementById("edDesc").value;
+  c.img = document.getElementById("edImg").value;
   pushUndo();
   closeModal();
   renderAll();
@@ -392,15 +402,15 @@ function undoLast(){
   renderAll();
 }
 
-/* ====== Right-click Add ====== */
+/* ====== Right-click ====== */
 document.getElementById("canvas").addEventListener("contextmenu", function(e){
   if(!editMode) return;
   e.preventDefault();
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
   var inner = document.getElementById("canvasInner");
   var rect = inner.getBoundingClientRect();
-  var ix = (e.clientX - rect.left - 100);
-  var iy = (e.clientY - rect.top - 100);
+  var ix = e.clientX - rect.left - 110;
+  var iy = e.clientY - rect.top - 150;
   cards.push({id:id, name:"新任务", img:"", desc:"", x:ix, y:iy});
   pushUndo();
   renderAll();
@@ -437,7 +447,7 @@ document.addEventListener("mouseup", function(){
 /* ====== Init ====== */
 document.getElementById("editToggle").style.display = "inline-block";
 loadData();
-window.addEventListener("resize", function(){ renderConnections(); });
+window.addEventListener("resize", function(){ renderConns(); });
 </script>
 </body>
 </html>
