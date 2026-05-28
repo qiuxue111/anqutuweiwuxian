@@ -453,15 +453,29 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   var old=document.getElementById('mapViewOverlay');
   if(old)old.remove();
 
-  var mapImages={
-    '\u519c\u573a':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/farm.png',
-    '\u5317\u5c71':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/beishan.png',
-    '\u5c71\u8c37':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/valley.png',
-    '\u519b\u68b0\u5e93':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/armory.png',
-    '\u7535\u89c6\u53f0':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/tvstation.png',
-    '\u963f\u8d3e\u514b\u65af\u6e2f\u53e3':window.location.href.replace(/[^/]*$/,'')+'../assets/maps/airport.png'
+  // Floor images per map — index matches floor value in DB (0=main)
+  var floorMap={
+    '\u519c\u573a':['../assets/maps/farm.png'],
+    '\u5317\u5c71':['../assets/maps/beishan.png','../assets/maps/beishan_北山酒店一楼.png','../assets/maps/beishan_北山酒店二楼.png','../assets/maps/beishan_北山酒店三楼.png'],
+    '\u5c71\u8c37':['../assets/maps/valley.png'],
+    '\u519b\u68b0\u5e93':['../assets/maps/armory.png','../assets/maps/armory_前线要塞负一楼.png','../assets/maps/armory_前线要塞一楼.png','../assets/maps/armory_前线要塞二楼.png'],
+    '\u7535\u89c6\u53f0':['../assets/maps/tvstation.png','../assets/maps/tvstation_电视台二楼.png'],
+    '\u963f\u8d3e\u514b\u65af\u6e2f\u53e3':['../assets/maps/airport.png','../assets/maps/airport_机场塔内一层.png','../assets/maps/airport_机场塔内二层.png']
   };
-  var imgSrc=mapImages[mapName]||'';
+  var floorLabelsMap={
+    '\u519c\u573a':['\u519c\u573a\u5168\u5883'],
+    '\u5317\u5c71':['\u5317\u5c71\u5168\u5883','\u5317\u5c71\u9152\u5e97\u4e00\u697c','\u5317\u5c71\u9152\u5e97\u4e8c\u697c','\u5317\u5c71\u9152\u5e97\u4e09\u697c'],
+    '\u5c71\u8c37':['\u5c71\u8c37\u5168\u5883'],
+    '\u519b\u68b0\u5e93':['\u519b\u68b0\u5e93\u5168\u5883','\u524d\u7ebf\u8981\u585e\u8d1f\u4e00\u697c','\u524d\u7ebf\u8981\u585e\u4e00\u697c','\u524d\u7ebf\u8981\u585e\u4e8c\u697c'],
+    '\u7535\u89c6\u53f0':['\u7535\u89c6\u53f0\u5168\u5883','\u7535\u89c6\u53f0\u4e8c\u697c'],
+    '\u963f\u8d3e\u514b\u65af\u6e2f\u53e3':['\u6e2f\u53e3\u5168\u5883','\u673a\u573a\u5854\u5185\u4e00\u5c42','\u673a\u573a\u5854\u5185\u4e8c\u5c42']
+  };
+
+  var imgs=floorMap[mapName]||[''];
+  var labels=floorLabelsMap[mapName]||['\u5730\u56fe'];
+  var curFloor=Math.min(Math.max(0,floor||0), imgs.length-1);
+
+  var getSrc=function(f){return window.location.href.replace(/[^/]*$/,'')+imgs[f];};
 
   var ov=document.createElement('div');
   ov.id='mapViewOverlay';
@@ -473,46 +487,34 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   closeBtn.onclick=function(){ov.remove();};
   ov.appendChild(closeBtn);
 
-  // Container sized to viewport with map centered
+  // Floor switcher
+  var floorBar=document.createElement('div');
+  floorBar.style.cssText='display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;justify-content:center';
+  var floorBtns=[];
+  imgs.forEach(function(s,i){
+    var btn=document.createElement('button');
+    btn.textContent=labels[i]||('\u697c\u5c42 '+i);
+    btn.style.cssText='padding:5px 14px;background:'+(i==curFloor?'#ffc832':'rgba(255,255,255,.08)')+';border:none;border-radius:6px;color:'+(i==curFloor?'#000':'#aaa')+';cursor:pointer;font-size:12px;font-weight:'+(i==curFloor?'600':'400');
+    btn.onclick=function(fi){
+      return function(){
+        curFloor=fi;
+        loadFloor(fi);
+        floorBtns.forEach(function(b,j){b.style.background=j==fi?'#ffc832':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
+        info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[fi];
+      };
+    }(i);
+    floorBtns.push(btn);
+    floorBar.appendChild(btn);
+  });
+  ov.appendChild(floorBar);
+
+  // Map container
   var wrap=document.createElement('div');
-  wrap.style.cssText='position:relative;width:90vw;max-width:1400px;height:80vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#000';
+  wrap.style.cssText='position:relative;width:90vw;max-width:1400px;height:75vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#000';
 
   var img=new Image();
   img.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain';
-  img.onload=function(){
-    // Calculate actual image display area within the contain box
-    var cw=wrap.clientWidth;
-    var ch=wrap.clientHeight;
-    var iw=img.naturalWidth;
-    var ih=img.naturalHeight;
-    // object-fit: contain: scale so image fits entirely
-    var scale=Math.min(cw/iw, ch/ih);
-    var dispW=iw*scale;  // actual displayed width in pixels
-    var dispH=ih*scale;  // actual displayed height
-    var offsetX=(cw-dispW)/2;  // left offset (black bars)
-    var offsetY=(ch-dispH)/2;  // top offset
 
-    // Convert percentage to pixel position within image area, then add offset
-    var pinPxX=offsetX + dispW * x/100;
-    var pinPxY=offsetY + dispH * y/100;
-
-    // Re-position the pin and label using absolute pixels
-    pin.style.left=pinPxX+'px';
-    pin.style.top=pinPxY+'px';
-    label.style.left=pinPxX+'px';
-    label.style.top=(pinPxY+12)+'px';
-  };
-  img.onerror=function(){
-    console.error('Map load failed');
-    var fb=document.createElement('div');
-    fb.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:16px';
-    fb.textContent='\u5730\u56fe\u56fe\u7247\u52a0\u8f7d\u5931\u8d25: '+mapName;
-    wrap.appendChild(fb);
-  };
-  img.src=imgSrc;
-  wrap.appendChild(img);
-
-  // Pin & label created now, will be repositioned on img.onload
   var pin=document.createElement('div');
   pin.style.cssText='position:absolute;left:0;top:0;z-index:5;width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5);pointer-events:none;transform:translate(-50%,-50%)';
   wrap.appendChild(pin);
@@ -525,11 +527,39 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   ov.appendChild(wrap);
 
   var info=document.createElement('div');
-  info.style.cssText='margin-top:10px;color:#888;font-size:13px;text-align:center';
-  info.innerHTML='\u5730\u56fe: '+mapName+' | \u5750\u6807: ('+x+'%, '+y+'%)'+(floor!==undefined&&floor!==null&&floor!==0?' | \u697c\u5c42: '+floor:'');
+  info.style.cssText='margin-top:8px;color:#aaa;font-size:13px;text-align:center';
+  info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+(labels[curFloor]||'');
   ov.appendChild(info);
 
   document.body.appendChild(ov);
+
+  function loadFloor(f){
+    var src=getSrc(f);
+    img.onload=function(){
+      var cw=wrap.clientWidth;
+      var ch=wrap.clientHeight;
+      var iw=img.naturalWidth;
+      var ih=img.naturalHeight;
+      var scale=Math.min(cw/iw, ch/ih);
+      var dispW=iw*scale;
+      var dispH=ih*scale;
+      var offsetX=(cw-dispW)/2;
+      var offsetY=(ch-dispH)/2;
+      var pinPxX=offsetX + dispW * x/100;
+      var pinPxY=offsetY + dispH * y/100;
+      pin.style.left=pinPxX+'px';
+      pin.style.top=pinPxY+'px';
+      label.style.left=pinPxX+'px';
+      label.style.top=(pinPxY+12)+'px';
+    };
+    img.onerror=function(){
+      console.error('Floor load failed:', src);
+    };
+    img.src=src;
+  }
+
+  // Initial load
+  loadFloor(curFloor);
 }
 function closeMapView(){
   var ov=document.getElementById('mapViewOverlay');
