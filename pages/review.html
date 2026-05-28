@@ -476,6 +476,11 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   var labels=floorLabelsMap[mapName]||['\u5730\u56fe'];
   var curFloor=Math.min(Math.max(0,floor||0), imgs.length-1);
 
+  // Zoom & pan state
+  var zm=2; // start at 2x zoom, centered on pin
+  var px=0, py=0;
+  var dragging=false, dragSx=0, dragSy=0, dragPx=0, dragPy=0;
+
   var ov=document.createElement('div');
   ov.id='mapViewOverlay';
   ov.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.95);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center';
@@ -494,46 +499,57 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     var btn=document.createElement('button');
     btn.textContent=labels[i];
     btn.style.cssText='padding:5px 14px;background:'+(i==curFloor?'#ffc832':'rgba(255,255,255,.08)')+';border:none;border-radius:6px;color:'+(i==curFloor?'#000':'#aaa')+';cursor:pointer;font-size:12px';
-    btn.onclick=function(fi){
-      return function(){
-        curFloor=fi;
-        mapImg.src=imgs[fi];
-        mapImg.style.display='block';
-        floorBtns.forEach(function(b,j){b.style.background=j==fi?'#ffc832':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
-        info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[fi];
-        posPin(fi);
-      };
-    }(i);
+    btn.onclick=function(fi){return function(){
+      curFloor=fi;
+      mapImg.src=imgs[fi];
+      zm=2;px=0;py=0;
+      floorBtns.forEach(function(b,j){b.style.background=j==fi?'#ffc832':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
+      info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[fi];
+      updateTransform();
+      posPin();
+    };}(i);
     floorBtns.push(btn);
     floorBar.appendChild(btn);
   });
   ov.appendChild(floorBar);
 
-  // Map container - using simple overflow:auto
-  var wrap=document.createElement('div');
-  wrap.style.cssText='position:relative;display:inline-block;overflow:hidden;border-radius:12px;border:1px solid #333;max-width:90vw;max-height:75vh';
-  wrap.id='mvw';
+  // Map container - clipping viewport
+  var clip=document.createElement('div');
+  clip.style.cssText='position:relative;width:90vw;max-width:1400px;height:75vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#111';
+  clip.id='mvClip';
 
-  // IMG tag - NOT via new Image(), directly in DOM
+  // Scrollable inner
+  var scroller=document.createElement('div');
+  scroller.style.cssText='position:relative;width:100%;height:100%;overflow:hidden;cursor:grab';
+  scroller.id='mvScroller';
+
+  // Absolute layer for transform (zoom + pan)
+  var inner=document.createElement('div');
+  inner.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;transform-origin:center';
+  inner.id='mvInner';
+
+  // IMG
   var mapImg=document.createElement('img');
   mapImg.id='mvwImg';
-  mapImg.style.cssText='display:block;width:auto;height:auto;max-width:90vw;max-height:75vh;object-fit:contain';
+  mapImg.style.cssText='display:block;width:100%;height:100%;object-fit:contain';
   mapImg.src=imgs[curFloor];
-  wrap.appendChild(mapImg);
+  inner.appendChild(mapImg);
 
-  // Pin positioned over the img - percentage relative to img itself
+  // Pin
   var pin=document.createElement('div');
   pin.id='mvwPin';
-  pin.style.cssText='position:absolute;left:'+x+'%;top:'+y+'%;z-index:5;width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5);pointer-events:none;transform:translate(-50%,-50%)';
-  wrap.appendChild(pin);
+  pin.style.cssText='position:absolute;left:50%;top:50%;z-index:5;width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5);pointer-events:none;transform:translate(-50%,-50%)';
+  inner.appendChild(pin);
 
   var label=document.createElement('div');
   label.id='mvwLabel';
-  label.style.cssText='position:absolute;left:'+x+'%;top:'+(parseFloat(y)+1.5)+'%;z-index:5;color:#ffc832;font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
+  label.style.cssText='position:absolute;left:50%;top:calc(50% + 12px);z-index:5;color:#ffc832;font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
   label.textContent=name||'';
-  wrap.appendChild(label);
+  inner.appendChild(label);
 
-  ov.appendChild(wrap);
+  scroller.appendChild(inner);
+  clip.appendChild(scroller);
+  ov.appendChild(clip);
 
   var info=document.createElement('div');
   info.style.cssText='margin-top:8px;color:#aaa;font-size:13px;text-align:center';
@@ -542,37 +558,104 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
 
   document.body.appendChild(ov);
 
-  function posPin(f){
-    // After img loads, adjust pin position using actual image display area
-    var iw=mapImg.naturalWidth, ih=mapImg.naturalHeight;
-    if(!iw||!ih){
-      mapImg.onload=function(){posPin(f);};
-      return;
+  // Zoom & pan
+  function updateTransform(){
+    inner.style.transform='translate('+px+'px,'+py+'px) scale('+zm+')';
+  }
+  function zoomTo(newZm,cx,cy){
+    if(newZm<0.2)newZm=0.2;
+    if(newZm>20)newZm=20;
+    // Zoom centered on (cx,cy) relative to scroller
+    var rect=scroller.getBoundingClientRect();
+    if(cx===undefined){
+      cx=rect.width/2;
+      cy=rect.height/2;
     }
-    var cw=wrap.clientWidth, ch=wrap.clientHeight;
-    var rw=mapImg.offsetWidth, rh=mapImg.offsetHeight;
-    if(!rw||!rh){
-      setTimeout(function(){posPin(f);},100);
-      return;
-    }
-    // offsetX/Y = where the image starts within wrap
-    // For display:inline-block with max-width/max-height + contain
-    // the image might not fill the whole wrap. Calculate offset.
-    // Actually: wrap is inline-block sized by img, so cw=rw, ch=rh
-    // The percentage is relative to the img. With object-fit:contain
-    // we need to compute actual rendered area.
-    var scale=Math.min(rw/iw, rh/ih);
-    var dispW=iw*scale, dispH=ih*scale;
-    var ox=(rw-dispW)/2, oy=(rh-dispH)/2;
-    var px=x*dispW/100 + ox;
-    var py=y*dispH/100 + oy;
-    pin.style.left=px+'px';
-    pin.style.top=py+'px';
-    label.style.left=px+'px';
-    label.style.top=(py+12)+'px';
+    var mx=cx-rect.left;
+    var my=cy-rect.top;
+    // Where the mouse is in the inner coordinate system
+    var ix=(mx-px*inner.offsetWidth/100)/zm;
+    var iy=(my-py*inner.offsetHeight/100)/zm;
+    // Adjust px/py so that (ix,iy) stays at (mx,my) after zoom
+    px=px + (zm/newZm-1)*ix*100/inner.offsetWidth;
+    py=py + (zm/newZm-1)*iy*100/inner.offsetHeight;
+    zm=newZm;
+    updateTransform();
   }
 
-  setTimeout(function(){posPin(curFloor);},50);
+  // Wheel zoom
+  scroller.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var f=e.deltaY>0?0.85:1.18;
+    zoomTo(zm*f, e.clientX, e.clientY);
+  },{passive:false});
+
+  // Pan
+  scroller.addEventListener('mousedown',function(e){
+    if(e.button!==0)return;
+    dragging=true;
+    dragSx=e.clientX; dragSy=e.clientY;
+    dragPx=px; dragPy=py;
+    scroller.style.cursor='grabbing';
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!dragging)return;
+    var dx=e.clientX-dragSx, dy=e.clientY-dragSy;
+    var rect=scroller.getBoundingClientRect();
+    var cf=inner.offsetWidth?100/inner.offsetWidth:1;
+    px=dragPx + dx*zm*cf/zm; // Simplified: dx * 100 / inner.offsetWidth
+    py=dragPy + dy*zm*cf/zm;
+    // Actually simpler: just use pixel-based pan
+    px=dragPx + dx*100/inner.offsetWidth;
+    py=dragPy + dy*100/inner.offsetHeight;
+    updateTransform();
+  });
+  document.addEventListener('mouseup',function(){
+    if(dragging){
+      dragging=false;
+      scroller.style.cursor='grab';
+    }
+  });
+
+  // Initialize: center on pin
+  function posPin(){
+    // After image loads, offset inner so pin appears at center
+    // Since pin is at 50%/50% (center), we offset inner to center on (x%, y%)
+    // Map the pin's actual position to center of viewport
+    mapImg.onload=function(){
+      // The pin sits at 50%/50% of inner. We want the (x%, y%) point on the image
+      // to be at the center of the clip. So offset inner such that pin's position
+      // aligns with (x%, y%) on the image.
+      // Actually simpler: transform inner so that the pixel (x% of img width, y% of img height)
+      // ends up at center of clip.
+      var iw=mapImg.naturalWidth, ih=mapImg.naturalHeight;
+      var rw=inner.offsetWidth||clip.clientWidth;
+      var rh=inner.offsetHeight||clip.clientHeight;
+      // image display size within inner
+      var scale=Math.min(rw/iw, rh/ih);
+      var dispW=iw*scale, dispH=ih*scale;
+      var ox=(rw-dispW)/2, oy=(rh-dispH)/2;
+      // Target pixel on the display
+      var tarX=ox + dispW*x/100;
+      var tarY=oy + dispH*y/100;
+      // We want tarX to be centered in clip
+      var cw=clip.clientWidth, ch=clip.clientHeight;
+      // With zm=2: the inner is zoomed 2x, so we need to offset
+      // Center of clip is (cw/2, ch/2) in clip coords
+      // Inner is at (px, py) offset with scale zm
+      // A point at (tarX, tarY) in inner coords appears at clip coords:
+      //   clipX = cw/2 + (tarX - cw/2)*zm + px*zm
+      // We want: clipX = cw/2, clipY = ch/2
+      // => px = (cw/2 - tarX) / (100*zm) * 100 ... hmm this is getting complex
+      // Simpler: reset to pin-centered default
+      px = (cw/2 - tarX) / zm;
+      py = (ch/2 - tarY) / zm;
+      updateTransform();
+    };
+    if(mapImg.complete)mapImg.onload();
+  }
+
+  setTimeout(posPin,100);
 }
 function closeMapView(){
   var ov=document.getElementById('mapViewOverlay');
