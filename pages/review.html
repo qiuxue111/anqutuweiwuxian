@@ -455,12 +455,12 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   if(old)old.remove();
 
   var mapImages={
-    "\u519c\u573a":window.location.origin+"/assets/maps/farm.png",
-    "\u5317\u5c71":window.location.origin+"/assets/maps/beishan.png",
-    "\u5c71\u8c37":window.location.origin+"/assets/maps/valley.png",
-    "\u519b\u68b0\u5e93":window.location.origin+"/assets/maps/armory.png",
-    "\u7535\u89c6\u53f0":window.location.origin+"/assets/maps/tvstation.png",
-    "\u963f\u8d3e\u514b\u65af\u6e2f\u53e3":window.location.origin+"/assets/maps/airport.png"
+    "\u519c\u573a":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/farm.png",
+    "\u5317\u5c71":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/beishan.png",
+    "\u5c71\u8c37":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/valley.png",
+    "\u519b\u68b0\u5e93":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/armory.png",
+    "\u7535\u89c6\u53f0":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/tvstation.png",
+    "\u963f\u8d3e\u514b\u65af\u6e2f\u53e3":window.location.href.replace(/[^/]*$/,"")+"../assets/maps/airport.png"
   };
   var floorImages={}; // Could be populated per map if needed
   var imgSrc=mapImages[mapName]||"";
