@@ -278,13 +278,9 @@ function updateTransform(){
 }
 
 function docscroll(){
-  /* Center canvas on first load */
-  if(cards.length === 0){
-    panX = 200; panY = 200;
-  } else {
-    panX = (window.innerWidth - 4000 * scale) / 2;
-    panY = (window.innerHeight - 4000 * scale) / 2;
-  }
+  /* Offset canvas to fill top-left with 4x zoom */
+  panX = 0;
+  panY = 0;
   updateTransform();
 }
 
