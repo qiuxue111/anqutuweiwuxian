@@ -311,43 +311,55 @@ function cancelEdit(){
 
 var connFrom = null;
 var connLine = null;
+var connTimeout = null;
 
-function onDotClick(cardId, type){
-  if(!editMode) return;
-  if(type === "out"){
-    /* Start connecting — green dot */
-    connFrom = cardId;
-    document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
-    var el = document.querySelector("#card_" + cardId + " .dot-green");
-    if(el) el.classList.add("active");
-    /* Create a temp line following mouse */
-    if(!connLine){
-      connLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      connLine.setAttribute("stroke", "#ff8833");
-      connLine.setAttribute("stroke-width", "2");
-      connLine.setAttribute("fill", "none");
-      connLine.setAttribute("stroke-dasharray", "6,4");
-      connLine.setAttribute("opacity", "0.5");
-      connLine.id = "connLine";
-      document.getElementById("connSvg").appendChild(connLine);
-    }
-  } else if(type === "in" && connFrom){
-    /* Finish connecting — blue dot */
-    if(connFrom !== cardId){
-      var dup = connections.some(function(c){ return c.from === connFrom && c.to === cardId; });
-      if(!dup){
-        connections.push({from:connFrom, to:cardId});
-        pushUndo();
-        renderConns();
-      }
-    }
-    connFrom = null;
-    document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
-    if(connLine){ connLine.remove(); connLine = null; }
+function startConnect(cardId){
+  connFrom = cardId;
+  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
+  var el = document.querySelector("#card_" + cardId + " .dot-green");
+  if(el) el.classList.add("active");
+  if(!connLine){
+    connLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    connLine.setAttribute("stroke", "#ff8833");
+    connLine.setAttribute("stroke-width", "2");
+    connLine.setAttribute("fill", "none");
+    connLine.setAttribute("stroke-dasharray", "6,4");
+    connLine.setAttribute("opacity", "0.5");
+    connLine.id = "connLine";
+    document.getElementById("connSvg").appendChild(connLine);
   }
 }
 
-/* Mouse move — update temp line */
+function finishConnect(cardId){
+  if(!connFrom) return;
+  if(connFrom !== cardId){
+    var dup = connections.some(function(c){ return c.from === connFrom && c.to === cardId; });
+    if(!dup){
+      connections.push({from:connFrom, to:cardId});
+      pushUndo();
+      renderConns();
+    }
+  }
+  connFrom = null;
+  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
+  if(connLine){ connLine.remove(); connLine = null; }
+}
+
+function cancelConnect(){
+  connFrom = null;
+  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
+  if(connLine){ connLine.remove(); connLine = null; }
+}
+
+function onDotClick(cardId, type){
+  if(!editMode) return;
+  if(type === "out" && !connFrom){
+    startConnect(cardId);
+  } else if(type === "in" && connFrom){
+    finishConnect(cardId);
+  }
+}
+
 document.addEventListener("mousemove", function(e){
   if(!connFrom) return;
   var fromEl = document.getElementById("card_" + connFrom);
@@ -363,6 +375,15 @@ document.addEventListener("mousemove", function(e){
   var fy = parseFloat(fromEl.style.top) + fh - 15;
   var midX = (fx + cx) / 2;
   connLine.setAttribute("d", "M " + fx + " " + fy + " C " + midX + " " + fy + ", " + midX + " " + cy + ", " + cx + " " + cy);
+});
+
+document.addEventListener("mouseup", function(e){
+  if(!connFrom) return;
+  var target = e.target;
+  if(target && target.classList && target.classList.contains("dot-blue")){
+    return;
+  }
+  cancelConnect();
 });
 
 function clearConns(){
