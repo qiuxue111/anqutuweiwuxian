@@ -368,159 +368,36 @@ document.addEventListener("mousemove", function(e){
   connLine.setAttribute("d", "M " + fx + " " + fy + " C " + midX + " " + fy + ", " + midX + " " + cy + ", " + cx + " " + cy);
 });
 
-document.addEventListener("mouseup", function(e){
-  if(!connFrom) return;
-  var target = e.target;
-  if(target && target.classList && target.classList.contains("dot-blue")){
-    return;
-  }
-  cancelConnect();
-});
 
 /* Also clear on scroll/pan */
+/* Green dot mousedown -> start connecting */
 document.addEventListener("mousedown", function(e){
-  if(connFrom && !e.target.closest(".dot-green,.dot-blue")){
+  var dot = e.target.closest(".dot-green");
+  if(dot && editMode){
+    var cardEl = dot.closest(".card");
+    if(cardEl){
+      var cid = cardEl.id.replace("card_", "");
+      startConnect(cid);
+    }
+    return;
+  }
+  if(connFrom && !e.target.closest(".dot-blue")){
     cancelConnect();
   }
 });
 
-function clearConns(){
-  if(!confirm("\u786e\u5b9a\u6e05\u7a7a\u6240\u6709\u8fde\u7ebf\uff1f")) return;
-  connections = [];
-  pushUndo();
-  renderConns();
-}
-
-function addCard(){
-  var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
-  var vp = document.getElementById("viewport");
-  var ccx = 10 + (vp.clientWidth - 480) / 4;
-  var ccy = 10 + (vp.clientHeight - 260) / 4;
-  cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:ccx, y:ccy});
-  pushUndo();
-  renderAll();
-  openEditCard(id);
-}
-
-function deleteCard(id){
-  if(!confirm("\u786e\u5b9a\u5220\u9664\u8fd9\u5f20\u5361\u7247\uff1f")) return;
-  var idx = cards.findIndex(function(c){ return c.id === id; });
-  if(idx >= 0) cards.splice(idx, 1);
-  connections = connections.filter(function(c){ return c.from !== id && c.to !== id; });
-  pushUndo();
-  renderAll();
-}
-
-function openEditCard(id){
-  var c = cards.find(function(card){ return card.id === id; });
-  if(!c) return;
-  editingCardId = id;
-  document.getElementById("modalTitle").textContent = "\u7f16\u8f91\u4efb\u52a1";
-  document.getElementById("edName").value = c.name || "";
-  document.getElementById("edDesc").value = c.desc || "";
-  document.getElementById("modal").classList.add("show");
-}
-
-function saveCard(){
-  var c = cards.find(function(card){ return card.id === editingCardId; });
-  if(!c) return;
-  c.name = document.getElementById("edName").value;
-  c.desc = document.getElementById("edDesc").value;
-  pushUndo();
-  closeModal();
-  renderAll();
-}
-
-function closeModal(){
-  document.getElementById("modal").classList.remove("show");
-  editingCardId = null;
-}
-
-function pushUndo(){
-  undoStack.push(JSON.stringify({cards:cards, connections:connections}));
-  if(undoStack.length > 20) undoStack.shift();
-}
-
-function undoLast(){
-  if(undoStack.length < 2) return;
-  undoStack.pop();
-  var prev = JSON.parse(undoStack[undoStack.length - 1]);
-  cards = prev.cards;
-  connections = prev.connections;
-  renderAll();
-}
-
-/* ====== Viewport events ====== */
-var vp = document.getElementById("viewport");
-var cvs = document.getElementById("canvas");
-
-/* Pan — left drag on viewport (not on card) */
-vp.addEventListener("mousedown", function(e){
-  if(e.target.closest(".card")) return;
-  if(e.button !== 0) return;
-  isPanning = true;
-  panStartX = e.clientX;
-  panStartY = e.clientY;
-  panOX = panX;
-  panOY = panY;
-  this.classList.add("dragging");
-});
-
-document.addEventListener("mousemove", function(e){
-  if(!isPanning) return;
-  panX = panOX + e.clientX - panStartX;
-  panY = panOY + e.clientY - panStartY;
-  updateTransform();
-});
-
-document.addEventListener("mouseup", function(){
-  if(isPanning){
-    isPanning = false;
-    vp.classList.remove("dragging");
+/* Blue dot mouseup -> finish connecting */
+document.addEventListener("mouseup", function(e){
+  if(!connFrom) return;
+  var dot = e.target.closest(".dot-blue");
+  if(dot && connFrom){
+    var cardEl = dot.closest(".card");
+    if(cardEl){
+      var tid = cardEl.id.replace("card_", "");
+      finishConnect(tid);
+    }
   }
 });
-
-/* Zoom — scroll wheel */
-vp.addEventListener("wheel", function(e){
-  e.preventDefault();
-  var rect = vp.getBoundingClientRect();
-  var mx = e.clientX - rect.left;
-  var my = e.clientY - rect.top;
-
-  var oldScale = scale;
-  var delta = e.deltaY < 0 ? 1.12 : 0.89;
-  scale = Math.max(0.15, Math.min(10, scale * delta));
-
-  /* Zoom toward mouse cursor */
-  panX = mx - (mx - panX) * (scale / oldScale);
-  panY = my - (my - panY) * (scale / oldScale);
-
-  updateTransform();
-}, {passive:false});
-
-/* Right-click on viewport — add card at canvas coordinates */
-vp.addEventListener("contextmenu", function(e){
-  e.preventDefault();
-  if(!editMode) return;
-  var rect = vp.getBoundingClientRect();
-  var vx = e.clientX - rect.left;
-  var vy = e.clientY - rect.top;
-  var cx = (vx - panX) / scale;
-  var cy = (vy - panY) / scale;
-  var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
-  cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:cx - 120, y:cy - 65});
-  pushUndo();
-  renderAll();
-  openEditCard(id);
-});
-
-/* Init *//* Init */
-document.getElementById("editToggle").style.display = "inline-block";
-loadData();
-window.addEventListener("resize", function(){
-  updateTransform();
-  renderConns();
-});
-</script>
-</body>
-</html>
+document.addEventListener("mousedown", function(e){
+  if(connFrom && !e.target.closest(".dot-green,.dot-blue")){
+  
