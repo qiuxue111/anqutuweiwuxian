@@ -555,11 +555,18 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     img.onerror=function(){
       console.error('Floor load failed:', getSrc(f));
     };
-    // Set src to trigger load (or handle cache case)
-    var prev=img.src;
+    // Set src to trigger load
     img.src=getSrc(f);
-    // If image was already cached, browser may not re-fire onload
-    if(img.complete&&img.naturalWidth)img.onload();
+    // Handle both fresh load and cached
+    function tryPosition(){
+      if(img.complete&&img.naturalWidth){
+        img.onload();
+      }else{
+        // img onload will handle it when ready; timeout as fallback
+        setTimeout(tryPosition,200);
+      }
+    }
+    tryPosition();
   }
 
   // Initial load
