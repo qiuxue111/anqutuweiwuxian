@@ -379,11 +379,8 @@ function clearConns(){
 function addCard(){
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
   var vp = document.getElementById("viewport");
-  var cx = vp.clientWidth / 2 - 120;
-  var cy = vp.clientHeight / 2 - 65;
-  /* Convert viewport center to canvas coordinates */
-  var ccx = (cx - panX) / scale;
-  var ccy = (cy - panY) / scale;
+  var ccx = 10 + (vp.clientWidth - 480) / 4;
+  var ccy = 10 + (vp.clientHeight - 260) / 4;
   cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:ccx, y:ccy});
   pushUndo();
   renderAll();
