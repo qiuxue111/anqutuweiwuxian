@@ -565,9 +565,18 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   var mapImg=document.createElement('img');
   mapImg.style.cssText='display:block;width:100%;height:100%;object-fit:contain;pointer-events:none';
 
-  // Pin
+  // Pin - use container icon if available
   var pin=document.createElement('div');
-  pin.style.cssText='position:absolute;z-index:5;width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5);pointer-events:none;transform:translate(-50%,-50%)';
+  pin.style.cssText='position:absolute;z-index:5;pointer-events:none;transform:translate(-50%,-50%)';
+  if(ic){
+    var pinImg=document.createElement('img');
+    pinImg.src=ic;
+    pinImg.style.cssText='width:48px;height:48px;border-radius:8px;object-fit:cover;border:2px solid #ffc832;box-shadow:0 0 10px rgba(255,200,50,.5)';
+    pinImg.onerror=function(){this.outerHTML='<div style="width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5)"></div>';};
+    pin.appendChild(pinImg);
+  }else{
+    pin.innerHTML='<div style="width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5)"></div>';
+  }
 
   var label=document.createElement('div');
   label.style.cssText='position:absolute;z-index:5;color:#ffc832;font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
