@@ -982,8 +982,12 @@ function renderCanvasPanel(){
   addBtn.onclick = function(){
     var name = prompt("输入新画布名称：");
     if(!name || !name.trim()) return;
+    name = name.trim();
+    /* 查重 */
+    var dup = canvasList.some(function(cv){ return cv.label === name; });
+    if(dup){ alert('已存在同名画布「' + name + '」'); return; }
     var id = 'custom_' + Date.now();
-    canvasList.push({id:id, label:name.trim(), color:'#aaa'});
+    canvasList.push({id:id, label:name, color:'#aaa'});
     saveCanvasList();
     renderCanvasPanel();
   };
@@ -999,7 +1003,11 @@ function renderCanvasPanel(){
       if(!cv) return;
       var name = prompt("新名称：", cv.label);
       if(!name || !name.trim()) return;
-      cv.label = name.trim();
+      name = name.trim();
+      /* 查重（排除自己） */
+      var dup = canvasList.some(function(x){ return x.id !== currentCanvas && x.label === name; });
+      if(dup){ alert('已存在同名画布「' + name + '」'); return; }
+      cv.label = name;
       saveCanvasList();
       renderCanvasPanel();
     };
