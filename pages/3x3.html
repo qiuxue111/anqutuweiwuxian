@@ -12,7 +12,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .app-bar h1{color:#ffc832;font-size:18px;font-weight:600;flex:1}
 .app-bar a{color:#888;text-decoration:none;font-size:13px}
 .app-bar .btn{padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px}
-.btn-edit{background:#2a2a3a;color:#88aaff;display:none}
+.btn-edit{background:#2a2a3a;color:#88aaff}
 .btn-save{background:#1a4a1a;color:#4f4}
 .btn-cancel{background:#3a1a1a;color:#f44}
 
@@ -23,18 +23,20 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 #connSvg path{stroke:#ff8833;stroke-width:3;fill:none;stroke-linecap:round;opacity:0.85;filter:drop-shadow(0 0 3px rgba(255,136,51,.3))}
 #connSvg polygon{fill:#ff8833;opacity:0.85}
 
-.card{position:absolute;width:200px;background:rgba(20,20,30,.95);border:1px solid #333;border-radius:12px;cursor:pointer;z-index:2;overflow:hidden;transition:box-shadow .2s,border-color .2s;user-select:none}
+.card{position:absolute;width:200px;min-height:200px;background:rgba(20,20,30,.95);border:1px solid #333;border-radius:12px;cursor:pointer;z-index:2;overflow:hidden;transition:box-shadow .2s,border-color .2s;user-select:none}
 .card:hover{box-shadow:0 0 20px rgba(255,200,50,.15);border-color:#555}
 .card.editing{border-color:#ffc832;box-shadow:0 0 30px rgba(255,200,50,.3)}
-.card-header{background:rgba(255,200,50,.1);padding:8px 10px;font-size:13px;font-weight:600;color:#ffc832;display:flex;align-items:center;gap:6px}
-.card-header img{width:20px;height:20px;border-radius:3px;object-fit:cover;flex-shrink:0}
-.card-body{padding:8px 10px;font-size:11px;color:#aaa}
-.card-body .tag{display:inline-block;padding:2px 6px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:4px;margin:1px;font-size:10px;color:#ccc}
+.card-img-wrap{width:100%;height:120px;overflow:hidden;background:#0a0a12;display:flex;align-items:center;justify-content:center}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover}
+.card-name{padding:8px 10px 4px;font-size:13px;font-weight:600;color:#ffc832}
+.card-desc{padding:0 10px 10px;font-size:11px;color:#999;line-height:1.4;word-break:break-all}
 .card-edit-btn{position:absolute;top:4px;right:4px;z-index:10;background:rgba(0,0,0,.6);border:none;border-radius:4px;color:#aaa;cursor:pointer;padding:2px 6px;font-size:11px;display:none}
 .card.editing .card-edit-btn{display:block}
 .card-edit-btn:hover{color:#ffc832}
+.card-del-btn{position:absolute;top:4px;left:4px;z-index:10;background:rgba(0,0,0,.6);border:none;border-radius:4px;color:#f66;cursor:pointer;padding:2px 6px;font-size:11px;display:none}
+.card.editing .card-del-btn{display:block}
+.card-del-btn:hover{color:#ff3333}
 
-/* 连接点 */
 .conn-dot{position:absolute;z-index:10;width:14px;height:14px;border-radius:50%;border:3px solid #111;cursor:crosshair;display:none;transition:transform .15s,box-shadow .15s}
 .conn-dot:hover{transform:scale(1.3);box-shadow:0 0 10px currentColor}
 .card.editing .conn-dot{display:block}
@@ -54,16 +56,15 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 
 .modal-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.8);z-index:9999;display:none;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
-.modal{background:#1a1a24;border:1px solid #333;border-radius:14px;padding:20px;width:400px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal{background:#1a1a24;border:1px solid #333;border-radius:14px;padding:20px;width:380px;max-width:90vw;max-height:80vh;overflow-y:auto}
 .modal h2{color:#ffc832;font-size:16px;margin-bottom:14px}
 .modal label{display:block;color:#aaa;font-size:12px;margin:8px 0 4px}
 .modal input,.modal textarea{width:100%;padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:8px;color:#ddd;font-size:12px;outline:none}
 .modal input:focus,.modal textarea:focus{border-color:#ffc832}
-.modal textarea{min-height:60px;resize:vertical}
+.modal textarea{min-height:80px;resize:vertical}
 .modal .btn-row{display:flex;gap:8px;margin-top:14px;justify-content:flex-end}
 .modal .btn-row button{padding:6px 16px;border:none;border-radius:6px;cursor:pointer;font-size:12px}
 .modal .btn-save-m{background:#ffc832;color:#000;font-weight:600}
-.modal .btn-del-card{background:#3a1a1a;color:#f44}
 .modal .btn-cancel-m{background:rgba(255,255,255,.08);color:#aaa}
 .loading{position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0f;z-index:9999;color:#666;font-size:14px}
 </style>
@@ -73,7 +74,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 <div class="app-bar">
   <a href="index.html">&larr; 返回</a>
   <h1>3&times;3 一图流</h1>
-  <button id="editToggle" class="btn btn-edit" onclick="toggleEdit()">编辑</button>
+  <button id="editToggle" class="btn btn-edit" onclick="toggleEdit()">进入编辑</button>
   <button id="saveBtn" class="btn btn-save" style="display:none" onclick="saveData()">保存</button>
   <button id="cancelBtn" class="btn btn-cancel" style="display:none" onclick="cancelEdit()">取消</button>
 </div>
@@ -85,7 +86,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 </div>
 
 <div id="toolbar" class="toolbar">
-  <button class="add-card-btn" onclick="addCard()">+ 新卡片</button>
+  <button class="add-card-btn" onclick="addCard()">+ 新建</button>
   <button class="conn-mode-btn" id="connModeBtn" onclick="toggleConnMode()">连线</button>
   <button class="undo-btn" onclick="undoLast()">撤销</button>
   <button class="del-conn-btn" onclick="clearAllConns()">清空连线</button>
@@ -93,19 +94,14 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 
 <div id="modal" class="modal-overlay">
   <div class="modal">
-    <h2 id="modalTitle">编辑卡片</h2>
-    <label>地图名</label>
-    <input id="edMapName" placeholder="例: 北山酒店">
-    <label>地图缩略图链接</label>
-    <input id="edMapImg" placeholder="图片 URL">
-    <label>标题</label>
-    <input id="edTitle" placeholder="卡片标题">
-    <label>装备建议（每行一个）</label>
-    <textarea id="edEquip" placeholder="S12K&#10;三级甲&#10;耳机"></textarea>
-    <label>备注</label>
-    <textarea id="edNote" placeholder="其他说明"></textarea>
+    <h2 id="modalTitle">编辑任务</h2>
+    <label>任务名称</label>
+    <input id="edName" placeholder="例: 首轮搜索">
+    <label>任务图片链接</label>
+    <input id="edImg" placeholder="图片 URL（可选）">
+    <label>任务内容</label>
+    <textarea id="edDesc" placeholder="描述任务细节..." style="min-height:80px"></textarea>
     <div class="btn-row">
-      <button class="btn-del-card" onclick="deleteCurrentCard()" style="display:none" id="delCardBtn">删除卡片</button>
       <button class="btn-cancel-m" onclick="closeModal()">取消</button>
       <button class="btn-save-m" onclick="saveCard()">保存</button>
     </div>
@@ -115,10 +111,8 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 <div class="loading" id="loading">加载中...</div>
 
 <script>
-/* Helper: safely write <\/ in JS strings */
 var LS = "\\/";
 
-/* ====== Data ====== */
 var cards = [];
 var connections = [];
 var editMode = false;
@@ -127,13 +121,8 @@ var editingCardId = null;
 var selectedConnFrom = null;
 var undoStack = [];
 
-/* Canvas pan */
 var panX = 0, panY = 0;
 var isPanning = false, panStartX = 0, panStartY = 0, panOX = 0, panOY = 0;
-
-function isAdmin(){
-  return true; /* TODO: 上线前改成 GitHub 账号校验 */
-}
 
 /* ====== Load / Save ====== */
 function loadData(){
@@ -151,20 +140,6 @@ function loadData(){
 
 function saveData(){
   localStorage.setItem("abi_3x3_data", JSON.stringify({cards:cards, connections:connections}));
-  if(isAdmin()){
-    var url = "https://hanrfbciinkhgcumvous.supabase.co/rest/v1/site_data";
-    var body = {key:"3x3_flow", value:JSON.stringify({cards:cards, connections:connections})};
-    fetch(url, {
-      method:"POST",
-      headers:{
-        "apikey":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok",
-        "Authorization":"Bearer "+localStorage.getItem("abi_token"),
-        "Content-Type":"application/json",
-        "Prefer":"resolution=merge-duplicates"
-      },
-      body:JSON.stringify(body)
-    }).catch(function(e){console.error("Sync fail",e);});
-  }
 }
 
 /* ====== Render ====== */
@@ -192,35 +167,38 @@ function renderCard(c){
   div.style.top = c.y + "px";
 
   var html = "";
+
+  /* 编辑按钮（右上角） */
   html += "<button class='card-edit-btn' onclick=\"event.stopPropagation();openEditCard('"+c.id+"')\">\\u270e<"+LS+"button>";
 
-  html += "<div class='card-header'>";
-  if(c.mapImg) html += "<img src='"+c.mapImg+"' onerror='this.remove()'>";
-  html += "<span>" + escHtml(c.mapName || "") + "<"+LS+"span>";
-  html += "<"+LS+"div>";
+  /* 删除按钮（左上角） */
+  html += "<button class='card-del-btn' onclick=\"event.stopPropagation();delCardDirect('"+c.id+"')\">\\u2716<"+LS+"button>";
 
-  if(c.title){
-    html += "<div style='padding:4px 10px;font-size:12px;color:#eee;font-weight:500'>" + escHtml(c.title) + "<"+LS+"div>";
-  }
-  if(c.equip && c.equip.length){
-    for(var i=0;i<c.equip.length;i++){
-      html += "<span class='tag'>" + escHtml(c.equip[i]) + "<"+LS+"span>";
-    }
-  }
-  if(c.note){
-    html += "<div style='padding:4px 10px 6px;font-size:10px;color:#777;border-top:1px solid rgba(255,255,255,.04);margin-top:4px'>" + escHtml(c.note) + "<"+LS+"div>";
+  /* 图片区域 */
+  if(c.img){
+    html += "<div class='card-img-wrap'><img src='"+c.img+"' style='width:100%;height:100%;object-fit:cover'><"+LS+"div>";
+  } else {
+    html += "<div class='card-img-wrap' style='background:#111;color:#555;font-size:24px'>?</div>";
   }
 
-  /* 绿色出点 (右边) / 蓝色入点 (左边) */
+  /* 任务名 */
+  html += "<div class='card-name'>" + escHtml(c.name || "未命名") + "<"+LS+"div>";
+
+  /* 任务内容 */
+  if(c.desc){
+    html += "<div class='card-desc'>" + escHtml(c.desc) + "<"+LS+"div>";
+  }
+
+  /* 连接点 */
   html += "<div class='conn-dot conn-out' onclick=\"event.stopPropagation();onConnClick('"+c.id+"')\" title='连线起点'><"+LS+"div>";
   html += "<div class='conn-dot conn-in' onclick=\"event.stopPropagation();onConnClick('"+c.id+"')\" title='连线终点'><"+LS+"div>";
 
   div.innerHTML = html;
 
-  /* 编辑模式：拖拽卡片 */
+  /* 拖拽卡片 */
   if(editMode){
     div.addEventListener("mousedown", function(e){
-      if(e.target.closest(".card-edit-btn,.conn-dot")) return;
+      if(e.target.closest(".card-edit-btn,.card-del-btn,.conn-dot")) return;
       if(e.button !== 0) return;
       var sx = e.clientX, sy = e.clientY;
       var ox = c.x, oy = c.y;
@@ -250,7 +228,6 @@ function renderCard(c){
 function renderConnections(){
   var svg = document.getElementById("connSvg");
   svg.innerHTML = "";
-  var inner = document.getElementById("canvasInner");
   connections.forEach(function(conn){
     var fromEl = document.getElementById("card_" + conn.from);
     var toEl = document.getElementById("card_" + conn.to);
@@ -263,11 +240,11 @@ function renderConnections(){
 
     var midX = (fx + tx) / 2;
     var d = "M " + fx + " " + fy + " C " + midX + " " + fy + ", " + midX + " " + ty + ", " + tx + " " + ty;
+
     var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("d", d);
     svg.appendChild(path);
 
-    /* 橙色箭头 */
     var angle = Math.atan2(ty - fy, tx - fx);
     var a = 12, w = 8;
     var p1x = tx - a * Math.cos(angle - w * Math.PI / 180);
@@ -280,7 +257,6 @@ function renderConnections(){
   });
 }
 
-/* ====== Canvas Pan & Zoom ====== */
 function updatePan(){
   var inner = document.getElementById("canvasInner");
   inner.style.transform = "translate(" + panX + "px," + panY + "px)";
@@ -293,10 +269,9 @@ function toggleEdit(){
   document.getElementById("saveBtn").style.display = editMode ? "inline-block" : "none";
   document.getElementById("cancelBtn").style.display = editMode ? "inline-block" : "none";
   document.getElementById("toolbar").style.display = editMode ? "flex" : "none";
-  var cw = document.getElementById("canvas");
-  cw.style.cursor = editMode ? "default" : "grab";
-  if(!editMode){ connMode = false; selectedConnFrom = null; }
+  document.getElementById("canvas").style.cursor = editMode ? "default" : "grab";
   if(!editMode){
+    connMode = false; selectedConnFrom = null;
     saveData();
     document.getElementById("editToggle").textContent = "进入编辑";
   } else {
@@ -313,10 +288,11 @@ function cancelEdit(){
   document.getElementById("toolbar").style.display = "none";
   document.getElementById("canvas").style.cursor = "grab";
   connMode = false; selectedConnFrom = null;
+  document.getElementById("editToggle").textContent = "进入编辑";
   loadData();
 }
 
-/* ====== Connect Mode ====== */
+/* ====== Connect ====== */
 function toggleConnMode(){
   connMode = !connMode;
   document.getElementById("connModeBtn").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
@@ -325,18 +301,15 @@ function toggleConnMode(){
   document.querySelectorAll(".conn-out").forEach(function(el){el.classList.remove("active");});
 }
 
-/* 点击连接点：绿色(出) → 起点，蓝色(入) → 终点 */
 function onConnClick(cardId){
   if(!connMode) return;
   var dot = event.target;
   if(!selectedConnFrom){
-    /* 第一次点：必须是绿色出点 */
     if(dot.classList.contains("conn-out")){
       selectedConnFrom = cardId;
       dot.classList.add("active");
     }
   } else {
-    /* 第二次点：必须是蓝色入点，不能是同一张卡 */
     if(dot.classList.contains("conn-in") && selectedConnFrom !== cardId){
       var dup = connections.some(function(c){ return c.from === selectedConnFrom && c.to === cardId; });
       if(!dup){
@@ -361,48 +334,39 @@ function clearAllConns(){
 function addCard(){
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
   var x = (window.innerWidth - 200) / 2;
-  var y = (window.innerHeight - 150) / 2;
-  cards.push({id:id, mapName:"新地图", mapImg:"", title:"", equip:[], note:"", x:x, y:y});
+  var y = (window.innerHeight - 220) / 2;
+  cards.push({id:id, name:"新任务", img:"", desc:"", x:x, y:y});
   pushUndo();
   renderAll();
   openEditCard(id);
+}
+
+function delCardDirect(id){
+  if(!confirm("确定删除这张卡片？")) return;
+  var idx = cards.findIndex(function(c){ return c.id === id; });
+  if(idx >= 0) cards.splice(idx, 1);
+  connections = connections.filter(function(c){ return c.from !== id && c.to !== id; });
+  pushUndo();
+  renderAll();
 }
 
 function openEditCard(id){
   var c = cards.find(function(card){ return card.id === id; });
   if(!c) return;
   editingCardId = id;
-  document.getElementById("modalTitle").textContent = "编辑卡片";
-  document.getElementById("edMapName").value = c.mapName || "";
-  document.getElementById("edMapImg").value = c.mapImg || "";
-  document.getElementById("edTitle").value = c.title || "";
-  document.getElementById("edEquip").value = (c.equip || []).join("\\n");
-  document.getElementById("edNote").value = c.note || "";
-  document.getElementById("delCardBtn").style.display = "inline-block";
-  document.getElementById("delCardBtn").setAttribute("data-id", id);
+  document.getElementById("modalTitle").textContent = "编辑任务";
+  document.getElementById("edName").value = c.name || "";
+  document.getElementById("edImg").value = c.img || "";
+  document.getElementById("edDesc").value = c.desc || "";
   document.getElementById("modal").classList.add("show");
 }
 
 function saveCard(){
   var c = cards.find(function(card){ return card.id === editingCardId; });
   if(!c) return;
-  c.mapName = document.getElementById("edMapName").value;
-  c.mapImg = document.getElementById("edMapImg").value;
-  c.title = document.getElementById("edTitle").value;
-  c.equip = document.getElementById("edEquip").value.split("\\n").filter(function(s){ return s.trim(); });
-  c.note = document.getElementById("edNote").value;
-  pushUndo();
-  closeModal();
-  renderAll();
-}
-
-function deleteCurrentCard(){
-  var id = document.getElementById("delCardBtn").getAttribute("data-id");
-  if(!id) return;
-  if(!confirm("确定删除这张卡片？")) return;
-  var idx = cards.findIndex(function(c){ return c.id === id; });
-  if(idx >= 0) cards.splice(idx, 1);
-  connections = connections.filter(function(c){ return c.from !== id && c.to !== id; });
+  c.name = document.getElementById("edName").value;
+  c.img = document.getElementById("edImg").value;
+  c.desc = document.getElementById("edDesc").value;
   pushUndo();
   closeModal();
   renderAll();
@@ -428,21 +392,22 @@ function undoLast(){
   renderAll();
 }
 
-/* ====== Right-click Add Card (edit mode only) ====== */
+/* ====== Right-click Add ====== */
 document.getElementById("canvas").addEventListener("contextmenu", function(e){
   if(!editMode) return;
   e.preventDefault();
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
   var inner = document.getElementById("canvasInner");
-  var ix = e.clientX - inner.getBoundingClientRect().left - 100;
-  var iy = e.clientY - inner.getBoundingClientRect().top - 60;
-  cards.push({id:id, mapName:"新地图", mapImg:"", title:"", equip:[], note:"", x:ix, y:iy});
+  var rect = inner.getBoundingClientRect();
+  var ix = (e.clientX - rect.left - 100);
+  var iy = (e.clientY - rect.top - 100);
+  cards.push({id:id, name:"新任务", img:"", desc:"", x:ix, y:iy});
   pushUndo();
   renderAll();
   openEditCard(id);
 });
 
-/* ====== Canvas Pan (non-edit mode) ====== */
+/* ====== Canvas Pan ====== */
 document.getElementById("canvas").addEventListener("mousedown", function(e){
   if(editMode) return;
   if(e.button !== 0) return;
@@ -471,7 +436,6 @@ document.addEventListener("mouseup", function(){
 
 /* ====== Init ====== */
 document.getElementById("editToggle").style.display = "inline-block";
-document.getElementById("editToggle").textContent = "进入编辑";
 loadData();
 window.addEventListener("resize", function(){ renderConnections(); });
 </script>
