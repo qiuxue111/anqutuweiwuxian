@@ -132,7 +132,7 @@ var panX = 0, panY = 0;
 var isPanning = false, panStartX = 0, panStartY = 0, panOX = 0, panOY = 0;
 
 function isAdmin(){
-  return localStorage.getItem("abi_is_admin")==="true" || !!localStorage.getItem("abi_token");
+  return true; /* TODO: 上线前改成 GitHub 账号校验 */
 }
 
 /* ====== Load / Save ====== */
@@ -296,7 +296,12 @@ function toggleEdit(){
   var cw = document.getElementById("canvas");
   cw.style.cursor = editMode ? "default" : "grab";
   if(!editMode){ connMode = false; selectedConnFrom = null; }
-  if(!editMode) saveData();
+  if(!editMode){
+    saveData();
+    document.getElementById("editToggle").textContent = "进入编辑";
+  } else {
+    document.getElementById("editToggle").textContent = "退出编辑";
+  }
   renderAll();
 }
 
@@ -465,7 +470,8 @@ document.addEventListener("mouseup", function(){
 });
 
 /* ====== Init ====== */
-if(isAdmin()) document.getElementById("editToggle").style.display = "inline-block";
+document.getElementById("editToggle").style.display = "inline-block";
+document.getElementById("editToggle").textContent = "进入编辑";
 loadData();
 window.addEventListener("resize", function(){ renderConnections(); });
 </script>
