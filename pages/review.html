@@ -453,14 +453,15 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   var old=document.getElementById('mapViewOverlay');
   if(old)old.remove();
 
-  // Floor images per map — index matches floor value in DB (0=main)
+  var base=window.location.href.replace(/[^/]*$/,'');
+
   var floorMap={
-    '\u519c\u573a':['../assets/maps/farm.png'],
-    '\u5317\u5c71':['../assets/maps/beishan.png','../assets/maps/beishan_北山酒店一楼.png','../assets/maps/beishan_北山酒店二楼.png','../assets/maps/beishan_北山酒店三楼.png'],
-    '\u5c71\u8c37':['../assets/maps/valley.png'],
-    '\u519b\u68b0\u5e93':['../assets/maps/armory.png','../assets/maps/armory_前线要塞负一楼.png','../assets/maps/armory_前线要塞一楼.png','../assets/maps/armory_前线要塞二楼.png'],
-    '\u7535\u89c6\u53f0':['../assets/maps/tvstation.png','../assets/maps/tvstation_电视台二楼.png'],
-    '\u963f\u8d3e\u514b\u65af\u6e2f\u53e3':['../assets/maps/airport.png','../assets/maps/airport_机场塔内一层.png','../assets/maps/airport_机场塔内二层.png']
+    '\u519c\u573a':[base+'../assets/maps/farm.png'],
+    '\u5317\u5c71':[base+'../assets/maps/beishan.png',base+'../assets/maps/beishan_\u5317\u5c71\u9152\u5e97\u4e00\u697c.png',base+'../assets/maps/beishan_\u5317\u5c71\u9152\u5e97\u4e8c\u697c.png',base+'../assets/maps/beishan_\u5317\u5c71\u9152\u5e97\u4e09\u697c.png'],
+    '\u5c71\u8c37':[base+'../assets/maps/valley.png'],
+    '\u519b\u68b0\u5e93':[base+'../assets/maps/armory.png',base+'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u8d1f\u4e00\u697c.png',base+'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u4e00\u697c.png',base+'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u4e8c\u697c.png'],
+    '\u7535\u89c6\u53f0':[base+'../assets/maps/tvstation.png',base+'../assets/maps/tvstation_\u7535\u89c6\u53f0\u4e8c\u697c.png'],
+    '\u963f\u8d3e\u514b\u65af\u6e2f\u53e3':[base+'../assets/maps/airport.png',base+'../assets/maps/airport_\u673a\u573a\u5854\u5185\u4e00\u5c42.png',base+'../assets/maps/airport_\u673a\u573a\u5854\u5185\u4e8c\u5c42.png']
   };
   var floorLabelsMap={
     '\u519c\u573a':['\u519c\u573a\u5168\u5883'],
@@ -475,8 +476,6 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   var labels=floorLabelsMap[mapName]||['\u5730\u56fe'];
   var curFloor=Math.min(Math.max(0,floor||0), imgs.length-1);
 
-  var getSrc=function(f){return window.location.href.replace(/[^/]*$/,'')+imgs[f];};
-
   var ov=document.createElement('div');
   ov.id='mapViewOverlay';
   ov.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.95);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center';
@@ -487,20 +486,22 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   closeBtn.onclick=function(){ov.remove();};
   ov.appendChild(closeBtn);
 
-  // Floor switcher
+  // Floor buttons
   var floorBar=document.createElement('div');
   floorBar.style.cssText='display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;justify-content:center';
   var floorBtns=[];
   imgs.forEach(function(s,i){
     var btn=document.createElement('button');
-    btn.textContent=labels[i]||('\u697c\u5c42 '+i);
-    btn.style.cssText='padding:5px 14px;background:'+(i==curFloor?'#ffc832':'rgba(255,255,255,.08)')+';border:none;border-radius:6px;color:'+(i==curFloor?'#000':'#aaa')+';cursor:pointer;font-size:12px;font-weight:'+(i==curFloor?'600':'400');
+    btn.textContent=labels[i];
+    btn.style.cssText='padding:5px 14px;background:'+(i==curFloor?'#ffc832':'rgba(255,255,255,.08)')+';border:none;border-radius:6px;color:'+(i==curFloor?'#000':'#aaa')+';cursor:pointer;font-size:12px';
     btn.onclick=function(fi){
       return function(){
         curFloor=fi;
-        loadFloor(fi);
+        mapImg.src=imgs[fi];
+        mapImg.style.display='block';
         floorBtns.forEach(function(b,j){b.style.background=j==fi?'#ffc832':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
         info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[fi];
+        posPin(fi);
       };
     }(i);
     floorBtns.push(btn);
@@ -508,19 +509,27 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   });
   ov.appendChild(floorBar);
 
-  // Map container
+  // Map container - using simple overflow:auto
   var wrap=document.createElement('div');
-  wrap.style.cssText='position:relative;width:90vw;max-width:1400px;height:75vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#000';
+  wrap.style.cssText='position:relative;display:inline-block;overflow:hidden;border-radius:12px;border:1px solid #333;max-width:90vw;max-height:75vh';
+  wrap.id='mvw';
 
-  var img=new Image();
-  img.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain';
+  // IMG tag - NOT via new Image(), directly in DOM
+  var mapImg=document.createElement('img');
+  mapImg.id='mvwImg';
+  mapImg.style.cssText='display:block;width:auto;height:auto;max-width:90vw;max-height:75vh;object-fit:contain';
+  mapImg.src=imgs[curFloor];
+  wrap.appendChild(mapImg);
 
+  // Pin positioned over the img - percentage relative to img itself
   var pin=document.createElement('div');
-  pin.style.cssText='position:absolute;left:0;top:0;z-index:5;width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5);pointer-events:none;transform:translate(-50%,-50%)';
+  pin.id='mvwPin';
+  pin.style.cssText='position:absolute;left:'+x+'%;top:'+y+'%;z-index:5;width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5);pointer-events:none;transform:translate(-50%,-50%)';
   wrap.appendChild(pin);
 
   var label=document.createElement('div');
-  label.style.cssText='position:absolute;left:0;top:0;z-index:5;color:#ffc832;font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
+  label.id='mvwLabel';
+  label.style.cssText='position:absolute;left:'+x+'%;top:'+(parseFloat(y)+1.5)+'%;z-index:5;color:#ffc832;font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
   label.textContent=name||'';
   wrap.appendChild(label);
 
@@ -528,49 +537,42 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
 
   var info=document.createElement('div');
   info.style.cssText='margin-top:8px;color:#aaa;font-size:13px;text-align:center';
-  info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+(labels[curFloor]||'');
+  info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[curFloor];
   ov.appendChild(info);
 
   document.body.appendChild(ov);
 
-  function loadFloor(f){
-    img.onload=function(){
-      var cw=wrap.clientWidth;
-      var ch=wrap.clientHeight;
-      var iw=img.naturalWidth;
-      var ih=img.naturalHeight;
-      if(!iw||!ih){img.onload();return;}
-      var scale=Math.min(cw/iw, ch/ih);
-      var dispW=iw*scale;
-      var dispH=ih*scale;
-      var offsetX=(cw-dispW)/2;
-      var offsetY=(ch-dispH)/2;
-      var pinPxX=offsetX + dispW * x/100;
-      var pinPxY=offsetY + dispH * y/100;
-      pin.style.left=pinPxX+'px';
-      pin.style.top=pinPxY+'px';
-      label.style.left=pinPxX+'px';
-      label.style.top=(pinPxY+12)+'px';
-    };
-    img.onerror=function(){
-      console.error('Floor load failed:', getSrc(f));
-    };
-    // Set src to trigger load
-    img.src=getSrc(f);
-    // Handle both fresh load and cached
-    function tryPosition(){
-      if(img.complete&&img.naturalWidth){
-        img.onload();
-      }else{
-        // img onload will handle it when ready; timeout as fallback
-        setTimeout(tryPosition,200);
-      }
+  function posPin(f){
+    // After img loads, adjust pin position using actual image display area
+    var iw=mapImg.naturalWidth, ih=mapImg.naturalHeight;
+    if(!iw||!ih){
+      mapImg.onload=function(){posPin(f);};
+      return;
     }
-    tryPosition();
+    var cw=wrap.clientWidth, ch=wrap.clientHeight;
+    var rw=mapImg.offsetWidth, rh=mapImg.offsetHeight;
+    if(!rw||!rh){
+      setTimeout(function(){posPin(f);},100);
+      return;
+    }
+    // offsetX/Y = where the image starts within wrap
+    // For display:inline-block with max-width/max-height + contain
+    // the image might not fill the whole wrap. Calculate offset.
+    // Actually: wrap is inline-block sized by img, so cw=rw, ch=rh
+    // The percentage is relative to the img. With object-fit:contain
+    // we need to compute actual rendered area.
+    var scale=Math.min(rw/iw, rh/ih);
+    var dispW=iw*scale, dispH=ih*scale;
+    var ox=(rw-dispW)/2, oy=(rh-dispH)/2;
+    var px=x*dispW/100 + ox;
+    var py=y*dispH/100 + oy;
+    pin.style.left=px+'px';
+    pin.style.top=py+'px';
+    label.style.left=px+'px';
+    label.style.top=(py+12)+'px';
   }
 
-  // Initial load
-  loadFloor(curFloor);
+  setTimeout(function(){posPin(curFloor);},50);
 }
 function closeMapView(){
   var ov=document.getElementById('mapViewOverlay');
