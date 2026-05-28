@@ -351,14 +351,54 @@ function cancelConnect(){
   if(connLine){ connLine.remove(); connLine = null; }
 }
 
-function onDotClick(cardId, type){
+var greenDotTimer = {};
+var longPressTimer = null;
+var longPressCard = null;
+
+/* Green dot: mousedown starts timer, if held 300ms -> start connect */
+/* We use capture phase on card to detect mousedown on green dots */
+document.addEventListener("mousedown", function(e){
+  var dot = e.target.closest(".dot-green");
+  if(!dot) return;
   if(!editMode) return;
-  if(type === "out" && !connFrom){
-    startConnect(cardId);
-  } else if(type === "in" && connFrom){
-    finishConnect(cardId);
+  var cardEl = dot.closest(".card");
+  if(!cardEl) return;
+  var cardId = cardEl.id.replace("card_", "");
+  longPressCard = cardId;
+  longPressTimer = setTimeout(function(){
+    if(longPressCard){
+      startConnect(longPressCard);
+    }
+    longPressTimer = null;
+  }, 300);
+});
+
+document.addEventListener("mouseup", function(e){
+  if(longPressTimer){
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+    /* Released before 300ms -> check if it's on blue dot */
+    if(e.target && e.target.classList && e.target.classList.contains("dot-blue") && longPressCard){
+      var targetCard = e.target.closest(".card");
+      if(targetCard){
+        var tid = targetCard.id.replace("card_", "");
+        finishConnect(tid);
+      }
+    }
+    longPressCard = null;
   }
-}
+});
+
+document.addEventListener("mousemove", function(e){
+  if(!longPressTimer) return; /* either already connected or no timer */
+  /* If mouse moves off the green dot, cancel long press */
+  var dot = e.target.closest(".dot-green");
+  if(!dot || dot !== document.querySelector("#card_" + longPressCard + " .dot-green")){
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+    longPressCard = null;
+  }
+});
 
 document.addEventListener("mousemove", function(e){
   if(!connFrom) return;
@@ -384,6 +424,13 @@ document.addEventListener("mouseup", function(e){
     return;
   }
   cancelConnect();
+});
+
+/* Also clear on scroll/pan */
+document.addEventListener("mousedown", function(e){
+  if(connFrom && !e.target.closest(".dot-green,.dot-blue")){
+    cancelConnect();
+  }
 });
 
 function clearConns(){
