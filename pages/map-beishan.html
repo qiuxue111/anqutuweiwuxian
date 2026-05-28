@@ -87,7 +87,7 @@ body{overflow:hidden;background:#0a0a0f}
 .top-bar .btn{padding:3px 6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:5px;color:#bbb;cursor:pointer;font-size:12px;transition:all .15s;white-space:nowrap}
 .top-bar .btn:hover{background:rgba(255,200,50,0.08);border-color:#ffc832;color:#ffc832}
 .top-bar .user-name{color:#ffc832;font-size:12px}
-.mat-panel{position:fixed;top:95px;left:8px;z-index:9998;width:170px}
+.mat-panel{position:fixed;top:95px;right:60px;z-index:9998;width:170px}
 .mat-btn{width:100%;padding:6px 8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#ccc;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
 .mat-btn:hover{background:rgba(255,200,50,0.08);border-color:#ffc832;color:#ffc832}
 .mat-btn.active{border-color:#ffc832;border-radius:8px 8px 0 0}
@@ -98,7 +98,7 @@ body{overflow:hidden;background:#0a0a0f}
 .mat-ctrl{display:flex;gap:4px;padding:0 2px 6px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:4px}
 .mat-ctrl-btn{padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:#aaa;cursor:pointer;font-size:9px;transition:all .1s;flex:1}
 .mat-ctrl-btn:hover{background:rgba(255,200,50,0.1);color:#ffc832;border-color:#ffc832}
-.mat-cat{font-size:10px;color:#666;padding:3px 4px 2px;font-weight:600}
+.mat-cat{font-size:30px;color:#666;padding:3px 4px 2px;font-weight:600}
 .mat-items{display:flex;flex-wrap:wrap;gap:3px;padding:0 2px 4px}
 .mat-item{width:46px;padding:3px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;transition:all .1s}
 .mat-item:hover{background:rgba(255,200,50,0.06);border-color:rgba(255,200,50,0.2)}
@@ -322,7 +322,7 @@ body{overflow:hidden;background:#0a0a0f}
   <button class="floor-btn" data-floor="2" onclick="switchFloor(2)">北山酒店二楼</button>
   <button class="floor-btn" data-floor="3" onclick="switchFloor(3)">北山酒店三楼</button>
 </div>
-<div class="action-bar" id="actionBar"><button class="action-btn" onclick="toggleMode()">📦<span class="ab-tip">投稿容器</span></button><button class="action-btn" onclick="toggleFullscreen()">⛶<span class="ab-tip">全屏</span></button></div>
+<div class="action-bar" id="actionBar"><button class="action-btn" onclick="toggleMode()">📦<span class="ab-tip"></span></button><button class="action-btn" onclick="toggleFullscreen()">⛶<span class="ab-tip">全屏</span></button></div>
 <div class="zoom-wrap" id="zoomWrap"><button class="zoom-btn" onclick="zoom(1.25)">+</button><div class="zoom-sep"></div><button class="zoom-btn" onclick="zoom(0.8)">-</button><div class="zoom-sep"></div><div class="zoom-pct" id="zl2">100%</div></div>
 <nav class="navbar">
   <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;font-weight:bold;">暗区无限</a><span style="color:#888;font-size:0.8rem;"> 攻略站</span></div>
@@ -1447,5 +1447,63 @@ function showPicker(){
   }
   if(document.readyState==="complete")centerMap();else window.addEventListener("load",centerMap);
 })();</script>
-</body>
+
+<script>
+// Shift+Click: 在鼠标位置投稿容器
+document.addEventListener('click', function(e) {
+  if (!e.shiftKey) return;
+  e.preventDefault();
+  e.stopPropagation();
+  var wrap = document.querySelector('.map-wrap');
+  if (!wrap) return;
+  var wr = wrap.getBoundingClientRect();
+  var mx = e.clientX - wr.left, my = e.clientY - wr.top;
+  var img = document.getElementById('mapImg');
+  if (!img) return;
+  var ix = mx / scaleM - panX / scaleM, iy = my / scaleM - panY / scaleM;
+  var pctX = Math.round(ix / img.clientWidth * 10000) / 100;
+  var pctY = Math.round(iy / img.clientHeight * 10000) / 100;
+  if (pctX < 0 || pctX > 100 || pctY < 0 || pctY > 100) return;
+  // Set position
+  var cv = document.getElementById('cv');
+  if (cv) cv.textContent = pctX + ', ' + pctY;
+  var ab = document.getElementById('ab');
+  if (ab) ab.style.display = 'block';
+  // Show picker
+  if (typeof showPicker === 'function') {
+    showPicker();
+  } else {
+    alert('Shift+Click: 请先点击地图上的📦按钮进入投稿模式');
+  }
+});
+</script>
+<!-- Shift+Click 投稿提示 -->
+
+<script>
+// Shift+Click: 在鼠标位置投稿容器
+document.addEventListener('click', function(e) {
+  if (!e.shiftKey) return;
+  e.preventDefault();
+  e.stopPropagation();
+  var wrap = document.querySelector('.map-wrap');
+  if (!wrap) return;
+  var wr = wrap.getBoundingClientRect();
+  var mx = e.clientX - wr.left, my = e.clientY - wr.top;
+  var img = document.getElementById('mapImg');
+  if (!img) return;
+  var ix = mx / scaleM - panX / scaleM, iy = my / scaleM - panY / scaleM;
+  var pctX = Math.round(ix / img.clientWidth * 10000) / 100;
+  var pctY = Math.round(iy / img.clientHeight * 10000) / 100;
+  if (pctX < 0 || pctX > 100 || pctY < 0 || pctY > 100) return;
+  var cv = document.getElementById('cv');
+  if (cv) cv.textContent = pctX + ', ' + pctY;
+  var ab = document.getElementById('ab');
+  if (ab) ab.style.display = 'block';
+  if (typeof showPicker === 'function') {
+    showPicker();
+  } else {
+    alert('Shift+Click: 请先点击地图上的📦按钮进入投稿模式');
+  }
+});
+</script><div style="position:fixed;bottom:4px;right:60px;z-index:99999;font-size:30px;color:rgba(255,255,255,0.25);pointer-events:none;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.8)">📦 Shift+左键投稿容器</div></body>
 </html>
