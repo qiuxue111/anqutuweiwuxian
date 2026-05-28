@@ -405,7 +405,7 @@ function adminPass(id){
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
-    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,map_name:p.map_name||"农场",ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[]}).then(function(){
+    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,map_name:p.map_name||"农场",ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[],floor:p.floor||0}).then(function(){
       supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
     });
   });
