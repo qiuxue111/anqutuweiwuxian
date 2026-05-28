@@ -976,22 +976,25 @@ function renderCanvasPanel(){
   p.appendChild(list);
 
   /* 添加画布 */
-  var addBtn = document.createElement("div");
-  addBtn.className = "cp-add";
-  addBtn.textContent = "+ 新建画布";
-  addBtn.onclick = function(){
-    var name = prompt("输入新画布名称：");
-    if(!name || !name.trim()) return;
-    name = name.trim();
-    /* 查重 */
-    var dup = canvasList.some(function(cv){ return cv.label === name; });
-    if(dup){ alert('已存在同名画布「' + name + '」'); return; }
-    var id = 'custom_' + Date.now();
-    canvasList.push({id:id, label:name, color:'#aaa'});
-    saveCanvasList();
-    renderCanvasPanel();
-  };
-  p.appendChild(addBtn);
+  /* 添加画布（仅管理员） */
+  if(canEdit()){
+    var addBtn = document.createElement("div");
+    addBtn.className = "cp-add";
+    addBtn.textContent = "+ 新建画布";
+    addBtn.onclick = function(){
+      var name = prompt("输入新画布名称：");
+      if(!name || !name.trim()) return;
+      name = name.trim();
+      /* 查重 */
+      var dup = canvasList.some(function(cv){ return cv.label === name; });
+      if(dup){ alert('已存在同名画布「' + name + '」'); return; }
+      var id = 'custom_' + Date.now();
+      canvasList.push({id:id, label:name, color:'#aaa'});
+      saveCanvasList();
+      renderCanvasPanel();
+    };
+    p.appendChild(addBtn);
+  }
 
   /* 重命名当前画布 */
   if(currentCanvas !== 'default'){
