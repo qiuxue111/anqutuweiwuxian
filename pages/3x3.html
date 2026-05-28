@@ -307,6 +307,11 @@ function cancelEdit(){
 
 function toggleConn(){
   connMode = !connMode;
+  if(connMode && !editMode){ editMode = true; renderAll(); }
+  document.getElementById("editToggle").style.display = editMode ? "none" : "inline-block";
+  document.getElementById("saveBtn").style.display = editMode ? "inline-block" : "none";
+  document.getElementById("cancelBtn").style.display = editMode ? "inline-block" : "none";
+  document.getElementById("toolbar").style.display = editMode ? "flex" : "none";
   document.getElementById("connToggle").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
   document.getElementById("connToggle").textContent = connMode ? "\u9000\u51fa\u8fde\u7ebf" : "\u8fde\u7ebf";
   selectedConnFrom = null;
