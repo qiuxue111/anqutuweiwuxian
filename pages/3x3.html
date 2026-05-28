@@ -394,7 +394,16 @@ document.addEventListener("mouseup", function(e){
     var cardEl = dot.closest(".card");
     if(cardEl){
       var tid = cardEl.id.replace("card_", "");
-      finishConnect(tid);
+      /* Check if already connected -> toggle off */
+      var existing = connections.findIndex(function(c){ return c.from === connFrom && c.to === tid; });
+      if(existing >= 0){
+        connections.splice(existing, 1);
+        pushUndo();
+        renderConns();
+        cancelConnect();
+      } else {
+        finishConnect(tid);
+      }
     }
   }
 });
