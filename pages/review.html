@@ -479,17 +479,13 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
 
   // Map image container
   var wrap=document.createElement('div');
-  wrap.style.cssText='position:relative;width:90vw;max-width:1200px;height:80vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#111;display:flex;align-items:center;justify-content:center';
+  wrap.style.cssText='position:relative;width:90vw;max-width:1200px;height:80vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#111';
 
   // Map image
   var img=document.createElement('img');
-  img.style.cssText='max-width:100%;max-height:100%;object-fit:contain';
+  img.style.cssText='width:100%;height:100%;object-fit:contain';
   img.alt=mapName||"\u5730\u56fe";
-
-  // Build URL
-  var floorParam=floor!==undefined&&floor!==null?"&floor="+floor:"";
-  var u=imgSrc+"?x="+x+"&y="+y+"&name="+encodeURIComponent(name||"")+"&type="+encodeURIComponent(type||"")+"&ic="+encodeURIComponent(ic||"")+floorParam;
-  img.src=u;
+  img.src=imgSrc;
 
   // Pin marker (absolute overlay on the map)
   var pin=document.createElement('div');
