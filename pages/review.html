@@ -215,7 +215,7 @@ function renderList(items){
     html+="<h3>"+p.name+"<\/h3>";
     html+=passed?"<span class='badge admin-passed'>已通过<\/span>":"<span class='badge pending'>待审核<\/span>";
     if(expired)html+="<span class='badge expired-badge'>已过期<\/span>";
-    if(p.submitter)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+p.submitter+"<\/span>";
+    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+p.submitted_by+"<\/span>";
     html+="<\/div>";
     html+="<div class='meta'>";
     html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\")'>("+p.x+"%, "+p.y+"%)<\/span>";
@@ -405,7 +405,7 @@ function adminPass(id){
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
-    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,map_name:p.map_name||"农场",ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[],floor:p.floor||0}).then(function(){
+    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,map_name:p.map_name||"农场",ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[],floor:p.floor||0,submitted_by:p.submitted_by||''}).then(function(){
       supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
     });
   });
