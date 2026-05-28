@@ -259,17 +259,11 @@ function renderList(items){
   document.getElementById("list").innerHTML=html;
   setTimeout(function(){
     var __cards=document.querySelectorAll('.view-on-map-btn');
-    var __data=window.__reviewPending||window.__reviewDels||[];
+    var __data=window.__reviewDels||[];
     __cards.forEach(function(btn,i){
       if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
     });
   },0);
-  // Fix data-map-name from window.__reviewData
-  var __cards=document.querySelectorAll('.view-on-map-btn');
-  var __data=window.__reviewPending||[];
-  __cards.forEach(function(btn,i){
-    if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
-  });
 }
 
 
@@ -335,17 +329,11 @@ function renderDels(dels){
   document.getElementById("list").innerHTML=html;
   setTimeout(function(){
     var __cards=document.querySelectorAll('.view-on-map-btn');
-    var __data=window.__reviewPending||window.__reviewDels||[];
+    var __data=window.__reviewDels||[];
     __cards.forEach(function(btn,i){
       if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
     });
   },0);
-  // Fix data-map-name from window.__reviewData
-  var __cards=document.querySelectorAll('.view-on-map-btn');
-  var __data=window.__reviewPending||[];
-  __cards.forEach(function(btn,i){
-    if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
-  });
 }
 
 function vote(id){
