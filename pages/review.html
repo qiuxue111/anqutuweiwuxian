@@ -316,7 +316,7 @@ function renderDels(dels){
     html+=" | "+votes+"/10 票（同意删除）<\/div>";
 
     // Go to map button (renderDels) — use data attributes
-    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
+    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-floor='"+(p.floor||0)+"' data-mapname='"+(p.map_name||"")+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
 
     html+="<div class='actions'>";
     if(!hasVoted){
