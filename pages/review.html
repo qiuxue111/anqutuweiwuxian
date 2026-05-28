@@ -220,7 +220,7 @@ function renderList(items){
     if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+displayUser(p.submitted_by)+"<\/span>";
     html+="<\/div>";
     html+="<div class='meta'>";
-    html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\",\"+(p.map_name||\"\")+\","+(p.floor||0)+")'>("+p.x+"%, "+p.y+"%,\"+(p.map_name||\"\")+\","+(p.floor||0)+"<\/span>";
+    html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\",\""+(p.map_name||"")+"\","+(p.floor||0)+")'>("+p.x+"%, "+p.y+"%)"+(p.floor||0)+"<\/span>";
     if(p.note)html+=" | "+p.note;
     html+=" | "+votes+"/10 票";
     if(expired)html+=" | <span style='color:#e55'>已过期<\/span>";
@@ -314,7 +314,7 @@ function renderDels(dels){
     html+="<h3>"+p.name+"<\/h3>"
     if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>请求人: "+displayUser(p.submitted_by)+"<\/span>";
     html+="<\/div>";
-    html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\",\"+(p.map_name||\"\")+\","+(p.floor||0)+")'>("+p.x+"%, "+p.y+"%)<\/span>";
+    html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\",\""+(p.map_name||"")+"\","+(p.floor||0)+")'>("+p.x+"%, "+p.y+"%)<\/span>";
     html+=" | "+votes+"/10 票（同意删除）<\/div>";
 
     // Go to map button (renderDels) — use data attributes
