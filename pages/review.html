@@ -228,7 +228,7 @@ function renderList(items){
     html+="<\/div>";
 
     // Go to map button (renderList) — use data attributes + click listener to avoid quoting hell
-    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-floor='"+(p.floor||0)+"' data-mapname='"+(p.map_name||"")+"' data-floor='"+(p.floor||0)+"' data-mapname='"+(p.map_name||"")+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
+    html+="<div style='margin:6px 0'><span class='view-on-map-btn' data-x='"+p.x+"' data-y='"+p.y+"' data-name='"+(p.name||"").replace(/'/g,"&#39;")+"' data-type='"+(p.type||0)+"' data-floor='"+(p.floor||0)+"' data-mapname='"+(p.map_name||"")+"' data-ic='"+(p.ic||"").replace(/'/g,"&#39;")+"' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>📍 在地图上查看位置<\/span><\/div>";
     html+="<\/div>"; // close card
 
     // Images if any
@@ -260,7 +260,7 @@ function renderList(items){
   document.getElementById("list").innerHTML=html;
   setTimeout(function(){
     var __cards=document.querySelectorAll('.view-on-map-btn');
-    var __data=window.__reviewDels||[];
+    var __data=window.__reviewPending||[];
     __cards.forEach(function(btn,i){
       if(__data[i])btn.dataset.mapName=__data[i].map_name||'';
     });
@@ -330,9 +330,9 @@ function renderDels(dels){
   document.getElementById("list").innerHTML=html;
   setTimeout(function(){
     var __cards=document.querySelectorAll('.view-on-map-btn');
-    var __data=window.__reviewPending||[];
+    var __data=window.__reviewDels||[];
     __cards.forEach(function(btn,i){
-      if(__data[i])btn.dataset.mapName=__data[i].map_name||(window.__reviewPins||[]).reduce(function(m,pi){return pi.id===__data[i].pin_id?pi.map_name:m;},'')||''||'';
+      if(__data[i])btn.dataset.mapName=__data[i].map_name||(window.__reviewPins||[]).reduce(function(m,pi){return pi.id===__data[i].pin_id?pi.map_name:m;},'')||'';
     });
   },0);
 }
