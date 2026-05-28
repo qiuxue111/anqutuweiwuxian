@@ -536,7 +536,7 @@ function closePinDetail(){document.getElementById('pd').classList.remove('show')
 
 // removed addPinImages
 
-function deleteCurrentPin(){if(curPinIdx===null)return;var p=pins[curPinIdx];if(!confirm('确定删除该容器?'))return;var ustr=localStorage.getItem('abi_user');var uname='Anon';try{var uj=JSON.parse(ustr);uname=uj.user_metadata&&uj.user_metadata.preferred_username||uj.user_metadata&&uj.user_metadata.user_name||'Anon';}catch(e){}if(p.id){supabase('deletion_requests','POST',{pin_id:p.id,name:p.name,x:p.x,y:p.y,submitted_by:uname,type:p.type||'',ic:p.ic||'',floor:p.floor||0,map_name:p.map_name||''}).then(function(){alert('已提交删除审核');pins.splice(curPinIdx,1);closePinDetail();renderMarkers();})}else{pins.splice(curPinIdx,1);closePinDetail();renderMarkers();}
+function deleteCurrentPin(){if(curPinIdx===null)return;var p=pins[curPinIdx];if(!confirm('确定删除该容器?'))return;var ustr=localStorage.getItem('abi_user');var uname='Anon';try{var uj=JSON.parse(ustr);uname=uj.user_metadata&&uj.user_metadata.preferred_username||uj.user_metadata&&uj.user_metadata.user_name||'Anon';}catch(e){}if(p.id){supabase('deletion_requests','POST',{pin_id:p.id,name:p.name,x:p.x,y:p.y,submitted_by:uname,type:p.type||'',ic:p.ic||'',floor:p.floor||0,map_name:mapNameCN||'',floor:p.floor||0,map_name:p.map_name||''}).then(function(){alert('已提交删除审核');pins.splice(curPinIdx,1);closePinDetail();renderMarkers();})}else{pins.splice(curPinIdx,1);closePinDetail();renderMarkers();}
 }
 
 function renderPinComments(){
