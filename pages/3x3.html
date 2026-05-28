@@ -16,9 +16,11 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .btn-save{background:#1a4a1a;color:#4f4}
 .btn-cancel{background:#3a1a1a;color:#f44}
 
-.canvas-wrap{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:hidden;background:#0f0f16;cursor:grab}
-.canvas-wrap.dragging{cursor:grabbing}
-.canvas-inner{position:absolute;top:0;left:0;transform-origin:0 0}
+.viewport{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:hidden;background:#0f0f16;cursor:grab}
+.viewport.dragging{cursor:grabbing}
+
+/* 画布 — 包含所有卡片和SVG，整体缩放平移 */
+.canvas{position:absolute;top:0;left:0;transform-origin:0 0;width:4000px;height:4000px;background: radial-gradient(circle at 25px 25px, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px}
 
 #connSvg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
 #connSvg path{stroke:#ff8833;stroke-width:3.5;fill:none;stroke-linecap:round;opacity:0.85;filter:drop-shadow(0 0 4px rgba(255,136,51,.3))}
@@ -31,9 +33,9 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .card-title{padding:12px 14px 4px;font-size:15px;font-weight:600;color:#fff;text-align:center;letter-spacing:1px}
 .card-desc{padding:0 14px 14px;font-size:12px;color:#999;line-height:1.5;text-align:left;word-break:break-all;min-height:24px}
 
-.card-actions{position:absolute;bottom:0;left:0;right:0;height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;z-index:5}
-.card-dot{width:22px;height:22px;border-radius:50%;border:3px solid #111;cursor:crosshair;display:none;transition:transform .15s,box-shadow .15s;z-index:6}
-.card.editing .card-dot{display:block}
+.card-actions{position:absolute;bottom:0;left:0;right:0;height:30px;display:none;align-items:center;justify-content:space-between;padding:0 4px;z-index:5}
+.card.editing .card-actions{display:flex}
+.card-dot{width:22px;height:22px;border-radius:50%;border:3px solid #111;cursor:crosshair;transition:transform .15s,box-shadow .15s;z-index:6}
 .card-dot:hover{transform:scale(1.2);box-shadow:0 0 10px currentColor}
 .dot-blue{background:#4488ff;margin-left:6px}
 .dot-green{background:#22cc66;margin-right:6px}
@@ -66,6 +68,8 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .modal .btn-save-m{background:#ffc832;color:#000;font-weight:600}
 .modal .btn-cancel-m{background:rgba(255,255,255,.08);color:#aaa}
 .loading{position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0f;z-index:9999;color:#666;font-size:14px}
+
+.zoom-info{position:fixed;bottom:20px;right:20px;z-index:100;color:#555;font-size:11px;background:rgba(10,10,15,.8);padding:4px 10px;border-radius:8px;border:1px solid #222}
 </style>
 </head>
 <body>
@@ -78,8 +82,8 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
   <button id="cancelBtn" class="btn btn-cancel" style="display:none" onclick="cancelEdit()">取消</button>
 </div>
 
-<div id="canvas" class="canvas-wrap">
-  <div id="canvasInner" class="canvas-inner">
+<div id="viewport" class="viewport">
+  <div id="canvas" class="canvas">
     <svg id="connSvg"></svg>
   </div>
 </div>
@@ -105,6 +109,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
   </div>
 </div>
 
+<div class="zoom-info" id="zoomInfo">100%</div>
 <div class="loading" id="loading">加载中...</div>
 
 <script>
@@ -116,6 +121,8 @@ var editingCardId = null;
 var selectedConnFrom = null;
 var undoStack = [];
 
+/* Canvas transform */
+var scale = 0.6;
 var panX = 0, panY = 0;
 var isPanning = false, panStartX = 0, panStartY = 0, panOX = 0, panOY = 0;
 
@@ -129,6 +136,7 @@ function loadData(){
     } catch(e) { cards = []; connections = []; }
   }
   renderAll();
+  docscroll();
   document.getElementById("loading").style.display = "none";
 }
 
@@ -136,23 +144,16 @@ function saveData(){
   localStorage.setItem("abi_3x3_data", JSON.stringify({cards:cards, connections:connections}));
 }
 
-function escHtml(s){
-  if(!s) return "";
-  var d = document.createElement("div");
-  d.appendChild(document.createTextNode(s));
-  return d.innerHTML;
-}
-
 function renderAll(){
-  var inner = document.getElementById("canvasInner");
-  inner.querySelectorAll(".card").forEach(function(el){el.remove();});
+  var cvs = document.getElementById("canvas");
+  cvs.querySelectorAll(".card").forEach(function(el){el.remove();});
   cards.forEach(function(c){ renderCard(c); });
   renderConns();
-  updatePan();
+  updateTransform();
 }
 
 function renderCard(c){
-  var inner = document.getElementById("canvasInner");
+  var cvs = document.getElementById("canvas");
   var div = document.createElement("div");
   div.className = "card" + (editMode ? " editing" : "");
   div.id = "card_" + c.id;
@@ -194,48 +195,48 @@ function renderCard(c){
   var blueDot = document.createElement("div");
   blueDot.className = "card-dot dot-blue";
   blueDot.title = "\u8fde\u7ebf\u7ec8\u70b9";
-  var self = c;
-  blueDot.addEventListener("click", function(e){ e.stopPropagation(); onDotClick(self.id, "in"); });
+  blueDot.addEventListener("click", function(e){ e.stopPropagation(); onDotClick(c.id, "in"); });
   actions.appendChild(blueDot);
 
   var greenDot = document.createElement("div");
   greenDot.className = "card-dot dot-green";
   greenDot.title = "\u8fde\u7ebf\u8d77\u70b9";
-  greenDot.addEventListener("click", function(e){ e.stopPropagation(); onDotClick(self.id, "out"); });
+  greenDot.addEventListener("click", function(e){ e.stopPropagation(); onDotClick(c.id, "out"); });
   actions.appendChild(greenDot);
 
   div.appendChild(actions);
 
-  // Drag
+  // Drag card (only in edit mode)
   if(editMode){
-    (function(card, cardData){
-      div.addEventListener("mousedown", function(e){
+    (function(el, cd){
+      el.addEventListener("mousedown", function(e){
         if(e.target.closest(".card-edit-btn,.card-del-btn,.card-dot")) return;
         if(e.button !== 0) return;
         var sx = e.clientX, sy = e.clientY;
-        var ox = cardData.x, oy = cardData.y;
+        var ox = cd.x, oy = cd.y;
         var moved = false;
         function mm(ev){
-          cardData.x = Math.max(0, ox + ev.clientX - sx);
-          cardData.y = Math.max(0, oy + ev.clientY - sy);
-          card.style.left = cardData.x + "px";
-          card.style.top = cardData.y + "px";
+          cd.x = ox + (ev.clientX - sx) / scale;
+          cd.y = oy + (ev.clientY - sy) / scale;
+          el.style.left = cd.x + "px";
+          el.style.top = cd.y + "px";
           moved = true;
           renderConns();
         }
         function mu(){
           document.removeEventListener("mousemove", mm);
           document.removeEventListener("mouseup", mu);
-          if(moved) pushUndo();
+          if(moved){ pushUndo(); }
         }
         document.addEventListener("mousemove", mm);
         document.addEventListener("mouseup", mu);
         e.preventDefault();
+        e.stopPropagation();
       });
     })(div, c);
   }
 
-  inner.appendChild(div);
+  cvs.appendChild(div);
 }
 
 function renderConns(){
@@ -271,9 +272,21 @@ function renderConns(){
   });
 }
 
-function updatePan(){
-  var inner = document.getElementById("canvasInner");
-  inner.style.transform = "translate(" + panX + "px," + panY + "px)";
+function updateTransform(){
+  var cvs = document.getElementById("canvas");
+  cvs.style.transform = "translate(" + panX + "px," + panY + "px) scale(" + scale + ")";
+  document.getElementById("zoomInfo").textContent = Math.round(scale * 100) + "%";
+}
+
+function docscroll(){
+  /* Center canvas on first load */
+  if(cards.length === 0){
+    panX = 200; panY = 200;
+  } else {
+    panX = (window.innerWidth - 4000 * scale) / 2;
+    panY = (window.innerHeight - 4000 * scale) / 2;
+  }
+  updateTransform();
 }
 
 function toggleEdit(){
@@ -282,13 +295,9 @@ function toggleEdit(){
   document.getElementById("saveBtn").style.display = editMode ? "inline-block" : "none";
   document.getElementById("cancelBtn").style.display = editMode ? "inline-block" : "none";
   document.getElementById("toolbar").style.display = editMode ? "flex" : "none";
-  document.getElementById("canvas").style.cursor = editMode ? "default" : "grab";
   if(!editMode){
     connMode = false; selectedConnFrom = null;
     saveData();
-    document.getElementById("editToggle").textContent = "\u8fdb\u5165\u7f16\u8f91";
-  } else {
-    document.getElementById("editToggle").textContent = "\u9000\u51fa\u7f16\u8f91";
   }
   renderAll();
 }
@@ -300,18 +309,19 @@ function cancelEdit(){
   document.getElementById("saveBtn").style.display = "none";
   document.getElementById("cancelBtn").style.display = "none";
   document.getElementById("toolbar").style.display = "none";
-  document.getElementById("canvas").style.cursor = "grab";
-  document.getElementById("editToggle").textContent = "\u8fdb\u5165\u7f16\u8f91";
   loadData();
 }
 
 function toggleConn(){
   connMode = !connMode;
-  if(connMode && !editMode){ editMode = true; renderAll(); }
-  document.getElementById("editToggle").style.display = editMode ? "none" : "inline-block";
-  document.getElementById("saveBtn").style.display = editMode ? "inline-block" : "none";
-  document.getElementById("cancelBtn").style.display = editMode ? "inline-block" : "none";
-  document.getElementById("toolbar").style.display = editMode ? "flex" : "none";
+  if(connMode && !editMode){
+    editMode = true;
+    renderAll();
+    document.getElementById("editToggle").style.display = "none";
+    document.getElementById("saveBtn").style.display = "inline-block";
+    document.getElementById("cancelBtn").style.display = "inline-block";
+    document.getElementById("toolbar").style.display = "flex";
+  }
   document.getElementById("connToggle").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
   document.getElementById("connToggle").textContent = connMode ? "\u9000\u51fa\u8fde\u7ebf" : "\u8fde\u7ebf";
   selectedConnFrom = null;
@@ -348,9 +358,13 @@ function clearConns(){
 
 function addCard(){
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
-  var x = (window.innerWidth - 240) / 2;
-  var y = (window.innerHeight - 130) / 2;
-  cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:x, y:y});
+  var vp = document.getElementById("viewport");
+  var cx = vp.clientWidth / 2 - 120;
+  var cy = vp.clientHeight / 2 - 65;
+  /* Convert viewport center to canvas coordinates */
+  var ccx = (cx - panX) / scale;
+  var ccy = (cy - panY) / scale;
+  cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:ccx, y:ccy});
   pushUndo();
   renderAll();
   openEditCard(id);
@@ -404,24 +418,14 @@ function undoLast(){
   renderAll();
 }
 
-document.getElementById("canvas").addEventListener("contextmenu", function(e){
-  if(!editMode) return;
-  e.preventDefault();
-  var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
-  var inner = document.getElementById("canvasInner");
-  var rect = inner.getBoundingClientRect();
-  var ix = e.clientX - rect.left - 120;
-  var iy = e.clientY - rect.top - 65;
-  cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:ix, y:iy});
-  pushUndo();
-  renderAll();
-  openEditCard(id);
-});
+/* ====== Viewport events ====== */
+var vp = document.getElementById("viewport");
+var cvs = document.getElementById("canvas");
 
-document.getElementById("canvas").addEventListener("mousedown", function(e){
-  if(editMode) return;
-  if(e.button !== 0) return;
+/* Pan — left drag on viewport (not on card) */
+vp.addEventListener("mousedown", function(e){
   if(e.target.closest(".card")) return;
+  if(e.button !== 0) return;
   isPanning = true;
   panStartX = e.clientX;
   panStartY = e.clientY;
@@ -434,19 +438,55 @@ document.addEventListener("mousemove", function(e){
   if(!isPanning) return;
   panX = panOX + e.clientX - panStartX;
   panY = panOY + e.clientY - panStartY;
-  updatePan();
+  updateTransform();
 });
 
 document.addEventListener("mouseup", function(){
   if(isPanning){
     isPanning = false;
-    document.getElementById("canvas").classList.remove("dragging");
+    vp.classList.remove("dragging");
   }
 });
 
+/* Zoom — scroll wheel */
+vp.addEventListener("wheel", function(e){
+  e.preventDefault();
+  var rect = vp.getBoundingClientRect();
+  var mx = e.clientX - rect.left;
+  var my = e.clientY - rect.top;
+
+  var oldScale = scale;
+  var delta = e.deltaY < 0 ? 1.12 : 0.89;
+  scale = Math.max(0.15, Math.min(3, scale * delta));
+
+  /* Zoom toward mouse cursor */
+  panX = mx - (mx - panX) * (scale / oldScale);
+  panY = my - (my - panY) * (scale / oldScale);
+
+  updateTransform();
+}, {passive:false});
+
+/* Right-click on canvas — add card (edit mode only) */
+cvs.addEventListener("contextmenu", function(e){
+  if(!editMode) return;
+  e.preventDefault();
+  e.stopPropagation();
+  var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
+  var cx = e.offsetX;
+  var cy = e.offsetY;
+  cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:cx - 120, y:cy - 65});
+  pushUndo();
+  renderAll();
+  openEditCard(id);
+});
+
+/* Init */
 document.getElementById("editToggle").style.display = "inline-block";
 loadData();
-window.addEventListener("resize", function(){ renderConns(); });
+window.addEventListener("resize", function(){
+  updateTransform();
+  renderConns();
+});
 </script>
 </body>
 </html>
