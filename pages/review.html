@@ -364,7 +364,7 @@ function vote(id){
         supabase("pending_pins","GET",null,"id=eq."+id).then(function(approved){
           if(approved&&approved.length){
             var a=approved[0];
-            supabase("pins","POST",{x:a.x,y:a.y,name:a.name,type:a.type,map_name:a.map_name||"农场",ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[]}).then(function(){
+            supabase("pins","POST",{x:a.x,y:a.y,name:a.name,type:a.type,map_name:a.map_name||"农场",ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[],floor:a.floor||0}).then(function(){
               supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
             });
           }
