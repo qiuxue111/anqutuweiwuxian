@@ -534,12 +534,12 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   document.body.appendChild(ov);
 
   function loadFloor(f){
-    var src=getSrc(f);
     img.onload=function(){
       var cw=wrap.clientWidth;
       var ch=wrap.clientHeight;
       var iw=img.naturalWidth;
       var ih=img.naturalHeight;
+      if(!iw||!ih){img.onload();return;}
       var scale=Math.min(cw/iw, ch/ih);
       var dispW=iw*scale;
       var dispH=ih*scale;
@@ -553,9 +553,13 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
       label.style.top=(pinPxY+12)+'px';
     };
     img.onerror=function(){
-      console.error('Floor load failed:', src);
+      console.error('Floor load failed:', getSrc(f));
     };
-    img.src=src;
+    // Set src to trigger load (or handle cache case)
+    var prev=img.src;
+    img.src=getSrc(f);
+    // If image was already cached, browser may not re-fire onload
+    if(img.complete&&img.naturalWidth)img.onload();
   }
 
   // Initial load
