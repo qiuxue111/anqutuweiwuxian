@@ -90,7 +90,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 
 <div id="toolbar" class="toolbar">
   <button class="add-btn" onclick="addCard()">+ 新建</button>
-  <button class="conn-toggle" id="connToggle" onclick="toggleConn()">连线</button>
+
   <button class="undo-btn" onclick="undoLast()">撤销</button>
   <button class="clear-btn" onclick="clearConns()">清空连线</button>
 </div>
@@ -116,7 +116,6 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 var cards = [];
 var connections = [];
 var editMode = false;
-var connMode = false;
 var editingCardId = null;
 var selectedConnFrom = null;
 var undoStack = [];
@@ -304,7 +303,8 @@ function toggleEdit(){
 
 function cancelEdit(){
   editMode = false;
-  connMode = false; selectedConnFrom = null;
+  connFrom = null;
+  if(connLine){ connLine.remove(); connLine = null; }
   document.getElementById("editToggle").style.display = "inline-block";
   document.getElementById("saveBtn").style.display = "none";
   document.getElementById("cancelBtn").style.display = "none";
@@ -312,42 +312,62 @@ function cancelEdit(){
   loadData();
 }
 
-function toggleConn(){
-  connMode = !connMode;
-  if(connMode && !editMode){
-    editMode = true;
-    renderAll();
-    document.getElementById("editToggle").style.display = "none";
-    document.getElementById("saveBtn").style.display = "inline-block";
-    document.getElementById("cancelBtn").style.display = "inline-block";
-    document.getElementById("toolbar").style.display = "flex";
-  }
-  document.getElementById("connToggle").style.background = connMode ? "#3a3a1a" : "#2a3a2a";
-  document.getElementById("connToggle").textContent = connMode ? "\u9000\u51fa\u8fde\u7ebf" : "\u8fde\u7ebf";
-  selectedConnFrom = null;
-  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
-}
+
+var connFrom = null;
+var connLine = null;
 
 function onDotClick(cardId, type){
-  if(!connMode) return;
+  if(!editMode) return;
   if(type === "out"){
-    selectedConnFrom = cardId;
+    /* Start connecting — green dot */
+    connFrom = cardId;
     document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
     var el = document.querySelector("#card_" + cardId + " .dot-green");
     if(el) el.classList.add("active");
-  } else if(type === "in" && selectedConnFrom){
-    if(selectedConnFrom !== cardId){
-      var dup = connections.some(function(c){ return c.from === selectedConnFrom && c.to === cardId; });
+    /* Create a temp line following mouse */
+    if(!connLine){
+      connLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      connLine.setAttribute("stroke", "#ff8833");
+      connLine.setAttribute("stroke-width", "2");
+      connLine.setAttribute("fill", "none");
+      connLine.setAttribute("stroke-dasharray", "6,4");
+      connLine.setAttribute("opacity", "0.5");
+      connLine.id = "connLine";
+      document.getElementById("connSvg").appendChild(connLine);
+    }
+  } else if(type === "in" && connFrom){
+    /* Finish connecting — blue dot */
+    if(connFrom !== cardId){
+      var dup = connections.some(function(c){ return c.from === connFrom && c.to === cardId; });
       if(!dup){
-        connections.push({from:selectedConnFrom, to:cardId});
+        connections.push({from:connFrom, to:cardId});
         pushUndo();
         renderConns();
       }
     }
-    selectedConnFrom = null;
+    connFrom = null;
     document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active");});
+    if(connLine){ connLine.remove(); connLine = null; }
   }
 }
+
+/* Mouse move — update temp line */
+document.addEventListener("mousemove", function(e){
+  if(!connFrom) return;
+  var fromEl = document.getElementById("card_" + connFrom);
+  if(!fromEl) return;
+  var rect = document.getElementById("viewport").getBoundingClientRect();
+  var vx = e.clientX - rect.left;
+  var vy = e.clientY - rect.top;
+  var cx = (vx - panX) / scale;
+  var cy = (vy - panY) / scale;
+
+  var fh = fromEl.offsetHeight;
+  var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
+  var fy = parseFloat(fromEl.style.top) + fh - 15;
+  var midX = (fx + cx) / 2;
+  connLine.setAttribute("d", "M " + fx + " " + fy + " C " + midX + " " + fy + ", " + midX + " " + cy + ", " + cx + " " + cy);
+});
 
 function clearConns(){
   if(!confirm("\u786e\u5b9a\u6e05\u7a7a\u6240\u6709\u8fde\u7ebf\uff1f")) return;
