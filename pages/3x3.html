@@ -466,21 +466,23 @@ vp.addEventListener("wheel", function(e){
   updateTransform();
 }, {passive:false});
 
-/* Right-click on canvas — add card (edit mode only) */
-cvs.addEventListener("contextmenu", function(e){
-  if(!editMode) return;
+/* Right-click on viewport — add card at canvas coordinates */
+vp.addEventListener("contextmenu", function(e){
   e.preventDefault();
-  e.stopPropagation();
+  if(!editMode) return;
+  var rect = vp.getBoundingClientRect();
+  var vx = e.clientX - rect.left;
+  var vy = e.clientY - rect.top;
+  var cx = (vx - panX) / scale;
+  var cy = (vy - panY) / scale;
   var id = "c" + Date.now() + Math.random().toString(36).slice(2,6);
-  var cx = e.offsetX;
-  var cy = e.offsetY;
   cards.push({id:id, name:"\u65b0\u4efb\u52a1", desc:"", x:cx - 120, y:cy - 65});
   pushUndo();
   renderAll();
   openEditCard(id);
 });
 
-/* Init */
+/* Init *//* Init */
 document.getElementById("editToggle").style.display = "inline-block";
 loadData();
 window.addEventListener("resize", function(){
