@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+<title>暗区突围 - 地图</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a14;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#ccc;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+
+.map-wrap{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden}
+#mv{position:absolute;top:0;left:0;transform-origin:0 0;width:100%;height:100%;overflow:visible}
+#mapImg{display:block;width:100%;height:auto;pointer-events:none;min-width:100%}
+#mv .pin-marker{position:absolute;cursor:pointer;transition:opacity .15s;z-index:2}
+#mv .pin-marker .pin-dot{width:20px;height:20px;border-radius:50%;border:2.5px solid #ffc832;background:rgba(255,200,50,0.35);transform:translate(-50%,-50%);box-shadow:0 0 6px rgba(255,200,50,0.3)}
+#mv .pin-marker .pin-icon{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-size:11px;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,0.9);color:#fff;background:rgba(0,0,0,0.55);padding:2px 6px;border-radius:4px;font-weight:500;letter-spacing:0.5px}
+#mv .pin-marker.active .pin-dot{background:#ffc832;box-shadow:0 0 14px rgba(255,200,50,0.7)}
+#mv .pin-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+
+.top-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0));background:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,transparent 100%);pointer-events:none}
+.top-bar>*{pointer-events:auto}
+.top-bar .back-btn,.top-bar .hamburger{width:36px;height:36px;border-radius:8px;border:none;background:rgba(0,0,0,0.5);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.top-bar .map-title{font-size:15px;font-weight:600;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.6)}
+
+.hamburger-menu{display:none;position:fixed;top:0;right:0;width:280px;max-width:85vw;height:100%;z-index:200;background:rgba(10,10,20,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow-y:auto;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0));transition:transform .25s ease;transform:translateX(100%);border-left:1px solid rgba(255,255,255,0.06)}
+.hamburger-menu.open{display:block;transform:translateX(0)}
+.hamburger-menu .hm-close{position:absolute;top:calc(8px + env(safe-area-inset-top,0));right:8px;width:32px;height:32px;border-radius:6px;border:none;background:rgba(255,255,255,0.08);color:#aaa;font-size:18px;cursor:pointer}
+.hamburger-menu .hm-section{margin-top:16px}
+.hamburger-menu .hm-section-title{color:#ffc832;font-size:13px;font-weight:600;padding:8px 0 4px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.hamburger-menu .hm-item{display:block;padding:10px 8px;color:#aaa;text-decoration:none;font-size:14px;border-radius:6px;transition:background .15s}
+.hamburger-menu .hm-item:hover{background:rgba(255,255,255,0.06);color:#fff}
+.hamburger-menu .hm-logout{margin-top:24px;width:100%;padding:10px;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);border-radius:8px;color:#ff6666;text-align:center;font-size:13px;cursor:pointer}
+
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0));background:linear-gradient(0deg,rgba(0,0,0,0.75) 0%,transparent 100%);pointer-events:none}
+.bottom-bar>*{pointer-events:auto}
+.bottom-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 10px;border-radius:8px;border:none;background:rgba(20,20,35,0.8);color:#ccc;font-size:10px;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);min-width:60px;transition:transform .1s}
+.bottom-btn:active{background:rgba(40,40,60,0.9);transform:scale(0.93)}
+.bottom-btn.active{background:rgba(255,200,50,0.2);color:#ffc832}
+.bottom-btn .icon{font-size:18px}
+
+.zoom-group{position:fixed;right:10px;bottom:65px;z-index:99;display:flex;flex-direction:column;gap:4px}
+.zoom-group button{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.55);color:#ccc;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.zoom-group button:active{background:rgba(40,40,60,0.8)}
+
+.floor-selector{display:none;position:fixed;left:10px;bottom:60px;z-index:99;background:rgba(10,10,20,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:4px;min-width:100px}
+.floor-selector.open{display:block}
+.floor-selector .floor-item{padding:10px 14px;border-radius:6px;color:#aaa;font-size:13px;cursor:pointer}
+.floor-selector .floor-item:active{background:rgba(255,200,50,0.15)}
+.floor-selector .floor-item.active{background:rgba(255,200,50,0.2);color:#ffc832}
+
+.layer-selector{display:none;position:fixed;right:10px;bottom:60px;z-index:99;background:rgba(10,10,20,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:4px;min-width:130px;max-height:50vh;overflow-y:auto}
+.layer-selector.open{display:block}
+.layer-selector .layer-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;color:#aaa;font-size:13px;cursor:pointer}
+.layer-selector .layer-item:active{background:rgba(255,255,255,0.06)}
+.layer-selector .layer-item .lchk{width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.layer-selector .layer-item.active .lchk{background:#ffc832;border-color:#ffc832;color:#111}
+
+.pin-detail{display:none;position:fixed;bottom:60px;left:0;right:0;z-index:150;margin:0 10px;background:rgba(15,15,28,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0));max-height:45vh;overflow-y:auto}
+.pin-detail.open{display:block}
+.pin-detail .pd-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pin-detail .pd-name{font-size:16px;font-weight:600;color:#ffc832}
+.pin-detail .pd-close{width:28px;height:28px;border-radius:6px;border:none;background:rgba(255,255,255,0.06);color:#888;font-size:16px;cursor:pointer}
+.pin-detail .pd-info{font-size:12px;color:#888;margin-bottom:8px}
+.pin-detail .pd-note{font-size:13px;color:#ccc;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:8px}
+.pin-detail .pd-images{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.pin-detail .pd-images img{width:60px;height:60px;border-radius:6px;object-fit:cover;border:1px solid rgba(255,255,255,0.06)}
+.pin-detail .pd-actions{display:flex;gap:8px;margin-top:8px}
+.pin-detail .pd-actions button{flex:1;padding:10px;border-radius:8px;border:none;font-size:12px;cursor:pointer}
+.pin-detail .pd-actions .pd-delete{background:rgba(255,50,50,0.1);color:#ff6666}
+.pin-detail .pd-actions .pd-report{background:rgba(136,170,255,0.1);color:#88aaff}
+
+.overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:90;background:rgba(0,0,0,0.35)}
+.overlay.open{display:block}
+
+.loading{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;color:#888;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="map-wrap" id="mapWrap">
+  <div id="mv">
+    <img id="mapImg" alt="地图" draggable="false">
+    <div id="pinsLayer" class="pin-layer"></div>
+  </div>
+</div>
+
+<div class="top-bar">
+  <button class="back-btn" id="backBtn">←</button>
+  <span class="map-title" id="mapTitle">加载中...</span>
+  <button class="hamburger" id="hamburgerBtn">☰</button>
+</div>
+
+<div class="zoom-group">
+  <button id="zoomIn">＋</button>
+  <button id="zoomOut">−</button>
+</div>
+
+<div class="floor-selector" id="floorSelector"></div>
+<div class="layer-selector" id="layerSelector"></div>
+
+<div class="bottom-bar" id="bottomBar">
+  <button class="bottom-btn" id="floorBtn"><span class="icon">🏢</span>楼层</button>
+  <button class="bottom-btn" id="layerBtn"><span class="icon">📋</span>图层</button>
+  <button class="bottom-btn" id="addPinBtn"><span class="icon">📍</span>报点</button>
+  <button class="bottom-btn" id="resetViewBtn"><span class="icon">🔄</span>复位</button>
+</div>
+
+<div class="pin-detail" id="pinDetail">
+  <div class="pd-header">
+    <span class="pd-name" id="pdName"></span>
+    <button class="pd-close" id="pdClose">✕</button>
+  </div>
+  <div class="pd-info" id="pdInfo"></div>
+  <div class="pd-note" id="pdNote" style="display:none"></div>
+  <div class="pd-images" id="pdImages"></div>
+  <div class="pd-actions">
+    <button class="pd-delete" id="pdDelete">🗑 删除</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<script>
+// ====== 地图数据 ======
+var MAPS = {
+  tvstation:{eng:'tvstation',cn:'电视台',img:'../assets/maps/tvstation.png',floors:[{img:'../assets/maps/tvstation.png',label:'全境'},{img:'../assets/maps/tvstation_\u7535\u89c6\u53f0\u4e8c\u697c.png',label:'二楼'}],layerData:{'\u8d35\u91cd':['\u4fdd\u9669\u7bb1','\u6ef4\u6ef4\u4fdd\u9669','\u7535\u5b50\u4fdd\u9669','\u5c0f\u4fdd\u9669','\u519b\u7528\u4fdd\u9669\u7bb1'],'\u7535\u5b50':['\u6536\u94f6\u673a','\u5bb6\u7528\u673a\u7bb1','\u519b\u7528\u4e3b\u673a'],'\u7269\u8d44':['\u666e\u901a\u7269\u8d44\u7bb1','\u9ad8\u7ea7\u7269\u8d44\u7bb1','\u7a7a\u8c03\u7f50','\u5783\u573e\u7bb1','\u997c\u5e72\u76d2'],'\u5f39\u836f':['\u5b50\u5f39\u7bb1','\u624b\u96f7\u7bb1'],'\u533b\u7597':['\u533b\u7597\u7bb1','\u9ad8\u7ea7\u533b\u7597\u7bb1'],'\u5de5\u5177':['\u5de5\u5177\u7bb1','\u9ad8\u7ea7\u5de5\u5177\u7bb1'],'\u8863\u7269':['\u5927\u8863','\u84dd\u8272\u5927\u8863','\u8863\u670d'],'\u5bb6\u5177':['\u62bd\u5c49','\u522e\u522e\u4e50'],'\u5bb9\u5668':['\u6587\u4ef6\u7bb1','\u8fd0\u52a8\u5305','\u65c5\u884c\u7bb1','\u767d\u8272\u65c5\u884c\u7bb1','\u5546\u52a1\u65c5\u884c\u7bb1','\u540e\u5907\u7bb1'],'\u6b66\u5668':['\u5927\u578b\u6b66\u5668\u7bb1','\u4e2d\u578b\u6b66\u5668\u7bb1','\u6728\u8d28\u6b66\u5668\u7bb1','\u6b66\u5668\u7bb1','\u9ad8\u7ea7\u6b66\u5668\u7bb1','\u957f\u6761\u6b66\u5668\u7bb1'],'\u5176\u4ed6':['\u4e09\u8272\u706f','\u5171\u9e23\u7403','\u5949\u732e\u96d5\u50cf'],'\u4eba\u673a':['BOSS','\u6e05\u9053\u592b','\u9ed1\u91d1\u4eba\u673a','\u767d\u72fc\u4eba\u673a'],'\u914d\u4ef6':['\u914d\u4ef6\u7bb1']}},
+  farm:{eng:'farm',cn:'\u519c\u573a',img:'../assets/maps/farm.png',floors:[{img:'../assets/maps/farm.png',label:'\u5168\u5883'}],layerData:{'\u8d35\u91cd':['\u4fdd\u9669\u7bb1','\u6ef4\u6ef4\u4fdd\u9669','\u7535\u5b50\u4fdd\u9669','\u5c0f\u4fdd\u9669','\u519b\u7528\u4fdd\u9669\u7bb1'],'\u7535\u5b50':['\u6536\u94f6\u673a','\u5bb6\u7528\u673a\u7bb1','\u519b\u7528\u4e3b\u673a'],'\u7269\u8d44':['\u666e\u901a\u7269\u8d44\u7bb1','\u9ad8\u7ea7\u7269\u8d44\u7bb1','\u7a7a\u8c03\u7f50','\u5783\u573e\u7bb1','\u997c\u5e72\u76d2'],'\u5f39\u836f':['\u5b50\u5f39\u7bb1','\u624b\u96f7\u7bb1'],'\u533b\u7597':['\u533b\u7597\u7bb1','\u9ad8\u7ea7\u533b\u7597\u7bb1'],'\u5de5\u5177':['\u5de5\u5177\u7bb1','\u9ad8\u7ea7\u5de5\u5177\u7bb1'],'\u8863\u7269':['\u5927\u8863','\u84dd\u8272\u5927\u8863','\u8863\u670d'],'\u5bb6\u5177':['\u62bd\u5c49','\u522e\u522e\u4e50'],'\u5bb9\u5668':['\u6587\u4ef6\u7bb1','\u8fd0\u52a8\u5305','\u65c5\u884c\u7bb1','\u767d\u8272\u65c5\u884c\u7bb1','\u5546\u52a1\u65c5\u884c\u7bb1','\u540e\u5907\u7bb1'],'\u6b66\u5668':['\u5927\u578b\u6b66\u5668\u7bb1','\u4e2d\u578b\u6b66\u5668\u7bb1','\u6728\u8d28\u6b66\u5668\u7bb1','\u6b66\u5668\u7bb1','\u9ad8\u7ea7\u6b66\u5668\u7bb1','\u957f\u6761\u6b66\u5668\u7bb1'],'\u5176\u4ed6':['\u4e09\u8272\u706f','\u5171\u9e23\u7403','\u5949\u732e\u96d5\u50cf'],'\u4eba\u673a':['BOSS','\u6e05\u9053\u592b','\u9ed1\u91d1\u4eba\u673a','\u767d\u72fc\u4eba\u673a'],'\u914d\u4ef6':['\u914d\u4ef6\u7bb1']}},
+  valley:{eng:'valley',cn:'\u5c71\u8c37',img:'../assets/maps/valley.png',floors:[{img:'../assets/maps/valley.png',label:'\u5168\u5883'}],layerData:{'\u8d35\u91cd':['\u4fdd\u9669\u7bb1','\u6ef4\u6ef4\u4fdd\u9669','\u7535\u5b50\u4fdd\u9669','\u5c0f\u4fdd\u9669','\u519b\u7528\u4fdd\u9669\u7bb1'],'\u7535\u5b50':['\u6536\u94f6\u673a','\u5bb6\u7528\u673a\u7bb1','\u519b\u7528\u4e3b\u673a'],'\u7269\u8d44':['\u666e\u901a\u7269\u8d44\u7bb1','\u9ad8\u7ea7\u7269\u8d44\u7bb1','\u7a7a\u8c03\u7f50','\u5783\u573e\u7bb1','\u997c\u5e72\u76d2'],'\u5f39\u836f':['\u5b50\u5f39\u7bb1','\u624b\u96f7\u7bb1'],'\u533b\u7597':['\u533b\u7597\u7bb1','\u9ad8\u7ea7\u533b\u7597\u7bb1'],'\u5de5\u5177':['\u5de5\u5177\u7bb1','\u9ad8\u7ea7\u5de5\u5177\u7bb1'],'\u8863\u7269':['\u5927\u8863','\u84dd\u8272\u5927\u8863','\u8863\u670d'],'\u5bb6\u5177':['\u62bd\u5c49','\u522e\u522e\u4e50'],'\u5bb9\u5668':['\u6587\u4ef6\u7bb1','\u8fd0\u52a8\u5305','\u65c5\u884c\u7bb1','\u767d\u8272\u65c5\u884c\u7bb1','\u5546\u52a1\u65c5\u884c\u7bb1','\u540e\u5907\u7bb1'],'\u6b66\u5668':['\u5927\u578b\u6b66\u5668\u7bb1','\u4e2d\u578b\u6b66\u5668\u7bb1','\u6728\u8d28\u6b66\u5668\u7bb1','\u6b66\u5668\u7bb1','\u9ad8\u7ea7\u6b66\u5668\u7bb1','\u957f\u6761\u6b66\u5668\u7bb1'],'\u5176\u4ed6':['\u4e09\u8272\u706f','\u5171\u9e23\u7403','\u5949\u732e\u96d5\u50cf'],'\u4eba\u673a':['BOSS','\u6e05\u9053\u592b','\u9ed1\u91d1\u4eba\u673a','\u767d\u72fc\u4eba\u673a'],'\u914d\u4ef6':['\u914d\u4ef6\u7bb1']}},
+  beishan:{eng:'beishan',cn:'\u5317\u5c71',img:'../assets/maps/beishan.png',floors:[{img:'../assets/maps/beishan.png',label:'\u5168\u5883'},{img:'../assets/maps/beishan_\u5317\u5c71\u9152\u5e97\u4e00\u697c.png',label:'\u9152\u5e97\u4e00\u697c'},{img:'../assets/maps/beishan_\u5317\u5c71\u9152\u5e97\u4e8c\u697c.png',label:'\u9152\u5e97\u4e8c\u697c'},{img:'../assets/maps/beishan_\u5317\u5c71\u9152\u5e97\u4e09\u697c.png',label:'\u9152\u5e97\u4e09\u697c'}],layerData:{'\u8d35\u91cd':['\u4fdd\u9669\u7bb1','\u6ef4\u6ef4\u4fdd\u9669','\u7535\u5b50\u4fdd\u9669','\u5c0f\u4fdd\u9669','\u519b\u7528\u4fdd\u9669\u7bb1'],'\u7535\u5b50':['\u6536\u94f6\u673a','\u5bb6\u7528\u673a\u7bb1','\u519b\u7528\u4e3b\u673a'],'\u7269\u8d44':['\u666e\u901a\u7269\u8d44\u7bb1','\u9ad8\u7ea7\u7269\u8d44\u7bb1','\u7a7a\u8c03\u7f50','\u5783\u573e\u7bb1','\u997c\u5e72\u76d2'],'\u5f39\u836f':['\u5b50\u5f39\u7bb1','\u624b\u96f7\u7bb1'],'\u533b\u7597':['\u533b\u7597\u7bb1','\u9ad8\u7ea7\u533b\u7597\u7bb1'],'\u5de5\u5177':['\u5de5\u5177\u7bb1','\u9ad8\u7ea7\u5de5\u5177\u7bb1'],'\u8863\u7269':['\u5927\u8863','\u84dd\u8272\u5927\u8863','\u8863\u670d'],'\u5bb6\u5177':['\u62bd\u5c49','\u522e\u522e\u4e50'],'\u5bb9\u5668':['\u6587\u4ef6\u7bb1','\u8fd0\u52a8\u5305','\u65c5\u884c\u7bb1','\u767d\u8272\u65c5\u884c\u7bb1','\u5546\u52a1\u65c5\u884c\u7bb1','\u540e\u5907\u7bb1'],'\u6b66\u5668':['\u5927\u578b\u6b66\u5668\u7bb1','\u4e2d\u578b\u6b66\u5668\u7bb1','\u6728\u8d28\u6b66\u5668\u7bb1','\u6b66\u5668\u7bb1','\u9ad8\u7ea7\u6b66\u5668\u7bb1','\u957f\u6761\u6b66\u5668\u7bb1'],'\u5176\u4ed6':['\u4e09\u8272\u706f','\u5171\u9e23\u7403','\u5949\u732e\u96d5\u50cf'],'\u4eba\u673a':['BOSS','\u6e05\u9053\u592b','\u9ed1\u91d1\u4eba\u673a','\u767d\u72fc\u4eba\u673a'],'\u914d\u4ef6':['\u914d\u4ef6\u7bb1']}},
+  airport:{eng:'airport',cn:'\u963f\u8d3e\u514b\u65af\u6e2f\u53e3',img:'../assets/maps/airport.png',floors:[{img:'../assets/maps/airport.png',label:'\u5168\u5883'},{img:'../assets/maps/airport_\u673a\u573a\u5854\u5185\u4e00\u5c42.png',label:'\u5854\u5185\u4e00\u5c42'},{img:'../assets/maps/airport_\u673a\u573a\u5854\u5185\u4e8c\u5c42.png',label:'\u5854\u5185\u4e8c\u5c42'}],layerData:{'\u8d35\u91cd':['\u4fdd\u9669\u7bb1','\u6ef4\u6ef4\u4fdd\u9669','\u7535\u5b50\u4fdd\u9669','\u5c0f\u4fdd\u9669','\u519b\u7528\u4fdd\u9669\u7bb1'],'\u7535\u5b50':['\u6536\u94f6\u673a','\u5bb6\u7528\u673a\u7bb1','\u519b\u7528\u4e3b\u673a'],'\u7269\u8d44':['\u666e\u901a\u7269\u8d44\u7bb1','\u9ad8\u7ea7\u7269\u8d44\u7bb1','\u7a7a\u8c03\u7f50','\u5783\u573e\u7bb1','\u997c\u5e72\u76d2'],'\u5f39\u836f':['\u5b50\u5f39\u7bb1','\u624b\u96f7\u7bb1'],'\u533b\u7597':['\u533b\u7597\u7bb1','\u9ad8\u7ea7\u533b\u7597\u7bb1'],'\u5de5\u5177':['\u5de5\u5177\u7bb1','\u9ad8\u7ea7\u5de5\u5177\u7bb1'],'\u8863\u7269':['\u5927\u8863','\u84dd\u8272\u5927\u8863','\u8863\u670d'],'\u5bb6\u5177':['\u62bd\u5c49','\u522e\u522e\u4e50'],'\u5bb9\u5668':['\u6587\u4ef6\u7bb1','\u8fd0\u52a8\u5305','\u65c5\u884c\u7bb1','\u767d\u8272\u65c5\u884c\u7bb1','\u5546\u52a1\u65c5\u884c\u7bb1','\u540e\u5907\u7bb1'],'\u6b66\u5668':['\u5927\u578b\u6b66\u5668\u7bb1','\u4e2d\u578b\u6b66\u5668\u7bb1','\u6728\u8d28\u6b66\u5668\u7bb1','\u6b66\u5668\u7bb1','\u9ad8\u7ea7\u6b66\u5668\u7bb1','\u957f\u6761\u6b66\u5668\u7bb1'],'\u5176\u4ed6':['\u4e09\u8272\u706f','\u5171\u9e23\u7403','\u5949\u732e\u96d5\u50cf'],'\u4eba\u673a':['BOSS','\u6e05\u9053\u592b','\u9ed1\u91d1\u4eba\u673a','\u767d\u72fc\u4eba\u673a'],'\u914d\u4ef6':['\u914d\u4ef6\u7bb1']}},
+  armory:{eng:'armory',cn:'\u519b\u68b0\u5e93',img:'../assets/maps/armory.png',floors:[{img:'../assets/maps/armory.png',label:'\u5168\u5883'},{img:'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u8d1f\u4e00\u697c.png',label:'\u8d1f\u4e00\u697c'},{img:'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u4e00\u697c.png',label:'\u4e00\u697c'},{img:'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u4e8c\u697c.png',label:'\u4e8c\u697c'}],layerData:{'\u8d35\u91cd':['\u4fdd\u9669\u7bb1','\u6ef4\u6ef4\u4fdd\u9669','\u7535\u5b50\u4fdd\u9669','\u5c0f\u4fdd\u9669'],'\u7535\u5b50':['\u6536\u94f6\u673a','\u5bb6\u7528\u673a\u7bb1','\u519b\u7528\u4e3b\u673a'],'\u7269\u8d44':['\u666e\u901a\u7269\u8d44\u7bb1','\u9ad8\u7ea7\u7269\u8d44\u7bb1','\u7a7a\u8c03\u7f50'],'\u5f39\u836f':['\u5b50\u5f39\u7bb1','\u624b\u96f7\u7bb1'],'\u533b\u7597':['\u533b\u7597\u7bb1','\u9ad8\u7ea7\u533b\u7597\u7bb1'],'\u5de5\u5177':['\u5de5\u5177\u7bb1','\u9ad8\u7ea7\u5de5\u5177\u7bb1'],'\u8863\u7269':['\u5927\u8863','\u84dd\u8272\u5927\u8863','\u8863\u670d'],'\u5bb6\u5177':['\u62bd\u5c49','\u522e\u522e\u4e50'],'\u5bb9\u5668':['\u6587\u4ef6\u7bb1','\u8fd0\u52a8\u5305','\u65c5\u884c\u7bb1','\u767d\u8272\u65c5\u884c\u7bb1','\u5546\u52a1\u65c5\u884c\u7bb1'],'\u6b66\u5668':['\u5927\u578b\u6b66\u5668\u7bb1','\u4e2d\u578b\u6b66\u5668\u7bb1','\u6728\u8d28\u6b66\u5668\u7bb1','\u6b66\u5668\u7bb1','\u9ad8\u7ea7\u6b66\u5668\u7bb1','\u957f\u6761\u6b66\u5668\u7bb1'],'\u5176\u4ed6':['\u4e09\u8272\u706f','\u5171\u9e23\u7403','\u5949\u732e\u96d5\u50cf'],'\u4eba\u673a':['BOSS','\u6e05\u9053\u592b','\u9ed1\u91d1\u4eba\u673a','\u767d\u72fc\u4eba\u673a'],'\u914d\u4ef6':['\u914d\u4ef6\u7bb1']}}
+};
+
+// ====== Supabase 配置 ======
+var SUPABASE_URL = 'https://hanrfbciinkhgcumvous.supabase.co';
+var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+function supabase(t,m,b,f){var u=SUPABASE_URL+'/rest/v1/'+t;var o={method:m||'GET',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'}};if(b){o.body=JSON.stringify(b);o.headers['Authorization']='Bearer '+SUPABASE_ANON;}if(f)u+='?'+f;return fetch(u,o).then(function(r){if(r.status>=400)throw new Error(r.status);return r.text().then(function(t){if(!t)return{};return JSON.parse(t);});});}
+
+// ====== 状态 ======
+var mapData = null, currentFloor = 0, pins = [], mapComments = [];
+var scaleM = 1, panX = 0, panY = 0, selectedLayers = {}, curPinIdx = null;
+var touchStartDist = 0, touchStartScale = 1, touchStartX = 0, touchStartY = 0;
+var touchPanX = 0, touchPanY = 0, _touchMoved = false, mode = 'browse';
+
+// ====== 初始化 ======
+function init(){
+  var params = new URLSearchParams(window.location.search);
+  var map = params.get('map') || 'tvstation';
+  mapData = MAPS[map];
+  if(!mapData) { alert('未知地图: '+map); return; }
+
+  document.getElementById('mapTitle').textContent = mapData.cn + ' - 暗区突围';
+  document.title = mapData.cn + ' - 暗区突围地图';
+
+  // 加载初始图层（全选）
+  for(var cat in mapData.layerData) selectedLayers[cat] = true;
+
+  loadPins();
+  loadMapImg();
+  renderFloorSelector();
+  renderLayerSelector();
+  setupEvents();
+}
+
+function loadMapImg(){
+  var img = document.getElementById('mapImg');
+  img.src = mapData.floors[currentFloor].img;
+  img.onload = function(){ fitMap(); };
+}
+
+function fitMap(){
+  var wrap = document.getElementById('mapWrap');
+  var img = document.getElementById('mapImg');
+  if(!img.complete || !img.naturalWidth) return;
+  var wr = wrap.getBoundingClientRect();
+  // 以宽度填充屏幕，用户可拖拽查看
+  scaleM = wr.width / img.naturalWidth;
+  panX = 0;
+  panY = (wr.height - img.naturalHeight * scaleM) / 2;
+  // 如果高度不足，改为高度适配
+  if(img.naturalHeight * scaleM > wr.height * 1.2){
+    scaleM = wr.height / img.naturalHeight * 0.9;
+    panX = (wr.width - img.naturalWidth * scaleM) / 2;
+    panY = 0;
+  }
+  updateTransform();
+}
+
+function updateTransform(){
+  var el = document.getElementById('mv');
+  if(!el) return;
+  el.style.transform = 'translate('+panX+'px,'+panY+'px) scale('+scaleM+')';
+}
+
+// ====== 触控事件 ======
+function setupEvents(){
+  var mv = document.getElementById('mv');
+  if(!mv) return;
+
+  // 单指拖拽
+  mv.addEventListener('touchstart', function(e){
+    if(e.touches.length === 1){
+      _touchMoved = false;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchPanX = panX;
+      touchPanY = panY;
+    } else if(e.touches.length === 2){
+      touchStartDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      touchStartScale = scaleM;
+    }
+  }, {passive: true});
+
+  mv.addEventListener('touchmove', function(e){
+    if(e.touches.length === 1 && !_touchMoved){
+      var dx = e.touches[0].clientX - touchStartX;
+      var dy = e.touches[0].clientY - touchStartY;
+      if(Math.abs(dx) > 8 || Math.abs(dy) > 8) _touchMoved = true;
+    }
+    if(e.touches.length === 1 && _touchMoved){
+      var dx = e.touches[0].clientX - touchStartX;
+      var dy = e.touches[0].clientY - touchStartY;
+      panX = touchPanX + dx;
+      panY = touchPanY + dy;
+      updateTransform();
+      e.preventDefault();
+    } else if(e.touches.length === 2){
+      e.preventDefault();
+      var dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      scaleM = touchStartScale * dist / touchStartDist;
+      if(scaleM < 0.3) scaleM = 0.3;
+      if(scaleM > 10) scaleM = 10;
+      updateTransform();
+    }
+  }, {passive: false});
+
+  // 点击标记
+  mv.addEventListener('click', function(e){
+    var marker = e.target.closest('.pin-marker');
+    if(marker){
+      var idx = parseInt(marker.getAttribute('data-idx'));
+      if(!isNaN(idx)) openPinDetail(idx);
+      return;
+    }
+    closePinDetail();
+  });
+
+  // 缩放按钮
+  document.getElementById('zoomIn').addEventListener('click', function(){
+    scaleM *= 1.3;
+    if(scaleM > 10) scaleM = 10;
+    updateTransform();
+  });
+  document.getElementById('zoomOut').addEventListener('click', function(){
+    scaleM *= 0.7;
+    if(scaleM < 0.3) scaleM = 0.3;
+    updateTransform();
+  });
+
+  // 底部按钮
+  document.getElementById('floorBtn').addEventListener('click', toggleFloorSelector);
+  document.getElementById('layerBtn').addEventListener('click', toggleLayerSelector);
+  document.getElementById('resetViewBtn').addEventListener('click', fitMap);
+
+  // 返回
+  document.getElementById('backBtn').addEventListener('click', function(){
+    window.location.href = '../index.html';
+  });
+
+  // 弹窗关闭
+  document.getElementById('pdClose').addEventListener('click', closePinDetail);
+
+  // 遮罩关闭
+  document.getElementById('overlay').addEventListener('click', function(){
+    closeFloorSelector();
+    closeLayerSelector();
+    document.getElementById('hamburgerMenu').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  });
+
+  // 注册
+  setupHamburger();
+}
+
+// ====== 标记渲染 ======
+function loadPins(){
+  if(!mapData) return;
+  try {
+    var saved = localStorage.getItem('abi_'+mapData.eng+'_pins');
+    if(saved) { var d = JSON.parse(saved); pins = d.pins || []; mapComments = d.mapComments || []; }
+  } catch(e){}
+  console.log('[map-mobile] loaded', pins.length, 'pins for', mapData.eng);
+  renderPins();
+  loadCloudPins();
+}
+
+function loadCloudPins(){
+  if(!SUPABASE_URL) return;
+  setTimeout(function(){
+    supabase('pending_pins','GET',null,'select=*&map_name=eq.'+encodeURIComponent(mapData.cn)+'&status=eq.approved')
+      .then(function(rows){
+        if(!rows || !rows.length) return;
+        var localIds = {};
+        pins.forEach(function(p){ if(p.id) localIds[p.id] = true; });
+        var added = false;
+        rows.forEach(function(r){
+          if(!localIds[r.id]){
+            pins.push({
+              id: r.id, name: r.name, type: r.type, ic: r.ic||'', note: r.note||'',
+              images: r.images||[], comments: r.comments||[], floor: r.floor||0,
+              submitted_by: r.submitted_by||'', x: r.x, y: r.y
+            });
+            added = true;
+          }
+        });
+        if(added) renderPins();
+      })['catch'](function(){});
+  }, 500);
+}
+
+function renderPins(){
+  var layer = document.getElementById('pinsLayer');
+  if(!layer) return;
+  layer.innerHTML = '';
+
+  pins.forEach(function(p, idx){
+    if(p.floor !== undefined && p.floor !== null && p.floor !== currentFloor) return;
+
+    // 图层过滤
+    var cat = '';
+    if(mapData){
+      for(var c in mapData.layerData){
+        if(mapData.layerData[c].indexOf(p.name) >= 0) { cat = c; break; }
+      }
+    }
+    var keys = Object.keys(selectedLayers);
+    if(cat && keys.length > 0 && !selectedLayers[cat]) return;
+
+    var el = document.createElement('div');
+    el.className = 'pin-marker' + (idx === curPinIdx ? ' active' : '');
+    el.style.left = p.x + '%';
+    el.style.top = p.y + '%';
+    el.setAttribute('data-idx', idx);
+
+    var dot = document.createElement('div');
+    dot.className = 'pin-dot';
+    el.appendChild(dot);
+
+    if(p.name){
+      var label = document.createElement('div');
+      label.className = 'pin-icon';
+      label.textContent = p.name;
+      el.appendChild(label);
+    }
+
+    layer.appendChild(el);
+  });
+}
+
+// ====== 弹窗 ======
+function openPinDetail(idx){
+  curPinIdx = idx;
+  var p = pins[idx];
+  if(!p) return;
+
+  document.getElementById('pdName').textContent = p.name || '物资';
+  document.getElementById('pdInfo').textContent = (p.submitted_by ? '提交: '+p.submitted_by : '') + (p.floor ? ' | 楼层: '+p.floor : '');
+
+  var noteEl = document.getElementById('pdNote');
+  if(p.note){ noteEl.style.display = 'block'; noteEl.textContent = p.note; }
+  else { noteEl.style.display = 'none'; }
+
+  var imgsEl = document.getElementById('pdImages');
+  imgsEl.innerHTML = '';
+  if(p.images && p.images.length){
+    p.images.forEach(function(url){
+      var img = document.createElement('img');
+      img.src = url;
+      img.onerror = function(){ this.style.display='none'; };
+      imgsEl.appendChild(img);
+    });
+  }
+
+  document.getElementById('pinDetail').classList.add('open');
+
+  // 删除按钮
+  document.getElementById('pdDelete').onclick = function(){
+    if(!confirm('确定申请删除此标记？')) return;
+    var ustr = localStorage.getItem('abi_user');
+    var uname = 'Anon';
+    try{ var uj=JSON.parse(ustr); uname=uj.user_metadata&&uj.user_metadata.preferred_username||uj.user_metadata&&uj.user_metadata.user_name||'Anon'; }catch(e){}
+    if(p.id && SUPABASE_URL){
+      supabase('deletion_requests','POST',{pin_id:p.id,name:p.name,x:p.x,y:p.y,submitted_by:uname,type:p.type||'',ic:p.ic||'',note:p.note||'',images:p.images||[],floor:p.floor||0,map_name:mapData.cn||''})
+        .then(function(){ alert('已提交删除请求'); })['catch'](function(e){ alert('提交失败: '+e.message); });
+    } else {
+      pins.splice(idx, 1);
+      closePinDetail();
+      renderPins();
+    }
+  };
+
+  renderPins();
+}
+
+function closePinDetail(){
+  curPinIdx = null;
+  document.getElementById('pinDetail').classList.remove('open');
+  renderPins();
+}
+
+// ====== 楼层 ======
+function renderFloorSelector(){
+  var el = document.getElementById('floorSelector');
+  el.innerHTML = '';
+  if(!mapData) return;
+  mapData.floors.forEach(function(f, idx){
+    var item = document.createElement('div');
+    item.className = 'floor-item' + (idx === currentFloor ? ' active' : '');
+    item.textContent = f.label;
+    (function(i){ item.addEventListener('click', function(){ switchFloor(i); }); })(idx);
+    el.appendChild(item);
+  });
+}
+
+function switchFloor(idx){
+  if(idx === currentFloor) { closeFloorSelector(); return; }
+  currentFloor = idx;
+  var img = document.getElementById('mapImg');
+  img.src = mapData.floors[idx].img;
+  img.onload = function(){
+    fitMap();
+    renderPins();
+    renderFloorSelector();
+    closeFloorSelector();
+    closeLayerSelector();
+  };
+}
+
+// ====== 图层 ======
+function renderLayerSelector(){
+  var el = document.getElementById('layerSelector');
+  el.innerHTML = '';
+  if(!mapData) return;
+
+  var allSelected = true;
+  for(var cat in mapData.layerData){
+    if(!selectedLayers[cat]) { allSelected = false; break; }
+  }
+
+  var allItem = document.createElement('div');
+  allItem.className = 'layer-item';
+  allItem.innerHTML = '<span class="lchk">' + (allSelected ? '✓' : '') + '</span><span>全部</span>';
+  allItem.addEventListener('click', function(){
+    if(allSelected){
+      selectedLayers = {};
+    } else {
+      for(var c in mapData.layerData) selectedLayers[c] = true;
+    }
+    renderLayerSelector();
+    renderPins();
+  });
+  el.appendChild(allItem);
+
+  for(var cat in mapData.layerData){
+    var item = document.createElement('div');
+    item.className = 'layer-item' + (selectedLayers[cat] ? ' active' : '');
+    item.innerHTML = '<span class="lchk">' + (selectedLayers[cat] ? '✓' : '') + '</span><span>' + cat + '</span>';
+    (function(c){ item.addEventListener('click', function(){
+      if(selectedLayers[c]) delete selectedLayers[c];
+      else selectedLayers[c] = true;
+      renderLayerSelector();
+      renderPins();
+    });})(cat);
+    el.appendChild(item);
+  }
+}
+
+// ====== 面板开关 ======
+function toggleFloorSelector(){
+  closeLayerSelector();
+  var el = document.getElementById('floorSelector');
+  el.classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open', el.classList.contains('open'));
+}
+function closeFloorSelector(){
+  document.getElementById('floorSelector').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+function toggleLayerSelector(){
+  closeFloorSelector();
+  var el = document.getElementById('layerSelector');
+  el.classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open', el.classList.contains('open'));
+}
+function closeLayerSelector(){
+  document.getElementById('layerSelector').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// ====== 汉堡菜单 ======
+function setupHamburger(){
+  var hm = document.getElementById('hamburgerMenu');
+  if(!hm) return;
+
+  document.getElementById('hamburgerBtn').addEventListener('click', function(){
+    hm.classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+  });
+
+  document.getElementById('hmClose').addEventListener('click', function(){
+    hm.classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  });
+
+  hm.querySelector('.hm-logout').addEventListener('click', function(){
+    localStorage.removeItem('abi_token');
+    localStorage.removeItem('abi_user');
+    alert('已退出');
+    window.location.reload();
+  });
+}
+
+// ====== 启动 ======
+function boot(){
+  // 确保 DOM 和图片加载完毕
+  setTimeout(init, 50);
+}
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+
+<!-- 汉堡菜单 -->
+<div class="hamburger-menu" id="hamburgerMenu">
+  <button class="hm-close" id="hmClose">✕</button>
+  <div class="hm-section">
+    <div class="hm-section-title">🏠 导航</div>
+    <a class="hm-item" href="../index.html">首页</a>
+  </div>
+  <div class="hm-section">
+    <div class="hm-section-title">🗺 地图选图</div>
+    <a class="hm-item" href="map-tvstation.html">📺 电视台</a>
+    <a class="hm-item" href="map-farm.html">🌾 农场</a>
+    <a class="hm-item" href="map-valley.html">🏔 山谷</a>
+    <a class="hm-item" href="map-beishan.html">⛰ 北山</a>
+    <a class="hm-item" href="map-airport.html">✈ 阿贾克斯港口</a>
+    <a class="hm-item" href="map-armory.html">🏗 军械库</a>
+  </div>
+  <div class="hm-section">
+    <div class="hm-section-title">📋 攻略</div>
+    <a class="hm-item" href="3x3.html">赛季任务</a>
+    <a class="hm-item" href="search.html">搜索</a>
+  </div>
+  <div class="hm-section">
+    <div class="hm-section-title">👤 用户</div>
+    <a class="hm-item" href="login.html">用户中心</a>
+  </div>
+  <button class="hm-logout" id="hmLogout">🚪 退出登录</button>
+</div>
+
+</body>
+</html>
