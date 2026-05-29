@@ -191,13 +191,11 @@ function fitMap(){
   var img = document.getElementById("mapImg");
   if(!img || !img.complete || !img.naturalWidth) return;
   var wr = wrap.getBoundingClientRect();
-  // 计算把地图中心对准屏幕中心所需的偏移
-  // 图片实际渲染宽: wr.width (width:100%), 高: wr.width/img.naturalWidth*img.naturalHeight
-  var imgW = wr.width;
-  var imgH = imgW / img.naturalWidth * img.naturalHeight;
   scaleM = 4;
-  panX = (wr.width - imgW * scaleM) / 2;
-  panY = (wr.height - imgH * scaleM) / 2;
+  // 图片CSS渲染宽 = wr.width (width:100%), 高 = 按比例
+  // 居中: 偏移到使放大后的图片中心对齐屏幕中心
+  panX = (wr.width - wr.width * scaleM) / 2;
+  panY = (wr.height - wr.width / img.naturalWidth * img.naturalHeight * scaleM) / 2;
   updateTransform();
 }
 
@@ -227,7 +225,7 @@ function setupTouchEvents(){
       touchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
       touchStartScale = scaleM;
     }
-  }, {passive: true});
+  }, {passive: false});
 
   mv.addEventListener("touchmove", function(e){
     if(e.touches.length === 1){
