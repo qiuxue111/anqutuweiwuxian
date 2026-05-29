@@ -190,10 +190,14 @@ function fitMap(){
   var wrap = document.getElementById("mapWrap");
   var img = document.getElementById("mapImg");
   if(!img || !img.complete || !img.naturalWidth) return;
-  // 和 PC 版一致：左上角定位，scale=4
-  panX = 0;
-  panY = 0;
+  var wr = wrap.getBoundingClientRect();
+  // 计算把地图中心对准屏幕中心所需的偏移
+  // 图片实际渲染宽: wr.width (width:100%), 高: wr.width/img.naturalWidth*img.naturalHeight
+  var imgW = wr.width;
+  var imgH = imgW / img.naturalWidth * img.naturalHeight;
   scaleM = 4;
+  panX = (wr.width - imgW * scaleM) / 2;
+  panY = (wr.height - imgH * scaleM) / 2;
   updateTransform();
 }
 
