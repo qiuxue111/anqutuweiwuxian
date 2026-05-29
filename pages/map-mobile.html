@@ -1489,7 +1489,8 @@ function showPicker(){
       if(el) el.id==="zr"?el.value=400:(el.textContent="400%");
     });
   }
-  if(document.readyState==="complete")centerMap();else if(!window.location.search.includes("x="))window.addEventListener("load",centerMap);
+  // disabled for mobile: centerMap overrides fitMap panX/panY
+  // if(document.readyState==="complete")centerMap();else if(!window.location.search.includes("x="))window.addEventListener("load",centerMap);
 })();
 
 // Shift+Click: 在鼠标位置投稿容器
