@@ -431,6 +431,8 @@ function renderLayerSelector(){
     catDiv.appendChild(grid);
     el.appendChild(catDiv);
   });
+  // 恢复之前的选中状态
+  restoreLayerState();
 }
 
 function setupHamburger(){
