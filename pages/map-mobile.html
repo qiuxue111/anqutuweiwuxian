@@ -190,12 +190,10 @@ function fitMap(){
   var wrap = document.getElementById("mapWrap");
   var img = document.getElementById("mapImg");
   if(!img || !img.complete || !img.naturalWidth) return;
-  var wr = wrap.getBoundingClientRect();
-  // PC版默认4倍缩放，手机也放大到能看到细节
+  // 和 PC 版一致：左上角定位，scale=4
+  panX = 0;
+  panY = 0;
   scaleM = 4;
-  // 居中显示（左上角为原点）
-  panX = (wr.width - img.clientWidth * scaleM) / 2;
-  panY = (wr.height - img.clientHeight * scaleM) / 2;
   updateTransform();
 }
 
