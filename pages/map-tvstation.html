@@ -406,7 +406,11 @@ body{font-size:14px!important}
     <div class="pd-title" id="pdTitle">容器名称</div>
     <div class="pd-coord" id="pdCoord">位置</div>
     <div class="pd-submit" id="pdSubmit" style="color:#888;font-size:12px;margin-top:2px">
-    <div class="pd-note" id="pdNoteDisplay" style="color:#999;font-size:12px;margin-top:4px;padding:3px 6px;background:rgba(255,255,255,0.02);border-radius:4px;display:none"></div></div>
+    <div class="pd-note" id="pdNoteDisplay" style="color:#999;font-size:12px;margin-top:4px;padding:3px 6px;background:rgba(255,255,255,0.02);border-radius:4px;display:none"></div>
+    <div style="display:flex;gap:4px;margin-top:4px;align-items:center;">
+      <input type="text" id="pdNote" placeholder="添加备注..." style="flex:1;padding:4px 6px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:4px;color:#ccc;font-size:11px;outline:none">
+      <button onclick="submitPinNote()" style="padding:3px 8px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-weight:600;cursor:pointer;font-size:11px">保存</button>
+    </div></div>
 
     <button id="pdDelete" onclick="if(!localStorage.getItem('abi_token')){loginGitHub();return false;}deleteCurrentPin()" style="width:100%;padding:6px;background:rgba(255,50,50,0.15);border:1px solid #ff4444;border-radius:6px;color:#ff4444;cursor:pointer;font-size:11px;margin-top:6px;margin-bottom:6px">🗑 删除该容器</button>
 
@@ -1012,6 +1016,31 @@ function saveNote(idx,el){
   el.onchange=handler;
   el.onblur=handler;
   if(pins[idx]&&pins[idx].note) el.value=pins[idx].note;
+}
+
+function submitPinNote(){
+  var idx = curPinIdx;
+  if(idx===null||idx===undefined) return;
+  var input = document.getElementById('pdNote');
+  if(!input) return;
+  var val = input.value.trim();
+  if(pins[idx]){
+    pins[idx].note = val;
+    // Update tooltip
+    var marker = document.querySelector('.pin-marker[data-pin-idx="'+idx+'"]');
+    if(marker){ if(val) marker.setAttribute('title',val); else marker.removeAttribute('title'); }
+    // Update display
+    var nd = document.getElementById('pdNoteDisplay');
+    if(nd){ if(val){ nd.textContent='\u2709 '+val; nd.style.display='block'; } else nd.style.display='none'; }
+    // Save to Supabase
+    if(pins[idx].id){
+      supabase('pins','PATCH',{note:val},'id=eq.'+pins[idx].id).then(function(){
+        input.placeholder='\u5df2\u4fdd\u5b58';
+      }).catch(function(e){
+        alert('\u4fdd\u5b58\u5931\u8d25: '+e.message);
+      });
+    }
+  }
 }
 
 // === 汉堡导航 ===
