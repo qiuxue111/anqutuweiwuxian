@@ -547,11 +547,11 @@ function switchFloor(idx) {
   window._switchFloorLock = true;
   
   img.onload = function(){
-    // 新图片加载完成：恢复视图
+    // 新图片加载完成：完全恢复之前的视图，不重新计算（不同楼层图片尺寸不同）
     panX = savedPanX;
     panY = savedPanY;
     scaleM = savedScale;
-    fitMap('force');
+    updateTransform();
     window._switchFloorLock = false;
     // 标记过滤
     var mv=document.getElementById('mv');
