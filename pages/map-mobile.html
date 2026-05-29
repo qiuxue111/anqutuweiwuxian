@@ -258,6 +258,11 @@ function init(){
 }
 
 function fitMap(){
+  // 防抖：忽略后续重复调用（PC版centerMap/switchFloor可能导致多次调用）
+  if(window._fmLock) return;
+  window._fmLock = true;
+  setTimeout(function(){ window._fmLock = false; }, 3000);
+  
   var wrap = document.getElementById("mapWrap");
   var img = document.getElementById("mapImg");
   if(!img || !img.complete || !img.naturalWidth) { console.log('fitMap: skip, img not ready'); return; }
