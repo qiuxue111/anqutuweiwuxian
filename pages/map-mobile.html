@@ -9,7 +9,7 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#0a0a14;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#ccc;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 
 .map-wrap{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden}
-#mv{position:absolute;top:0;left:0;transform-origin:0 0;width:100%}
+#mv{transform-origin:0 0}
 #mapImg{display:block;width:100%;height:auto;pointer-events:none;min-width:100%}
 #mv .pin-marker{position:absolute;cursor:pointer;transition:opacity .15s;z-index:2;pointer-events:auto}
 #mv .pin-marker .pin-dot{width:20px;height:20px;border-radius:50%;border:2.5px solid #ffc832;background:rgba(255,200,50,0.35);transform:translate(-50%,-50%);box-shadow:0 0 6px rgba(255,200,50,0.3)}
@@ -278,11 +278,11 @@ function setupTouchEvents(){
   var mv = document.getElementById("mv");
   if(!mv) return;
   
-  // 禁用 PC 版 touch 监听（双指缩放由我们接管）
-  mv._touchEventsDisabled = true;
+  // 覆盖 PC 版的事件监听（手机不需要）
+  mv.onwheel = null;  // 禁用 PC 版 wheel 缩放
   
   mv.addEventListener("touchstart", function(e){
-    if(this._touchEventsDisabled) e.stopImmediatePropagation();
+    e.preventDefault();  // 阻止 mouse 模拟事件
     if(e.touches.length === 1){
       _touchMoved = false;
       touchStartX = e.touches[0].clientX;
