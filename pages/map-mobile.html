@@ -556,13 +556,6 @@ function switchFloor(idx) {
     // 标记过滤
     var mv=document.getElementById('mv');
     if(mv){mv.querySelectorAll('.pin-marker').forEach(function(el){var pi=parseInt(el.getAttribute('data-pin-idx'));if(!isNaN(pi)&&pins[pi]){var pf=pins[pi].floor||0;el.style.display=pf===idx?'':'none';}});}
-    // 二次保护：防止PC版代码稍后篡改视图
-    setTimeout(function(){
-      panX = savedPanX;
-      panY = savedPanY;
-      scaleM = savedScale;
-      updateTransform();
-    }, 200);
   };
   
   img.src = floorImages[idx];
