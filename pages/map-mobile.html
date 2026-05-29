@@ -253,6 +253,11 @@ function init(){
   // 禁用 PC 版 centerMap（会覆盖我们的 fitMap）
   window.centerMap = function(){};
   
+  // 确保手机版 switchFloor 不被 PC 版覆盖
+  setTimeout(function(){
+    window.switchFloor = switchFloor;
+  }, 100);
+  
   setupMobileUI();
   setupHamburger();
 }
