@@ -268,11 +268,15 @@ function fitMap(){
   if(!img || !img.complete || !img.naturalWidth) { console.log('fitMap: skip, img not ready'); return; }
   var wr = wrap.getBoundingClientRect();
   if(!wr.width || !wr.height) { console.log('fitMap: wrap has zero size'); return; }
-  // 图片填满宽度，scale=1时图片自然显示
+  
+  // 图片填满宽度
   scaleM = 1;
   panX = 0;
-  panY = 0;
-  console.log('fitMap', wr.width, wr.height, img.naturalWidth, img.naturalHeight);
+  // 垂直居中：屏幕高度减去图片显示高度后除以2
+  var imgH = img.getBoundingClientRect().height;
+  panY = (wr.height - imgH) / 2;
+  
+  console.log('fitMap', wr.width, wr.height, img.naturalWidth, img.naturalHeight, 'panY:', panY);
   updateTransform();
 }
 
