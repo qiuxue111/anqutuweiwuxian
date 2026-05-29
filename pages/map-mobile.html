@@ -243,7 +243,10 @@ function init(){
   setTimeout(function(){
     if(img.complete || !img.naturalWidth) fitMap();
   }, 500);
-
+  
+  // 禁用 PC 版 centerMap（会覆盖我们的 fitMap）
+  window.centerMap = function(){};
+  
   setupMobileUI();
   setupHamburger();
 }
@@ -333,8 +336,18 @@ function setupBottomBar(){
   });
   document.getElementById("layerBtn").addEventListener("click", function(){
     document.getElementById("floorSelector").classList.remove("open");
-    document.getElementById("layerSelector").classList.toggle("open");
-    document.getElementById("overlay").classList.toggle("open", document.getElementById("layerSelector").classList.contains("open"));
+    var ls = document.getElementById("layerSelector");
+    ls.classList.toggle("open");
+    if(ls.classList.contains("open")){
+      // 确保 #lp 在 #layerSelector 里
+      var lp = document.getElementById("lp");
+      if(lp && lp.parentNode !== ls) {
+        ls.innerHTML = '';
+        ls.appendChild(lp);
+      }
+      renderLayerSelector();
+    }
+    document.getElementById("overlay").classList.toggle("open", ls.classList.contains("open"));
   });
   document.getElementById("addPinBtn").addEventListener("click", function(){
     if(!localStorage.getItem("abi_token")){ alert("请先登录"); loginGitHub(); return; }
