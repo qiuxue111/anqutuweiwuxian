@@ -506,8 +506,7 @@ function zoomTo(v,cx,cy){v=v/100;if(v<0.1)v=0.1;if(v>10)v=10;if(cx!==void 0&&cy!
 function resetView(){scaleM=1;panX=0;panY=0;var e=document.getElementById('mv');if(e)e.style.transform='translate(0px,0px) scale(1)';var zr=document.getElementById('zr');if(zr)zr.value=100;var zl=document.getElementById('zl');if(zl)zl.textContent='100%';}
 document.addEventListener('DOMContentLoaded',function(){
   document.addEventListener('click',function(e){
-    var mv=document.getElementById('mv');
-    if(mv&&!mv.contains(e.target)){resetView();}
+    if(e.target===document.body){resetView();}
   });
 });
 window.onerror=function(m,s,l,c,err){console.error('JS err',m,l,c);alert('Err: '+m);return true;};
