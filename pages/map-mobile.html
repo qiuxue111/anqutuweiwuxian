@@ -355,13 +355,17 @@ function renderLayerSelector(){
   if(!el) return;
   
   // 构建手机版图层UI：分类+容器单独开关
-  el.innerHTML = '<div class="ly-all"><label><input type="checkbox" id="lyAllCb" data-layer="__all__" checked><span>All</span></label></div>';
+  el.innerHTML = '<div class="ly-ctrl"><button id="lySelAll" class="ly-ctrl-btn">☑ 全选</button><button id="lyClearAll" class="ly-ctrl-btn">☐ 取消</button></div>';
   
-  var allCb = el.querySelector('#lyAllCb');
-  allCb.addEventListener('change', function(){
-    el.querySelectorAll('input[data-name]').forEach(function(cb){ cb.checked = this.checked; }, this);
-    el.querySelectorAll('input[data-layer]').forEach(function(cb){ cb.checked = this.checked; }, this);
+  document.getElementById('lySelAll').addEventListener('click', function(){
+    el.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked = true; });
     dispatchLayerCheck();
+    saveLayerState();
+  });
+  document.getElementById('lyClearAll').addEventListener('click', function(){
+    el.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked = false; });
+    dispatchLayerCheck();
+    saveLayerState();
   });
   
   // Use the current map's layerData keys instead of waiting for global orders
@@ -389,6 +393,8 @@ function renderLayerSelector(){
         }
       }, this);
       dispatchLayerCheck();
+      // Save state
+      saveLayerState();
     });
     hdr.appendChild(hdrCb);
     hdr.appendChild(document.createTextNode(' ' + k));
@@ -404,7 +410,7 @@ function renderLayerSelector(){
       cb.type = 'checkbox';
       cb.checked = true;
       cb.setAttribute('data-name', item);
-      cb.addEventListener('change', function(){ dispatchLayerCheck(); });
+      cb.addEventListener('change', function(){ dispatchLayerCheck(); saveLayerState(); });
       lbl.appendChild(cb);
       // 图标
       var ic = getIconUrl(item);
@@ -805,6 +811,35 @@ async function deletePinComment(commentId,pinIdx){
     }
   }catch(e){alert(e.message)}
 }
+
+// 保存图层选中状态到 localStorage
+function saveLayerState(){
+  var el = document.getElementById('layerSelector');
+  if(!el) return;
+  var state = {};
+  el.querySelectorAll('input[type=checkbox]').forEach(function(cb){
+    var name = cb.getAttribute('data-name') || cb.getAttribute('data-layer') || '';
+    if(name) state[name] = cb.checked;
+  });
+  localStorage.setItem('mobile_layer_state_' + currentMap, JSON.stringify(state));
+}
+
+// 恢复图层选中状态
+function restoreLayerState(){
+  var saved = localStorage.getItem('mobile_layer_state_' + currentMap);
+  if(!saved) return;
+  try {
+    var state = JSON.parse(saved);
+    var el = document.getElementById('layerSelector');
+    if(!el) return;
+    el.querySelectorAll('input[type=checkbox]').forEach(function(cb){
+      var name = cb.getAttribute('data-name') || cb.getAttribute('data-layer') || '';
+      if(name && state[name] !== undefined) cb.checked = state[name];
+    });
+    dispatchLayerCheck();
+  } catch(e){}
+}
+
 function dispatchLayerCheck(){var hiddenTypes={};var hiddenNames={};var lp=document.getElementById('lp');var ls=document.getElementById('layerSelector');function qs(p){var r=[];if(lp)r=r.concat(Array.from(lp.querySelectorAll(p)));if(ls)r=r.concat(Array.from(ls.querySelectorAll(p)));return r;}qs('input[data-layer]').forEach(function(cb){if(!cb.checked){var t=cb.getAttribute('data-layer');if(t!=='__all__'&&!hiddenTypes[t])hiddenTypes[t]=true;}});qs('input[data-name]').forEach(function(cb){if(!cb.checked){hiddenNames[cb.getAttribute('data-name')]=true;}});var mv=document.getElementById('mv');if(!mv)return;mv.querySelectorAll('.pin-marker').forEach(function(el){var idx=parseInt(el.getAttribute('data-pin-idx'));if(isNaN(idx)||!pins[idx])return;var p=pins[idx];var hide=false;if(hiddenNames[p.name]){hide=true;}if(!hide){for(var ht in hiddenTypes){if(layerData[ht]&&layerData[ht].indexOf(p.name)>=0){hide=true;break;}}}el.style.display=hide?'none':(pins[idx]?(function(){var pf=(pins[idx].floor!==undefined&&pins[idx].floor!==null)?pins[idx].floor:0;return pf===currentFloor?'':'none';})():'');});}
 function renderLayers(){
   var lp=document.getElementById('lp');if(!lp)return;
