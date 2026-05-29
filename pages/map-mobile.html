@@ -238,7 +238,7 @@ function init(){
   var img = document.getElementById("mapImg");
   img.src = floorImages[0];
   img.onload = function(){
-    fitMap();
+    fitMap('force');
     loadFromLocal();
     loadCloudPins();
     checkReviewBtn();
@@ -247,7 +247,7 @@ function init(){
   };
   // 后备：onload 不触发时重试
   setTimeout(function(){
-    if(img.complete || !img.naturalWidth) fitMap();
+    if(img.complete || !img.naturalWidth) fitMap('force');
   }, 500);
   
   // 禁用 PC 版 centerMap（会覆盖我们的 fitMap）
@@ -262,12 +262,10 @@ function init(){
   setupHamburger();
 }
 
-function fitMap(){
-  // 防抖：忽略后续重复调用（PC版centerMap/switchFloor可能导致多次调用）
-  if(window._fmLock) return;
+function fitMap(from){
+  // 防抖：首次调用锁定，后续忽略（包括PC版的各种间接调用）
+  if(window._fmLock && from !== 'force') return;
   window._fmLock = true;
-  setTimeout(function(){ window._fmLock = false; }, 3000);
-  
   var wrap = document.getElementById("mapWrap");
   var img = document.getElementById("mapImg");
   if(!img || !img.complete || !img.naturalWidth) { console.log('fitMap: skip, img not ready'); return; }
@@ -555,7 +553,7 @@ function switchFloor(idx) {
     panX = savedPanX;
     panY = savedPanY;
     scaleM = savedScale;
-    updateTransform();
+    fitMap('force');
     window._switchFloorLock = false;
     // 标记过滤
     var mv=document.getElementById('mv');
