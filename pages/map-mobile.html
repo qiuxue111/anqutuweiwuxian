@@ -189,14 +189,15 @@ function init(){
 function fitMap(){
   var wrap = document.getElementById("mapWrap");
   var img = document.getElementById("mapImg");
-  if(!img || !img.complete || !img.naturalWidth) return;
+  if(!img || !img.complete || !img.naturalWidth) { console.log('fitMap: skip, img not ready'); return; }
   var wr = wrap.getBoundingClientRect();
-  // 填满屏幕宽度，高度自适应，居中显示
-  scaleM = wr.width / Math.min(wr.width, img.naturalWidth);
+  if(!wr.width || !wr.height) { console.log('fitMap: wrap has zero size'); return; }
+  // 填满屏幕宽度，高度自适应
+  scaleM = Math.max(0.5, wr.width / img.naturalWidth);
   panX = 0;
   var imgH = wr.width / img.naturalWidth * img.naturalHeight;
-  panY = (wr.height - imgH * scaleM) / 2;
-  if(Math.abs(panY) < 10) panY = 0;
+  panY = Math.max(0, (wr.height - imgH * scaleM) / 2);
+  console.log('fitMap', wr.width, wr.height, img.naturalWidth, img.naturalHeight, scaleM, panX, panY);
   updateTransform();
 }
 
