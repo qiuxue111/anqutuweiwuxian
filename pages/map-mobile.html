@@ -273,7 +273,12 @@ function setupMobileUI(){
 function setupTouchEvents(){
   var mv = document.getElementById("mv");
   if(!mv) return;
+  
+  // 禁用 PC 版 touch 监听（双指缩放由我们接管）
+  mv._touchEventsDisabled = true;
+  
   mv.addEventListener("touchstart", function(e){
+    if(this._touchEventsDisabled) e.stopImmediatePropagation();
     if(e.touches.length === 1){
       _touchMoved = false;
       touchStartX = e.touches[0].clientX;
