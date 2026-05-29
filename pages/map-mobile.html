@@ -140,20 +140,13 @@ var MAPS = {
   armory:{eng:'armory',cn:'前线要塞',img:'../assets/maps/armory.png',floors:[{img:'../assets/maps/armory.png',label:'\u5168\u5883'},{img:'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u8d1f\u4e00\u697c.png',label:'\u8d1f\u4e00\u697c'},{img:'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u4e00\u697c.png',label:'\u4e00\u697c'},{img:'../assets/maps/armory_\u524d\u7ebf\u8981\u585e\u4e8c\u697c.png',label:'\u4e8c\u697c'}],layerData:{'\u8d35\u91cd':['\u4fdd\u9669\u7bb1','\u6ef4\u6ef4\u4fdd\u9669','\u7535\u5b50\u4fdd\u9669','\u5c0f\u4fdd\u9669'],'\u7535\u5b50':['\u6536\u94f6\u673a','\u5bb6\u7528\u673a\u7bb1','\u519b\u7528\u4e3b\u673a'],'\u7269\u8d44':['\u666e\u901a\u7269\u8d44\u7bb1','\u9ad8\u7ea7\u7269\u8d44\u7bb1','\u7a7a\u8c03\u7f50'],'\u5f39\u836f':['\u5b50\u5f39\u7bb1','\u624b\u96f7\u7bb1'],'\u533b\u7597':['\u5927\u578b\u533b\u7597\u7bb1','\u533b\u7597\u7bb1','\u9ad8\u7ea7\u533b\u7597\u7bb1','\u5c0f\u578b\u533b\u7597\u7bb1'],'\u5de5\u5177':['\u5de5\u5177\u7bb1','\u9ad8\u7ea7\u5de5\u5177\u7bb1'],'\u8863\u7269':['\u5927\u8863','\u84dd\u8272\u5927\u8863','\u8863\u670d'],'\u5bb6\u5177':['\u62bd\u5c49','\u522e\u522e\u4e50'],'\u5bb9\u5668':['\u6587\u4ef6\u7bb1','\u8fd0\u52a8\u5305','\u65c5\u884c\u7bb1','\u767d\u8272\u65c5\u884c\u7bb1','\u5546\u52a1\u65c5\u884c\u7bb1'],'\u6b66\u5668':['\u5927\u578b\u6b66\u5668\u7bb1','\u4e2d\u578b\u6b66\u5668\u7bb1','\u6728\u8d28\u6b66\u5668\u7bb1','\u6b66\u5668\u7bb1','\u9ad8\u7ea7\u6b66\u5668\u7bb1','\u957f\u6761\u6b66\u5668\u7bb1'],'\u5176\u4ed6':['\u4e09\u8272\u706f','\u5171\u9e23\u7403','\u5949\u732e\u96d5\u50cf'],'\u4eba\u673a':['BOSS','\u6e05\u9053\u592b','\u9ed1\u91d1\u4eba\u673a','\u767d\u72fc\u4eba\u673a'],'\u914d\u4ef6':['\u914d\u4ef6\u7bb1']}}
 };
 
-var SUPABASE_URL = "https://brrpbtuxgecufcvnmcdb.supabase.co";
-var SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJycnBidHV4Z2VjdWZjdm5tY2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NTI1NzEsImV4cCI6MjA2MTEyODU3MX0.RFXfEqUj5Z5YjSLxTMjk7kjlo14ggcPpLMxVsrceHqg";
+var SUPABASE_URL = "https://hanrfbciinkhgcumvous.supabase.co";
+var SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok";
 function supabase(t,m,b,f){
-  var u=SUPABASE_URL+"/rest/v1/"+t;if(f)u+="?"+f;
-  var tk=localStorage.getItem("abi_token");
-  var token=SUPABASE_ANON;
-  if(tk){
-    try{
-      var p=JSON.parse(atob(tk.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
-      if(p.exp&&p.exp*1000>Date.now())token=tk;
-    }catch(e){}
-  }
-  var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON,"Authorization":"Bearer "+token,"Content-Type":"application/json"}};
-  if(b)o.body=JSON.stringify(b);
+  var u=SUPABASE_URL+"/rest/v1/"+t;
+  var o={method:m||"GET",headers:{"apikey":SUPABASE_ANON,"Content-Type":"application/json"}};
+  if(b){o.body=JSON.stringify(b);o.headers["Authorization"]="Bearer "+SUPABASE_ANON;}
+  if(f)u+="?"+f;
   return fetch(u,o).then(function(r){
     if(r.status>=400)throw new Error(r.status);
     return r.text().then(function(t){if(!t)return{};return JSON.parse(t);});
@@ -569,7 +562,7 @@ function getIconUrl(n){var u=iconUrls[n]||'';return u;}
 // SUPABASE_URL defined in mobile init
 /* supabase defined in init */
 
-function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://brrpbtuxgecufcvnmcdb.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
+function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
 function logout(){localStorage.removeItem('abi_token');localStorage.removeItem('abi_user');window.location.reload();}
 function ut(){var el=document.getElementById('mv');if(!el)return;el.style.transform='translate('+panX+'px,'+panY+'px) scale('+scaleM+')';var zr=document.getElementById('zr');if(zr)zr.value=Math.round(scaleM*100);var zl=document.getElementById('zl');if(zl)zl.textContent=Math.round(scaleM*100)+'%';try{renderMarkers();}catch(e){}}
 function zoom(f,cx,cy){if(cx===void 0||cy===void 0){scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>10)scaleM=10;ut();return;}var prev=scaleM;scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>10)scaleM=10;var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=cx-wr.left,my=cy-wr.top;var imgX=(mx-panX)/prev,imgY=(my-panY)/prev;panX=mx-imgX*scaleM;panY=my-imgY*scaleM;ut();}
