@@ -544,7 +544,8 @@ function switchFloor(idx) {
   document.querySelectorAll('.floor-btn').forEach(function(btn, i) {
     btn.classList.toggle('active', i === idx);
   });
-  resetView();
+  // 不reset视图：保持panX/panY/scale不变
+  fitMap();
   // 过滤标记 — 只显示当前楼层
   var mv=document.getElementById('mv');
   if(mv){mv.querySelectorAll('.pin-marker').forEach(function(el){var pi=parseInt(el.getAttribute('data-pin-idx'));if(!isNaN(pi)&&pins[pi]){var pf=pins[pi].floor||0;el.style.display=pf===idx?'':'none';}});}
