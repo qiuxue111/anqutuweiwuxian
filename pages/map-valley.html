@@ -4,7 +4,7 @@
   <link rel="icon" href="../favicon.ico" type="image/jpeg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>灞辫胺鍦板浘 - 鏆楀尯绐佸洿锛氭棤闄?/title>
+<title>山谷地图 - 暗区突围：无限</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0;padding:0;overflow:hidden}
@@ -40,7 +40,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 #vm{padding:3px 6px;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;margin:0 0 1rem;display:flex;align-items:center;gap:8px}
 #vm .coord{color:#ffc832;font-family:monospace;font-size:14px}
 #vm .sel-btn{display:none;padding:5px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:12px}
-/* 鈹€鈹€鈹€ 瀹瑰櫒璇︽儏寮圭獥 鈹€鈹€鈹€ */
+/* ─── 容器详情弹窗 ─── */
 .pd-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:9998;justify-content:center;align-items:center}
 .pd-overlay.show{display:flex}
 .pd-box{background:#12121a;border:1px solid #1e1e2a;border-radius:16px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.6)}
@@ -66,7 +66,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 .pd-comments .pdc-list{margin-top:8px;max-height:200px;overflow-y:auto}
 .pd-comments .pdc-item{padding:6px 8px;background:#0a0a10;border-radius:6px;margin-bottom:4px;font-size:12px;color:#ccc}
 .pd-comments .pdc-item .pdc-time{color:#666;font-size:12px;float:right}
-/* 鈹€鈹€鈹€ 鍦板浘鍏ㄥ眬璇勮鍖?鈹€鈹€鈹€ */
+/* ─── 地图全局评论区 ─── */
 .map-comments{margin:1rem auto;max-width:1200px;background:#12121a;border:1px solid #1e1e2a;border-radius:12px;padding:16px}
 .map-comments h3{color:#ffc832;font-size:12px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .map-comments textarea{width:100%;min-height:60px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:8px;color:#ddd;padding:10px;font-size:14px;resize:vertical;font-family:inherit}
@@ -155,7 +155,7 @@ body{overflow:hidden;background:#0a0a0f}
   <link rel="icon" href="../favicon.ico" type="image/jpeg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>灞辫胺鍦板浘 - 鏆楀尯绐佸洿锛氭棤闄?/title>
+<title>山谷地图 - 暗区突围：无限</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0;padding:0;overflow:hidden}
@@ -191,7 +191,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 #vm{padding:3px 6px;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;margin:0 0 1rem;display:flex;align-items:center;gap:8px}
 #vm .coord{color:#ffc832;font-family:monospace;font-size:14px}
 #vm .sel-btn{display:none;padding:5px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:12px}
-/* 鈹€鈹€鈹€ 瀹瑰櫒璇︽儏寮圭獥 鈹€鈹€鈹€ */
+/* ─── 容器详情弹窗 ─── */
 .pd-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:9998;justify-content:center;align-items:center}
 .pd-overlay.show{display:flex}
 .pd-box{background:#12121a;border:1px solid #1e1e2a;border-radius:16px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.6)}
@@ -217,7 +217,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 .pd-comments .pdc-list{margin-top:8px;max-height:200px;overflow-y:auto}
 .pd-comments .pdc-item{padding:6px 8px;background:#0a0a10;border-radius:6px;margin-bottom:4px;font-size:12px;color:#ccc}
 .pd-comments .pdc-item .pdc-time{color:#666;font-size:12px;float:right}
-/* 鈹€鈹€鈹€ 鍦板浘鍏ㄥ眬璇勮鍖?鈹€鈹€鈹€ */
+/* ─── 地图全局评论区 ─── */
 .map-comments{margin:1rem auto;max-width:1200px;background:#12121a;border:1px solid #1e1e2a;border-radius:12px;padding:16px}
 .map-comments h3{color:#ffc832;font-size:12px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .map-comments textarea{width:100%;min-height:60px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:8px;color:#ddd;padding:10px;font-size:14px;resize:vertical;font-family:inherit}
@@ -301,35 +301,35 @@ body{overflow:hidden;background:#0a0a0f}
 .ly-pop{min-width:280px!important;max-width:90vw!important;width:auto!important}
 </style></head>
 <body>
-<div class="hamburger" id="hamburger" onclick="toggleHamburger()">鈽?/div>
+<div class="hamburger" id="hamburger" onclick="toggleHamburger()">☰</div>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
-<div class="top-bar" id="topBar"><a href="../index.html" class="logo">鏆楀尯鏃犻檺</a><div class="sep"></div><button class="btn" onclick="resetView()">澶嶄綅</button>
-<button class="btn" onclick="resetPositions()">鈫?褰掍綅</button><div class="sep"></div><span class="user-name" id="userName2"></span><button class="btn" id="loginBtn2" onclick="loginGitHub()">鐧诲綍</button><button class="btn" id="reviewBtn2" onclick="window.location.href='review.html?from=map-valley'" style="display:none">瀹℃牳</button></div>
-<div class="mat-panel" id="matPanel"><button class="mat-btn" id="matBtn" onclick="toggleMat()">馃摝 鐗╄祫</button><div class="mat-content" id="matContent"></div></div>
+<div class="top-bar" id="topBar"><a href="../index.html" class="logo">暗区无限</a><div class="sep"></div><button class="btn" onclick="resetView()">复位</button>
+<button class="btn" onclick="resetPositions()">↺ 归位</button><div class="sep"></div><span class="user-name" id="userName2"></span><button class="btn" id="loginBtn2" onclick="loginGitHub()">登录</button><button class="btn" id="reviewBtn2" onclick="window.location.href='review.html?from=map-valley'" style="display:none">审核</button></div>
+<div class="mat-panel" id="matPanel"><button class="mat-btn" id="matBtn" onclick="toggleMat()">📦 物资</button><div class="mat-content" id="matContent"></div></div>
 <div class="floor-wrap" id="floorWrap" style="display:none"
-<div class="action-bar" id="actionBar"><button class="action-btn" onclick="toggleMode()">馃摝<span class="ab-tip"></span></button><button class="action-btn" onclick="toggleFullscreen()">鉀?span class="ab-tip">鍏ㄥ睆</span></button></div>
+<div class="action-bar" id="actionBar"><button class="action-btn" onclick="toggleMode()">📦<span class="ab-tip"></span></button><button class="action-btn" onclick="toggleFullscreen()">⛶<span class="ab-tip">全屏</span></button></div>
 <div class="zoom-wrap" id="zoomWrap"><button class="zoom-btn" onclick="zoom(1.25)">+</button><div class="zoom-sep"></div><button class="zoom-btn" onclick="zoom(0.8)">-</button><div class="zoom-sep"></div><div class="zoom-pct" id="zl2">100%</div></div>
 <nav class="navbar">
-  <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;font-weight:bold;">鏆楀尯鏃犻檺</a><span style="color:#888;font-size:0.8rem;"> 鏀荤暐绔?/span></div>
+  <div class="logo"><a href="../index.html" style="color:#ffc832;text-decoration:none;font-weight:bold;">暗区无限</a><span style="color:#888;font-size:0.8rem;"> 攻略站</span></div>
   <div id="userArea" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
     <span id="userName" style="color:#ffc832;font-size:0.85rem;display:none;"></span>
-    <button id="loginBtn" onclick="loginGitHub()" style="padding:4px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-size:0.8rem;cursor:pointer;font-weight:bold;">鐧诲綍</button>
+    <button id="loginBtn" onclick="loginGitHub()" style="padding:4px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-size:0.8rem;cursor:pointer;font-weight:bold;">登录</button>
     <button id="menuBtn" onclick="toggleMenu()" style="width:32px;height:32px;background:#1e1e2a;color:#ccc;border:1px solid #333;border-radius:6px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#9776;</button>
   </div>
   <div id="sideMenu" style="display:none;position:fixed;top:0;right:0;width:260px;height:100vh;background:#0f0f18;border-left:1px solid #1e1e2a;z-index:9999;padding:1rem;box-shadow:-4px 0 20px rgba(0,0,0,0.5);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #1e1e2a;">
-      <span style="color:#ffc832;font-weight:bold;">鑿滃崟</span>
+      <span style="color:#ffc832;font-weight:bold;">菜单</span>
       <button onclick="toggleMenu()" style="width:28px;height:28px;background:transparent;color:#888;border:1px solid #333;border-radius:4px;cursor:pointer;font-size:1rem;">&#10005;</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
-      <a href="maps.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F5FA; 鍦板浘閫夊浘</a>
-      <a href="weapons.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F527; 鏀规灙</a>
-      <a href="strategy.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4AC; 鑱婂ぉ</a>
-      <a href="gear.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4D6; 鏀荤暐</a>
-      <a href="../search.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F50D; 鎼滅储</a>
+      <a href="maps.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F5FA; 地图选图</a>
+      <a href="weapons.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F527; 改枪</a>
+      <a href="strategy.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4AC; 聊天</a>
+      <a href="gear.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F4D6; 攻略</a>
+      <a href="../search.html" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F50D; 搜索</a>
       <div style="border-top:1px solid #1e1e2a;margin:8px 0;padding-top:8px;">
-        <a href="#" onclick="showUserCenter()" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F464; 鐢ㄦ埛涓績</a>
-        <a href="#" onclick="logout()" style="display:block;padding:10px 12px;color:#e74c3c;border-radius:6px;text-decoration:none;font-size:0.9rem;">閫€鍑虹櫥褰?/a>
+        <a href="#" onclick="showUserCenter()" style="display:block;padding:10px 12px;color:#ccc;border-radius:6px;text-decoration:none;font-size:0.95rem;">&#x1F464; 用户中心</a>
+        <a href="#" onclick="logout()" style="display:block;padding:10px 12px;color:#e74c3c;border-radius:6px;text-decoration:none;font-size:0.9rem;">退出登录</a>
       </div>
     </div>
   </div>
@@ -351,7 +351,7 @@ body{overflow:hidden;background:#0a0a0f}
 .floor-btn:hover{background:rgba(255,200,50,0.15);border-color:#ffc832;color:#ffc832}
 .floor-btn.active{background:#ffc832;color:#0a0a0f;border-color:#ffc832;font-weight:600}
 
-/* === 鍥哄畾灏哄锛氶潰鏉?鎸夐挳涓嶅彈娴忚鍣ㄧ缉鏀惧奖鍝?=== */
+/* === 固定尺寸：面板/按钮不受浏览器缩放影响 === */
 body{font-size:14px!important}
 .floor-btn{min-width:80px!important;height:30px!important;padding:4px 10px!important;font-size:12px!important}
 #hamburger{width:36px!important;height:36px!important;font-size:18px!important}
@@ -369,7 +369,7 @@ body{font-size:14px!important}
 .floor-wrap{min-width:200px!important}
 
 </style>
-  <button class="ly-btn" id="lbb">鍥惧眰</button>
+  <button class="ly-btn" id="lbb">图层</button>
   <div id="mv" style="transform-origin:0 0;cursor:grab">
     <img src="../assets/maps/valley.png" draggable="false" id="mapImg" style="display:block;width:100%">
   </div>
@@ -380,33 +380,33 @@ body{font-size:14px!important}
     <button onclick="zoom(1.18)">+</button>
     <button onclick="resetView()">&#x27F2;</button>
     <span id="zl">100%</span>
-    <button id="mdBtn" class="mode" onclick="toggleMode()">&#x1F441;&#xFE0F; 娴忚</button>
+    <button id="mdBtn" class="mode" onclick="toggleMode()">&#x1F441;&#xFE0F; 浏览</button>
   </div>
 <div class="ly-pop" id="lp"></div>
 <div class="crosshair" id="ch"><div class="ch-v"></div><div class="ch-h"></div><div class="ch-dot"></div></div>
-<div id="vm"><span>褰撳墠浣嶇疆锛?/span><span class="coord" id="cv">鏈€夋嫨</span><button class="sel-btn" id="ab">閫夋嫨瀹瑰櫒绫诲瀷 鈫?/button></div>
+<div id="vm"><span>当前位置：</span><span class="coord" id="cv">未选择</span><button class="sel-btn" id="ab">选择容器类型 →</button></div>
 
-<!-- 瀹瑰櫒璇︽儏寮圭獥 -->
+<!-- 容器详情弹窗 -->
 <div class="pd-overlay" id="pd">
   <div class="pd-box">
-    <button class="pd-close" onclick="closePinDetail()">鉁?/button>
-    <div class="pd-title" id="pdTitle">瀹瑰櫒鍚嶇О</div>
-    <div class="pd-coord" id="pdCoord">浣嶇疆</div>
+    <button class="pd-close" onclick="closePinDetail()">✕</button>
+    <div class="pd-title" id="pdTitle">容器名称</div>
+    <div class="pd-coord" id="pdCoord">位置</div>
     <div class="pd-submit" id="pdSubmit" style="color:#888;font-size:12px;margin-top:2px">
     <div class="pd-note" id="pdNoteDisplay" style="color:#999;font-size:12px;margin-top:4px;padding:3px 6px;background:rgba(255,255,255,0.02);border-radius:4px;display:none"></div></div>
 
-    <button id="pdDelete" onclick="if(!localStorage.getItem('abi_token')){loginGitHub();return false;}deleteCurrentPin()" style="width:100%;padding:6px;background:rgba(255,50,50,0.15);border:1px solid #ff4444;border-radius:6px;color:#ff4444;cursor:pointer;font-size:11px;margin-top:6px;margin-bottom:6px">馃棏 鍒犻櫎璇ュ鍣?/button>
+    <button id="pdDelete" onclick="if(!localStorage.getItem('abi_token')){loginGitHub();return false;}deleteCurrentPin()" style="width:100%;padding:6px;background:rgba(255,50,50,0.15);border:1px solid #ff4444;border-radius:6px;color:#ff4444;cursor:pointer;font-size:11px;margin-top:6px;margin-bottom:6px">🗑 删除该容器</button>
 
-    <!-- 瀹瑰櫒璇勮鍖?-->
+    <!-- 容器评论区 -->
     <div class="pd-comments">
-      <div class="pdc-title">馃挰 璇勮鍖?/div>
+      <div class="pdc-title">💬 评论区</div>
       <div style="display:flex;gap:4px;align-items:flex-start;">
-        <textarea id="pdcInput" placeholder="瀵硅繖涓鍣ㄦ湁浠€涔堟兂璇寸殑锛? style="flex:1;min-height:50px;"></textarea>
-        <button class="pdc-btn" onclick="submitPinComment()" style="white-space:nowrap;">鍙戣〃</button>
+        <textarea id="pdcInput" placeholder="对这个容器有什么想说的？" style="flex:1;min-height:50px;"></textarea>
+        <button class="pdc-btn" onclick="submitPinComment()" style="white-space:nowrap;">发表</button>
       </div>
       <div class="pdc-file-row" style="display:flex;gap:6px;margin:4px 0;align-items:center;">
         <label style="width:32px;height:32px;border-radius:50%;background:#333;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#fff;">+<input type="file" id="pdcFileInput" accept="image/*" multiple style="display:none" onchange="previewPinCommentFiles(this)"></label>
-        <span id="pdcFileCount" style="font-size:0.7rem;color:#888;">鏈€夋嫨鍥剧墖</span>
+        <span id="pdcFileCount" style="font-size:0.7rem;color:#888;">未选择图片</span>
       </div>
       <div id="pdcFilePreview" style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;"></div>
       <div class="pdc-list" id="pdcList"></div>
@@ -414,18 +414,18 @@ body{font-size:14px!important}
   </div>
 </div>
 
-<!-- 鍦板浘璇勮鍖?-->
+<!-- 地图评论区 -->
 
 <div id="commentPanel" style="display:none" style="position:fixed;top:50%;right:10px;transform:translateY(-50%);z-index:9997;width:140px;max-height:60vh;background:rgba(10,10,15,0.9);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:6px;box-shadow:0 4px 20px rgba(0,0,0,0.4);display:flex;flex-direction:column;overflow:hidden;cursor:grab">
   <h3 style="color:#ffc832;font-size:12px;margin:0 0 3px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-    <span>馃挰 璁ㄨ</span>
+    <span>💬 讨论</span>
     <span style="font-size:8px;color:#555;cursor:pointer" onclick="this.parentElement.parentElement.parentElement.nextElementSiblingx;margin:0 0 8px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-    <span>馃挰 鍦板浘璁ㄨ鍖?/span>
-    <span style="font-size:10px;color:#666;cursor:pointer" onclick="this.parentElement.parentElement.style.display='none'">鉁?鏀惰捣</span>
+    <span>💬 地图讨论区</span>
+    <span style="font-size:10px;color:#666;cursor:pointer" onclick="this.parentElement.parentElement.style.display='none'">✕ 收起</span>
   </h3>
-  <textarea id="mcInput" placeholder="鎯宠鐐逛粈涔堬紵" style="width:100%;min-height:40px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:5px;color:#ccc;padding:5px;font-size:12px;resize:vertical;font-family:inherit;box-sizing:border-box;flex-shrink:0"></textarea>
+  <textarea id="mcInput" placeholder="想说点什么？" style="width:100%;min-height:40px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:5px;color:#ccc;padding:5px;font-size:12px;resize:vertical;font-family:inherit;box-sizing:border-box;flex-shrink:0"></textarea>
   <div class="mc-actions" style="display:flex;gap:4px;margin-top:4px;flex-shrink:0">
-    <button onclick="submitMapComment()" style="padding:3px 10px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-weight:600;cursor:pointer;font-size:10px">鍙戣〃</button>
+    <button onclick="submitMapComment()" style="padding:3px 10px;background:#ffc832;color:#0a0a0f;border:none;border-radius:4px;font-weight:600;cursor:pointer;font-size:10px">发表</button>
   </div>
   <div class="mc-list" id="mcList" style="margin-top:8px;overflow-y:auto;flex:1"></div>
 </div>
@@ -434,17 +434,27 @@ body{font-size:14px!important}
 
 
 <script>
+/* mobile redirect */
+(function(){
+  var isMobile = false;
+try { isMobile = ('ontouchstart' in window && window.innerWidth < 600 && !navigator.userAgent.match(/Windows|Macintosh/)); } catch(e){}
+  if(!isMobile) return;
+  var m = window.location.pathname.match(/map-(\w+)\.html/);
+  if(m) window.location.href = 'map-mobile.html?map=' + m[1];
+})();
+</script>
+<script>
 var scaleM=4,panX=0,panY=0,_jumpingMarker=false,mode='browse',pins=[],mapComments=[],curPinIdx=null,touchStartDist=0,touchStartScale=1;
 function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
-function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'宸茬櫥褰?);}catch(e){return localStorage.getItem('abi_user')||'宸茬櫥褰?;}}
+function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return localStorage.getItem('abi_user')||'已登录';}}
 (function(){normalizeUser();var t=localStorage.getItem('abi_token');var un=document.getElementById('userName');var lb=document.getElementById('loginBtn');var rb=document.getElementById('reviewBtnMM');if(t&&un){un.style.display='inline';un.textContent=getUserName();}if(t&&lb)lb.style.display='none';if(rb)rb.style.display=t?'block':'none';setTimeout(function(){normalizeUser();var t2=localStorage.getItem('abi_token');var un2=document.getElementById('userName');var lb2=document.getElementById('loginBtn');var rb2=document.getElementById('reviewBtnMM');if(t2&&un2){un2.style.display='inline';un2.textContent=getUserName();}if(t2&&lb2)lb2.style.display='none';if(rb2)rb2.style.display=t2?'block':'none';},500);})();
 if((window.location.hash||'').indexOf('access_token')>=0||(window.location.search||'').indexOf('access_token')>=0){try{var raw=(window.location.hash||window.location.search).replace(/^[#?]/,'');var p={};raw.split('&').forEach(function(s){var kv=s.split('=');p[kv[0]]=decodeURIComponent(kv[1]||'');});if(p.access_token){localStorage.setItem('abi_token',p.access_token);try{var b64=p.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var u=JSON.parse(atob(b64));localStorage.setItem('abi_user',JSON.stringify(u));}catch(e){localStorage.setItem('abi_user','{"user_metadata":{"preferred_username":"User"}}');}history.replaceState(null,'',window.location.pathname+window.location.search);window.location.href=window.location.pathname+window.location.search;}}catch(e){console.error('Auth err',e);}}
-var mapNameEng='valley',mapNameCN='灞辫胺',cloudPins=[],cloudComments=[];
-// ========== 妤煎眰鍒囨崲 ==========
+var mapNameEng='valley',mapNameCN='山谷',cloudPins=[],cloudComments=[];
+// ========== 楼层切换 ==========
 var floorImages = ["../assets/maps/valley.png"];
 var floorLabels = [
-  '灞辫胺鍏ㄥ',
-  '灞辫胺浜屾ゼ'
+  '山谷全境',
+  '山谷二楼'
 ];
 var currentFloor = 0;
 
@@ -460,13 +470,15 @@ function switchFloor(idx) {
     btn.classList.toggle('active', i === idx);
   });
   resetView();
-  // 杩囨护鏍囪 鈥?鍙樉绀哄綋鍓嶆ゼ灞?  var mv=document.getElementById('mv');
+  // 过滤标记 — 只显示当前楼层
+  var mv=document.getElementById('mv');
   if(mv){mv.querySelectorAll('.pin-marker').forEach(function(el){var pi=parseInt(el.getAttribute('data-pin-idx'));if(!isNaN(pi)&&pins[pi]){var pf=pins[pi].floor||0;el.style.display=pf===idx?'':'none';}});}
-  // 闈?灞傞殣钘忓鍣ㄩ€夋嫨寮圭獥鐨勪綅缃寚绀?  if(idx>0 && typeof hideAreaSelect==='function'){hideAreaSelect();}
+  // 非0层隐藏容器选择弹窗的位置指示
+  if(idx>0 && typeof hideAreaSelect==='function'){hideAreaSelect();}
   console.log('Switch to floor', idx, floorLabels[idx]);
 }
 function checkReviewBtn(){var rb=document.getElementById('reviewBtnMM');if(!rb)return;if(localStorage.getItem('abi_token')){rb.style.display='block';}else{rb.style.display='none';}}
-var iconUrls={"淇濋櫓绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%BF%9D%E9%99%A9.png","婊存淮淇濋櫓":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%BB%B4%E6%BB%B4%E4%BF%9D%E9%99%A9.png","鐢靛瓙淇濋櫓":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%94%B5%E5%AD%90%E4%BF%9D%E9%99%A9.png","鏀堕摱鏈?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%94%B6%E9%93%B6%E6%9C%BA.png","瀹剁敤鏈虹":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%AE%B6%E7%94%A8%E6%9C%BA%E7%AE%B1.png","鍐涚敤涓绘満":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%86%9B%E7%94%A8%E4%B8%BB%E6%9C%BA.png","鏅€氱墿璧勭":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%BD%AE%E7%89%A9%E7%AE%B1.png","楂樼骇鐗╄祫绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%BB%91%E7%BD%AE%E7%89%A9%E7%AE%B1.png","瀛愬脊绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%AD%90%E5%BC%B9%E7%AE%B1.png","鎵嬮浄绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%89%8B%E9%9B%B7%E7%AE%B1.png","鍖荤枟绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%B8%AD%E7%BA%A7%E5%8C%BB%E7%96%97.png","楂樼骇鍖荤枟绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%AB%98%E7%BA%A7%E5%8C%BB%E7%96%97.png","宸ュ叿绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B7%A5%E5%85%B7%E7%AE%B1.png","楂樼骇宸ュ叿绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%AB%98%E7%BA%A7%E5%B7%A5%E5%85%B7%E7%AE%B1.png","鏂囦欢绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%96%87%E4%BB%B6%E7%AE%B1.png","澶ц。":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A4%A7%E8%A1%A3.png","钃濊壊澶ц。":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E8%93%9D%E9%A2%86.png","琛ｆ湇":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B0%8F%E8%A1%A3%E6%9C%8D.png","鎶藉眽":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%8A%BD%E5%B1%89.png","鍒埉涔?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%88%AE%E5%88%AE%E4%B9%90.png","杩愬姩鍖?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E8%BF%90%E5%8A%A8%E5%8C%85.png","鏃呰绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%95%86%E5%8A%A1%E6%97%85%E8%A1%8C%E7%AE%B1.png","鐧借壊鏃呰绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%99%BD%E6%97%85.png","鍟嗗姟鏃呰绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%95%86%E5%8A%A1%E6%97%85%E8%A1%8C%E7%AE%B1.png","澶у瀷姝﹀櫒绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A4%A7%E5%9E%8B%E6%AD%A6%E5%99%A8%E7%AE%B1.png","涓瀷姝﹀櫒绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%B8%AD%E5%9E%8B%E6%AD%A6%E5%99%A8%E7%AE%B1.png","鏈ㄨ川姝﹀櫒绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%9C%A8%E8%B4%A8%E6%AD%A6%E5%99%A8%E7%AE%B1.png","姝﹀櫒绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%AD%A6%E5%99%A8%E7%AE%B1.png","楂樼骇姝﹀櫒绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%AB%98%E7%BA%A7%E6%AD%A6%E5%99%A8%E7%AE%B1.png","閰嶄欢绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%85%8D%E4%BB%B6%E7%AE%B1.png","涓夎壊鐏?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%B8%89%E8%89%B2%E7%81%AF.png","鍏遍福鐞?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%85%B1%E9%B8%A3%E7%90%83.png","濂夌尞闆曞儚":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A5%89%E7%8C%AE%E9%9B%95%E5%83%8F.png","灏忎繚闄?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B0%8F%E4%BF%9D%E9%99%A9.png","绌鸿皟缃?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%A9%BA%E8%B0%83%E7%BD%90.png","闀挎潯姝﹀櫒绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%95%BF%E6%9D%A1%E6%AD%A6%E5%99%A8%E7%AE%B1.png","涓夎壊鐏?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%B8%89%E8%89%B2%E7%81%AF.png","鍏遍福鐞?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%85%B1%E9%B8%A3%E7%90%83.png","濂夌尞闆曞儚":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A5%89%E7%8C%AE%E9%9B%95%E5%83%8F.png","灏忎繚闄?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B0%8F%E4%BF%9D%E9%99%A9.png","绌鸿皟缃?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%A9%BA%E8%B0%83%E7%BD%90.png","闀挎潯姝﹀櫒绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%95%BF%E6%9D%A1%E6%AD%A6%E5%99%A8%E7%AE%B1.png","BOSS":"馃拃","娓呴亾澶?:"馃","榛戦噾浜烘満":"馃枻馃ぜ","鐧界嫾浜烘満":"馃惡馃ぜ","鍐涚敤淇濋櫓绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%86%9B%E7%94%A8%E4%BF%9D%E9%99%A9%E7%AE%B1.png","鍚庡绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%90%8E%E5%A4%87%E7%AE%B1.png","鍨冨溇绠?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%9E%83%E5%9C%BE%E7%AE%B1.png","楗煎共鐩?:"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%A5%BC%E5%B9%B2%E7%9B%92.png"};
+var iconUrls={"保险箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%BF%9D%E9%99%A9.png","滴滴保险":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%BB%B4%E6%BB%B4%E4%BF%9D%E9%99%A9.png","电子保险":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%94%B5%E5%AD%90%E4%BF%9D%E9%99%A9.png","收银机":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%94%B6%E9%93%B6%E6%9C%BA.png","家用机箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%AE%B6%E7%94%A8%E6%9C%BA%E7%AE%B1.png","军用主机":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%86%9B%E7%94%A8%E4%B8%BB%E6%9C%BA.png","普通物资箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%BD%AE%E7%89%A9%E7%AE%B1.png","高级物资箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%BB%91%E7%BD%AE%E7%89%A9%E7%AE%B1.png","子弹箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%AD%90%E5%BC%B9%E7%AE%B1.png","手雷箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%89%8B%E9%9B%B7%E7%AE%B1.png","医疗箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%B8%AD%E7%BA%A7%E5%8C%BB%E7%96%97.png","小型医疗箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B0%8F%E5%8C%BB%E7%96%97.png","大型医疗箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A4%A7%E5%9E%8B%E5%8C%BB%E7%96%97%E7%AE%B1.png","高级医疗箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%AB%98%E7%BA%A7%E5%8C%BB%E7%96%97.png","工具箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B7%A5%E5%85%B7%E7%AE%B1.png","高级工具箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%AB%98%E7%BA%A7%E5%B7%A5%E5%85%B7%E7%AE%B1.png","文件箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%96%87%E4%BB%B6%E7%AE%B1.png","大衣":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A4%A7%E8%A1%A3.png","蓝色大衣":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E8%93%9D%E9%A2%86.png","衣服":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B0%8F%E8%A1%A3%E6%9C%8D.png","抽屉":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%8A%BD%E5%B1%89.png","刮刮乐":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%88%AE%E5%88%AE%E4%B9%90.png","运动包":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E8%BF%90%E5%8A%A8%E5%8C%85.png","旅行箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%95%86%E5%8A%A1%E6%97%85%E8%A1%8C%E7%AE%B1.png","白色旅行箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%99%BD%E6%97%85.png","商务旅行箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%95%86%E5%8A%A1%E6%97%85%E8%A1%8C%E7%AE%B1.png","大型武器箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A4%A7%E5%9E%8B%E6%AD%A6%E5%99%A8%E7%AE%B1.png","中型武器箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%B8%AD%E5%9E%8B%E6%AD%A6%E5%99%A8%E7%AE%B1.png","木质武器箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%9C%A8%E8%B4%A8%E6%AD%A6%E5%99%A8%E7%AE%B1.png","武器箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E6%AD%A6%E5%99%A8%E7%AE%B1.png","高级武器箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%AB%98%E7%BA%A7%E6%AD%A6%E5%99%A8%E7%AE%B1.png","配件箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%85%8D%E4%BB%B6%E7%AE%B1.png","三色灯":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%B8%89%E8%89%B2%E7%81%AF.png","共鸣球":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%85%B1%E9%B8%A3%E7%90%83.png","奉献雕像":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A5%89%E7%8C%AE%E9%9B%95%E5%83%8F.png","小保险":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B0%8F%E4%BF%9D%E9%99%A9.png","空调罐":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%A9%BA%E8%B0%83%E7%BD%90.png","长条武器箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%95%BF%E6%9D%A1%E6%AD%A6%E5%99%A8%E7%AE%B1.png","三色灯":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E4%B8%89%E8%89%B2%E7%81%AF.png","共鸣球":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%85%B1%E9%B8%A3%E7%90%83.png","奉献雕像":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%A5%89%E7%8C%AE%E9%9B%95%E5%83%8F.png","小保险":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%B0%8F%E4%BF%9D%E9%99%A9.png","空调罐":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%A9%BA%E8%B0%83%E7%BD%90.png","长条武器箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%95%BF%E6%9D%A1%E6%AD%A6%E5%99%A8%E7%AE%B1.png","BOSS":"💀","清道夫":"🤖","黑金人机":"🖤🤼","白狼人机":"🐺🤼","军用保险箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%86%9B%E7%94%A8%E4%BF%9D%E9%99%A9%E7%AE%B1.png","后备箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%90%8E%E5%A4%87%E7%AE%B1.png","垃圾箱":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E5%9E%83%E5%9C%BE%E7%AE%B1.png","饼干盒":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E9%A5%BC%E5%B9%B2%E7%9B%92.png"};
 function getIconUrl(n){var u=iconUrls[n]||'';return u;}
 var SUPABASE_URL='https://hanrfbciinkhgcumvous.supabase.co';var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
 function supabase(t,m,b,f){var u='https://hanrfbciinkhgcumvous.supabase.co/rest/v1/'+t;var o={method:m||'GET',headers:{'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok','Content-Type':'application/json'}};if(b){o.body=JSON.stringify(b);o.headers['Authorization']='Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';}if(f)u+='?'+f;return fetch(u,o).then(function(r){if(r.status>=400)throw new Error(r.status);return r.text().then(function(t){if(!t)return{};return JSON.parse(t);});});}
@@ -476,8 +488,13 @@ function ut(){var el=document.getElementById('mv');if(!el)return;el.style.transf
 function zoom(f,cx,cy){if(cx===void 0||cy===void 0){scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>10)scaleM=10;ut();return;}var prev=scaleM;scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>10)scaleM=10;var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=cx-wr.left,my=cy-wr.top;var imgX=(mx-panX)/prev,imgY=(my-panY)/prev;panX=mx-imgX*scaleM;panY=my-imgY*scaleM;ut();}
 function zoomTo(v,cx,cy){v=v/100;if(v<0.1)v=0.1;if(v>10)v=10;if(cx!==void 0&&cy!==void 0){var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=cx-wr.left,my=cy-wr.top;var imgX=(mx-panX)/scaleM,imgY=(my-panY)/scaleM;panX=mx-imgX*v;panY=my-imgY*v;}scaleM=v;ut();}
 function resetView(){scaleM=1;panX=0;panY=0;var e=document.getElementById('mv');if(e)e.style.transform='translate(0px,0px) scale(1)';var zr=document.getElementById('zr');if(zr)zr.value=100;var zl=document.getElementById('zl');if(zl)zl.textContent='100%';}
-window.onerror=function(m,s,l,c,err){console.error('JS err',m,l,c);alert('Err: '+m);return true;};
-function toggleMode(){mode=(mode==='browse')?'place':'browse';var btn=document.getElementById('mdBtn');if(btn)btn.textContent=(mode==='place')?'[P] 鏀剧疆':'[B] 娴忚';document.getElementById('ch').classList.toggle('show',mode==='place');document.getElementById('cv').textContent='-';document.getElementById('ab').style.display='none';}
+document.addEventListener('DOMContentLoaded',function(){
+  document.addEventListener('click',function(e){
+    if(e.target===document.body){resetView();}
+  });
+});
+window.onerror=function(m,s,l,c,err){console.error('JS ewindow.onerror=function(m,s,l,c,err){console.error('JS ewindow.onerror=function(m,s,l,c,err){console.error('JS ewindow.onerror=function(m,s,l,c,err){console.error('JS err',m,l,c);alert('Err: '+m);return true;};
+function toggleMode(){mode=(mode==='browse')?'place':'browse';var btn=document.getElementById('mdBtn');if(btn)btn.textContent=(mode==='place')?'[P] 放置':'[B] 浏览';document.getElementById('ch').classList.toggle('show',mode==='place');document.getElementById('cv').textContent='-';document.getElementById('ab').style.display='none';}
 document.body.addEventListener('mousedown',function(e){if(mode==='place')return;var btn=e.button;var mv=document.getElementById('mv');if(!mv||e.target.closest('.pin-marker')||e.target.closest('.pd-overlay')||e.target.closest('.controls')||e.target.closest('#fp'))return;var sx=e.clientX,sy=e.clientY,px=panX,py=panY;var moved=false;function mm(ev){if(mode==='place'){document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);return;}var dx=ev.clientX-sx,dy=ev.clientY-sy;if(Math.abs(dx)>3||Math.abs(dy)>3)moved=true;panX=px+dx;panY=py+dy;ut();}function mu(ev){document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);if(!moved&&btn===0){var ch=document.getElementById('ch');if(mode==='place'){ch.style.left=ev.clientX+'px';ch.style.top=ev.clientY+'px';ch.classList.add('show');extractPos(ev);}}else if(moved&&btn===0){document.getElementById('ch').classList.remove('show');}}document.addEventListener('mousemove',mm);document.addEventListener('mouseup',mu);});
 document.body.addEventListener('mousemove',function(e){if(mode==='place'){var ch=document.getElementById('ch');ch.style.left=e.clientX+'px';ch.style.top=e.clientY+'px';}});
 document.getElementById('mv').addEventListener('click',function(e){if(mode==='place'&&!e.target.closest('.pin-marker')){extractPos(e);showPicker();}});
@@ -485,23 +502,23 @@ function extractPos(e){var wrap=document.querySelector('.map-wrap');if(!wrap)ret
 document.getElementById('mv').addEventListener('wheel',function(e){e.preventDefault();var f=e.deltaY>0?0.9:1.1;zoom(f,e.clientX,e.clientY);},{passive:false});
 document.getElementById('mv').addEventListener('touchstart',function(e){if(e.touches.length===2){touchStartDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);touchStartScale=scaleM;}},{passive:true});
 document.getElementById('mv').addEventListener('touchmove',function(e){if(e.touches.length===2){e.preventDefault();var dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);var ns=touchStartScale*dist/touchStartDist;zoomTo(Math.round(ns*100));}},{passive:false});
-var sb=document.getElementById('sb');if(sb)sb.onclick=function(){showPicker();mode='browse';document.getElementById('ch').classList.remove('show');var btn=document.getElementById('mdBtn');if(btn)btn.textContent='[B] 娴忚';};
+var sb=document.getElementById('sb');if(sb)sb.onclick=function(){showPicker();mode='browse';document.getElementById('ch').classList.remove('show');var btn=document.getElementById('mdBtn');if(btn)btn.textContent='[B] 浏览';};
 var lb=document.getElementById('lbb');if(lb){var lp=document.getElementById('lp');if(lp){lb.onclick=function(e){e.stopPropagation();lp.classList.toggle('show');if(lp.classList.contains('show')){renderLayers();}};document.addEventListener('click',function(ev){if(lp&&!lp.contains(ev.target)&&ev.target!==document.getElementById('lbb'))lp.classList.remove('show');});}}
 if(typeof renderMarkers==='function')renderMarkers();
 function toggleMenu(){var m=document.getElementById('sideMenu');if(m){m.style.display=(m.style.display==='none'||!m.style.display)?'block':'none';}}
 var us=new URLSearchParams(window.location.search);setTimeout(function(){if(us.get('x')&&us.get('y')){jumpToFromUrl();}else{loadCloudPins();}checkReviewBtn();if(typeof currentFloor==='number'){filterPinsByFloor(currentFloor);}},300);
-var layerData={'璐甸噸':['淇濋櫓绠?,'婊存淮淇濋櫓','鐢靛瓙淇濋櫓','灏忎繚闄?,'鍐涚敤淇濋櫓绠?],'鐢靛瓙':['鏀堕摱鏈?,'瀹剁敤鏈虹','鍐涚敤涓绘満'],'鐗╄祫':['鏅€氱墿璧勭','楂樼骇鐗╄祫绠?,'绌鸿皟缃?,'鍨冨溇绠?,'楗煎共鐩?],'寮硅嵂':['瀛愬脊绠?,'鎵嬮浄绠?],'鍖荤枟':['鍖荤枟绠?,'楂樼骇鍖荤枟绠?],'宸ュ叿':['宸ュ叿绠?,'楂樼骇宸ュ叿绠?],'琛ｇ墿':['澶ц。','钃濊壊澶ц。','琛ｆ湇'],'瀹跺叿':['鎶藉眽','鍒埉涔?],'瀹瑰櫒':['鏂囦欢绠?,'杩愬姩鍖?,'鏃呰绠?,'鐧借壊鏃呰绠?,'鍟嗗姟鏃呰绠?,'鍚庡绠?],'姝﹀櫒':['澶у瀷姝﹀櫒绠?,'涓瀷姝﹀櫒绠?,'鏈ㄨ川姝﹀櫒绠?,'姝﹀櫒绠?,'楂樼骇姝﹀櫒绠?,'闀挎潯姝﹀櫒绠?],'鍏朵粬':['涓夎壊鐏?,'鍏遍福鐞?,'濂夌尞闆曞儚'],'浜烘満':['BOSS','娓呴亾澶?,'榛戦噾浜烘満','鐧界嫾浜烘満'],'閰嶄欢':['閰嶄欢绠?]};
-var orders=['璐甸噸','鐢靛瓙','鐗╄祫','寮硅嵂','鍖荤枟','宸ュ叿','琛ｇ墿','瀹跺叿','瀹瑰櫒','姝﹀櫒','閰嶄欢','鍏朵粬','浜烘満'];
+var layerData={'贵重':['保险箱','滴滴保险','电子保险','小保险','军用保险箱'],'电子':['收银机','家用机箱','军用主机'],'物资':['普通物资箱','高级物资箱','空调罐','垃圾箱','饼干盒'],'弹药':['子弹箱','手雷箱'],'医疗':['大型医疗箱','医疗箱','高级医疗箱','小型医疗箱'],'工具':['工具箱','高级工具箱'],'衣物':['大衣','蓝色大衣','衣服'],'家具':['抽屉','刮刮乐'],'容器':['文件箱','运动包','旅行箱','白色旅行箱','商务旅行箱','后备箱'],'武器':['大型武器箱','中型武器箱','木质武器箱','武器箱','高级武器箱','长条武器箱'],'其他':['三色灯','共鸣球','奉献雕像'],'人机':['BOSS','清道夫','黑金人机','白狼人机'],'配件':['配件箱']};
+var orders=['贵重','电子','物资','弹药','医疗','工具','衣物','家具','容器','武器','配件','其他','人机'];
 function showPicker(){var old=document.getElementById('cpMenu');if(old)old.remove();var menu=document.createElement('div');menu.id='cpMenu';menu.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a24;border:1px solid #333;border-radius:12px;padding:16px;max-height:80vh;overflow-y:auto;z-index:9999;min-width:320px;max-width:420px';var title=document.createElement('div');title.style.cssText='font-size:15px;color:#ffc832;font-weight:600;margin-bottom:12px;text-align:center';title.textContent='Select Container';menu.appendChild(title);orders.forEach(function(layer){var items=layerData[layer];if(!items||items.length===0)return;var group=document.createElement('div');group.style.cssText='margin-bottom:12px';var label=document.createElement('div');label.style.cssText='font-size:12px;color:#888;margin-bottom:6px;font-weight:600';label.textContent='['+layer+']';group.appendChild(label);var grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(2,1fr);gap:8px';items.forEach(function(item){var btn=document.createElement('button');btn.style.cssText='padding:8px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:8px;color:#ddd;cursor:pointer;font-size:12px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px';var ic=getIconUrl(item);if(ic){var img=document.createElement('img');img.src=ic;img.style.cssText='width:48px;height:48px;border-radius:6px;object-fit:cover';img.onerror=function(){this.style.display='none';};btn.appendChild(img);}var span=document.createElement('span');span.textContent=item;btn.appendChild(span);btn.onclick=function(t){return function(){placePin(t);menu.remove();};}(item);grid.appendChild(btn);});group.appendChild(grid);menu.appendChild(group);});var cb=document.createElement('button');cb.textContent='Cancel';cb.style.cssText='margin-top:12px;padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:8px;color:#888;cursor:pointer;font-size:14px;width:100%';cb.onclick=function(){menu.remove();};menu.appendChild(cb);document.body.appendChild(menu);}
-function placePin(tp){if(!localStorage.getItem('abi_token')){alert('Login required to submit');loginGitHub();return;}var cv=document.getElementById('cv');if(!cv||cv.textContent==='-'){alert('Click map first');return;}var parts=cv.textContent.split(',');var x=parseFloat(parts[0]);var y=parseFloat(parts[1]);if(isNaN(x)||isNaN(y)){alert('Invalid pos');return;}var uj=localStorage.getItem('abi_user');var uname='Anon';try{if(uj){var uo=JSON.parse(uj);if(uo&&uo.user_metadata&&uo.user_metadata.user_name)uname=uo.user_metadata.user_name;else if(uo&&uo.email)uname=uo.email.split('@')[0];}}catch(e){}var cf=typeof currentFloor==='number'?currentFloor:0;var p={name:tp,x:x,y:y,note:'',images:[],comments:[],};pins.push(p);renderMarkers();cv.textContent='-';document.getElementById('ab').style.display='none';var btn=document.getElementById('mdBtn');if(btn)btn.textContent='[B] 娴忚';var type='other';for(var cat in layerData){if(layerData[cat].indexOf(tp)>=0){type=cat;break;}}supabase('pending_pins','POST',{name:tp,x:x,y:y,map_name:mapNameCN,type:type,ic:'',note:'',images:[],floor:cf,submitted_by:uname}).then(function(r){alert('\u5df2\u63d0\u4ea4\u5ba1\u6838');var ov=document.createElement('div');ov.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #ffc832;border-radius:10px;padding:12px 20px;z-index:99999;max-width:90vw;text-align:center';var u=window.location.origin+window.location.pathname.replace(/\/[^\/]+$/,'/map-valley.html')+'?x='+x+'&y='+y+'&floor='+cf;ov.innerHTML='<div style="color:#ffc832;font-size:14px;font-weight:600;margin-bottom:8px">\u5df2\u63d0\u4ea4\u5ba1\u6838<\/div><div style="color:#888;font-size:12px;margin-bottom:10px">\u7b49\u5f85\u7ba1\u7406\u5458\u5ba1\u6838\u540e\u5c06\u663e\u793a\u5728\u5730\u56fe\u4e0a<\/div><a href="'+u+'" style="color:#88aaff;font-size:12px;text-decoration:underline">\ud83d\udccd \u5728\u5730\u56fe\u4e0a\u67e5\u770b\u4f4d\u7f6e<\/a><br><button onclick="this.parentElement.remove()" style="margin-top:10px;padding:4px 16px;background:#333;border:none;border-radius:6px;color:#888;cursor:pointer">\u5173\u95ed<\/button>';document.body.appendChild(ov);})['catch'](function(e){alert('Upload failed: '+e.message);});localStorage.setItem('abi_'+mapNameEng+'_pins',JSON.stringify({pins:pins,mapComments:mapComments}));}
+function placePin(tp){if(!localStorage.getItem('abi_token')){alert('Login required to submit');loginGitHub();return;}var cv=document.getElementById('cv');if(!cv||cv.textContent==='-'){alert('Click map first');return;}var parts=cv.textContent.split(',');var x=parseFloat(parts[0]);var y=parseFloat(parts[1]);if(isNaN(x)||isNaN(y)){alert('Invalid pos');return;}var uj=localStorage.getItem('abi_user');var uname='Anon';try{if(uj){var uo=JSON.parse(uj);if(uo&&uo.user_metadata&&uo.user_metadata.user_name)uname=uo.user_metadata.user_name;else if(uo&&uo.email)uname=uo.email.split('@')[0];}}catch(e){}var cf=typeof currentFloor==='number'?currentFloor:0;var p={name:tp,x:x,y:y,note:'',images:[],comments:[],};pins.push(p);renderMarkers();cv.textContent='-';document.getElementById('ab').style.display='none';var btn=document.getElementById('mdBtn');if(btn)btn.textContent='[B] 浏览';var type='other';for(var cat in layerData){if(layerData[cat].indexOf(tp)>=0){type=cat;break;}}supabase('pending_pins','POST',{name:tp,x:x,y:y,map_name:mapNameCN,type:type,ic:'',note:'',images:[],floor:cf,submitted_by:uname}).then(function(r){alert('\u5df2\u63d0\u4ea4\u5ba1\u6838');var ov=document.createElement('div');ov.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #ffc832;border-radius:10px;padding:12px 20px;z-index:99999;max-width:90vw;text-align:center';var u=window.location.origin+window.location.pathname.replace(/\/[^\/]+$/,'/map-valley.html')+'?x='+x+'&y='+y+'&floor='+cf;ov.innerHTML='<div style="color:#ffc832;font-size:14px;font-weight:600;margin-bottom:8px">\u5df2\u63d0\u4ea4\u5ba1\u6838<\/div><div style="color:#888;font-size:12px;margin-bottom:10px">\u7b49\u5f85\u7ba1\u7406\u5458\u5ba1\u6838\u540e\u5c06\u663e\u793a\u5728\u5730\u56fe\u4e0a<\/div><a href="'+u+'" style="color:#88aaff;font-size:12px;text-decoration:underline">\ud83d\udccd \u5728\u5730\u56fe\u4e0a\u67e5\u770b\u4f4d\u7f6e<\/a><br><button onclick="this.parentElement.remove()" style="margin-top:10px;padding:4px 16px;background:#333;border:none;border-radius:6px;color:#888;cursor:pointer">\u5173\u95ed<\/button>';document.body.appendChild(ov);})['catch'](function(e){alert('Upload failed: '+e.message);});localStorage.setItem('abi_'+mapNameEng+'_pins',JSON.stringify({pins:pins,mapComments:mapComments}));}
 function renderMarkers(){var mv=document.getElementById('mv');if(!mv)return;mv.querySelectorAll('.pin-marker').forEach(function(el){el.remove();});pins.forEach(function(p,i){var el=document.createElement('div');el.className='pin-marker';el.setAttribute('data-pin-idx',i);el.style.cssText='position:absolute;left:'+p.x+'%;top:'+p.y+'%;transform:translate(-50%,-50%);cursor:pointer;z-index:100;';var ic=getIconUrl(p.name);if(ic&&ic.indexOf('http')===0){var img=document.createElement('img');img.src=ic;var s=Math.min(100,60/Math.pow(scaleM,1.176));img.style.cssText='width:'+s+'px;height:'+s+'px;border-radius:'+Math.min(10,4/Math.pow(scaleM,1.176))+'px;object-fit:cover;border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid rgba(255,200,50,0.6);box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5)';img.onerror=function(){this.style.display='none';};el.appendChild(img);var dot=document.createElement('div');var ds=Math.min(60,36/Math.pow(scaleM,1.176));dot.style.cssText='width:'+ds+'px;height:'+ds+'px;border-radius:50%;background:#ffc832;border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid #fff;box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5);display:none';el.appendChild(dot);}else if(ic){var sp=document.createElement('span');sp.textContent=ic;var fs=Math.min(36,20/Math.pow(scaleM,1.176));sp.style.cssText='font-size:'+fs+'px;line-height:1;text-align:center;display:block';el.appendChild(sp);var dot=document.createElement('div');var ds=Math.min(60,36/Math.pow(scaleM,1.176));dot.style.cssText='width:'+ds+'px;height:'+ds+'px;border-radius:50%;background:#ffc832;border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid #fff;box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5);display:none';el.appendChild(dot);}else{var dot=document.createElement('div');var ds=Math.min(60,36/Math.pow(scaleM,1.176));dot.style.cssText='width:'+ds+'px;height:'+ds+'px;border-radius:50%;background:#ffc832;border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid #fff;box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5)';el.appendChild(dot);}el.onclick=function(e){e.stopPropagation();showPinDetail(i);};if(p.note) el.title=p.note;var pf=(p.floor!==undefined&&p.floor!==null)?p.floor:0;el.style.display=pf===currentFloor?"":"none";mv.appendChild(el);});setTimeout(dispatchLayerCheck,100);}
-function showPinDetail(idx){curPinIdx=idx;var p=pins[idx];var ic=getIconUrl(p.name);var title=document.getElementById('pdTitle');if(title){title.innerHTML='';if(ic){var img=document.createElement('img');img.src=ic;img.style.cssText='width:28px;height:28px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px';title.appendChild(img);}title.appendChild(document.createTextNode(' '+(p.name||p.type||'?')));}var ps=document.getElementById('pdSubmit');if(ps){  ps.textContent=(p.submitted_by?'璐＄尞鑰? '+p.submitted_by:'');}var pc=document.getElementById('pdCoord');if(pc)pc.textContent=Math.round(p.x)+'%, '+Math.round(p.y)+'%';var note=document.getElementById('pdNote');if(note)note.value=p.note||'';// renderPinImages removed
+function showPinDetail(idx){curPinIdx=idx;var p=pins[idx];var ic=getIconUrl(p.name);var title=document.getElementById('pdTitle');if(title){title.innerHTML='';if(ic){var img=document.createElement('img');img.src=ic;img.style.cssText='width:28px;height:28px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px';title.appendChild(img);}title.appendChild(document.createTextNode(' '+(p.name||p.type||'?')));}var ps=document.getElementById('pdSubmit');if(ps){  ps.textContent=(p.submitted_by?'贡献者: '+p.submitted_by:'');}var pc=document.getElementById('pdCoord');if(pc)pc.textContent=Math.round(p.x)+'%, '+Math.round(p.y)+'%';var note=document.getElementById('pdNote');if(note)note.value=p.note||'';// renderPinImages removed
 var pd=document.getElementById('pd');if(pd)pd.classList.add('show');loadPinComments(idx);}
 async function loadPinComments(pinIdx){
   if(pinIdx===undefined||pinIdx===null)return;
   var p=pins[pinIdx];
   if(!p||!p.id){
-    document.getElementById('pdCommentList').innerHTML='<div style="color:#666;font-size:10px;padding:4px">鏆傛湭鎻愪氦锛屾棤璇勮</div>';
+    document.getElementById('pdCommentList').innerHTML='<div style="color:#666;font-size:10px;padding:4px">暂未提交，无评论</div>';
     return;
   }
   try{
@@ -517,13 +534,13 @@ async function loadPinComments(pinIdx){
       data.forEach(function(c){
         var html='';
         html+='<div class="c-item" style="margin-bottom:4px;padding:4px;border-bottom:1px solid rgba(255,255,255,0.04);position:relative;font-size:11px">';
-        html+='<div class="c-user" style="color:#888;font-size:10px;margin-bottom:2px">'+esc(c.user_name||'鍖垮悕')+'</div>';
+        html+='<div class="c-user" style="color:#888;font-size:10px;margin-bottom:2px">'+esc(c.user_name||'匿名')+'</div>';
         html+='<div class="c-text">'+esc(c.text)+'</div>';
-        if(getUserName())html+='<button class="c-del" onclick="deletePinComment('+c.id+','+pinIdx+')" style="position:absolute;top:2px;right:2px;background:none;border:none;color:#ff4444;font-size:9px;cursor:pointer">鍒犻櫎</button>';
+        if(getUserName())html+='<button class="c-del" onclick="deletePinComment('+c.id+','+pinIdx+')" style="position:absolute;top:2px;right:2px;background:none;border:none;color:#ff4444;font-size:9px;cursor:pointer">删除</button>';
         html+='</div>';
         list.innerHTML+=html;
       });
-      if(data.length===0)list.innerHTML='<div style="color:#666;font-size:10px;padding:4px">鏆傛棤璇勮</div>';
+      if(data.length===0)list.innerHTML='<div style="color:#666;font-size:10px;padding:4px">暂无评论</div>';
     }
   }catch(e){}
 }
@@ -534,7 +551,7 @@ function closePinDetail(){document.getElementById('pd').classList.remove('show')
 
 // removed addPinImages
 
-function deleteCurrentPin(){if(curPinIdx===null)return;var p=pins[curPinIdx];if(!confirm('纭畾鍒犻櫎璇ュ鍣?'))return;var ustr=localStorage.getItem('abi_user');var uname='Anon';try{var uj=JSON.parse(ustr);uname=uj.user_metadata&&uj.user_metadata.preferred_username||uj.user_metadata&&uj.user_metadata.user_name||'Anon';}catch(e){}if(p.id){supabase('deletion_requests','POST',{pin_id:p.id,name:p.name,x:p.x,y:p.y,submitted_by:uname,type:p.type||'',ic:p.ic||'',note:p.note||'',images:p.images||[],floor:p.floor||0,map_name:mapNameCN||''}).then(function(){alert('宸叉彁浜ゅ垹闄ゅ鏍?);pins.splice(curPinIdx,1);closePinDetail();renderMarkers();})}else{pins.splice(curPinIdx,1);closePinDetail();renderMarkers();}
+function deleteCurrentPin(){if(curPinIdx===null)return;var p=pins[curPinIdx];if(!confirm('确定删除该容器?'))return;var ustr=localStorage.getItem('abi_user');var uname='Anon';try{var uj=JSON.parse(ustr);uname=uj.user_metadata&&uj.user_metadata.preferred_username||uj.user_metadata&&uj.user_metadata.user_name||'Anon';}catch(e){}if(p.id){supabase('deletion_requests','POST',{pin_id:p.id,name:p.name,x:p.x,y:p.y,submitted_by:uname,type:p.type||'',ic:p.ic||'',note:p.note||'',images:p.images||[],floor:p.floor||0,map_name:mapNameCN||''}).then(function(){alert('已提交删除审核');pins.splice(curPinIdx,1);closePinDetail();renderMarkers();})}else{pins.splice(curPinIdx,1);closePinDetail();renderMarkers();}
 }
 
 function renderPinComments(){
@@ -545,13 +562,13 @@ function renderPinComments(){
   var userName=getUserName();
   var cs=pins[curPinIdx].comments||[];
   if(cs.length===0){
-    list.innerHTML='<div style="color:#555;font-size:0.75rem;padding:8px;">鏆傛棤璇勮</div>';
+    list.innerHTML='<div style="color:#555;font-size:0.75rem;padding:8px;">暂无评论</div>';
     return;
   }
   var html='';
   for(var i=0;i<cs.length;i++){
     var c=cs[i];
-    var un=c.user_name||'鍖垮悕';
+    var un=c.user_name||'匿名';
     var txt=c.text||'';
     var time=c.created_at?new Date(c.created_at).toLocaleString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
     html+='<div class="c-item"><div class="c-hdr"><span class="c-author">'+un+'</span><span class="c-time">'+time+'</span></div><div class="c-body">'+txt+'</div>';
@@ -566,7 +583,7 @@ function renderPinComments(){
       }
     }
     if(token&&c.user_name===userName){
-      html+='<div class="c-actions"><button class="c-del" onclick="deletePinComment('+c.id+','+curPinIdx+')">鍒犻櫎</button></div>';
+      html+='<div class="c-actions"><button class="c-del" onclick="deletePinComment('+c.id+','+curPinIdx+')">删除</button></div>';
     }
     html+='</div>';
   }
@@ -643,18 +660,18 @@ function previewPinCommentFiles(input){
 
 async function submitPinComment(){
   var token=localStorage.getItem('abi_token');
-  if(!token){alert('璇峰厛鐧诲綍');return;}
+  if(!token){alert('请先登录');return;}
   if(curPinIdx===null)return;
   var input=document.getElementById('pdcInput');
   var content=input.value.trim();
   var fileInput=document.getElementById('pdcFileInput');
   var images=[];
-  if(content==''&&(!fileInput||fileInput.files.length===0)){alert('璇疯緭鍏ヨ瘎璁哄唴瀹?);return;}
+  if(content==''&&(!fileInput||fileInput.files.length===0)){alert('请输入评论内容');return;}
   if(fileInput&&fileInput.files.length>0){
     for(var i=0;i<fileInput.files.length;i++){
       var f=fileInput.files[i];
-      if(!f.type.startsWith('image/')){alert('鍙敮鎸佸浘鐗囨枃浠?);return;}
-      if(f.size>5*1024*1024){alert('鍗曞紶鍥剧墖涓嶈兘瓒呰繃5MB');return;}
+      if(!f.type.startsWith('image/')){alert('只支持图片文件');return;}
+      if(f.size>5*1024*1024){alert('单张图片不能超过5MB');return;}
       var imgName=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.jpg';
       var formData=new FormData();
       formData.append('file',f);
@@ -670,7 +687,7 @@ async function submitPinComment(){
       }catch(e){console.error('Upload failed',e);}
     }
   }
-  var user_name=getUserName()||'鍖垮悕';
+  var user_name=getUserName()||'匿名';
   var body={map_name:mapNameCN,text:content,user_name:user_name,pin_id:pins[curPinIdx].id};
   if(images.length)body.images=JSON.stringify(images);
   try{
@@ -686,10 +703,10 @@ async function submitPinComment(){
       if(preview)preview.innerHTML='';
       loadPinComments(curPinIdx);
     }else{
-      alert('璇勮澶辫触');
+      alert('评论失败');
     }
   }catch(e){
-    alert('璇勮澶辫触: '+e.message);
+    alert('评论失败: '+e.message);
   }
 }
 async function submitMapComment(){
@@ -717,8 +734,8 @@ async function submitMapComment(){
 }
 async function deletePinComment(commentId,pinIdx){
   var t=localStorage.getItem('abi_token');
-  if(!t){alert('璇峰厛鐧诲綍');return;}
-  if(!confirm('纭畾鍒犻櫎璇勮锛?))return;
+  if(!t){alert('请先登录');return;}
+  if(!confirm('确定删除评论？'))return;
   try{
     var r=await fetch(SUPABASE_URL+'/rest/v1/map_comments?id=eq.'+commentId,{
       method:'DELETE',
@@ -815,7 +832,8 @@ async function deleteMapComment(commentId){
 
 </script>
 <script>/**
- * 鎶婃墍鏈夋敞鍏S鍐欏埌杩欎釜鏂囦欢锛宖inal_all_in_one.cjs 璇诲彇瀹? */
+ * 把所有注入JS写到这个文件，final_all_in_one.cjs 读取它
+ */
 var selectedLayers = window.selectedLayers || {};
 (function(){ orders.forEach(function(layer){ var items=layerData[layer]; if(items) items.forEach(function(it){ selectedLayers[it]=true; }); }); })();
 
@@ -849,11 +867,11 @@ function syncMatPins(){
 function toggleMat(){
   var btn=document.getElementById('matBtn'),mc=document.getElementById('matContent');
   if(!mc) return;
-  if(mc.classList.contains('show')){ mc.classList.remove('show'); btn.classList.remove('active'); btn.innerHTML='馃摝 鐗╄祫'; return; }
-  btn.classList.add('active'); btn.innerHTML='馃摝 鐗╄祫 鈻?; mc.classList.add('show'); mc.innerHTML='';
+  if(mc.classList.contains('show')){ mc.classList.remove('show'); btn.classList.remove('active'); btn.innerHTML='📦 物资'; return; }
+  btn.classList.add('active'); btn.innerHTML='📦 物资 ▲'; mc.classList.add('show'); mc.innerHTML='';
   var ctrl=document.createElement('div'); ctrl.className='mat-ctrl';
-  var allBtn=document.createElement('button'); allBtn.className='mat-ctrl-btn'; allBtn.textContent='鈽?鍏ㄩ€?; allBtn.onclick=function(){ selectAllMat(true); };
-  var noneBtn=document.createElement('button'); noneBtn.className='mat-ctrl-btn'; noneBtn.textContent='鈽?鍙栨秷'; noneBtn.onclick=function(){ selectAllMat(false); };
+  var allBtn=document.createElement('button'); allBtn.className='mat-ctrl-btn'; allBtn.textContent='☑ 全选'; allBtn.onclick=function(){ selectAllMat(true); };
+  var noneBtn=document.createElement('button'); noneBtn.className='mat-ctrl-btn'; noneBtn.textContent='☐ 取消'; noneBtn.onclick=function(){ selectAllMat(false); };
   ctrl.appendChild(allBtn); ctrl.appendChild(noneBtn); mc.appendChild(ctrl);
   orders.forEach(function(layer){
     var items=layerData[layer]; if(!items||items.length===0) return;
@@ -862,7 +880,7 @@ function toggleMat(){
     items.forEach(function(it){
       var el=document.createElement('div'); el.className='mat-item'; el.setAttribute('data-item',it);
       var ic=(typeof getIconUrl==='function')?getIconUrl(it):'';
-      if(ic&&ic.indexOf('http')===0){ var img=document.createElement('img'); img.src=ic; img.onerror=function(){ this.style.display='none'; }; el.appendChild(img); } else { var em=document.createElement('div'); em.textContent='馃摝'; el.appendChild(em); }
+      if(ic&&ic.indexOf('http')===0){ var img=document.createElement('img'); img.src=ic; img.onerror=function(){ this.style.display='none'; }; el.appendChild(img); } else { var em=document.createElement('div'); em.textContent='📦'; el.appendChild(em); }
       var nm=document.createElement('div'); nm.className='mi-name'; nm.textContent=it; el.appendChild(nm);
       el.onclick=(function(itm){ return function(){ selectedLayers[itm]=!selectedLayers[itm]; if(typeof renderMarkers==='function') renderMarkers(); syncMatPins(); }; })(it);
       if(selectedLayers[it]) el.classList.add('active'); row.appendChild(el);
@@ -923,14 +941,14 @@ function placePin(tp,noteText){
   var cf=typeof currentFloor==='number'?currentFloor:0;
   var p={name:tp,x:x,y:y,note:noteText||'',images:[],comments:[]}; pins.push(p); renderMarkers();
   cv.textContent='-'; document.getElementById('ab').style.display='none';
-  var btn=document.getElementById('mdBtn'); if(btn) btn.textContent='[B] 娴忚';
+  var btn=document.getElementById('mdBtn'); if(btn) btn.textContent='[B] 浏览';
   var type='other'; for(var cat in layerData){ if(layerData[cat].indexOf(tp)>=0){ type=cat; break; } }
   supabase('pending_pins','POST',{name:tp,x:x,y:y,map_name:mapNameCN,type:type,ic:'',note:noteText||'',images:[],floor:cf,submitted_by:uname})
   .then(function(r){
-    alert('宸叉彁浜ゅ鏍?);
+    alert('已提交审核');
     var ov=document.createElement('div'); ov.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #ffc832;border-radius:10px;padding:12px 20px;z-index:99999;max-width:90vw;text-align:center';
     var u=window.location.origin+window.location.pathname.replace(/\/[^\/]+$/,'/map-valley.html')+'?x='+x+'&y='+y+'&floor='+cf;
-    ov.innerHTML='<div style="color:#ffc832;font-size:14px;font-weight:600;margin-bottom:8px">宸叉彁浜ゅ鏍?/div><div style="color:#888;font-size:12px;margin-bottom:10px">绛夊緟绠＄悊鍛樺鏍稿悗灏嗘樉绀哄湪鍦板浘涓?/div><a href="'+u+'" style="color:#88aaff;font-size:12px;text-decoration:underline">馃搷 鍦ㄥ湴鍥句笂鏌ョ湅浣嶇疆</a><br><button onclick="this.parentElement.remove()" style="margin-top:10px;padding:4px 16px;background:#333;border:none;border-radius:6px;color:#888;cursor:pointer">鍏抽棴</button>';
+    ov.innerHTML='<div style="color:#ffc832;font-size:14px;font-weight:600;margin-bottom:8px">已提交审核</div><div style="color:#888;font-size:12px;margin-bottom:10px">等待管理员审核后将显示在地图上</div><a href="'+u+'" style="color:#88aaff;font-size:12px;text-decoration:underline">📍 在地图上查看位置</a><br><button onclick="this.parentElement.remove()" style="margin-top:10px;padding:4px 16px;background:#333;border:none;border-radius:6px;color:#888;cursor:pointer">关闭</button>';
     document.body.appendChild(ov);
   })['catch'](function(e){ alert('Upload failed: '+e.message); });
   localStorage.setItem('abi_'+mapNameEng+'_pins',JSON.stringify({pins:pins,mapComments:mapComments}));
@@ -940,7 +958,7 @@ function showPinDetail(idx){
   curPinIdx=idx; var p=pins[idx]; var ic=getIconUrl(p.name);
   var title=document.getElementById('pdTitle');
   if(title){ title.innerHTML=''; if(ic){ var img=document.createElement('img'); img.src=ic; img.style.cssText='width:28px;height:28px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px'; title.appendChild(img); } title.appendChild(document.createTextNode(' '+(p.name||p.type||'?'))); }
-  var ps=document.getElementById('pdSubmit'); if(ps) ps.textContent=(p.submitted_by?'璐＄尞鑰? '+p.submitted_by:'');
+  var ps=document.getElementById('pdSubmit'); if(ps) ps.textContent=(p.submitted_by?'贡献者: '+p.submitted_by:'');
   var pc=document.getElementById('pdCoord'); if(pc) pc.textContent=Math.round(p.x)+'%, '+Math.round(p.y)+'%';
   var note=document.getElementById('pdNote'); if(note){ note.value=p.note||''; saveNote(idx,note); }
   var pd=document.getElementById('pd'); if(pd) pd.classList.add('show'); loadPinComments(idx);
@@ -953,44 +971,44 @@ function saveNote(idx,el){
   if(pins[idx]&&pins[idx].note) el.value=pins[idx].note;
 }
 
-// === 姹夊牎瀵艰埅 ===
+// === 汉堡导航 ===
 var navGroups = [
-  { label: '馃彔 棣栭〉', url: '../index.html' },
-  { label: '馃椇 鍦板浘閫夊浘', sub: true,
+  { label: '🏠 首页', url: '../index.html' },
+  { label: '🗺 地图选图', sub: true,
     items: [
     {
-        "label": "鐢佃鍙?,
+        "label": "电视台",
         "url": "map-tvstation.html"
     },
     {
-        "label": "鍐滃満",
+        "label": "农场",
         "url": "map-farm.html"
     },
     {
-        "label": "鍖楀北",
+        "label": "北山",
         "url": "map-beishan.html"
     },
     {
-        "label": "灞辫胺",
+        "label": "山谷",
         "url": "map-valley.html"
     },
     {
-        "label": "鍐涙搴?,
+        "label": "军械库",
         "url": "map-armory.html"
     },
     {
-        "label": "鏈哄満",
+        "label": "机场",
         "url": "map-airport.html"
     }
 ]},
-  { label: '馃敡 鏀规灙', url: '../gunsmith.html' },
-  { label: '馃挰 鑱婂ぉ', url: '../chat.html' },
-  { label: '馃摉 鏀荤暐', url: '../guides.html' },
-  { label: '馃攳 鎼滅储', url: '../search.html' },
-  { label: '鉁?瀹℃牳涓績', url: 'review.html?from=map-valley' },
-  { label: '馃懁 鐢ㄦ埛涓績', url: '../profile.html' },
+  { label: '🔧 改枪', url: '../gunsmith.html' },
+  { label: '💬 聊天', url: '../chat.html' },
+  { label: '📖 攻略', url: '../guides.html' },
+  { label: '🔍 搜索', url: '../search.html' },
+  { label: '✅ 审核中心', url: 'review.html?from=map-valley' },
+  { label: '👤 用户中心', url: '../profile.html' },
   { sep: true },
-  { label: '馃毆 閫€鍑虹櫥褰?, action: 'logout' }
+  { label: '🚪 退出登录', action: 'logout' }
 ];
 
 function toggleHamburger(){
@@ -1028,7 +1046,7 @@ function toggleHamburger(){
     gl.textContent=g.label;
     if(g.url&&g.url.indexOf(curFile)>=0) gl.classList.add('active');
     (function(u,a){ gl.onclick=function(){
-      if(a==='logout'){ if(typeof logout==='function')logout(); else alert('鏈櫥褰?); return; }
+      if(a==='logout'){ if(typeof logout==='function')logout(); else alert('未登录'); return; }
       if(u) window.location.href=u;
     };})(g.url,g.action);
     gl.style.cursor='pointer';
@@ -1042,10 +1060,11 @@ document.addEventListener('click', function(e){
   }
 });
 
-// === 鎵€鏈夋诞鍔ㄦ寜閽彲鎷栨嫿 ===
+// === 所有浮动按钮可拖拽 ===
 
 
-// 鍒濆鍖栨嫋鎷?(function(){ var h=document.getElementById('hamburger'); if(h) {} })();
+// 初始化拖拽
+(function(){ var h=document.getElementById('hamburger'); if(h) {} })();
 (function(){ var ab=document.getElementById('actionBar'); if(ab) {} })();
 (function(){ var zw=document.getElementById('zoomWrap'); if(zw) {} })();
 (function(){ var tb=document.getElementById("__disabled__"); if(tb){ tb.style.cursor='grab'; try{var saved=localStorage.getItem("__disabled__");if(saved){var p=JSON.parse(saved);tb.style.left=p.l;tb.style.top=p.t;}}catch(e){} var ox,oy,mx,my,drag=false,hd=false; tb.addEventListener('mousedown',function(e){if(e.target.tagName==='BUTTON'||e.target.tagName==='A')return; e.stopPropagation(); drag=true;hd=false; ox=e.clientX;oy=e.clientY; mx=parseInt(tb.style.left)||0; my=parseInt(tb.style.top)||8; }); document.addEventListener('mousemove',function(e){if(!drag)return;e.preventDefault();var dx=e.clientX-ox,dy=e.clientY-oy;if(Math.abs(dx)>5||Math.abs(dy)>5)hd=true;tb.style.left=(mx+dx)+'px';tb.style.top=(my+dy)+'px';}); document.addEventListener('mouseup',function(){if(drag){drag=false;if(hd)try{localStorage.setItem("__disabled__",JSON.stringify({l:tb.style.left,t:tb.style.top}));}catch(e){}}}); } })();
@@ -1055,14 +1074,14 @@ document.addEventListener('click', function(e){
 </script>
 <script>
 (function(){
-  // === 淇鎵€鏈夋嫋鎷斤細stopPropagation + 鎷栨嫿>5px鍚庨樆姝lick ===
+  // === 修复所有拖拽：stopPropagation + 拖拽>5px后阻止click ===
   var draggableIds = ['hamburger','matPanel','lp',"__floorFixed__","__disabled__",'actionBar','zoomWrap'];
   draggableIds.forEach(function(id){
     var el = document.getElementById(id);
     if(!el) return;
     el.style.cursor = 'grab';
     var ox,oy,mx,my,drag=false,moved=false;
-    // 闃叉宸叉湁鐨勬嫋鎷藉啿绐侊紝绉婚櫎鏃х洃鍚啀閲嶆柊缁戝畾
+    // 防止已有的拖拽冲突，移除旧监听再重新绑定
     el._moved = false;
     el.addEventListener('mousedown',function(e){
       el._moved = false;
@@ -1085,7 +1104,8 @@ document.addEventListener('click', function(e){
     document.addEventListener('mouseup',function(){
       drag=false;
     });
-    // 鎹曡幏闃舵鎷︽埅 click 鈥?鍙湁鎷栨嫿杩囩殑鎵嶉樆姝?    el.addEventListener('click',function(e){
+    // 捕获阶段拦截 click — 只有拖拽过的才阻止
+    el.addEventListener('click',function(e){
       if(this._moved){
         this._moved = false;
         e.stopPropagation();
@@ -1093,7 +1113,7 @@ document.addEventListener('click', function(e){
         return false;
       }
     },true);
-    // 纭繚 _moved 鍦?mouseup 鍚庡欢杩熼噸缃紙闃叉鍚庣画 click 琚敊璇嫤鎴級
+    // 确保 _moved 在 mouseup 后延迟重置（防止后续 click 被错误拦截）
     document.addEventListener('mouseup',function(){
       setTimeout(function(){ if(el) el._moved = false; }, 100);
     });
@@ -1103,10 +1123,11 @@ document.addEventListener('click', function(e){
 
 
 <script>
-// 闃绘娴忚鍣ㄧ缉鏀撅紙Ctrl+婊氳疆 / Ctrl+鍔犲彿鍑忓彿锛?document.addEventListener('wheel',function(e){
+// 阻止浏览器缩放（Ctrl+滚轮 / Ctrl+加号减号）
+document.addEventListener('wheel',function(e){
   if(e.ctrlKey || e.metaKey){
     e.preventDefault();
-    // 鏀逛负鍦板浘缂╂斁
+    // 改为地图缩放
     if(typeof setScale === 'function'){
       var dir = e.deltaY > 0 ? -1 : 1;
       var newScale = scaleM + dir * 0.1 * scaleM;
@@ -1160,10 +1181,10 @@ input,textarea,button{font-size:14px!important}
 </style>
 <script>
 (function(){
-  // Ctrl+婊氳疆缂╂斁淇濇姢
+  // Ctrl+滚轮缩放保护
   document.addEventListener('wheel',function(e){if(e.ctrlKey||e.metaKey){e.preventDefault();}},{passive:false});
 
-  // 澶嶄綅鍔熻兘
+  // 复位功能
   function resetPositions(){
     var items=[
       ['hamburger','hb_pos'],
@@ -1186,7 +1207,8 @@ input,textarea,button{font-size:14px!important}
   }
   window.resetPositions = resetPositions;
 
-  // 鎵€鏈夐潰鏉垮彲鎷栨嫿锛堜笉淇濆瓨浣嶇疆锛?  var draggableIds=['hamburger','matPanel','lp',"__floorFixed__","__disabled__",'actionBar','zoomWrap','commentPanel'];
+  // 所有面板可拖拽（不保存位置）
+  var draggableIds=['hamburger','matPanel','lp',"__floorFixed__","__disabled__",'actionBar','zoomWrap','commentPanel'];
   draggableIds.forEach(function(id){
     var el=document.getElementById(id);
     if(!el) return;
@@ -1221,7 +1243,8 @@ input,textarea,button{font-size:14px!important}
     },true);
   });
 
-  // 椤堕儴鍔犲浣嶆寜閽?  var tb=document.getElementById("__disabled__");
+  // 顶部加复位按钮
+  var tb=document.getElementById("__disabled__");
   if(tb){
     var rp=document.createElement('button');
     rp.textContent='\u21ba \u5f52\u4f4d';
@@ -1231,7 +1254,7 @@ input,textarea,button{font-size:14px!important}
   }
 })();
 
-// === showPicker锛堟姇绋垮脊绐楋級 ===
+// === showPicker（投稿弹窗） ===
 function showPicker(){
   var old=document.getElementById('cpMenu');
   if(old)old.remove();
@@ -1240,7 +1263,8 @@ function showPicker(){
   menu.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:99999';
   var box=document.createElement('div');
   box.style.cssText='background:#12121a;border:1px solid #1e1e2a;border-radius:14px;padding:16px 20px;min-width:360px;max-width:440px;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.6);display:flex;flex-direction:column;gap:10px';
-  // 鏍囬鏍?  var header=document.createElement('div');
+  // 标题栏
+  var header=document.createElement('div');
   header.style.cssText='display:flex;justify-content:space-between;align-items:center';
   var title=document.createElement('div');
   title.style.cssText='font-size:15px;color:#ffc832;font-weight:600';
@@ -1252,13 +1276,13 @@ function showPicker(){
   closeBtn.onclick=function(){menu.remove();};
   header.appendChild(closeBtn);
   box.appendChild(header);
-  // 鍧愭爣+妤煎眰
+  // 坐标+楼层
   var info=document.createElement('div');
   info.style.cssText='font-size:12px;color:#888;display:flex;gap:8px;padding:3px 6px;background:rgba(255,255,255,0.02);border-radius:4px';
   var cv=document.getElementById('cv');
   info.innerHTML='<span>\ud83d\udccd '+(cv?cv.textContent:'')+'</span><span style="color:#444">|</span><span>\ud83c\udfd7 '+(typeof currentFloor==='number'?'\u7b2c'+currentFloor+'\u5c42':'')+'</span>';
   box.appendChild(info);
-  // 鍒嗙被鏍囩
+  // 分类标签
   var tabBar=document.createElement('div');
   tabBar.style.cssText='display:flex;gap:3px;flex-wrap:wrap';
   var layers=['\u5168\u90e8'].concat(orders);
@@ -1277,7 +1301,7 @@ function showPicker(){
     tabBar.appendChild(tab);
   });
   box.appendChild(tabBar);
-  // 瀹瑰櫒缃戞牸
+  // 容器网格
   var gridWrap=document.createElement('div');
   gridWrap.style.cssText='max-height:300px;overflow-y:auto;scrollbar-width:thin';
   var gridContainer=document.createElement('div');
@@ -1318,7 +1342,7 @@ function showPicker(){
   });
   gridWrap.appendChild(gridContainer);
   box.appendChild(gridWrap);
-  // 搴曢儴澶囨敞
+  // 底部备注
   var footer=document.createElement('div');
   footer.style.cssText='margin-top:4px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.04)';
   var noteLabel=document.createElement('div');
@@ -1344,17 +1368,19 @@ function showPicker(){
   document.body.appendChild(menu);
 }
 
-// === 澶囨敞鏄剧ず ===
+// === 备注显示 ===
 (function(){
-  // 璇︽儏寮圭獥鍔犲娉ㄦ樉绀?  var pdn = document.getElementById('pdNoteDisplay');
+  // 详情弹窗加备注显示
+  var pdn = document.getElementById('pdNoteDisplay');
   if(!pdn){
-    // 绛塂OM鍔犺浇
+    // 等DOM加载
     var ti = setInterval(function(){
       var nd = document.getElementById('pdNoteDisplay');
       if(nd){ clearInterval(ti); }
     }, 100);
   }
-  // 瑕嗙洊 showPinDetail 鍔犲娉?  var origSD = window.showPinDetail;
+  // 覆盖 showPinDetail 加备注
+  var origSD = window.showPinDetail;
   if(typeof origSD === 'function'){
     window.showPinDetail = function(idx){
       origSD(idx);
@@ -1381,11 +1407,11 @@ function showPicker(){
         ls.innerHTML='<a href="#" onclick="logout();return false" style="color:#ffc832;text-decoration:none">'+un+'</a>';
         var rb=document.getElementById("reviewBtn2");if(rb)rb.style.display="";
       } else {
-        ls.innerHTML='<a href="#" onclick="loginGitHub();return false" style="color:#aaa;text-decoration:none">鐧诲綍</a>';
+        ls.innerHTML='<a href="#" onclick="loginGitHub();return false" style="color:#aaa;text-decoration:none">登录</a>';
         var rb=document.getElementById("reviewBtn2");if(rb)rb.style.display="none";
       }
     }catch(e){
-      ls.innerHTML='<a href="#" onclick="loginGitHub();return false" style="color:#aaa;text-decoration:none">鐧诲綍</a>';
+      ls.innerHTML='<a href="#" onclick="loginGitHub();return false" style="color:#aaa;text-decoration:none">登录</a>';
     }
   }
   if(document.readyState==="complete")up();else window.addEventListener("load",up);
@@ -1407,7 +1433,8 @@ function showPicker(){
 })();</script>
 
 <script>
-// Shift+Click: 鍦ㄩ紶鏍囦綅缃姇绋垮鍣?document.addEventListener('click', function(e) {
+// Shift+Click: 在鼠标位置投稿容器
+document.addEventListener('click', function(e) {
   if (!e.shiftKey) return;
   e.preventDefault();
   e.stopPropagation();
@@ -1430,14 +1457,15 @@ function showPicker(){
   if (typeof showPicker === 'function') {
     showPicker();
   } else {
-    alert('Shift+Click: 璇峰厛鐐瑰嚮鍦板浘涓婄殑馃摝鎸夐挳杩涘叆鎶曠妯″紡');
+    alert('Shift+Click: 请先点击地图上的📦按钮进入投稿模式');
   }
 });
 </script>
-<!-- Shift+Click 鎶曠鎻愮ず -->
+<!-- Shift+Click 投稿提示 -->
 
 <script>
-// Shift+Click: 鍦ㄩ紶鏍囦綅缃姇绋垮鍣?document.addEventListener('click', function(e) {
+// Shift+Click: 在鼠标位置投稿容器
+document.addEventListener('click', function(e) {
   if (!e.shiftKey) return;
   e.preventDefault();
   e.stopPropagation();
@@ -1458,8 +1486,8 @@ function showPicker(){
   if (typeof showPicker === 'function') {
     showPicker();
   } else {
-    alert('Shift+Click: 璇峰厛鐐瑰嚮鍦板浘涓婄殑馃摝鎸夐挳杩涘叆鎶曠妯″紡');
+    alert('Shift+Click: 请先点击地图上的📦按钮进入投稿模式');
   }
 });
-</script><div style="position:fixed;bottom:4px;right:60px;z-index:99999;font-size:30px;color:rgba(255,255,255,0.25);pointer-events:none;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.8)">馃摝 Shift+宸﹂敭鎶曠瀹瑰櫒</div></body>
+</script><div style="position:fixed;bottom:4px;right:60px;z-index:99999;font-size:30px;color:rgba(255,255,255,0.25);pointer-events:none;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.8)">📦 Shift+左键投稿容器</div></body>
 </html>
