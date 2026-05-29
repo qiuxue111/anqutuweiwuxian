@@ -51,10 +51,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a14;font-family:
 .layer-selector{display:none;position:fixed;right:10px;bottom:60px;z-index:99;background:rgba(10,10,20,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:4px;min-width:200px;max-height:60vh;overflow-y:auto}
 .layer-selector.open{display:block}
 .layer-selector .layer-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;color:#aaa;font-size:13px;cursor:pointer}
-#lp{width:100%}
-#lp input[type=checkbox]{accent-color:#ffc832;width:16px;height:16px}
-#lp .layer-item label{font-size:12px;gap:6px;padding:2px 4px}
-#lp .layer-item img{width:36px;height:36px}
+.ly-all{padding:8px 4px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;color:#ffc832;font-weight:600}
+.ly-all input{margin-right:6px;accent-color:#ffc832;width:16px;height:16px}
+.ly-cat{margin:6px 0;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.ly-cat-hdr{font-size:14px;color:#888;padding:4px 0;font-weight:600}
+.ly-cat-hdr input{margin-right:4px;accent-color:#ffc832;width:14px;height:14px}
+.ly-grid{display:grid;grid-template-columns:1fr;gap:4px;margin-top:4px}
+.ly-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#aaa;cursor:pointer;padding:2px 4px;border-radius:4px}
+.ly-item input{accent-color:#ffc832;width:14px;height:14px}
+.ly-icon{width:28px;height:28px;border-radius:4px;object-fit:cover}
+.ly-icon.ph{display:inline-flex;width:28px;height:28px;border-radius:4px;background:#333;align-items:center;justify-content:center;color:#888;font-size:10px}
 .layer-selector .layer-item:active{background:rgba(255,255,255,0.06)}
 .layer-selector .layer-item .lchk{width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
 .layer-selector .layer-item.active .lchk{background:#ffc832;border-color:#ffc832;color:#111}
@@ -381,15 +387,67 @@ function renderFloorSelector(){
 
 function renderLayerSelector(){
   var el = document.getElementById("layerSelector");
-  // 把 #lp 移到 #layerSelector 里（PC 版 renderLayers 写入 #lp）
-  var lp = document.getElementById("lp");
-  if(lp && lp.parentNode !== el && !el.contains(lp)) {
-    el.innerHTML = '';
-    el.appendChild(lp);
-  }
-  // PC版renderLayers写入#lp，在手机面板中显示
-  lp.classList.add('mobile-layer-panel');
-  if(typeof renderLayers === 'function') renderLayers();
+  if(!el) return;
+  
+  // 构建手机版图层UI：分类+容器单独开关
+  el.innerHTML = '<div class="ly-all"><label><input type="checkbox" id="lyAllCb" checked><span>All</span></label></div>';
+  
+  var allCb = el.querySelector('#lyAllCb');
+  allCb.addEventListener('change', function(){
+    toggleAllLayers(this.checked);
+  });
+  
+  orders.forEach(function(k){
+    var items = layerData[k];
+    if(!items || items.length === 0) return;
+    
+    var catDiv = document.createElement('div');
+    catDiv.className = 'ly-cat';
+    
+    // 分类头部 checkbox
+    var hdr = document.createElement('div');
+    hdr.className = 'ly-cat-hdr';
+    var hdrCb = document.createElement('input');
+    hdrCb.type = 'checkbox';
+    hdrCb.checked = true;
+    hdrCb.addEventListener('change', function(){
+      toggleLayer(k, this.checked);
+    });
+    hdr.appendChild(hdrCb);
+    hdr.appendChild(document.createTextNode(' ' + k));
+    catDiv.appendChild(hdr);
+    
+    // 容器列表(grid)
+    var grid = document.createElement('div');
+    grid.className = 'ly-grid';
+    items.forEach(function(item){
+      var lbl = document.createElement('label');
+      lbl.className = 'ly-item';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = true;
+      cb.setAttribute('data-name', item);
+      cb.addEventListener('change', function(){ dispatchLayerCheck(); });
+      lbl.appendChild(cb);
+      // 图标
+      var ic = getIconUrl(item);
+      if(ic && ic.indexOf('http') === 0){
+        var img = document.createElement('img');
+        img.src = ic;
+        img.className = 'ly-icon';
+        lbl.appendChild(img);
+      } else {
+        var ph = document.createElement('span');
+        ph.className = 'ly-icon ph';
+        ph.textContent = '?';
+        lbl.appendChild(ph);
+      }
+      lbl.appendChild(document.createTextNode(item));
+      grid.appendChild(lbl);
+    });
+    catDiv.appendChild(grid);
+    el.appendChild(catDiv);
+  });
 }
 
 function setupHamburger(){
