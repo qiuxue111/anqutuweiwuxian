@@ -831,13 +831,13 @@ function saveLayerState(){
     var name = cb.getAttribute('data-name') || cb.getAttribute('data-layer') || '';
     if(name) state[name] = cb.checked;
   });
-  try { localStorage.setItem('mobile_layer_state_' + mapName, JSON.stringify(state)); } catch(e){}
+  try { localStorage.setItem('mobile_layer_state_' + mapNameEng, JSON.stringify(state)); } catch(e){}
 }
 
 // 恢复图层选中状态
 function restoreLayerState(){
   try {
-    var saved = localStorage.getItem('mobile_layer_state_' + mapName);
+    var saved = localStorage.getItem('mobile_layer_state_' + mapNameEng);
     if(!saved) return;
     var state = JSON.parse(saved);
     var el = document.getElementById('layerSelector');
