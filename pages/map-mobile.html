@@ -540,14 +540,29 @@ function switchFloor(idx) {
   currentFloor = idx;
   var img = document.getElementById('mapImg');
   if (!img) return;
-  // 只切换图片，保持panX/panY/scale不变
+  
+  // 锁定 panX/panY/scale，禁止 PC 版代码在新图片加载时篡改
+  var savedPanX = panX, savedPanY = panY, savedScale = scaleM;
+  window._switchFloorLock = true;
+  
+  img.onload = function(){
+    // 新图片加载完成：恢复视图
+    panX = savedPanX;
+    panY = savedPanY;
+    scaleM = savedScale;
+    updateTransform();
+    window._switchFloorLock = false;
+    // 标记过滤
+    var mv=document.getElementById('mv');
+    if(mv){mv.querySelectorAll('.pin-marker').forEach(function(el){var pi=parseInt(el.getAttribute('data-pin-idx'));if(!isNaN(pi)&&pins[pi]){var pf=pins[pi].floor||0;el.style.display=pf===idx?'':'none';}});}
+  };
+  
   img.src = floorImages[idx];
+  
   document.querySelectorAll('.floor-btn').forEach(function(btn, i) {
     btn.classList.toggle('active', i === idx);
   });
-  // 过滤标记 — 只显示当前楼层
-  var mv=document.getElementById('mv');
-  if(mv){mv.querySelectorAll('.pin-marker').forEach(function(el){var pi=parseInt(el.getAttribute('data-pin-idx'));if(!isNaN(pi)&&pins[pi]){var pf=pins[pi].floor||0;el.style.display=pf===idx?'':'none';}});}
+  
   // 非0层隐藏容器选择弹窗的位置指示
   if(idx>0 && typeof hideAreaSelect==='function'){hideAreaSelect();}
   console.log('Switch to floor', idx, floorLabels[idx]);
