@@ -186,6 +186,16 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 <div class="loading" id="loading">加载中...</div>
 
 <script>
+/* mobile redirect */
+(function(){
+  var isMobile = false;
+try { isMobile = ('ontouchstart' in window && window.innerWidth < 600 && !navigator.userAgent.match(/Windows|Macintosh/)); } catch(e){}
+  if(!isMobile) return;
+  var m = window.location.pathname.match(/map-(\w+)\.html/);
+  if(m) window.location.href = 'map-mobile.html?map=' + m[1];
+})();
+</script>
+<script>
 var cards = [];
 var connections = [];
 var editMode = false;

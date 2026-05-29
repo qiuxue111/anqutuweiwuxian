@@ -287,6 +287,16 @@ body{font-size:14px!important}
 
 
 <script>
+/* mobile redirect */
+(function(){
+  var isMobile = false;
+try { isMobile = ('ontouchstart' in window && window.innerWidth < 600 && !navigator.userAgent.match(/Windows|Macintosh/)); } catch(e){}
+  if(!isMobile) return;
+  var m = window.location.pathname.match(/map-(\w+)\.html/);
+  if(m) window.location.href = 'map-mobile.html?map=' + m[1];
+})();
+</script>
+<script>
 var scaleM=4,panX=0,panY=0,mode='browse',pins=[],mapComments=[],curPinIdx=null,touchStartDist=0,touchStartScale=1;
 function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
 function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return localStorage.getItem('abi_user')||'已登录';}}
