@@ -358,7 +358,7 @@ function renderLayerSelector(){
   el.innerHTML = '<div class="ly-ctrl"><button id="lySelAll" class="ly-ctrl-btn">☑ 全选</button><button id="lyClearAll" class="ly-ctrl-btn">☐ 取消</button></div>';
   
   document.getElementById('lySelAll').addEventListener('click', function(){
-    el.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked = true; });
+    el.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked = false; });
     dispatchLayerCheck();
     saveLayerState();
   });
