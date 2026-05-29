@@ -191,10 +191,12 @@ function fitMap(){
   var img = document.getElementById("mapImg");
   if(!img || !img.complete || !img.naturalWidth) return;
   var wr = wrap.getBoundingClientRect();
-  scaleM = 4;
-  panX = (wr.width - wr.width * scaleM) / 2;
-  panY = (wr.height - wr.width / img.naturalWidth * img.naturalHeight * scaleM) / 2;
-  console.log('fitMap', wr.width, wr.height, img.naturalWidth, img.naturalHeight, panX, panY);
+  // 填满屏幕宽度，高度自适应，居中显示
+  scaleM = wr.width / Math.min(wr.width, img.naturalWidth);
+  panX = 0;
+  var imgH = wr.width / img.naturalWidth * img.naturalHeight;
+  panY = (wr.height - imgH * scaleM) / 2;
+  if(Math.abs(panY) < 10) panY = 0;
   updateTransform();
 }
 
