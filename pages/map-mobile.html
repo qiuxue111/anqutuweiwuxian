@@ -192,10 +192,9 @@ function fitMap(){
   if(!img || !img.complete || !img.naturalWidth) return;
   var wr = wrap.getBoundingClientRect();
   scaleM = 4;
-  // 图片CSS渲染宽 = wr.width (width:100%), 高 = 按比例
-  // 居中: 偏移到使放大后的图片中心对齐屏幕中心
   panX = (wr.width - wr.width * scaleM) / 2;
   panY = (wr.height - wr.width / img.naturalWidth * img.naturalHeight * scaleM) / 2;
+  console.log('fitMap', wr.width, wr.height, img.naturalWidth, img.naturalHeight, panX, panY);
   updateTransform();
 }
 
