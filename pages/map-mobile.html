@@ -828,8 +828,7 @@ function saveLayerState(){
 function restoreLayerState(){
   try {
     var saved = localStorage.getItem('mobile_layer_state_' + mapName);
-  if(!saved) return;
-  try {
+    if(!saved) return;
     var state = JSON.parse(saved);
     var el = document.getElementById('layerSelector');
     if(!el) return;
