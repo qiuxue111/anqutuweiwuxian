@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>农场地图 - 暗区突围：无限</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif}
+nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem;height:50px;background:#0f0f16;border-bottom:1px solid #222}
+.logo{color:#ffc832;font-weight:bold;font-size:16px;text-decoration:none}
+.map-wrap{position:relative;width:100%;max-width:1200px;margin:1rem auto;border:1px solid #1e1e2a;border-radius:12px;overflow:hidden}
+.map-wrap img{display:block;width:100%;-webkit-user-drag:none;user-select:none;pointer-events:none}
+.ctrl{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#0f0f16;border-top:1px solid #1e1e2a;flex-wrap:wrap}
+.ctrl button{background:#1e1e2a;border:none;color:#ccc;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px}
+.ctrl button:hover{background:#2a2a3a;color:#ffc832}
+.ctrl button.mode{background:transparent;border:1px solid rgba(255,200,50,.2);color:#ffc832;margin-left:auto}
+.ctrl input[type=range]{width:80px;accent-color:#ffc832}
+.ctrl span{color:#888;font-size:12px;min-width:35px;text-align:center}
+.ly-btn{position:absolute;top:8px;right:8px;z-index:10;background:rgba(0,0,0,.6);border:1px solid #333;color:#ddd;padding:16px 40px;border-radius:16px;cursor:pointer;font-size:52px}
+.crosshair{display:none;position:fixed;z-index:9997;pointer-events:none;width:40px;height:40px;transform:translate(-50%,-50%)}
+.crosshair.show{display:block}
+.crosshair .ch-h,.crosshair .ch-v{position:absolute;background:rgba(255,200,50,.8)}
+.crosshair .ch-h{top:50%;left:0;width:100%;height:2px;transform:translateY(-50%)}
+.crosshair .ch-v{top:0;left:50%;width:2px;height:100%;transform:translateX(-50%)}
+.crosshair .ch-dot{position:absolute;top:50%;left:50%;width:10px;height:10px;border:2px solid #ffc832;border-radius:50%;transform:translate(-50%,-50%);background:rgba(255,200,50,.15)}
+.ly-btn:hover{background:rgba(0,0,0,.8);color:#ffc832}
+.ly-pop{display:none;position:fixed;top:75px;right:16px;background:rgba(18,18,26,.96);border:1px solid #1e1e2a;border-radius:16px;padding:24px;max-height:80vh;overflow-y:auto;min-width:600px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.ly-pop.show{display:block}
+.ly-pop label{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;font-size:28px;color:#ccc;border-radius:12px;margin-bottom:4px}
+.ly-pop label:hover{background:rgba(255,200,50,.08)}
+.ly-pop input{accent-color:#ffc832;margin:0;width:32px;height:32px}
+.ly-pop .ly-icon{width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0;display:inline-block;vertical-align:middle}
+.ly-pop .ly-icon.e{width:48px;text-align:center;font-size:36px;line-height:48px}
+.ly-pop .all-label{justify-content:center;border:1px solid rgba(255,200,50,.3);border-radius:12px;padding:16px;margin-bottom:12px;font-size:28px}
+.ly-pop .ly-card{background:rgba(255,255,255,.03);border:1px solid #1e1e2a;border-radius:12px;padding:12px;margin-bottom:10px}
+.ly-pop .ly-card-hdr{display:flex;align-items:center;gap:10px;padding:6px 8px 10px;border-bottom:1px solid rgba(255,200,50,.15);margin-bottom:4px;font-size:22px;color:#ffc832;font-weight:600}
+.ly-pop .ly-card-hdr input{width:24px;height:24px}
+#vm{padding:8px 12px;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;margin:0 0 1rem;display:flex;align-items:center;gap:8px}
+#vm .coord{color:#ffc832;font-family:monospace;font-size:14px}
+#vm .sel-btn{display:none;padding:5px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px}
+/* ─── 容器详情弹窗 ─── */
+.pd-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:9998;justify-content:center;align-items:center}
+.pd-overlay.show{display:flex}
+.pd-box{background:#12121a;border:1px solid #1e1e2a;border-radius:16px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.pd-close{position:absolute;top:12px;right:16px;color:#666;font-size:22px;cursor:pointer;background:none;border:none}
+.pd-close:hover{color:#ffc832}
+.pd-title{font-size:22px;color:#ffc832;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.pd-coord{color:#888;font-size:13px;margin-bottom:16px;font-family:monospace}
+.pd-section-title{color:#ffc832;font-size:15px;margin:16px 0 8px;font-weight:600;border-bottom:1px solid rgba(255,200,50,.15);padding-bottom:4px}
+.pd-note{width:100%;min-height:80px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:8px;color:#ddd;padding:10px;font-size:14px;resize:vertical;font-family:inherit}
+.pd-note:focus{outline:none;border-color:#ffc832}
+.pd-save-note{padding:6px 16px;background:#ffc832;color:#0a0a0f;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;margin-top:6px}
+.pd-save-note:hover{background:#e6b42e}
+.pd-img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.pd-img-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:1px solid #1e1e2a;cursor:pointer}
+.pd-img-grid img:hover{border-color:#ffc832}
+.pd-add-img{display:flex;align-items:center;justify-content:center;aspect-ratio:1;border:2px dashed #333;border-radius:6px;cursor:pointer;color:#666;font-size:28px}
+.pd-add-img:hover{border-color:#ffc832;color:#ffc832}
+.pd-comments{margin-top:16px;border-top:1px solid #1e1e2a;padding-top:12px}
+.pd-comments .pdc-title{color:#ffc832;font-size:15px;font-weight:600;margin-bottom:8px}
+.pd-comments textarea{width:100%;min-height:40px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:8px;color:#ddd;padding:8px;font-size:13px;resize:vertical;font-family:inherit}
+.pd-comments textarea:focus{outline:none;border-color:#ffc832}
+.pd-comments .pdc-btn{padding:4px 12px;background:#ffc832;color:#0a0a0f;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:12px;margin-top:4px}
+.pd-comments .pdc-list{margin-top:8px;max-height:200px;overflow-y:auto}
+.pd-comments .pdc-item{padding:6px 8px;background:#0a0a10;border-radius:6px;margin-bottom:4px;font-size:13px;color:#ccc}
+.pd-comments .pdc-item .pdc-time{color:#666;font-size:11px;float:right}
+/* ─── 地图全局评论�?─── */
+.map-comments{margin:1rem auto;max-width:1200px;background:#12121a;border:1px solid #1e1e2a;border-radius:12px;padding:16px}
+.map-comments h3{color:#ffc832;font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.map-comments textarea{width:100%;min-height:60px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:8px;color:#ddd;padding:10px;font-size:14px;resize:vertical;font-family:inherit}
+.map-comments textarea:focus{outline:none;border-color:#ffc832}
+.map-comments .mc-actions{display:flex;gap:8px;margin-top:6px;align-items:center}
+.map-comments .mc-actions button{padding:6px 16px;background:#ffc832;color:#0a0a0f;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px}
+.map-comments .mc-actions button:hover{background:#e6b42e}
+.map-comments .mc-list{margin-top:12px}
+.map-comments .mc-item{padding:8px 10px;background:#0a0a10;border-radius:8px;margin-bottom:6px;font-size:14px;color:#ccc}
+.map-comments .mc-item .mc-time{color:#666;font-size:11px;float:right}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="logo">暗区无限</a>
+  <div style="display:flex;gap:10px;align-items:center">
+    <a href="review.html" style="color:#888;font-size:13px;text-decoration:none">📋 审核</a>
+    <a href="help.html" style="color:#888;font-size:13px;text-decoration:none">📖 帮助</a>
+    <a href="maps.html" style="color:#888;font-size:13px;text-decoration:none">�?返回地图</a>
+  </div>
+</nav>
+<div class="map-wrap">
+  <button class="ly-btn" id="lbb">图层</button>
+  <div id="mv" style="transform-origin:0 0;cursor:grab">
+    <img src="../assets/maps/farm.png" draggable="false" id="mapImg" style="display:block;width:100%">
+  </div>
+  </div>
+  <div class="ctrl">
+    <button onclick="zoom(0.85)">-</button>
+    <input type="range" id="zr" min="20" max="800" value="100" oninput="zoomTo(+this.value)">
+    <button onclick="zoom(1.18)">+</button>
+    <button onclick="resetView()">&#x27F2;</button>
+    <span id="zl">100%</span>
+    <button id="mdBtn" class="mode">&#x1F441;&#xFE0F; 浏览</button>
+    <button onclick="exportToCloud()" style="background:#2a1a0a;border:1px solid rgba(255,200,50,.2);color:#ffc832;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px">📤 导出</button>
+  </div>
+<div class="ly-pop" id="lp"></div>
+<div class="crosshair" id="ch"><div class="ch-v"></div><div class="ch-h"></div><div class="ch-dot"></div></div>
+<div id="vm"><span>当前位置�?/span><span class="coord" id="cv">未选择</span><button class="sel-btn" id="ab">选择容器类型 �?/button></div>
+
+<!-- 容器详情弹窗 -->
+<div class="pd-overlay" id="pd">
+  <div class="pd-box">
+    <button class="pd-close" onclick="closePinDetail()">�?/button>
+    <div class="pd-title" id="pdTitle">容器名称</div>
+    <div class="pd-coord" id="pdCoord">位置</div>
+
+    <div class="pd-section-title">📝 备注</div>
+    <textarea class="pd-note" id="pdNote" placeholder="写下关于这个容器的备注…�?></textarea>
+    <button class="pd-save-note" onclick="savePinNote()">保存备注</button>
+
+    <div class="pd-section-title">🖼�?图片</div>
+    <div class="pd-img-grid" id="pdImgGrid"></div>
+    <input type="file" id="pdImgInput" accept="image/*" style="display:none" multiple onchange="addPinImages(this.files)">
+
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button onclick="deleteCurrentPin()" style="padding:6px 14px;background:#4a1a1a;color:#e55;border:none;border-radius:6px;cursor:pointer;font-size:13px">🗑 删除此点�?/button>
+    </div>
+
+    <!-- 容器评论�?-->
+    <div class="pd-comments">
+      <div class="pdc-title">💬 评论�?/div>
+      <textarea id="pdcInput" placeholder="对这个容器有什么想说的�?></textarea>
+      <button class="pdc-btn" onclick="postPinComment()">发表</button>
+      <div class="pdc-list" id="pdcList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 地图评论�?-->
+<div class="map-comments">
+  <h3>💬 地图讨论�?/h3>
+  <textarea id="mcInput" placeholder="对这张地图有什么想说的�?></textarea>
+  <div class="mc-actions">
+    <button onclick="postMapComment()">发表评论</button>
+  </div>
+  <div class="mc-list" id="mcList"></div>
+</div>
+
+<script>
+var TYPES=[
+  {cat:"保险�?, items:[
+    {id:"safe",name:"保险�?,ic:"../assets/icons/保险.png"},
+    {id:"safe2",name:"电子保险",ic:"../assets/icons/电子保险.png"},
+    {id:"safe3",name:"滴滴保险",ic:"../assets/icons/滴滴保险.png"},
+  ]},
+  {cat:"武器�?, items:[
+    {id:"weapon",name:"武器�?,ic:"../assets/icons/武器�?png"},
+    {id:"中型武器�?,name:"中型武器�?,ic:"../assets/icons/中型武器�?png"},
+    {id:"largeWeapon",name:"大型武器�?,ic:"../assets/icons/大型武器�?png"},
+    {id:"woodWeapon",name:"木质武器�?,ic:"../assets/icons/木质武器�?png"},
+    {id:"高级武器�?,name:"高级武器�?,ic:"../assets/icons/高级武器�?png"},
+  ]},
+  {cat:"工具�?, items:[
+    {id:"tool",name:"工具�?,ic:"../assets/icons/工具�?png"},
+    {id:"高级工具�?,name:"高级工具�?,ic:"../assets/icons/高级工具�?png"},
+  ]},
+  {cat:"医疗�?, items:[
+    {id:"med",name:"小医�?,ic:"../assets/icons/小医�?png"},
+    {id:"中级医疗",name:"中级医疗",ic:"../assets/icons/中级医疗.png"},
+    {id:"高级医疗",name:"高级医疗",ic:"../assets/icons/高级医疗.png"},
+  ]},
+  {cat:"弹药�?, items:[
+    {id:"ammo",name:"子弹�?,ic:"../assets/icons/子弹�?png"},
+  ]},
+  {cat:"生活箱包", items:[
+    {id:"suitcase",name:"旅行�?,ic:"../assets/icons/商务旅行�?png"},
+    {id:"运动�?,name:"运动�?,ic:"../assets/icons/运动�?png"},
+    {id:"白旅",name:"白旅",ic:"../assets/icons/白旅.png"},
+    {id:"蓝领",name:"蓝领",ic:"../assets/icons/蓝领.png"},
+  ]},
+  {cat:"机箱/置物�?, items:[
+    {id:"置物�?,name:"置物�?,ic:"../assets/icons/置物�?png"},
+    {id:"黑置物箱",name:"黑置物箱",ic:"../assets/icons/黑置物箱.png"},
+    {id:"军用主机",name:"军用主机",ic:"../assets/icons/军用主机.png"},
+    {id:"家用机箱",name:"家用机箱",ic:"../assets/icons/家用机箱.png"},
+  ]},
+  {cat:"衣服", items:[
+    {id:"小衣�?,name:"小衣�?,ic:"../assets/icons/小衣�?png"},
+    {id:"大衣",name:"大衣",ic:"../assets/icons/大衣.png"},
+  ]},
+  {cat:"特殊容器", items:[
+    {id:"drawer",name:"抽屉",ic:"../assets/icons/抽屉.png"},
+    {id:"文件�?,name:"文件�?,ic:"../assets/icons/文件�?png"},
+    {id:"配件�?,name:"配件�?,ic:"../assets/icons/配件�?png"},
+    {id:"收银�?,name:"收银�?,ic:"../assets/icons/收银�?png"},
+    {id:"手雷�?,name:"手雷�?,ic:"../assets/icons/手雷�?png"},
+    {id:"刮刮�?,name:"刮刮�?,ic:"../assets/icons/刮刮�?png"},
+  ]},
+  {cat:"其他", items:[
+    {id:"extract",name:"撤离�?,ic:"emoji:🚁"},
+    {id:"other",name:"其他",ic:"emoji:🏷�?},
+  ]}
+];
+// 平铺所�?item 方便查找
+var TYPE={},ALL_ITEMS=[];
+TYPES.forEach(function(g){g.items.forEach(function(t){TYPE[t.id]=t;ALL_ITEMS.push(t);});});
+var layerSt={};ALL_ITEMS.forEach(function(t){layerSt[t.id]=false;});
+var pins=[],curPinIdx=null,mode="view",pp=null,scale=1,panX=0,panY=0,dg=false,dx=0,dy=0,sx=0,sy=0;
+var mapComments=[];
+var mv=document.getElementById("mv");
+
+function renderLayers(){
+  var list=document.getElementById("lp");list.innerHTML="";
+  // 全选按�?
+  var allOn=true;ALL_ITEMS.forEach(function(t){if(!layerSt[t.id])allOn=false;});
+  var al=document.createElement("label");al.className="all-label";
+  var ac=document.createElement("input");ac.type="checkbox";ac.checked=allOn;
+  ac.onchange=function(){var v=ac.checked;ALL_ITEMS.forEach(function(t){layerSt[t.id]=v;});renderMarkers();renderLayers();};
+  al.appendChild(ac);al.appendChild(document.createTextNode(" 全�?));list.appendChild(al);
+  // 分组卡片
+  TYPES.forEach(function(g){
+    var card=document.createElement("div");card.className="ly-card";
+    // 组标�?+ 组全�?
+    var hdr=document.createElement("div");hdr.className="ly-card-hdr";
+    var hc=document.createElement("input");hc.type="checkbox";
+    var gAllOn=true;g.items.forEach(function(t){if(!layerSt[t.id])gAllOn=false;});
+    hc.checked=gAllOn;
+    hc.onchange=function(){var v=hc.checked;g.items.forEach(function(t){layerSt[t.id]=v;});renderMarkers();renderLayers();};
+    var ht=document.createElement("span");ht.textContent=g.cat;
+    hdr.appendChild(hc);hdr.appendChild(ht);card.appendChild(hdr);
+    // 组内项目
+    g.items.forEach(function(t){
+      if(layerSt[t.id]===undefined)layerSt[t.id]=false;
+      var la=document.createElement("label");
+      var cb=document.createElement("input");cb.type="checkbox";cb.checked=layerSt[t.id];
+      cb.onchange=(function(id){return function(){layerSt[id]=cb.checked;renderMarkers();};})(t.id);
+      la.appendChild(cb);
+      var isEmoji=t.ic&&t.ic.indexOf("emoji:")===0;
+      if(isEmoji){
+        var sp=document.createElement("span");sp.className="ly-icon e";sp.textContent=t.ic.replace("emoji:","");la.appendChild(sp);
+      }else{
+        var im=document.createElement("img");im.className="ly-icon";im.src=t.ic;la.appendChild(im);
+      }
+      la.appendChild(document.createTextNode(t.name));card.appendChild(la);
+    });
+    list.appendChild(card);
+  });
+}
+document.getElementById("lbb").onclick=function(){document.getElementById("lp").classList.toggle("show");renderLayers();};
+document.addEventListener("click",function(e){var el=document.getElementById("lp"),btn=document.getElementById("lbb");if(el.classList.contains("show")&&!el.contains(e.target)&&e.target!==btn)el.classList.remove("show");});
+
+function renderMarkers(){
+  var box=document.getElementById("mb");
+  if(!box){box=document.createElement("div");box.id="mb";box.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none";document.querySelector(".map-wrap img").parentNode.appendChild(box);}
+  box.innerHTML="";
+  pins.forEach(function(p,i){
+    if(layerSt[p.type]===false)return;
+    var el=document.createElement("div");
+    var td=TYPE[p.type]||{name:p.name,ic:p.ic||"emoji:�?};
+    var ic=td.ic||p.ic;
+    var isEmoji=ic&&ic.indexOf("emoji:")===0;
+    if(isEmoji){
+      el.className="pin-el";el.style.cssText="position:absolute;font-size:18px;transform:translate(-50%,-50%);left:"+p.x+"%;top:"+p.y+"%;pointer-events:auto;cursor:pointer;z-index:10;text-shadow:0 0 4px rgba(0,0,0,.8)";
+      el.textContent=ic.replace("emoji:","");
+    }else{
+      el.className="pin-el";el.style.cssText="position:absolute;background-image:url("+ic+");background-size:cover;background-position:center;background-color:rgba(0,0,0,.4);border:1.5px solid rgba(0,0,0,.6);border-radius:5px;transform:translate(-50%,-50%);left:"+p.x+"%;top:"+p.y+"%;pointer-events:auto;cursor:pointer;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.5)";el.style.width="28px";el.style.height="28px";
+    }
+    el.title=p.name;
+    el.onclick=(function(idx){return function(e){e.stopPropagation();showPinDetail(idx);};})(i);
+    box.appendChild(el);
+  });
+}
+
+function updateTransform(){
+  mv.style.transform="translate("+panX+"px,"+panY+"px) scale("+scale+")";
+  var dots=document.querySelectorAll("#mb .pin-el");
+  var sz=28/scale;
+  dots.forEach(function(el){
+    el.style.width=sz+"px";
+    el.style.height=sz+"px";
+    el.style.fontSize=Math.max(8,20/scale)+"px";
+    el.style.borderWidth=Math.max(0.3,1.5/scale)+"px";
+    el.style.borderRadius=Math.max(1,5/scale)+"px";
+  });
+}
+function zoom(f){
+  var ns=Math.min(8,Math.max(0.2,scale*f));
+  if(ns===scale)return;
+  var vp=mv.parentElement;
+  var cx=vp.clientWidth/2,cy=vp.clientHeight/2;
+  var ix=(cx-panX)/scale,iy=(cy-panY)/scale;
+  scale=ns;panX=cx-ix*scale;panY=cy-iy*scale;
+  updateTransform();
+  document.getElementById("zr").value=Math.round(scale*100);
+  document.getElementById("zl").textContent=Math.round(scale*100)+"%";
+}
+function zoomTo(v){
+  scale=v/100;panX=0;panY=0;updateTransform();
+  document.getElementById("zl").textContent=Math.round(scale*100)+"%";
+}
+function resetView(){
+  scale=1;panX=0;panY=0;updateTransform();
+  document.getElementById("zr").value=100;document.getElementById("zl").textContent="100%";
+}
+document.querySelector(".map-wrap").addEventListener("wheel",function(e){
+  e.preventDefault();
+  var r=mv.parentElement.getBoundingClientRect();
+  var cx=e.clientX-r.left,cy=e.clientY-r.top;
+  var ns=scale*(e.deltaY<0?1.1:0.91);
+  ns=Math.min(8,Math.max(0.2,ns));
+  if(ns===scale)return;
+  var ix=(cx-panX)/scale,iy=(cy-panY)/scale;
+  scale=ns;panX=cx-ix*scale;panY=cy-iy*scale;
+  updateTransform();
+  document.getElementById("zr").value=Math.round(scale*100);
+  document.getElementById("zl").textContent=Math.round(scale*100)+"%";
+},{passive:false});
+
+mv.addEventListener("mousedown",function(e){
+  if(e.target.closest(".ly-btn"))return;
+  dg=true;dx=e.clientX;dy=e.clientY;sx=panX;sy=panY;mv.style.cursor="grabbing";
+});
+window.addEventListener("mousemove",function(e){
+  if(!dg)return;panX=sx+(e.clientX-dx);panY=sy+(e.clientY-dy);updateTransform();
+});
+window.addEventListener("mouseup",function(){dg=false;mv.style.cursor="grab";});
+
+mv.addEventListener("click",function(e){
+  if(dg||mode!=="contribute")return;
+  var r=mv.parentElement.getBoundingClientRect();
+  var cx=e.clientX-r.left,cy=e.clientY-r.top;
+  var ix=(cx-panX)/scale,iy=(cy-panY)/scale;
+  var img=document.getElementById("mapImg");
+  pp={x:Math.round(ix/img.clientWidth*1000)/10,y:Math.round(iy/img.clientHeight*1000)/10};
+  document.getElementById("cv").textContent=pp.x+"%, "+pp.y+"%";
+  document.getElementById("ab").style.display="inline-block";
+  showPicker();
+});
+
+document.getElementById("mdBtn").onclick=function(){
+  var ch=document.getElementById("ch");
+  if(mode==="view"){
+    mode="contribute";
+    document.getElementById("mdBtn").textContent="✏️ 贡献";
+    document.getElementById("mdBtn").style.color="#6f6";
+    document.getElementById("mdBtn").style.borderColor="rgba(0,255,0,.3)";
+    ch.classList.add("show");
+    mv.style.cursor="crosshair";
+  }else{
+    mode="view";
+    document.getElementById("mdBtn").textContent="👁�?浏览";
+    document.getElementById("mdBtn").style.color="#ffc832";
+    document.getElementById("mdBtn").style.borderColor="rgba(255,200,50,.2)";
+    ch.classList.remove("show");
+    if(!dg)mv.style.cursor="grab";
+  }
+};
+
+// 贡献模式鼠标跟随（准�?+ 位置显示�?
+mv.addEventListener("mousemove",function(e){
+  if(mode!=="contribute")return;
+  var ch=document.getElementById("ch");
+  ch.style.left=e.clientX+"px";
+  ch.style.top=e.clientY+"px";
+  var r=mv.parentElement.getBoundingClientRect();
+  var cx=e.clientX-r.left,cy=e.clientY-r.top;
+  var img=document.getElementById("mapImg");
+  var ix=((cx-panX)/scale)/img.clientWidth*100,iy=((cy-panY)/scale)/img.clientHeight*100;
+  document.getElementById("cv").textContent=Math.round(ix*10)/10+"%, "+Math.round(iy*10)/10+"%";
+});
+
+function showPicker(){
+  // 创建弹出�?
+  var overlay=document.getElementById("po");
+  if(!overlay){
+    overlay=document.createElement("div");overlay.id="po";
+    overlay.style.cssText="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9998;padding:16px";
+    overlay.innerHTML="<div style='background:#12121a;border:1px solid #1e1e2a;border-radius:14px;width:100%;max-width:600px;max-height:80vh;overflow-y:auto;padding:16px;position:relative;margin:0 0 0 auto;box-shadow:0 8px 32px rgba(0,0,0,.6)'><button onclick='closePicker()' style='position:absolute;top:8px;right:10px;color:#666;font-size:18px;cursor:pointer;background:none;border:none'>X<"+"/button><p style='color:#ffc832;font-size:15px;margin:0 0 4px;text-align:center'>选择容器类型<"+"/p><p id='pc' style='text-align:center;color:#888;font-size:13px;margin-bottom:12px'>位置�?"+"/p><div id='pg' style='display:grid;grid-template-columns:repeat(6,1fr);gap:8px'><"+"/div><"+"/div>";
+    document.body.appendChild(overlay);
+  }
+  document.getElementById("pc").textContent="位置�?"+pp.x+"%, "+pp.y+"%";
+  var grid=document.getElementById("pg");grid.innerHTML="";
+  TYPES.forEach(function(g){
+    // 组标�?
+    var gTitle=document.createElement("div");gTitle.textContent=g.cat;
+    gTitle.style.cssText="grid-column:1/-1;color:#ffc832;font-size:13px;font-weight:600;padding:4px 0 2px;border-bottom:1px solid rgba(255,200,50,.15);margin-top:4px";
+    grid.appendChild(gTitle);
+    g.items.forEach(function(t){
+      var it=document.createElement("div");it.style.cssText="display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 3px;background:#0f0f16;border-radius:6px;cursor:pointer;border:2px solid transparent";
+      it.onmouseover=function(){this.style.borderColor="#ffc832";this.style.background="#1a1a22";};
+      it.onmouseout=function(){this.style.borderColor="transparent";this.style.background="#0f0f16";};
+      var isEmoji=t.ic&&t.ic.indexOf("emoji:")===0;
+      if(isEmoji){
+        var em=document.createElement("div");em.style.cssText="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:22px";
+        em.textContent=t.ic.replace("emoji:","");it.appendChild(em);
+      }else{
+        var im=document.createElement("img");im.src=t.ic;im.style.cssText="width:36px;height:36px;border-radius:3px;object-fit:cover";it.appendChild(im);
+      }
+      var lb=document.createElement("div");lb.textContent=t.name;lb.style.cssText="font-size:11px;color:#ccc;text-align:center";it.appendChild(lb);
+      it.onclick=function(){queueAddPin(t.id);};
+      grid.appendChild(it);
+    });
+  });
+  overlay.style.display="block";
+}
+function closePicker(){document.getElementById("po").style.display="none";}
+
+// ─── Supabase 数据�?───
+// 配置：你在Supabase项目Settings→API里找到这两项
+var SUPABASE_URL = "https://hanrfbciinkhgcumvous.supabase.co";
+var SUPABASE_ANON_KEY = "sb_publishable_agTUVeYIUF_YtZ_9UZLghA_T6pu8pzG";
+
+// 完整Supabase客户端（轻量fetch封装�?
+function supabase(table, method, body, query){
+  var url=SUPABASE_URL+"/rest/v1/"+table;
+  if(query)url+="?"+query;
+  var opt={method:method||"GET",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"}};
+  if(body&&method!=="GET")opt.body=JSON.stringify(body);
+  return fetch(url,opt).then(function(r){return r.json();});
+}
+
+// ─── 云端点位 ───
+var cloudPins=[],cloudComments=[];
+// 本地编辑覆盖（管理员用自己的localStorage数据覆盖云端，其他人只读�?
+function getLocalPins(){
+  try{var d=JSON.parse(localStorage.getItem("abi_farm_pins"));if(d&&d.pins)return d.pins;}catch(e){}
+  return null;
+}
+function getLocalComments(){
+  try{var d=JSON.parse(localStorage.getItem("abi_farm_pins"));if(d&&d.mapComments)return d.mapComments;}catch(e){}
+  return null;
+}
+function saveLocalPins(p,cm){
+  try{localStorage.setItem("abi_farm_pins",JSON.stringify({pins:p,mapComments:cm||[]}));}catch(e){}
+}
+
+// 加载云端数据
+function loadData(){
+  var both=[];
+  both.push(supabase("pins","GET").then(function(d){
+    if(d&&d.length){cloudPins=d;
+      // 清理supabase字段
+      cloudPins.forEach(function(p){delete p.id;delete p.created_at;});
+    }
+  }));
+  both.push(supabase("map_comments","GET").then(function(d){
+    if(d&&d.length){cloudComments=d;
+      cloudComments.forEach(function(c){delete c.id;delete c.created_at;});
+    }
+  }));
+  Promise.all(both).then(function(){
+    applyLocalEdits();
+    renderMarkers();
+    renderMapComments();
+  }).catch(function(){
+    applyLocalEdits();
+    renderMarkers();
+    renderMapComments();
+  });
+}
+
+function applyLocalEdits(){
+  var lp=getLocalPins();
+  if(lp){pins=lp;}else{pins=cloudPins.slice();}
+  var lc=getLocalComments();
+  if(lc){mapComments=lc;}else{mapComments=cloudComments.slice();}
+}
+
+// ─── 正式添加/删除（管理员直接操作云端）───
+function addPin(tid){
+  if(!pp)return;
+  // 提交到待审核�?
+  var item={x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[],admin_passed:false,votes:0,voters:[]};
+  supabase("pending_pins","POST",item).then(function(){
+    alert("�?已提交审核！其他用户�?同意"�?0票，或管理员通过后即可显示�?);
+  });
+  // 本地预览
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  lp.push({x:pp.x,y:pp.y,name:TYPE[tid].name,type:tid,ic:TYPE[tid].ic,note:"",images:[],comments:[]});
+  saveLocalPins(lp,lc);
+  applyLocalEdits();
+  renderMarkers();
+  pp=null;document.getElementById("cv").textContent="未选择";document.getElementById("ab").style.display="none";closePicker();
+}
+
+function deleteCurrentPin(){
+  if(curPinIdx===null)return;
+  if(!confirm("确认删除这个点位�?))return;
+  // 从云端删除（通过坐标+类型匹配�?
+  var p=pins[curPinIdx];
+  supabase("pins","DELETE",null,"x=eq."+p.x+"&y=eq."+p.y+"&type=eq."+encodeURIComponent(p.type));
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  lp.splice(curPinIdx,1);
+  saveLocalPins(lp,lc);
+  curPinIdx=null;
+  closePinDetail();
+  applyLocalEdits();
+  renderMarkers();
+}
+
+function savePinNote(){
+  if(curPinIdx===null)return;
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  lp[curPinIdx].note=document.getElementById("pdNote").value;
+  saveLocalPins(lp,lc);
+}
+
+function renderPinImages(){
+  var grid=document.getElementById("pdImgGrid");grid.innerHTML="";
+  if(curPinIdx===null)return;
+  var imgs=pins[curPinIdx].images||[];
+  imgs.forEach(function(src,i){
+    var img=document.createElement("img");img.src=src;
+    img.onclick=function(){
+      if(!confirm("删除此图片？"))return;
+      var lp=getLocalPins()||cloudPins.slice();
+      var lc=getLocalComments()||cloudComments.slice();
+      lp[curPinIdx].images.splice(i,1);
+      saveLocalPins(lp,lc);
+      applyLocalEdits();
+      renderPinImages();
+    };
+    grid.appendChild(img);
+  });
+  var addBtn=document.createElement("div");addBtn.className="pd-add-img";addBtn.textContent="+";
+  addBtn.onclick=function(){document.getElementById("pdImgInput").click();};
+  grid.appendChild(addBtn);
+}
+function addPinImages(files){
+  if(curPinIdx===null||!files.length)return;
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  for(var i=0;i<files.length;i++){
+    (function(file){
+      var reader=new FileReader();
+      reader.onload=function(e){
+        lp[curPinIdx].images.push(e.target.result);
+        if(i===files.length-1){
+          saveLocalPins(lp,lc);
+          applyLocalEdits();
+          renderPinImages();
+        }
+      };
+      reader.readAsDataURL(file);
+    })(files[i]);
+  }
+}
+
+// ─── 容器详情弹窗 ───
+function showPinDetail(idx){
+  curPinIdx=idx;
+  var p=pins[idx];
+  document.getElementById("pdTitle").innerHTML="<img src='"+(p.ic||"")+"' style='width:28px;height:28px;border-radius:4px;object-fit:cover'> "+p.name;
+  document.getElementById("pdCoord").textContent="位置�?"+p.x+"%, "+p.y+"%";
+  document.getElementById("pdNote").value=p.note||"";
+  renderPinImages();
+  renderPinComments();
+  document.getElementById("pd").classList.add("show");
+}
+function closePinDetail(){document.getElementById("pd").classList.remove("show");curPinIdx=null;}
+
+// ─── 容器点位评论�?───
+function renderPinComments(){
+  var list=document.getElementById("pdcList");list.innerHTML="";
+  if(curPinIdx===null)return;
+  var comments=pins[curPinIdx].comments||[];
+  comments.forEach(function(c){
+    var item=document.createElement("div");item.className="pdc-item";
+    var time=document.createElement("span");time.className="pdc-time";time.textContent=c.time;
+    var text=document.createElement("span");text.textContent=c.text;
+    item.appendChild(text);item.appendChild(time);list.appendChild(item);
+  });
+}
+function postPinComment(){
+  if(curPinIdx===null)return;
+  var input=document.getElementById("pdcInput");
+  var text=input.value.trim();
+  if(!text)return;
+  var now=new Date();
+  var tz=now.toLocaleString("zh-CN",{hour12:false,timeZone:"Asia/Shanghai"});
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  if(!lp[curPinIdx].comments)lp[curPinIdx].comments=[];
+  lp[curPinIdx].comments.push({text:text,time:tz});
+  saveLocalPins(lp,lc);
+  applyLocalEdits();
+  renderPinComments();
+  input.value="";
+}
+
+// ─── 地图评论�?───
+function renderMapComments(){
+  var list=document.getElementById("mcList");list.innerHTML="";
+  mapComments.forEach(function(c){
+    var item=document.createElement("div");item.className="mc-item";
+    var time=document.createElement("span");time.className="mc-time";time.textContent=c.time;
+    var text=document.createElement("span");text.textContent=c.text;
+    item.appendChild(text);item.appendChild(time);list.appendChild(item);
+  });
+}
+function postMapComment(){
+  var input=document.getElementById("mcInput");
+  var text=input.value.trim();
+  if(!text)return;
+  var now=new Date();
+  var tz=now.toLocaleString("zh-CN",{hour12:false,timeZone:"Asia/Shanghai"});
+  var lp=getLocalPins()||cloudPins.slice();
+  var lc=getLocalComments()||cloudComments.slice();
+  lc.push({text:text,time:tz});
+  saveLocalPins(lp,lc);
+  applyLocalEdits();
+  renderMapComments();
+  input.value="";
+}
+
+// ─── 导出到本地覆盖data/pins.json（已废弃，只用Supabase）───
+function exportToCloud(){
+  var data={pins:cloudPins,mapComments:cloudComments};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="pins.json";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  alert("�?已导出当前云端点位！");
+}
+
+loadData();
+</script>
+</body>
+</html>
