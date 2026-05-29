@@ -407,13 +407,26 @@ body{font-size:14px!important}
     <div class="pd-coord" id="pdCoord">位置</div>
     <div class="pd-submit" id="pdSubmit" style="color:#888;font-size:12px;margin-top:2px"></div>
     <div class="pd-note" id="pdNoteDisplay" style="color:#999;font-size:12px;margin-top:4px;padding:3px 6px;background:rgba(255,255,255,0.02);border-radius:4px;display:none"></div>
-    <div class="pdc-note" style="display:flex;gap:4px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.04);align-items:center;">
-      <span style="font-size:10px;color:#777;white-space:nowrap">\ud83d\udcac 备注</span>
-      <input type="text" id="pdNote" placeholder="添加备注..." style="flex:1;padding:5px 8px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:5px;color:#ccc;font-size:11px;outline:none">
-      <button onclick="submitPinNote()" style="padding:4px 10px;background:#ffc832;color:#0a0a0f;border:none;border-radius:5px;font-weight:600;cursor:pointer;font-size:11px">保存</button>
-    </div></div>
 
-    <button id="pdDelete" onclick="if(!localStorage.getItem('abi_token')){loginGitHub();return false;}deleteCurrentPin()" style="width:100%;padding:6px;background:rgba(255,50,50,0.15);border:1px solid #ff4444;border-radius:6px;color:#ff4444;cursor:pointer;font-size:11px;margin-top:6px;margin-bottom:6px">🗑 删除该容器</button>
+    <div class="pd-comments" style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.04)">
+      <div style="display:flex;gap:4px;margin-bottom:6px;align-items:center;">
+        <span style="font-size:10px;color:#777;white-space:nowrap">备注</span>
+        <input type="text" id="pdNote" placeholder="添加备注..." style="flex:1;padding:5px 8px;background:#0a0a10;border:1px solid #1e1e2a;border-radius:5px;color:#ccc;font-size:11px;outline:none">
+        <button onclick="submitPinNote()" style="padding:4px 10px;background:#ffc832;color:#0a0a0f;border:none;border-radius:5px;font-weight:600;cursor:pointer;font-size:11px">保存</button>
+        <button id="pdDelete" onclick="if(!localStorage.getItem('abi_token')){loginGitHub();return false;}deleteCurrentPin()" style="padding:4px 10px;background:rgba(255,50,50,0.15);border:1px solid #ff4444;border-radius:5px;color:#ff4444;cursor:pointer;font-size:11px">删除</button>
+      </div>
+      <div class="pdc-title">评论区</div>
+      <div style="display:flex;gap:4px;align-items:flex-start;">
+        <textarea id="pdcInput" placeholder="对这个容器有什么想说的？" style="flex:1;min-height:50px;"></textarea>
+        <button class="pdc-btn" onclick="submitPinComment()" style="white-space:nowrap;">发表</button>
+      </div>
+      <div class="pdc-file-row" style="display:flex;gap:6px;margin:4px 0;align-items:center;">
+        <label style="width:32px;height:32px;border-radius:50%;background:#333;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#fff;">+<input type="file" id="pdcFileInput" accept="image/*" multiple style="display:none" onchange="previewPinCommentFiles(this)"></label>
+        <span id="pdcFileCount" style="font-size:0.7rem;color:#888;">未选择图片</span>
+      </div>
+      <div id="pdcFilePreview" style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;"></div>
+      <div class="pdc-list" id="pdcList"></div>
+    </div> onclick="if(!localStorage.getItem('abi_token')){loginGitHub();return false;}deleteCurrentPin()" style="width:100%;padding:6px;background:rgba(255,50,50,0.15);border:1px solid #ff4444;border-radius:6px;color:#ff4444;cursor:pointer;font-size:11px;margin-top:6px;margin-bottom:6px">🗑 删除该容器</button>
 
     <!-- 容器评论区 -->
     <div class="pd-comments">
