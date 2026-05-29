@@ -164,6 +164,9 @@ var mapNameEng = "", mapNameCN = "", layerData = {}, floorImages = [], floorLabe
 var cloudPins = [], cloudComments = [];
 
 function init(){
+  // 保存手机版switchFloor引用，防止被PC版覆盖
+  window._mobileSF = switchFloor;
+  
   var params = new URLSearchParams(window.location.search);
   var mapName = params.get("map") || "tvstation";
   mapData = MAPS[mapName];
@@ -252,11 +255,6 @@ function init(){
   
   // 禁用 PC 版 centerMap（会覆盖我们的 fitMap）
   window.centerMap = function(){};
-  
-  // 确保手机版 switchFloor 不被 PC 版覆盖
-  setTimeout(function(){
-    window.switchFloor = switchFloor;
-  }, 100);
   
   setupMobileUI();
   setupHamburger();
@@ -388,7 +386,7 @@ function renderFloorSelector(){
     item.textContent = floorLabels[idx];
     (function(i){
       item.addEventListener("click", function(){
-        switchFloor(i);
+        (typeof window._mobileSF === 'function' ? window._mobileSF : switchFloor)(i);
         document.getElementById("floorSelector").classList.remove("open");
         document.getElementById("overlay").classList.remove("open");
       });
