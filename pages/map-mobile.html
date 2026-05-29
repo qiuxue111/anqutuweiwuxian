@@ -181,6 +181,10 @@ function init(){
     renderFloorSelector();
     renderLayerSelector();
   };
+  // 后备：onload 不触发时重试
+  setTimeout(function(){
+    if(img.complete || !img.naturalWidth) fitMap();
+  }, 500);
 
   setupMobileUI();
   setupHamburger();
