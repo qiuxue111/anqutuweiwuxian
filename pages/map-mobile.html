@@ -364,7 +364,9 @@ function renderLayerSelector(){
     dispatchLayerCheck();
   });
   
-  orders.forEach(function(k){
+  // Use the current map's layerData keys instead of waiting for global orders
+  var layerKeys = Object.keys(layerData);
+  layerKeys.forEach(function(k){
     var items = layerData[k];
     if(!items || items.length === 0) return;
     
