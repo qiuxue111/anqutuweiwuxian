@@ -364,7 +364,8 @@ function renderLayerSelector(){
   });
   document.getElementById('lyClearAll').addEventListener('click', function(){
     el.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked = false; });
-    dispatchLayerCheck();
+    selectedLayers = {};
+    renderMarkers();
     saveLayerState();
   });
   
@@ -392,7 +393,9 @@ function renderLayerSelector(){
           cb.checked = this.checked;
         }
       }, this);
-      dispatchLayerCheck();
+      // Update selectedLayers
+      catItems.forEach(function(it){ selectedLayers[it] = this.checked; }, this);
+      renderMarkers();
       // Save state
       saveLayerState();
     });
@@ -410,7 +413,12 @@ function renderLayerSelector(){
       cb.type = 'checkbox';
       cb.checked = true;
       cb.setAttribute('data-name', item);
-      cb.addEventListener('change', function(){ dispatchLayerCheck(); saveLayerState(); });
+      cb.addEventListener('change', function(){
+      var nm = this.getAttribute('data-name');
+      if(nm) selectedLayers[nm] = this.checked;
+      renderMarkers();
+      saveLayerState();
+    });
       lbl.appendChild(cb);
       // 图标
       var ic = getIconUrl(item);
@@ -838,7 +846,12 @@ function restoreLayerState(){
       var name = cb.getAttribute('data-name') || cb.getAttribute('data-layer') || '';
       if(name && state[name] !== undefined) cb.checked = state[name];
     });
-    dispatchLayerCheck();
+    // Sync selectedLayers from checkbox state
+    el.querySelectorAll('input[data-name]').forEach(function(cb){
+      var nm = cb.getAttribute('data-name');
+      if(nm) selectedLayers[nm] = cb.checked;
+    });
+    renderMarkers();
   } catch(e){}
 }
 
