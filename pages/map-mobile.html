@@ -242,7 +242,7 @@ function init(){
   img.src = floorImages[0];
   img.onload = function(){
     fitMap('force');
-    loadFromLocal();
+    // 所有数据从服务器获取，不走本地缓存
     loadCloudPins();
     checkReviewBtn();
     renderFloorSelector();
