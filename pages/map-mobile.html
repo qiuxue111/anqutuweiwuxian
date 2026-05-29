@@ -9,12 +9,12 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#0a0a14;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#ccc;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 
 .map-wrap{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden}
-#mv{position:absolute;top:0;left:0;transform-origin:0 0;width:100%;height:100%}
-#mapImg{display:block;width:100%;height:auto;pointer-events:none}
+#mv{position:absolute;top:0;left:0;transform-origin:0 0;width:100%;height:100%;overflow:visible}
+#mapImg{display:block;width:100%;height:auto;pointer-events:none;min-width:100%}
 #mv .pin-marker{position:absolute;cursor:pointer;transition:opacity .15s;z-index:2}
-#mv .pin-marker .pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid #ffc832;background:rgba(255,200,50,0.3);transform:translate(-50%,-50%)}
-#mv .pin-marker .pin-icon{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,0.9);color:#eee;background:rgba(0,0,0,0.4);padding:1px 5px;border-radius:4px}
-#mv .pin-marker.active .pin-dot{background:#ffc832;box-shadow:0 0 12px rgba(255,200,50,0.6)}
+#mv .pin-marker .pin-dot{width:20px;height:20px;border-radius:50%;border:2.5px solid #ffc832;background:rgba(255,200,50,0.35);transform:translate(-50%,-50%);box-shadow:0 0 6px rgba(255,200,50,0.3)}
+#mv .pin-marker .pin-icon{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-size:11px;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,0.9);color:#fff;background:rgba(0,0,0,0.55);padding:2px 6px;border-radius:4px;font-weight:500;letter-spacing:0.5px}
+#mv .pin-marker.active .pin-dot{background:#ffc832;box-shadow:0 0 14px rgba(255,200,50,0.7)}
 #mv .pin-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
 
 .top-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0));background:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,transparent 100%);pointer-events:none}
@@ -173,8 +173,16 @@ function fitMap(){
   var img = document.getElementById('mapImg');
   if(!img.complete || !img.naturalWidth) return;
   var wr = wrap.getBoundingClientRect();
-  scaleM = Math.min(wr.width / img.naturalWidth, wr.height / img.naturalHeight);
-  panX = 0; panY = 0;
+  // 以宽度填充屏幕，用户可拖拽查看
+  scaleM = wr.width / img.naturalWidth;
+  panX = 0;
+  panY = (wr.height - img.naturalHeight * scaleM) / 2;
+  // 如果高度不足，改为高度适配
+  if(img.naturalHeight * scaleM > wr.height * 1.2){
+    scaleM = wr.height / img.naturalHeight * 0.9;
+    panX = (wr.width - img.naturalWidth * scaleM) / 2;
+    panY = 0;
+  }
   updateTransform();
 }
 
@@ -287,6 +295,7 @@ function loadPins(){
     var saved = localStorage.getItem('abi_'+mapData.eng+'_pins');
     if(saved) { var d = JSON.parse(saved); pins = d.pins || []; mapComments = d.mapComments || []; }
   } catch(e){}
+  console.log('[map-mobile] loaded', pins.length, 'pins for', mapData.eng);
   renderPins();
   loadCloudPins();
 }
@@ -518,7 +527,11 @@ function setupHamburger(){
 }
 
 // ====== 启动 ======
-document.addEventListener('DOMContentLoaded', init);
+function boot(){
+  // 确保 DOM 和图片加载完毕
+  setTimeout(init, 50);
+}
+document.addEventListener('DOMContentLoaded', boot);
 </script>
 
 <!-- 汉堡菜单 -->
