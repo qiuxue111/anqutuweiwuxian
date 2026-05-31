@@ -173,10 +173,13 @@ function showUserCenter(){
 
 var SUPABASE_URL='https://hanrfbciinkhgcumvous.supabase.co';
 var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+var ADMINS=['qiuxue111'];
+function isAdmin(){try{var u=localStorage.getItem('abi_user');if(!u)return false;var p=JSON.parse(u);var name=p.user_metadata&&p.user_metadata.preferred_username||p.user_metadata&&p.user_metadata.user_name||p.email||'';return name&&ADMINS.indexOf(name)>=0;}catch(e){return false;}}
+
 
 function db(method,table,body,query){
   var token=localStorage.getItem('abi_token');
-  var useToken=(method==='POST'||method==='PATCH');
+  var useToken=(method==='POST'||method==='PATCH'||method==='DELETE');
   var auth=useToken&&token?'Bearer '+token:'Bearer '+SUPABASE_ANON;
   return fetch(SUPABASE_URL+'/rest/v1/'+table+(query?'?'+query:''),{
     method:method,
@@ -237,7 +240,7 @@ async function loadPosts(){
       }).join('')+'</div>' : '';
       var pId=p.id;
       var token=localStorage.getItem('abi_token');
-      var delBtn='';
+      var delBtn='';if(isAdmin()){delBtn=' <button onclick="event.stopPropagation();event.preventDefault();deletePost('+pId+')" style="padding:2px 8px;background:rgba(255,50,50,0.15);border:1px solid rgba(255,50,50,0.3);border-radius:4px;color:#ff4444;cursor:pointer;font-size:0.75rem;">删除</button>';}
       
       return '<div class="post-card" id="post_'+pId+'" style="cursor:pointer;" onclick="openPostModal('+pId+')"><h3><a href="javascript:void(0)" href="javascript:void(0)">'+esc(p.title||'无标题')+'</a></h3>'+
         '<div class="meta"><span style="font-size:0.7rem;padding:2px 6px;border-radius:4px;background:'+hue+'22;color:'+hue+';">'+cn+'</span>'+
@@ -437,6 +440,16 @@ async function deleteComment(commentId, containerId, postId){
   }catch(e){alert('删除失败: '+e.message);}
 }
 
+async 
+async function deletePost(id){
+  if(!confirm('确定删除此帖子?')) return;
+  try{
+    var r=await db('DELETE','map_posts',null,'id=eq.'+id);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var el=document.getElementById('post_'+id);
+    if(el) el.style.display='none';
+  }catch(e){alert('删除失败: '+e.message);}
+}
 async function openPostModal(postId){
   var token=localStorage.getItem('abi_token');
   try{
