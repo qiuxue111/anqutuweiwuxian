@@ -161,13 +161,39 @@ function switchTab(e,tab){
   loadData();
 }
 
+function autoCleanExpired(items){
+  var now=Date.now();
+  var toDelete=[];
+  items.forEach(function(p){
+    if(p.admin_passed)return;
+    var created=new Date(p.created_at||now).getTime();
+    var hoursOld=(now-created)/3600000;
+    if(hoursOld>=24){
+      toDelete.push(p.id);
+    }
+  });
+  if(toDelete.length===0)return;
+  var remaining=items.filter(function(p){return toDelete.indexOf(p.id)<0;});
+  // 逐个删除过期条目
+  var chain=Promise.resolve();
+  toDelete.forEach(function(id){
+    chain=chain.then(function(){
+      return supabase("pending_pins","DELETE",null,"id=eq."+id).catch(function(){});
+    });
+  });
+  chain.then(function(){
+    console.log("已清理 "+toDelete.length+" 条过期待审核项");
+  });
+  return remaining;
+}
+
 function loadData(){
   document.getElementById("list").innerHTML="<div class='loading'>加载中...<\/div>";
   var p=supabase("pending_pins","GET",null,"order=created_at.desc").catch(function(){return [];});
   var d=supabase("deletion_requests","GET",null,"order=created_at.desc").catch(function(){return [];});
   var pin=supabase("pins","GET",null,"order=created_at.desc").catch(function(){return [];});
   Promise.all([p,d,pin]).then(function(res){window.__reviewPending=res[0];window.__reviewDels=res[1];window.__reviewPending=res[0];window.__reviewDels=res[1];
-    var items=res[0]||[];
+    var items=autoCleanExpired(res[0]||[])||[];
     var dels=res[1]||[];
     var pins=res[2]||[];
     window.__reviewPins=pins;
@@ -355,7 +381,7 @@ function vote(id){
         supabase("pending_pins","GET",null,"id=eq."+id).then(function(approved){
           if(approved&&approved.length){
             var a=approved[0];
-            supabase("pins","POST",{x:a.x,y:a.y,name:a.name,type:a.type,map_name:a.map_name||"农场",ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[],floor:a.floor||0}).then(function(){
+            supabase("pins","POST",{x:a.x,y:a.y,px:a.px,py:a.py,name:a.name,type:a.type,map_name:a.map_name||"农场",ic:a.ic,note:a.note||"",images:a.images||[],comments:a.comments||[],floor:a.floor||0}).then(function(){
               supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
             });
           }
@@ -396,7 +422,7 @@ function adminPass(id){
   supabase("pending_pins","GET",null,"id=eq."+id).then(function(items){
     if(!items||!items.length)return;
     var p=items[0];
-    supabase("pins","POST",{x:p.x,y:p.y,name:p.name,type:p.type,map_name:p.map_name||"农场",ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[],floor:p.floor||0,submitted_by:p.submitted_by||''}).then(function(){
+    supabase("pins","POST",{x:p.x,y:p.y,px:p.px,py:p.py,name:p.name,type:p.type,map_name:p.map_name||"农场",ic:p.ic,note:p.note||"",images:p.images||[],comments:p.comments||[],floor:p.floor||0,submitted_by:p.submitted_by||''}).then(function(){
       supabase("pending_pins","DELETE",null,"id=eq."+id).then(function(){loadData();});
     });
   });
