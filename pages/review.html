@@ -172,7 +172,7 @@ function autoCleanExpired(items){
       toDelete.push(p.id);
     }
   });
-  if(toDelete.length===0)return;
+  if(toDelete.length===0)return items;
   var remaining=items.filter(function(p){return toDelete.indexOf(p.id)<0;});
   // 逐个删除过期条目
   var chain=Promise.resolve();
