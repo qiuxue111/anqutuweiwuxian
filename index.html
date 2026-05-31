@@ -606,20 +606,11 @@ function renderThanks(){
         }
       }
       
-      // 边界弹力——越靠近边缘推力越大，防止出界
-      var mg=60;
-      if(b.x<mg)b.vx+=(mg-b.x)/30;
-      else if(b.x<cw-mg)b.vx+=0; // no-op better than nothing
-      else b.vx-=(b.x-(cw-mg))/30;
-      if(b.y<mg)b.vy+=(mg-b.y)/30;
-      else if(b.y<ch-mg){}
-      else b.vy-=(b.y-(ch-mg))/30;
-      
-      // 边界碰撞（反弹）— 使用当前视口大小
-      if(b.x-b.radius<0){b.x=b.radius;b.vx=Math.abs(b.vx)*0.85;b.bounce=1;}
-      if(b.x+b.radius>cw){b.x=cw-b.radius;b.vx=-Math.abs(b.vx)*0.85;b.bounce=1;}
-      if(b.y-b.radius<0){b.y=b.radius;b.vy=Math.abs(b.vy)*0.85;b.bounce=1;}
-      if(b.y+b.radius>ch){b.y=ch-b.radius;b.vy=-Math.abs(b.vy)*0.85;b.bounce=1;}
+      // 边界碰撞（反弹）— 加随机偏转防止卡边反复弹
+      if(b.x-b.radius<0){b.x=b.radius;b.vx=Math.abs(b.vx)*(0.85+Math.random()*0.2);b.vy+=(-0.5+Math.random())*0.5;b.bounce=1;}
+      if(b.x+b.radius>cw){b.x=cw-b.radius;b.vx=-Math.abs(b.vx)*(0.85+Math.random()*0.2);b.vy+=(-0.5+Math.random())*0.5;b.bounce=1;}
+      if(b.y-b.radius<0){b.y=b.radius;b.vy=Math.abs(b.vy)*(0.85+Math.random()*0.2);b.vx+=(-0.5+Math.random())*0.5;b.bounce=1;}
+      if(b.y+b.radius>ch){b.y=ch-b.radius;b.vy=-Math.abs(b.vy)*(0.85+Math.random()*0.2);b.vx+=(-0.5+Math.random())*0.5;b.bounce=1;}
       
       // 球间碰撞
       for(var bj=bi+1;bj<thanksBalls.length;bj++){
