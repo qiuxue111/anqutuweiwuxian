@@ -524,7 +524,7 @@ document.body.addEventListener('mousedown',function(e){if(mode==='place')return;
 document.body.addEventListener('mousemove',function(e){if(mode==='place'){var ch=document.getElementById('ch');ch.style.left=e.clientX+'px';ch.style.top=e.clientY+'px';}});
 document.getElementById('mv').addEventListener('click',function(e){if(mode==='place'&&!e.target.closest('.pin-marker')){extractPos(e);showPicker();}});
 function extractPos(e){var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=e.clientX-wr.left,my=e.clientY-wr.top;var img=document.getElementById('mapImg');var ix=mx/scaleM-panX/scaleM,iy=my/scaleM-panY/scaleM;var pctX=Math.round(ix/img.clientWidth*10000)/100;var pctY=Math.round(iy/img.clientHeight*10000)/100;var px__=Math.round(pctX/100*(img.naturalWidth||img.width||0));var py__=Math.round(pctY/100*(img.naturalHeight||img.height||0));var cv=document.getElementById('cv');if(cv)cv.textContent=pctX+', '+pctY;}
-document.getElementById('mv').addEventListener('wheel',function(e){e.preventDefault();var f=e.deltaY>0?0.9:1.1;zoom(f,e.clientX,e.clientY);},{passive:false});
+document.getElementById('mv').addEventListener('wheel',function(e){_zooming=true;e.preventDefault();var f=e.deltaY>0?0.9:1.1;zoom(f,e.clientX,e.clientY);},{passive:false});
 document.getElementById('mv').addEventListener('touchstart',function(e){if(e.touches.length===2){touchStartDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);touchStartScale=scaleM;}},{passive:true});
 document.getElementById('mv').addEventListener('touchmove',function(e){if(e.touches.length===2){e.preventDefault();var dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);var ns=touchStartScale*dist/touchStartDist;zoomTo(Math.round(ns*100));}},{passive:false});
 var sb=document.getElementById('sb');if(sb)sb.onclick=function(){showPicker();mode='browse';document.getElementById('ch').classList.remove('show');var btn=document.getElementById('mdBtn');if(btn)btn.textContent='[B] 浏览';};
@@ -956,7 +956,7 @@ function toggleMat(){
   ctrl.appendChild(allBtn); ctrl.appendChild(noneBtn); mc.appendChild(ctrl);
   orders.forEach(function(layer){
     var items=layerData[layer]; if(!items||items.length===0) return;
-    var cat=document.createElement('div'); cat.className='mat-cat'; cat.textContent='['+layer+']'; mc.appendChild(cat);
+    var cat=document.createElement('div'); cat.className='mat-cat'; cat.textContent='['+layer+']'; cat.style.cssText='cursor:pointer;display:flex;justify-content:space-between;align-items:center';var selBtn=document.createElement('span');selBtn.textContent='☑';selBtn.style.cssText='font-size:13px;cursor:pointer;width:22px;text-align:center;border-radius:3px;transition:.15s';selBtn.onclick=(function(l){return function(e){e.stopPropagation();var items=layerData[l];if(!items)return;var all=items.every(function(it){return selectedLayers[it];});items.forEach(function(it){selectedLayers[it]=!all;});if(typeof renderMarkers==='function')renderMarkers();syncMatPins();};})(layer);cat.appendChild(selBtn);cat.onclick=(function(){var r=cat.nextElementSibling;if(r&&r.className==='mat-items'){var h=r.style.display==='none';r.style.display=h?'':'none';cat.style.opacity=h?'1':'0.5';}});mc.appendChild(cat);
     var row=document.createElement('div'); row.className='mat-items';
     items.forEach(function(it){
       var el=document.createElement('div'); el.className='mat-item'; el.setAttribute('data-item',it);
@@ -1242,6 +1242,18 @@ input,textarea,button{font-size:14px!important}
 #commentPanel h3{font-size:10px!important}
 @keyframes pulseRed{0%{outline:0px solid #ff4444;box-shadow:0 0 0px rgba(255,68,68,0.4)}50%{outline:2px solid #ff4444;box-shadow:0 0 8px rgba(255,68,68,0.8)}100%{outline:0px solid #ff4444;box-shadow:0 0 0px rgba(255,68,68,0.4)}}.mat-item.active{color:var(--cat-color,#ffc832)!important;background:var(--cat-bg,rgba(255,200,50,0.12))!important;border-color:var(--cat-color,#ffc832)!important}.mat-item.active .mi-name{color:var(--cat-color,#ffc832)!important}
 .mat-content{overflow-y:auto!important}
+
+/* v1.19 UI入场动画 1s */
+[class*=btn],.drag-handle,.logo,#pd,.hamburger,#topBar,.hamburger-menu{animation:uiPopIn 1s ease both}
+@keyframes uiPopIn{from{opacity:0;transform:scale(0.85) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+
+
+
+
+
+
+
 </style>
 <script>
 (function(){
@@ -1553,5 +1565,6 @@ document.addEventListener('click', function(e) {
     alert('Shift+Click: 请先点击地图上的📦按钮进入投稿模式');
   }
 });
+
 </script><div style="position:fixed;bottom:4px;right:60px;z-index:99999;font-size:30px;color:rgba(255,255,255,0.25);pointer-events:none;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.8)">📦 Shift+左键投稿容器</div></body>
 </html>
