@@ -447,10 +447,12 @@ function previewCommentFiles(input){
 </div>
 
 <!-- ===== 感谢名单 ===== -->
-<div id="thanksSection" style="margin-top:2rem;padding:1rem 0;border-top:1px solid rgba(255,255,255,0.04);position:relative;">
-  <h2 style="color:#ffc832;font-size:1.1rem;margin-bottom:0.5rem;text-align:center;">🎉 感谢名单</h2>
-  <div id="thanksContainer" style="width:100%;height:200px;position:relative;overflow:hidden;border-radius:12px;background:rgba(10,10,15,0.4);"></div>
+<div id="thanksSection" style="margin-top:2rem;padding:1rem 0;border-top:1px solid rgba(255,255,255,0.04);">
+  <h2 style="color:#ffc832;font-size:1.1rem;margin-bottom:1rem;text-align:center;">🎉 感谢名单</h2>
 </div>
+
+<!-- 物理小球Canvas - 最底层覆盖全视口 -->
+<canvas id="thanksCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block;"></canvas>
 
 <!-- 编辑按钮（仅管理员可见） -->
 <div id="thanksEditBtn" style="display:none;position:fixed;right:16px;bottom:16px;z-index:9999;width:48px;height:48px;border-radius:50%;background:rgba(255,200,50,0.15);border:1px solid rgba(255,200,50,0.25);color:#ffc832;font-size:1.4rem;cursor:pointer;align-items:center;justify-content:center;" onclick="openThanksEditor()">✏️</div>
@@ -498,24 +500,22 @@ var thanksBalls = []; // 物理球数组
 var thanksAnimId = null;
 
 function renderThanks(){
-  var el=document.getElementById('thanksContainer');
-  if(!el)return;
+  var canvas=document.getElementById('thanksCanvas');
+  if(!canvas)return;
+  
   if(!thanksData||!thanksData.length){
-    el.innerHTML='<span style="color:#555;font-size:0.85rem;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">暂无感谢名单</span>';
     if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
+    ctx.clearRect(0,0,W,H);
     return;
   }
   
   // 如果已有物理引擎在跑，先停止
   if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
   
-  // 清空容器，创建Canvas
-  el.innerHTML='<canvas id="thanksCanvas" style="width:100%;height:100%;display:block;"></canvas>';
-  var canvas=document.getElementById('thanksCanvas');
-  var rect=el.getBoundingClientRect();
-  var W=rect.width||el.clientWidth||800;
-  var H=rect.height||el.clientHeight||200;
-  canvas.width=W*2; // 2x retina
+  // 初始化Canvas尺寸
+  var W=window.innerWidth;
+  var H=window.innerHeight;
+  canvas.width=W*2;
   canvas.height=H*2;
   canvas.style.width=W+'px';
   canvas.style.height=H+'px';
@@ -527,53 +527,49 @@ function renderThanks(){
   
   // 创建物理球
   thanksBalls=[];
-  var padding=35;
-  var radius=26;
-  var hues=[];
+  var radius=30;
   thanksData.forEach(function(m,i){
     var col=colors[i%colors.length];
-    hues.push(col);
-    // 随机初始位置（避开重叠）
-    var x,y,overlap;
-    for(var attempt=0;attempt<50;attempt++){
-      x=padding+Math.random()*(W-padding*2);
-      y=padding+Math.random()*(H-padding*2);
-      overlap=false;
-      for(var j=0;j<thanksBalls.length;j++){
-        var dx=x-thanksBalls[j].x;
-        var dy=y-thanksBalls[j].y;
-        if(dx*dx+dy*dy<(radius*2.5)*(radius*2.5)){overlap=true;break;}
-      }
-      if(!overlap)break;
-    }
+    // 随机初始位置
+    var x=radius+Math.random()*(W-radius*2);
+    var y=radius+Math.random()*(H-radius*2);
     thanksBalls.push({
-      x:x, y:y, vx:(Math.random()-0.5)*2, vy:(Math.random()-0.5)*2,
+      x:x, y:y, vx:(Math.random()-0.5)*3, vy:(Math.random()-0.5)*3,
       radius:radius, color:col, name:m.name, idx:i,
-      bounce:0 // 弹跳计时器
+      bounce:0
     });
   });
   
   // 物理循环
   function physicsLoop(){
-    var r=el.getBoundingClientRect();
-    var cw=r.width||W;
-    var ch=r.height||H;
+    // 每次循环重新获取视口大小，支持窗口变化
+    var cw=window.innerWidth;
+    var ch=window.innerHeight;
+    
+    // Canvas尺寸同步
+    if(canvas.width!==cw*2||canvas.height!==ch*2){
+      canvas.width=cw*2;
+      canvas.height=ch*2;
+      canvas.style.width=cw+'px';
+      canvas.style.height=ch+'px';
+      ctx.setTransform(2,0,0,2,0,0);
+    }
     
     for(var bi=0;bi<thanksBalls.length;bi++){
       var b=thanksBalls[bi];
       
       // 重力
-      b.vy+=0.15;
+      b.vy+=0.12;
       
       // 空气阻力
-      b.vx*=0.995;
-      b.vy*=0.995;
+      b.vx*=0.998;
+      b.vy*=0.998;
       
       // 移动
       b.x+=b.vx;
       b.y+=b.vy;
       
-      // 边界碰撞（反弹）
+      // 边界碰撞（反弹）— 使用当前视口大小
       if(b.x-b.radius<0){b.x=b.radius;b.vx=Math.abs(b.vx)*0.85;b.bounce=1;}
       if(b.x+b.radius>cw){b.x=cw-b.radius;b.vx=-Math.abs(b.vx)*0.85;b.bounce=1;}
       if(b.y-b.radius<0){b.y=b.radius;b.vy=Math.abs(b.vy)*0.85;b.bounce=1;}
@@ -594,7 +590,6 @@ function renderThanks(){
           b.y-=ny*overlap;
           o.x+=nx*overlap;
           o.y+=ny*overlap;
-          // 交换速度分量
           var dvx=b.vx-o.vx;
           var dvy=b.vy-o.vy;
           var dot=dvx*nx+dvy*ny;
@@ -623,32 +618,31 @@ function renderThanks(){
       // 弹跳光晕
       if(b.bounce>0.05){
         ctx.beginPath();
-        ctx.arc(b.x,b.y,b.radius+b.bounce*6,0,Math.PI*2);
-        ctx.fillStyle=b.color+'33';
+        ctx.arc(b.x,b.y,b.radius+b.bounce*8,0,Math.PI*2);
+        ctx.fillStyle=b.color+'22';
         ctx.fill();
       }
       
-      // 球体
+      // 球体渐变
       ctx.beginPath();
       ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
-      var grad=ctx.createRadialGradient(b.x-6,b.y-6,2,b.x,b.y,b.radius);
-      grad.addColorStop(0,'rgba(255,255,255,0.3)');
-      grad.addColorStop(0.5,b.color+'88');
-      grad.addColorStop(1,b.color+'44');
+      var grad=ctx.createRadialGradient(b.x-8,b.y-8,3,b.x,b.y,b.radius);
+      grad.addColorStop(0,'rgba(255,255,255,0.4)');
+      grad.addColorStop(0.4,b.color+'aa');
+      grad.addColorStop(1,b.color+'55');
       ctx.fillStyle=grad;
       ctx.fill();
-      ctx.strokeStyle=b.color+'99';
+      ctx.strokeStyle=b.color+'bb';
       ctx.lineWidth=1.5;
       ctx.stroke();
       
       // 文字
       ctx.fillStyle='#fff';
-      ctx.font='bold 11px -apple-system,sans-serif';
+      ctx.font='bold 12px -apple-system,sans-serif';
       ctx.textAlign='center';
       ctx.textBaseline='middle';
-      // 文字阴影
-      ctx.shadowColor='rgba(0,0,0,0.6)';
-      ctx.shadowBlur=3;
+      ctx.shadowColor='rgba(0,0,0,0.7)';
+      ctx.shadowBlur=4;
       var displayName=m.name.length>4?m.name.slice(0,3)+'..':m.name;
       ctx.fillText(displayName,b.x,b.y);
       ctx.shadowBlur=0;
@@ -660,10 +654,10 @@ function renderThanks(){
   physicsLoop();
 }
 
-// 点击Canvas检测球
+// 全局点击检测小球（canvas pointer-events:none，监听window的点击）
 document.addEventListener('click',function(e){
   var canvas=document.getElementById('thanksCanvas');
-  if(!canvas)return;
+  if(!canvas||!thanksBalls||!thanksBalls.length)return;
   var rect=canvas.getBoundingClientRect();
   var mx=e.clientX-rect.left;
   var my=e.clientY-rect.top;
@@ -673,6 +667,7 @@ document.addEventListener('click',function(e){
     var dy=my-b.y;
     if(dx*dx+dy*dy<=b.radius*b.radius){
       showThanksDetail(b.idx);
+      e.stopPropagation();
       e.preventDefault();
       return;
     }
