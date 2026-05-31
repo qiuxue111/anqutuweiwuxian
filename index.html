@@ -606,17 +606,33 @@ function renderThanks(){
         }
       }
       
-      // 边界碰撞——触边就从屏幕中间弹出
+      // 边界碰撞——触边就从屏幕中间弹出（带消失出现动画）
       if(b.x-b.radius<0||b.x+b.radius>cw||b.y-b.radius<0||b.y+b.radius>ch){
-        // 瞬移到屏幕中央
-        b.x=cw/2+(-30+Math.random()*60);
-        b.y=ch/2+(-30+Math.random()*60);
-        // 随机方向弹出去
-        var a=Math.random()*Math.PI*2;
-        var sp=0.8+Math.random()*1.5;
-        b.vx=Math.cos(a)*sp;
-        b.vy=Math.sin(a)*sp;
-        b.bounce=1;
+        if(!b.fading){
+          b.fading=true; // 开始消失
+          b.fadeDir=-1; // 缩小
+          b.fadeScale=1;
+        }
+      }
+      // 消失/出现动画
+      if(b.fading){
+        b.fadeDir*=1.06; // 加速缩小/放大
+        b.fadeScale+=b.fadeDir*0.05;
+        if(b.fadeScale<=0.05){
+          // 完全消失，瞬移中间
+          b.x=cw/2+(-30+Math.random()*60);
+          b.y=ch/2+(-30+Math.random()*60);
+          var a=Math.random()*Math.PI*2;
+          var sp=0.8+Math.random()*1.5;
+          b.vx=Math.cos(a)*sp;
+          b.vy=Math.sin(a)*sp;
+          b.fadeDir=1; // 开始变大
+          b.bounce=1;
+        }
+        if(b.fadeScale>=1){
+          b.fading=false;
+          b.fadeScale=1;
+        }
       }
       
       // 球间碰撞
@@ -698,7 +714,13 @@ function renderThanks(){
         ctx.fill();
       }
       
-      // 球体
+      // 球体（带消失/出现缩放）
+      if(b.fadeScale!==undefined&&b.fadeScale<1){
+        ctx.save();
+        ctx.translate(b.x,b.y);
+        ctx.scale(b.fadeScale,b.fadeScale);
+        ctx.translate(-b.x,-b.y);
+      }
       if(m.avatar_url){
         // 有头像——用圆形裁剪图片
         ctx.save();
@@ -713,6 +735,7 @@ function renderThanks(){
         ctx.strokeStyle=b.color+'bb';
         ctx.lineWidth=1.5;
         ctx.stroke();
+        if(b.fadeScale!==undefined&&b.fadeScale<1)ctx.restore();
       }else{
         // 无头像——渐变圆
         ctx.beginPath();
@@ -726,6 +749,7 @@ function renderThanks(){
         ctx.strokeStyle=b.color+'bb';
         ctx.lineWidth=1.5;
         ctx.stroke();
+        if(b.fadeScale!==undefined&&b.fadeScale<1)ctx.restore();
       }
       
       // 文字（无头像或头像太淡时显示）
