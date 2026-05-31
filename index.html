@@ -540,6 +540,17 @@ function renderThanks(){
     });
   });
   
+  // 预加载所有头像图片
+  var avatarImgs={};
+  thanksData.forEach(function(m,i){
+    if(m.avatar_url){
+      var img=new Image();
+      img.crossOrigin='anonymous';
+      img.src=m.avatar_url;
+      avatarImgs[i]=img;
+    }
+  });
+  
   // 物理循环
   function physicsLoop(){
     // 每次循环重新获取视口大小，支持窗口变化
@@ -623,20 +634,37 @@ function renderThanks(){
         ctx.fill();
       }
       
-      // 球体渐变
-      ctx.beginPath();
-      ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
-      var grad=ctx.createRadialGradient(b.x-8,b.y-8,3,b.x,b.y,b.radius);
-      grad.addColorStop(0,'rgba(255,255,255,0.4)');
-      grad.addColorStop(0.4,b.color+'aa');
-      grad.addColorStop(1,b.color+'55');
-      ctx.fillStyle=grad;
-      ctx.fill();
-      ctx.strokeStyle=b.color+'bb';
-      ctx.lineWidth=1.5;
-      ctx.stroke();
+      // 球体
+      if(m.avatar_url){
+        // 有头像——用圆形裁剪图片
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
+        ctx.clip();
+        var img=avatarImgs[b.idx];
+        if(img&&img.complete&&img.naturalWidth>0){
+          ctx.drawImage(img,b.x-b.radius,b.y-b.radius,b.radius*2,b.radius*2);
+        }
+        ctx.restore();
+        ctx.strokeStyle=b.color+'bb';
+        ctx.lineWidth=1.5;
+        ctx.stroke();
+      }else{
+        // 无头像——渐变圆
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
+        var grad=ctx.createRadialGradient(b.x-8,b.y-8,3,b.x,b.y,b.radius);
+        grad.addColorStop(0,'rgba(255,255,255,0.4)');
+        grad.addColorStop(0.4,b.color+'aa');
+        grad.addColorStop(1,b.color+'55');
+        ctx.fillStyle=grad;
+        ctx.fill();
+        ctx.strokeStyle=b.color+'bb';
+        ctx.lineWidth=1.5;
+        ctx.stroke();
+      }
       
-      // 文字
+      // 文字（无头像或头像太淡时显示）
       ctx.fillStyle='#fff';
       ctx.font='bold 12px -apple-system,sans-serif';
       ctx.textAlign='center';
@@ -725,6 +753,10 @@ function renderEditorList(){
   el.innerHTML=thanksData.map(function(m,i){
     return '<div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px;margin-bottom:8px;">'+
       '<div style="display:flex;gap:8px;align-items:center;">'+
+      '<div style="position:relative;">'+
+      (m.avatar_url?'<img src="'+esc(m.avatar_url)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #333;">':'<div style="width:40px;height:40px;border-radius:50%;background:rgba(255,200,50,0.1);border:1px solid #333;display:flex;align-items:center;justify-content:center;color:#888;font-size:0.6rem;">无图</div>')+
+      '<input type="file" accept="image/*" style="position:absolute;top:0;left:0;width:40px;height:40px;opacity:0;cursor:pointer;" onchange="uploadAvatar('+i+',this)">'+
+      '</div>'+
       '<input value="'+esc(m.name)+'" placeholder="名字" style="flex:1;padding:6px 10px;background:#1a1a22;color:#fff;border:1px solid #333;border-radius:6px;font-size:0.85rem;" oninput="thanksData['+i+'].name=this.value">'+
       '<button onclick="removeThanksMember('+i+')" style="padding:4px 10px;background:rgba(255,50,50,0.15);border:1px solid rgba(255,50,50,0.3);border-radius:4px;color:#f55;cursor:pointer;font-size:0.75rem;">删除</button>'+
       '</div>'+
@@ -736,8 +768,35 @@ function renderEditorList(){
 
 function addThanksMember(){
   if(!thanksData)thanksData=[];
-  thanksData.push({name:'新成员',detail:'',link:''});
+  thanksData.push({name:'新成员',detail:'',link:'',avatar_url:''});
   renderEditorList();
+}
+
+function uploadAvatar(idx,input){
+  if(!input.files||!input.files[0])return;
+  var file=input.files[0];
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      // 取图片中心圆形区域，输出 100x100
+      var size=Math.min(img.width,img.height);
+      var sx=(img.width-size)/2;
+      var sy=(img.height-size)/2;
+      var c=document.createElement('canvas');
+      c.width=100;
+      c.height=100;
+      var ctx=c.getContext('2d');
+      ctx.beginPath();
+      ctx.arc(50,50,50,0,Math.PI*2);
+      ctx.clip();
+      ctx.drawImage(img,sx,sy,size,size,0,0,100,100);
+      thanksData[idx].avatar_url=c.toDataURL('image/jpeg',0.7);
+      renderEditorList();
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function removeThanksMember(idx){
@@ -770,7 +829,7 @@ async function saveThanksMembers(){
       var r=await fetch(SUPABASE_URL+'/rest/v1/thanks_members',{
         method:'POST',
         headers:{'Authorization':'Bearer '+token,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
-        body:JSON.stringify({name:m.name,detail:m.detail||'',link:m.link||'',sort_order:i})
+        body:JSON.stringify({name:m.name,detail:m.detail||'',link:m.link||'',avatar_url:m.avatar_url||'',sort_order:i})
       });
       if(!r.ok)throw new Error('insert '+i+': '+r.status+' '+await r.text().catch(function(){return'';}));
     }
