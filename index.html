@@ -503,16 +503,6 @@ function renderThanks(){
   var canvas=document.getElementById('thanksCanvas');
   if(!canvas)return;
   
-  if(!thanksData||!thanksData.length){
-    if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
-    ctx.clearRect(0,0,W,H);
-    return;
-  }
-  
-  // 如果已有物理引擎在跑，先停止
-  if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
-  
-  // 初始化Canvas尺寸
   var W=window.innerWidth;
   var H=window.innerHeight;
   canvas.width=W*2;
@@ -521,6 +511,15 @@ function renderThanks(){
   canvas.style.height=H+'px';
   var ctx=canvas.getContext('2d');
   ctx.scale(2,2);
+  
+  if(!thanksData||!thanksData.length){
+    if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
+    ctx.clearRect(0,0,W,H);
+    return;
+  }
+  
+  // 如果已有物理引擎在跑，先停止
+  if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
   
   // 彩色列表
   var colors=['#ff6b6b','#ffc832','#51cf66','#339af0','#cc5de8','#f06595','#20c997','#ff922b','#748ffc','#f783ac'];
