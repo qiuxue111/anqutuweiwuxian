@@ -524,13 +524,12 @@ function renderThanks(){
   if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
   
   // 彩色列表
-  var colors=['#ff6b6b','#ffc832','#51cf66','#339af0','#cc5de8','#f06595','#20c997','#ff922b','#748ffc','#f783ac'];
-  
-  // 创建物理球
+  // 创建物理球（随机HSL亮色）
   thanksBalls=[];
   var radius=30;
   thanksData.forEach(function(m,i){
-    var col=colors[i%colors.length];
+    var hue=Math.floor(Math.random()*360);
+    var col='hsl('+hue+',100%,65%)';
     // 随机初始位置
     var x=radius+Math.random()*(W-radius*2);
     var y=radius+Math.random()*(H-radius*2);
@@ -659,18 +658,25 @@ function renderThanks(){
       var b=thanksBalls[bi];
       var m=thanksData[b.idx];
       
-      // 外层发光光晕（始终显示）
+      // 外层白色发光（始终显示——先画阴影再画球）
+      ctx.shadowColor=b.color;
+      ctx.shadowBlur=22;
       ctx.beginPath();
-      ctx.arc(b.x,b.y,b.radius+5,0,Math.PI*2);
-      ctx.fillStyle=b.color+'33';
+      ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
+      ctx.fillStyle='transparent';
       ctx.fill();
-      ctx.beginPath();
-      ctx.arc(b.x,b.y,b.radius+2,0,Math.PI*2);
-      ctx.fillStyle=b.color+'55';
-      ctx.fill();
+      ctx.shadowBlur=0;
       
-      // 弹跳光晕（增强）
+      // 弹跳光晕（白色强光）
       if(b.bounce>0.05){
+        ctx.shadowColor='#fff';
+        ctx.shadowBlur=b.bounce*40;
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
+        ctx.fillStyle='transparent';
+        ctx.fill();
+        ctx.shadowBlur=0;
+      }
         ctx.beginPath();
         ctx.arc(b.x,b.y,b.radius+b.bounce*15,0,Math.PI*2);
         ctx.fillStyle=b.color+'44';
@@ -712,7 +718,7 @@ function renderThanks(){
       }
       
       // 文字（无头像或头像太淡时显示）
-      ctx.fillStyle='#fff';
+      ctx.fillStyle=b.color;
       ctx.font='bold 12px -apple-system,sans-serif';
       ctx.textAlign='center';
       ctx.textBaseline='middle';
