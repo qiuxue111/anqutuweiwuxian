@@ -716,12 +716,11 @@ function renderThanks(){
         ctx.fill();
       }
       
-      // 球体（带消失/出现缩放）
-      if(b.fadeScale!==undefined&&b.fadeScale<1){
-        ctx.save();
-        ctx.translate(b.x,b.y);
-        ctx.scale(b.fadeScale,b.fadeScale);
-        ctx.translate(-b.x,-b.y);
+      // 球体（带消失/出现渐隐渐显）
+      var ballAlpha=1;
+      if(b.fading){
+        ballAlpha=Math.min(1,b.fadeScale*3);
+        ctx.globalAlpha=ballAlpha;
       }
       if(m.avatar_url){
         // 有头像——用圆形裁剪图片
@@ -737,12 +736,11 @@ function renderThanks(){
         ctx.strokeStyle=b.color+'bb';
         ctx.lineWidth=1.5;
         ctx.stroke();
-        if(b.fadeScale!==undefined&&b.fadeScale<1)ctx.restore();
+        if(b.fading)ctx.globalAlpha=1;
       }else{
         // 无头像——渐变圆
-        var sr=b.radius*(b.fadeScale||1);
         ctx.beginPath();
-        ctx.arc(b.x,b.y,sr,0,Math.PI*2);
+        ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
         var grad=ctx.createRadialGradient(b.x-8,b.y-8,3,b.x,b.y,sr);
         grad.addColorStop(0,'rgba(255,255,255,0.4)');
         grad.addColorStop(0.4,b.color+'aa');
@@ -752,10 +750,13 @@ function renderThanks(){
         ctx.strokeStyle=b.color+'bb';
         ctx.lineWidth=1.5;
         ctx.stroke();
-        if(b.fadeScale!==undefined&&b.fadeScale<1)ctx.restore();
+        if(b.fading)ctx.globalAlpha=1;
       }
       
-      // 文字（无头像或头像太淡时显示）
+      // 文字（渐显）
+      var nameAlpha=1;
+      if(b.fading)nameAlpha=Math.min(1,b.fadeScale*3);
+      ctx.globalAlpha=nameAlpha;
       ctx.fillStyle=b.color;
       ctx.font='bold 12px -apple-system,sans-serif';
       ctx.textAlign='center';
@@ -765,6 +766,7 @@ function renderThanks(){
       var displayName=m.name.length>4?m.name.slice(0,3)+'..':m.name;
       ctx.fillText(displayName,b.x,b.y);
       ctx.shadowBlur=0;
+      ctx.globalAlpha=1;
     }
     
     thanksAnimId=requestAnimationFrame(physicsLoop);
