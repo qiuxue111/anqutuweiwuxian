@@ -780,7 +780,9 @@ function openThanksEditor(){
   var el=document.getElementById('thanksEditor');
   if(!el)return;
   el.style.display='block';
+  document.body.style.overflow='hidden';
   renderEditorList();
+  renderThanks(); // 确保球显出来
 }
 
 function closeThanksEditor(){
@@ -891,8 +893,7 @@ async function saveThanksMembers(){
 setTimeout(function(){
   var btn=document.getElementById('thanksEditBtn');
   if(btn)btn.style.display=isAdmin()?'flex':'none';
-  renderThanks(); // DOM 加载完后初始化画布
-  loadThanks();
+  loadThanks(); // loadThanks 完成后会自动调 renderThanks
 },100);
 </script>
 
