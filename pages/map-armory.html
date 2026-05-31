@@ -1053,12 +1053,12 @@ var navGroups = [
         "url": "map-airport.html"
     }
 ]},
-  { label: '🔧 改枪', url: '../gunsmith.html' },
-  { label: '💬 聊天', url: '../chat.html' },
-  { label: '📖 攻略', url: '../guides.html' },
+  { label: '🔧 改枪', url: 'weapons.html' },
+  { label: '💬 聊天', url: 'strategy.html' },
+  { label: '📖 攻略', url: 'gear.html' },
   { label: '🔍 搜索', url: '../search.html' },
   { label: '✅ 审核中心', url: 'review.html' },
-  { label: '👤 用户中心', url: '../profile.html' },
+  { label: '👤 用户中心', action: 'userCenter' },
   { sep: true },
   { label: '🚪 退出登录', action: 'logout' }
 ];
@@ -1099,6 +1099,7 @@ function toggleHamburger(){
     if(g.url&&g.url.indexOf(curFile)>=0) gl.classList.add('active');
     (function(u,a){ gl.onclick=function(){
       if(a==='logout'){ if(typeof logout==='function')logout(); else alert('未登录'); return; }
+      if(a==='userCenter'){ if(typeof showUserCenter==='function')showUserCenter(); else alert('未实现'); return; }
       if(u) window.location.href=u;
     };})(g.url,g.action);
     gl.style.cursor='pointer';
