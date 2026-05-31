@@ -623,13 +623,14 @@ function renderThanks(){
           if(b.fadeAlpha<=0){
             b.fadeStep=1;
             b.fadeHold=0;
-            // 瞬移中间，换方向
+            // 瞬移中间，换方向，换颜色
             b.x=cw/2+(-30+Math.random()*60);
             b.y=ch/2+(-30+Math.random()*60);
             var a=Math.random()*Math.PI*2;
             var sp=0.8+Math.random()*1.5;
             b.vx=Math.cos(a)*sp;
             b.vy=Math.sin(a)*sp;
+            b.color='hsl('+Math.floor(Math.random()*360)+',100%,65%)';
             b.bounce=1;
           }
         }else if(b.fadeStep===1){
