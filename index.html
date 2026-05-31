@@ -513,6 +513,7 @@ async function loadThanks(){
     thanksData=await r.json();
   }catch(e){
     console.log('loadThanks:',e.message);
+    alert('loadThanks error: '+e.message);
   }
   renderThanks(); // 无论如何都渲染（有数据渲染小球，无数据渲染空画布）
 }
@@ -720,6 +721,10 @@ function renderThanks(){
       var b=thanksBalls[bi];
       var m=thanksData[b.idx];
       
+      // 计算渲染半径（入场缩放用）
+      var drawRadius=b.radius;
+      if(b.enterScale<1)drawRadius=b.radius*b.enterScale;
+
       // 外层彩色发光——用渐变光晕（渐隐时不显示）
       if(!b.fading||b.fadeAlpha>0.3){
         ctx.beginPath();
@@ -763,11 +768,7 @@ function renderThanks(){
       
       // 球体（带消失/出现渐隐渐显 + 入场放大）
       var ballAlpha=1;
-      var drawRadius=b.radius;
-      if(b.enterScale<1){
-        drawRadius=b.radius*b.enterScale;
-        ctx.globalAlpha=b.enterScale;
-      }
+      if(b.enterScale<1)ctx.globalAlpha=b.enterScale;
       if(b.fading){
         ballAlpha=b.fadeAlpha;
         ctx.globalAlpha=ballAlpha;
