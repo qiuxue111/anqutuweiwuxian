@@ -582,19 +582,28 @@ function removeThanksMember(idx){
 }
 
 async function saveThanksMembers(){
-  // Strategy: delete all, re-insert
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('请先登录后再保存');return;}
   try{
-    // Delete all existing
-    var d=await db('DELETE','thanks_members',null,'');
-    if(!d.ok&&d.status!==204)throw new Error('delete: '+d.status);
+    // Delete all existing — use direct fetch to ensure auth header
+    var d=await fetch(SUPABASE_URL+'/rest/v1/thanks_members?'+new URLSearchParams({}),{
+      method:'DELETE',
+      headers:{'Authorization':'Bearer '+token,'apiKey':SUPABASE_ANON,'Content-Type':'application/json'}
+    });
+    if(!d.ok&&d.status!==204)throw new Error('delete: '+d.status+' '+await d.text().catch(function(){return'';}));
     // Insert all
     for(var i=0;i<thanksData.length;i++){
       var m=thanksData[i];
-      var r=await db('POST','thanks_members',{name:m.name,detail:m.detail||'',link:m.link||'',sort_order:i});
-      if(!r.ok)throw new Error('insert '+i+': '+r.status);
+      var r=await fetch(SUPABASE_URL+'/rest/v1/thanks_members',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+token,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify({name:m.name,detail:m.detail||'',link:m.link||'',sort_order:i})
+      });
+      if(!r.ok)throw new Error('insert '+i+': '+r.status+' '+await r.text().catch(function(){return'';}));
     }
     closeThanksEditor();
     loadThanks();
+    alert('保存成功');
   }catch(e){alert('保存失败: '+e.message);}
 }
 
