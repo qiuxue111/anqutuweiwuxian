@@ -493,7 +493,11 @@ async function loadThanks(){
     if(!r.ok)throw new Error(r.status);
     thanksData=await r.json();
     renderThanks();
-  }catch(e){console.log('loadThanks:',e.message);}
+  }catch(e){
+    console.log('loadThanks:',e.message);
+    // 即使失败也渲染空区域（不清除旧数据）
+    if(!thanksData||!thanksData.length)renderThanks();
+  }
 }
 
 var thanksBalls = []; // 物理球数组
@@ -887,6 +891,7 @@ async function saveThanksMembers(){
 
 // 管理员可见编辑按钮
 (function(){
+  renderThanks(); // 先渲染空画布（或缓存数据）
   setTimeout(function(){
     var btn=document.getElementById('thanksEditBtn');
     if(btn)btn.style.display=isAdmin()?'flex':'none';
