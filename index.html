@@ -734,11 +734,14 @@ document.addEventListener('click',function(e){
   }
 });
 
-// 鼠标移动推小球——在canvas区域移动鼠标时推开附近小球
-var thanksMouseX=null, thanksMouseY=null;
+// 鼠标推球——只有按住鼠标拖拽时才推开
+var thanksMouseDown=false;
+document.addEventListener('mousedown',function(e){thanksMouseDown=true;});
+document.addEventListener('mouseup',function(e){thanksMouseDown=false;thanksMouseX=null;thanksMouseY=null;});
 document.addEventListener('mousemove',function(e){
   var canvas=document.getElementById('thanksCanvas');
   if(!canvas||!thanksBalls||!thanksBalls.length)return;
+  if(!thanksMouseDown)return;
   var rect=canvas.getBoundingClientRect();
   thanksMouseX=e.clientX-rect.left;
   thanksMouseY=e.clientY-rect.top;
