@@ -921,8 +921,28 @@ function syncMatPins(){
 function toggleMat(){
   var btn=document.getElementById('matBtn'),mc=document.getElementById('matContent');
   if(!mc) return;
-  if(mc.classList.contains('show')){ mc.classList.remove('show'); btn.classList.remove('active'); btn.innerHTML='📦 物资'; return; }
-  btn.classList.add('active'); btn.innerHTML='📦 物资 ▲'; mc.classList.add('show'); mc.innerHTML='';
+  if(mc.animating) return;
+  if(mc.classList.contains('show')){ btn.classList.remove('active'); btn.innerHTML='📦 物资'; mc.animating=false;var items=mc.querySelectorAll('.mat-cat,.mat-items,.mat-ctrl');var len=items.length;mc.style.transition='max-height 0.4s ease';mc.style.maxHeight=Math.min(mc.scrollHeight,520)+'px';requestAnimationFrame(function(){mc.style.maxHeight='0';});items.forEach(function(e,i){e.style.transition='opacity 0.2s ease,transform 0.2s ease';setTimeout(function(){e.style.opacity='0';e.style.transform='translateY(12px)';},(len-1-i)*40);});setTimeout(function(){mc.classList.remove('show');mc.style.maxHeight='';mc.innerHTML='';},Math.max(len*40+200,400)); return; }
+  btn.classList.add('active'); btn.innerHTML='📦 物资 ▲'; mc.innerHTML='';mc.animating=false; mc.innerHTML=''; setTimeout(function(){
+    mc.classList.add('show');
+    mc.style.maxHeight='0';
+        requestAnimationFrame(function(){
+      mc.style.transition='max-height 0.4s ease';
+      mc.style.maxHeight=Math.min(mc.scrollHeight,520)+'px';
+      setTimeout(function(){mc.style.overflow='auto';mc.style.maxHeight='520px';},450);
+    });
+    var items=mc.querySelectorAll('.mat-cat,.mat-items,.mat-ctrl');
+    items.forEach(function(e,i){
+      e.style.opacity='0';
+      e.style.transform='translateY(-12px)';
+      e.style.transition='opacity 0.35s ease,transform 0.35s ease';
+      setTimeout(function(){
+        e.style.opacity='1';
+        e.style.transform='translateY(0)';
+      },i*65);
+    });
+    syncMatPins();
+  },1);
   var ctrl=document.createElement('div'); ctrl.className='mat-ctrl';
   var allBtn=document.createElement('button'); allBtn.className='mat-ctrl-btn'; allBtn.textContent='☑ 全选'; allBtn.onclick=function(){ selectAllMat(true); };
   var noneBtn=document.createElement('button'); noneBtn.className='mat-ctrl-btn'; noneBtn.textContent='☐ 取消'; noneBtn.onclick=function(){ selectAllMat(false); };
@@ -941,7 +961,6 @@ function toggleMat(){
     });
     mc.appendChild(row);
   });
-syncMatPins();
 }
 
 function placePin(tp,noteText){
@@ -1214,7 +1233,9 @@ input,textarea,button{font-size:14px!important}
 #commentPanel textarea{font-size:10px!important;min-height:32px!important;padding:4px!important}
 #commentPanel button{font-size:9px!important;padding:2px 8px!important}
 #commentPanel h3{font-size:10px!important}
-@keyframes pulseRed{0%{outline:0px solid #ff4444;box-shadow:0 0 0px rgba(255,68,68,0.4)}50%{outline:2px solid #ff4444;box-shadow:0 0 8px rgba(255,68,68,0.8)}100%{outline:0px solid #ff4444;box-shadow:0 0 0px rgba(255,68,68,0.4)}}.mat-item.active{color:var(--cat-color,#ffc832)!important;background:var(--cat-bg,rgba(255,200,50,0.12))!important;border-color:var(--cat-color,#ffc832)!important}.mat-item.active .mi-name{color:var(--cat-color,#ffc832)!important}</style>
+@keyframes pulseRed{0%{outline:0px solid #ff4444;box-shadow:0 0 0px rgba(255,68,68,0.4)}50%{outline:2px solid #ff4444;box-shadow:0 0 8px rgba(255,68,68,0.8)}100%{outline:0px solid #ff4444;box-shadow:0 0 0px rgba(255,68,68,0.4)}}.mat-item.active{color:var(--cat-color,#ffc832)!important;background:var(--cat-bg,rgba(255,200,50,0.12))!important;border-color:var(--cat-color,#ffc832)!important}.mat-item.active .mi-name{color:var(--cat-color,#ffc832)!important}
+.mat-content{overflow-y:auto!important}
+</style>
 <script>
 (function(){
   // Ctrl+滚轮缩放保护

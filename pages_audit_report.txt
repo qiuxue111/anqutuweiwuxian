@@ -1,0 +1,74 @@
+========== 全流程变量审计报告 ==========
+日期: 2026/5/31 22:40:28
+
+=== 1. 提交 pending_pins POST（地图页 -> 待审核）===
+map-valley.html: ❌ 未找到 pending_pins POST
+map-farm.html: ❌ 未找到 pending_pins POST
+map-tvstation.html: ❌ 未找到 pending_pins POST
+map-beishan.html: ❌ 未找到 pending_pins POST
+map-armory.html: ❌ 未找到 pending_pins POST
+map-airport.html: ❌ 未找到 pending_pins POST
+
+=== 2. 审核获取 pending_pins GET（review.html -> 读取待审核列表）===
+GET: supabase("pending_pins","GET",null,"order=created_at.desc")
+GET: supabase("pending_pins","GET",null,"id=eq."+id)
+GET: supabase("pending_pins","GET",null,"id=eq."+id)
+GET: supabase("pending_pins","GET",null,"id=eq."+id)
+GET(deletion): supabase("deletion_requests","GET",null,"order=created_at.desc")
+GET(deletion): supabase("deletion_requests","GET",null,"id=eq."+id)
+
+=== 3. 审核通过 pins POST（review.html -> 已通过表）===
+
+=== 4. 审核通过后删除 pending_pins（review.html -> 待审核中移除）===
+DELETE: supabase("pending_pins","DELETE",null,"id=eq."+id)
+DELETE: supabase("pending_pins","DELETE",null,"id=eq."+id)
+DELETE: supabase("pending_pins","DELETE",null,"id=eq."+id)
+DELETE: supabase("pending_pins","DELETE",null,"id=eq."+id)
+DELETE: supabase("pending_pins","DELETE",null,"id=eq."+id)
+
+=== 5. 删除请求流程（review.html -> deletion_requests）===
+deletion_requests GET: null,"order=created_at.desc"
+deletion_requests GET: null,"id=eq."+id
+deletion_requests PATCH: update,"id=eq."+id
+deletion_requests DELETE: null,"id=eq."+id
+deletion_requests DELETE: null,"id=eq."+id
+
+=== 6. 地图页删除流程 ===
+
+=== 7. 变量名统一性检查 ===
+map-valley.html: ⚠️ 仍有 px__ 引用（应统一为 x/y 百分比坐标）
+map-valley.html: ⚠️ 仍有 py__ 引用
+map-valley.html: 使用 mapNameCN
+map-valley.html: submitted_by 从 uname 变量获取
+map-farm.html: ⚠️ 仍有 px__ 引用（应统一为 x/y 百分比坐标）
+map-farm.html: ⚠️ 仍有 py__ 引用
+map-farm.html: 使用 mapNameCN
+map-farm.html: submitted_by 从 uname 变量获取
+map-tvstation.html: ⚠️ 仍有 px__ 引用（应统一为 x/y 百分比坐标）
+map-tvstation.html: ⚠️ 仍有 py__ 引用
+map-tvstation.html: 使用 mapNameCN
+map-tvstation.html: submitted_by 从 uname 变量获取
+map-beishan.html: ⚠️ 仍有 px__ 引用（应统一为 x/y 百分比坐标）
+map-beishan.html: ⚠️ 仍有 py__ 引用
+map-beishan.html: 使用 mapNameCN
+map-beishan.html: submitted_by 从 uname 变量获取
+map-armory.html: ⚠️ 仍有 px__ 引用（应统一为 x/y 百分比坐标）
+map-armory.html: ⚠️ 仍有 py__ 引用
+map-armory.html: 使用 mapNameCN
+map-armory.html: submitted_by 从 uname 变量获取
+map-airport.html: ⚠️ 仍有 px__ 引用（应统一为 x/y 百分比坐标）
+map-airport.html: ⚠️ 仍有 py__ 引用
+map-airport.html: 使用 mapNameCN
+map-airport.html: submitted_by 从 uname 变量获取
+
+=== 8. 总结 ===
+数据库 pending_pins 字段: id, x, y, name, type, ic, note, images, comments, votes, voters, admin_passed, created_at, map_name, floor, submitted_by
+数据库 pins 字段: id, x, y, name, type, ic, note, images, comments, created_at, map_name, floor, submitted_by
+数据库 deletion_requests 字段: id, pin_id, name, x, y, submitted_by, votes, voters, approved, reason, created_at, type, ic, floor, map_name
+
+核心检查项：
+1. 地图页提交 pending_pins → 字段应与数据库一致
+2. review.html 获取 pending_pins → 不应使用不存在的 status 过滤
+3. 审核通过 pins POST → 不应传不存在的 px/py，且应包含 submitted_by
+4. 审核通过后 DELETE pending_pins → 正常
+5. 删除请求 deletion_requests → 字段应与数据库一致
