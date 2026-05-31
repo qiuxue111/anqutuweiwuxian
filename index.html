@@ -32,6 +32,18 @@ body{background:#08080e;color:#ccc;font-family:-apple-system,BlinkMacSystemFont,
 a{color:#ffc832;text-decoration:none;}
 a:hover{opacity:0.8;}
 
+/* 入场动画 */
+.enter-fade{animation:enterPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes enterPop{
+  0%{opacity:0;transform:scale(0.6) translateY(20px);}
+  100%{opacity:1;transform:scale(1) translateY(0);}
+}
+.enter-delay-1{animation-delay:0.1s;}
+.enter-delay-2{animation-delay:0.2s;}
+.enter-delay-3{animation-delay:0.35s;}
+.enter-delay-4{animation-delay:0.5s;}
+.enter-delay-5{animation-delay:0.65s;}
+
 /* Floating menu button - upper left, semi-transparent */
 
 /* User area - top right */
@@ -67,16 +79,16 @@ a:hover{opacity:0.8;}
     .like-btn.active{background:rgba(255,200,50,0.1);border-color:#ffc83255;color:#ffc832;}
 
 </style>
-<button id="menuBtn" onclick="toggleMenu()">☰</button>
-<div id="userArea"><span id="loginDot" style="display:none;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span><span id="userName" style="display:none;color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);"></span><button id="loginBtn" onclick="loginGitHub()" style="padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;">登录</button></div>
+<button id="menuBtn" class="enter-fade enter-delay-1" onclick="toggleMenu()">☰</button>
+<div id="userArea"><span id="loginDot" style="display:none;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span><span id="userName" style="display:none;color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);"></span><button id="loginBtn" class="enter-fade enter-delay-2" onclick="loginGitHub()" style="padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;">登录</button></div>
 <div id="bubbleMenu"><a href="index.html" style="color:#ffc832;">🏠 首页</a><a href="pages/maps.html">🗺 地图选图</a><a href="pages/weapons.html">🔧 改枪</a><a href="pages/strategy.html">💬 聊天</a><a href="pages/gear.html">📖 攻略</a><a href="pages/3x3.html" style="padding-left:22px;font-size:0.85rem;color:#999">│ 3×3一图流</a><a href="search.html">🔍 搜索</a><div class="sep"></div><a id="reviewBtn" href="pages/review.html" style="display:none;">✅ 审核中心</a><a href="#" onclick="showUserCenter()">👤 用户中心</a><a href="#" onclick="logout()">🚪 退出登录</a></div>
 <div class="content">
 
-  <h1 style="color:#ffc832;font-size:1.8rem;margin-bottom:0.5rem;">暗区无限攻略站</h1>
-  <p style="color:#888;margin-bottom:2rem;">暗区突围：无限 玩家社区</p>
+  <h1 class="enter-fade enter-delay-3" style="color:#ffc832;font-size:1.8rem;margin-bottom:0.5rem;">暗区无限攻略站</h1>
+  <p class="enter-fade enter-delay-4" style="color:#888;margin-bottom:2rem;">暗区突围：无限 玩家社区</p>
 
   <div id="hotPosts" style="margin-bottom:2rem;">
-    <h2 style="color:#ffc832;font-size:1.1rem;margin-bottom:1rem;">📌 最新帖子</h2>
+    <h2 class="enter-fade enter-delay-5" style="color:#ffc832;font-size:1.1rem;margin-bottom:1rem;">📌 最新帖子</h2>
     <div id="postList" style="display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 
@@ -171,7 +183,7 @@ async function loadHotPosts(){
       el.innerHTML='<div style="text-align:center;color:#555;padding:2rem;">暂无帖子</div>';
       return;
     }
-    el.innerHTML=posts.map(function(p){
+    el.innerHTML=posts.map(function(p,i){
       var prev=(p.content||'').substring(0,120);
       var cat=p.category||'杂谈';
       var cn={'general':'杂谈','question':'问答','guide':'攻略','showoff':'炫耀'}[cat]||'杂谈';
@@ -180,7 +192,8 @@ async function loadHotPosts(){
       var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
       var imgHTML=imgs.length?'<div style="display:flex;gap:4px;margin-top:4px;">'+imgs.slice(0,3).map(function(u){return '<img src="'+u+'" style="width:40px;height:40px;border-radius:4px;object-fit:cover;border:1px solid #1e1e2a;">';}).join('')+(imgs.length>3?'<span style="color:#555;font-size:0.7rem;align-self:center;">+'+imgs.length+'</span>':'')+'</div>':'';
       var likes=p.likes_count||0;
-      return '<div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px;cursor:pointer;" onclick="openPostModal('+pId+')">'+
+      var delay=Math.min((i+1)*0.1,0.8); // 最大延迟0.8s
+      return '<div class="enter-fade" style="animation-delay:'+delay.toFixed(1)+'s;background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px;cursor:pointer;" onclick="openPostModal('+pId+')">'+
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'+
         '<span style="font-size:0.7rem;padding:2px 6px;border-radius:4px;background:'+hue+'22;color:'+hue+';">'+cn+'</span>'+
         '<span style="font-size:0.7rem;color:#555;">'+(p.author||'匿名')+'</span>'+
