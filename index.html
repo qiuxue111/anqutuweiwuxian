@@ -606,6 +606,13 @@ function renderThanks(){
         }
       }
       
+      // 边界弹力——离边缘近时自动往回推，防止卡角落
+      var margin=80;
+      if(b.x<margin)b.vx+=(margin-b.x)/200;
+      if(b.x>cw-margin)b.vx-=(b.x-(cw-margin))/200;
+      if(b.y<margin)b.vy+=(margin-b.y)/200;
+      if(b.y>ch-margin)b.vy-=(b.y-(ch-margin))/200;
+      
       // 边界碰撞（反弹）— 使用当前视口大小
       if(b.x-b.radius<0){b.x=b.radius;b.vx=Math.abs(b.vx)*0.85;b.bounce=1;}
       if(b.x+b.radius>cw){b.x=cw-b.radius;b.vx=-Math.abs(b.vx)*0.85;b.bounce=1;}
