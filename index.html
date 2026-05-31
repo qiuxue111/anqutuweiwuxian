@@ -552,6 +552,24 @@ function renderThanks(){
   });
   
   // 物理循环
+  var gravX=0, gravY=0.12; // 默认重力向下
+  
+  // 监听设备运动（手机晃动/倾斜）
+  if(window.DeviceMotionEvent){
+    window.addEventListener('devicemotion',function(e){
+      var acc=e.accelerationIncludingGravity;
+      if(acc){
+        // 映射到-0.3~0.3范围
+        gravX=(acc.x||0)/30;
+        gravY=((acc.y||0)+9.8)/30; // 设备Y轴向上为-9.8，倒置
+        // 限制范围
+        if(gravX>0.3)gravX=0.3;
+        if(gravX<-0.3)gravX=-0.3;
+        if(gravY>0.4)gravY=0.4;
+        if(gravY<-0.1)gravY=-0.1;
+      }
+    });
+  }
   function physicsLoop(){
     // 每次循环重新获取视口大小，支持窗口变化
     var cw=window.innerWidth;
@@ -569,8 +587,9 @@ function renderThanks(){
     for(var bi=0;bi<thanksBalls.length;bi++){
       var b=thanksBalls[bi];
       
-      // 重力
-      b.vy+=0.12;
+      // 重力（支持设备倾斜）
+      b.vy+=gravY;
+      b.vx+=gravX;
       
       // 空气阻力
       b.vx*=0.998;
@@ -579,6 +598,19 @@ function renderThanks(){
       // 移动
       b.x+=b.vx;
       b.y+=b.vy;
+      
+      // 鼠标推力——鼠标移近时推开小球
+      if(thanksMouseX!==null&&thanksMouseY!==null){
+        var mdx=b.x-thanksMouseX;
+        var mdy=b.y-thanksMouseY;
+        var mdist=Math.sqrt(mdx*mdx+mdy*mdy);
+        if(mdist<b.radius*4&&mdist>1){
+          var force=(b.radius*4-mdist)/(b.radius*4)*3;
+          b.vx+=mdx/mdist*force;
+          b.vy+=mdy/mdist*force;
+          if(mdist<b.radius+5)b.bounce=1;
+        }
+      }
       
       // 边界碰撞（反弹）— 使用当前视口大小
       if(b.x-b.radius<0){b.x=b.radius;b.vx=Math.abs(b.vx)*0.85;b.bounce=1;}
@@ -701,6 +733,18 @@ document.addEventListener('click',function(e){
     }
   }
 });
+
+// 鼠标移动推小球——在canvas区域移动鼠标时推开附近小球
+var thanksMouseX=null, thanksMouseY=null;
+document.addEventListener('mousemove',function(e){
+  var canvas=document.getElementById('thanksCanvas');
+  if(!canvas||!thanksBalls||!thanksBalls.length)return;
+  var rect=canvas.getBoundingClientRect();
+  thanksMouseX=e.clientX-rect.left;
+  thanksMouseY=e.clientY-rect.top;
+});
+// 在物理循环里处理鼠标推力
+// 修改physicsLoop里的渲染后部分
 
 // 物理引擎（在renderThanks中实现）
 
