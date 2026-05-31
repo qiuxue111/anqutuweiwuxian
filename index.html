@@ -667,7 +667,7 @@ function renderThanks(){
       ctx.fill();
       ctx.shadowBlur=0;
       
-      // 弹跳光晕（白色强光）
+      // 弹跳光晕（白色强光+彩色扩散）
       if(b.bounce>0.05){
         ctx.shadowColor='#fff';
         ctx.shadowBlur=b.bounce*40;
@@ -676,7 +676,7 @@ function renderThanks(){
         ctx.fillStyle='transparent';
         ctx.fill();
         ctx.shadowBlur=0;
-      }
+        // 彩色扩散光晕
         ctx.beginPath();
         ctx.arc(b.x,b.y,b.radius+b.bounce*15,0,Math.PI*2);
         ctx.fillStyle=b.color+'44';
