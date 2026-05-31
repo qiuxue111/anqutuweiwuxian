@@ -606,32 +606,42 @@ function renderThanks(){
         }
       }
       
-      // 边界碰撞——触边就从屏幕中间弹出（带消失出现动画）
+      // 边界碰撞——触边从中间重出现（渐隐→瞬移→渐显）
       if(b.x-b.radius<0||b.x+b.radius>cw||b.y-b.radius<0||b.y+b.radius>ch){
         if(!b.fading){
-          b.fading=true; // 开始消失
-          b.fadeDir=-1; // 缩小
-          b.fadeScale=1;
+          b.fading=true;
+          b.fadeStep=0; // 0=渐隐中, 1=瞬移, 2=渐显中
+          b.fadeAlpha=1; // 透明度(0-1)
+          b.fadeHold=0; // 计时
         }
       }
-      // 消失/出现动画
       if(b.fading){
-        b.fadeDir*=1.02; // 缓慢加速缩小/放大
-        b.fadeScale+=b.fadeDir*0.015;
-        if(b.fadeScale<=0.05){
-          // 完全消失，瞬移中间
-          b.x=cw/2+(-30+Math.random()*60);
-          b.y=ch/2+(-30+Math.random()*60);
-          var a=Math.random()*Math.PI*2;
-          var sp=0.8+Math.random()*1.5;
-          b.vx=Math.cos(a)*sp;
-          b.vy=Math.sin(a)*sp;
-          b.fadeDir=0.02; // 开始慢慢变大
-          b.bounce=1;
-        }
-        if(b.fadeScale>=1){
-          b.fading=false;
-          b.fadeScale=1;
+        b.fadeHold++;
+        if(b.fadeStep===0){
+          // 渐隐阶段：1.5秒内变透明
+          b.fadeAlpha=Math.max(0,1-b.fadeHold/90);
+          if(b.fadeAlpha<=0){
+            b.fadeStep=1;
+            b.fadeHold=0;
+            // 瞬移中间，换方向
+            b.x=cw/2+(-30+Math.random()*60);
+            b.y=ch/2+(-30+Math.random()*60);
+            var a=Math.random()*Math.PI*2;
+            var sp=0.8+Math.random()*1.5;
+            b.vx=Math.cos(a)*sp;
+            b.vy=Math.sin(a)*sp;
+            b.bounce=1;
+          }
+        }else if(b.fadeStep===1){
+          // 瞬移后停顿0.3秒
+          if(b.fadeHold>18){b.fadeStep=2;b.fadeHold=0;}
+        }else{
+          // 渐显阶段：1.5秒内变实
+          b.fadeAlpha=Math.min(1,b.fadeHold/90);
+          if(b.fadeAlpha>=1){
+            b.fading=false;
+            b.fadeAlpha=1;
+          }
         }
       }
       
@@ -675,8 +685,8 @@ function renderThanks(){
       var b=thanksBalls[bi];
       var m=thanksData[b.idx];
       
-      // 外层彩色发光——用渐变光晕（缩放时不显示）
-      if(!b.fading||b.fadeScale>0.3){
+      // 外层彩色发光——用渐变光晕（渐隐时不显示）
+      if(!b.fading||b.fadeAlpha>0.3){
         ctx.beginPath();
         ctx.arc(b.x,b.y,b.radius+8,0,Math.PI*2);
         // HSL转HSLA用于渐变
@@ -719,7 +729,7 @@ function renderThanks(){
       // 球体（带消失/出现渐隐渐显）
       var ballAlpha=1;
       if(b.fading){
-        ballAlpha=Math.min(1,b.fadeScale*3);
+        ballAlpha=b.fadeAlpha;
         ctx.globalAlpha=ballAlpha;
       }
       if(m.avatar_url){
@@ -755,7 +765,7 @@ function renderThanks(){
       
       // 文字（渐显）
       var nameAlpha=1;
-      if(b.fading)nameAlpha=Math.min(1,b.fadeScale*3);
+      if(b.fading)nameAlpha=b.fadeAlpha;
       ctx.globalAlpha=nameAlpha;
       ctx.fillStyle=b.color;
       ctx.font='bold 12px -apple-system,sans-serif';
