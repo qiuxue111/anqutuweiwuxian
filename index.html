@@ -606,11 +606,18 @@ function renderThanks(){
         }
       }
       
-      // 边界碰撞（反弹）— 加随机偏转防止卡边反复弹
-      if(b.x-b.radius<0){b.x=b.radius;b.vx=Math.abs(b.vx)*(0.85+Math.random()*0.2);b.vy+=(-0.5+Math.random())*0.5;b.bounce=1;}
-      if(b.x+b.radius>cw){b.x=cw-b.radius;b.vx=-Math.abs(b.vx)*(0.85+Math.random()*0.2);b.vy+=(-0.5+Math.random())*0.5;b.bounce=1;}
-      if(b.y-b.radius<0){b.y=b.radius;b.vy=Math.abs(b.vy)*(0.85+Math.random()*0.2);b.vx+=(-0.5+Math.random())*0.5;b.bounce=1;}
-      if(b.y+b.radius>ch){b.y=ch-b.radius;b.vy=-Math.abs(b.vy)*(0.85+Math.random()*0.2);b.vx+=(-0.5+Math.random())*0.5;b.bounce=1;}
+      // 边界碰撞——触边就从底部弹出
+      if(b.x-b.radius<0||b.x+b.radius>cw||b.y-b.radius<0||b.y+b.radius>ch){
+        // 瞬移到底部上方随机位置
+        b.x=b.radius+Math.random()*(cw-b.radius*2);
+        b.y=ch-b.radius-5;
+        // 给一个向上的初速度（弹起来）
+        var a=Math.random()*Math.PI-Math.PI/2; // 向上范围 -90度到+90度
+        var sp=1+Math.random()*2;
+        b.vx=Math.cos(a)*sp;
+        b.vy=Math.sin(a)*sp-Math.abs(sp*0.5); // 确保向上
+        b.bounce=1;
+      }
       
       // 球间碰撞
       for(var bj=bi+1;bj<thanksBalls.length;bj++){
