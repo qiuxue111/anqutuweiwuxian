@@ -606,12 +606,14 @@ function renderThanks(){
         }
       }
       
-      // 边界弹力——离边缘近时自动往回推，防止卡角落
-      var margin=80;
-      if(b.x<margin)b.vx+=(margin-b.x)/200;
-      if(b.x>cw-margin)b.vx-=(b.x-(cw-margin))/200;
-      if(b.y<margin)b.vy+=(margin-b.y)/200;
-      if(b.y>ch-margin)b.vy-=(b.y-(ch-margin))/200;
+      // 边界弹力——越靠近边缘推力越大，防止出界
+      var mg=60;
+      if(b.x<mg)b.vx+=(mg-b.x)/30;
+      else if(b.x<cw-mg)b.vx+=0; // no-op better than nothing
+      else b.vx-=(b.x-(cw-mg))/30;
+      if(b.y<mg)b.vy+=(mg-b.y)/30;
+      else if(b.y<ch-mg){}
+      else b.vy-=(b.y-(ch-mg))/30;
       
       // 边界碰撞（反弹）— 使用当前视口大小
       if(b.x-b.radius<0){b.x=b.radius;b.vx=Math.abs(b.vx)*0.85;b.bounce=1;}
