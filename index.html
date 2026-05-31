@@ -737,6 +737,7 @@ document.addEventListener('click',function(e){
 
 // 鼠标推球——只有按住鼠标拖拽时才推开
 var thanksMouseDown=false;
+var thanksMouseX=null, thanksMouseY=null;
 document.addEventListener('mousedown',function(e){thanksMouseDown=true;});
 document.addEventListener('mouseup',function(e){thanksMouseDown=false;thanksMouseX=null;thanksMouseY=null;});
 document.addEventListener('mousemove',function(e){
