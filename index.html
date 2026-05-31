@@ -513,7 +513,6 @@ async function loadThanks(){
     thanksData=await r.json();
   }catch(e){
     console.log('loadThanks:',e.message);
-    alert('loadThanks error: '+e.message);
   }
   renderThanks(); // 无论如何都渲染（有数据渲染小球，无数据渲染空画布）
 }
