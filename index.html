@@ -659,10 +659,24 @@ function renderThanks(){
       var b=thanksBalls[bi];
       var m=thanksData[b.idx];
       
-      // 弹跳光晕
+      // 外层发光光晕（始终显示）
+      ctx.beginPath();
+      ctx.arc(b.x,b.y,b.radius+5,0,Math.PI*2);
+      ctx.fillStyle=b.color+'33';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(b.x,b.y,b.radius+2,0,Math.PI*2);
+      ctx.fillStyle=b.color+'55';
+      ctx.fill();
+      
+      // 弹跳光晕（增强）
       if(b.bounce>0.05){
         ctx.beginPath();
-        ctx.arc(b.x,b.y,b.radius+b.bounce*8,0,Math.PI*2);
+        ctx.arc(b.x,b.y,b.radius+b.bounce*15,0,Math.PI*2);
+        ctx.fillStyle=b.color+'44';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.radius+b.bounce*25,0,Math.PI*2);
         ctx.fillStyle=b.color+'22';
         ctx.fill();
       }
