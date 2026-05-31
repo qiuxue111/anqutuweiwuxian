@@ -662,11 +662,12 @@ function renderThanks(){
       // 外层彩色发光——用渐变光晕
       ctx.beginPath();
       ctx.arc(b.x,b.y,b.radius+8,0,Math.PI*2);
-      var glowGrad=ctx.createRadialGradient(b.x,b.y,b.radius,b.x,b.y,b.radius+8);
-      glowGrad.addColorStop(0,b.color+'99');
-      glowGrad.addColorStop(0.5,b.color+'44');
-      glowGrad.addColorStop(1,b.color+'00');
-      ctx.fillStyle=glowGrad;
+      // HSL转HSLA用于渐变
+      var hslaBase=b.color.replace('hsl','hsla').replace(')',',');
+      ctx.fillStyle=ctx.createRadialGradient(b.x,b.y,b.radius-2,b.x,b.y,b.radius+8);
+      ctx.fillStyle.addColorStop(0,hslaBase+'0.8)');
+      ctx.fillStyle.addColorStop(0.4,hslaBase+'0.4)');
+      ctx.fillStyle.addColorStop(1,hslaBase+'0)');
       ctx.fill();
       // 外层彩色描边圈
       ctx.beginPath();
