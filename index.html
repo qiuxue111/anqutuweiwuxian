@@ -616,8 +616,8 @@ function renderThanks(){
       }
       // 消失/出现动画
       if(b.fading){
-        b.fadeDir*=1.06; // 加速缩小/放大
-        b.fadeScale+=b.fadeDir*0.05;
+        b.fadeDir*=1.02; // 缓慢加速缩小/放大
+        b.fadeScale+=b.fadeDir*0.015;
         if(b.fadeScale<=0.05){
           // 完全消失，瞬移中间
           b.x=cw/2+(-30+Math.random()*60);
@@ -626,7 +626,7 @@ function renderThanks(){
           var sp=0.8+Math.random()*1.5;
           b.vx=Math.cos(a)*sp;
           b.vy=Math.sin(a)*sp;
-          b.fadeDir=1; // 开始变大
+          b.fadeDir=0.02; // 开始慢慢变大
           b.bounce=1;
         }
         if(b.fadeScale>=1){
