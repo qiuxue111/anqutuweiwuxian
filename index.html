@@ -724,8 +724,8 @@ function renderThanks(){
       var drawRadius=b.radius;
       if(b.enterScale<1)drawRadius=b.radius*b.enterScale;
 
-      // 外层彩色发光——用渐变光晕（渐隐时不显示）
-      if(!b.fading||b.fadeAlpha>0.3){
+      // 外层彩色发光——用渐变光晕（渐隐/入场时不显示）
+      if((!b.fading||b.fadeAlpha>0.3)&&drawRadius>4){
         ctx.beginPath();
         ctx.arc(b.x,b.y,b.radius+8,0,Math.PI*2);
         // HSL转HSLA用于渐变
