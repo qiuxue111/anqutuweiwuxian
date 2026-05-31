@@ -764,21 +764,63 @@ document.addEventListener('click',function(e){
   }
 });
 
-// 鼠标推球——只有按住鼠标拖拽时才推开
+// 鼠标推球+悬停tooltip
+var thanksHoverIdx=-1;
 var thanksMouseDown=false;
 var thanksMouseX=null, thanksMouseY=null;
 document.addEventListener('mousedown',function(e){thanksMouseDown=true;});
 document.addEventListener('mouseup',function(e){thanksMouseDown=false;thanksMouseX=null;thanksMouseY=null;});
 document.addEventListener('mousemove',function(e){
   var canvas=document.getElementById('thanksCanvas');
-  if(!canvas||!thanksBalls||!thanksBalls.length)return;
-  if(!thanksMouseDown)return;
+  if(!canvas||!thanksBalls||!thanksBalls.length){
+    if(thanksHoverIdx>=0){thanksHoverIdx=-1;hideThanksTooltip();}
+    return;
+  }
   var rect=canvas.getBoundingClientRect();
-  thanksMouseX=e.clientX-rect.left;
-  thanksMouseY=e.clientY-rect.top;
+  var mx=e.clientX-rect.left;
+  var my=e.clientY-rect.top;
+  
+  // 悬停tooltip检测
+  var found=-1;
+  for(var i=0;i<thanksBalls.length;i++){
+    var b=thanksBalls[i];
+    var dx=mx-b.x;
+    var dy=my-b.y;
+    if(dx*dx+dy*dy<=b.radius*b.radius){found=i;break;}
+  }
+  if(found!==thanksHoverIdx){
+    thanksHoverIdx=found;
+    if(found>=0&&thanksData[found]&&thanksData[found].detail)showThanksTooltip(thanksData[found].detail,e.clientX,e.clientY);
+    else hideThanksTooltip();
+  }
+  
+  // 鼠标推球
+  if(!thanksMouseDown)return;
+  thanksMouseX=mx;
+  thanksMouseY=my;
 });
-// 在物理循环里处理鼠标推力
-// 修改physicsLoop里的渲染后部分
+
+function showThanksTooltip(text,mx,my){
+  var el=document.getElementById('thanksTooltip');
+  if(!el){
+    el=document.createElement('div');
+    el.id='thanksTooltip';
+    el.style.cssText='position:fixed;z-index:10001;background:rgba(10,10,15,0.92);border:1px solid rgba(255,200,50,0.2);border-radius:8px;padding:6px 12px;color:#ccc;font-size:0.8rem;pointer-events:none;backdrop-filter:blur(4px);max-width:260px;word-break:break-word;line-height:1.4;';
+    document.body.appendChild(el);
+  }
+  el.textContent=text;
+  el.style.display='block';
+  el.style.left=(mx+14)+'px';
+  el.style.top=(my+14)+'px';
+  var r=el.getBoundingClientRect();
+  if(r.right>window.innerWidth)el.style.left=(mx-r.width-14)+'px';
+  if(r.bottom>window.innerHeight)el.style.top=(my-r.height-14)+'px';
+}
+
+function hideThanksTooltip(){
+  var el=document.getElementById('thanksTooltip');
+  if(el)el.style.display='none';
+}
 
 // 物理引擎（在renderThanks中实现）
 
