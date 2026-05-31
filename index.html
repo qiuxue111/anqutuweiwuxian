@@ -500,7 +500,7 @@ function renderThanks(){
     if(el)el.innerHTML='<span style="color:#555;font-size:0.85rem;">暂无感谢名单</span>';
     return;
   }
-  el.innerHTML=thanksData.map(function(m){
+  el.innerHTML=thanksData.map(function(m,i){
     var hasLink=m.link&&m.link.trim();
     return '<div class="thanks-ball" onclick="showThanksDetail('+i+')" style="width:60px;height:60px;border-radius:50%;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;font-size:0.75rem;color:#ffc832;text-align:center;word-break:break-all;padding:4px;position:relative;animation:thanksBounce 2s ease-in-out infinite;overflow:hidden;" title="'+esc(m.detail||'')+'">'+esc(m.name)+'</div>';
   }).join('');
