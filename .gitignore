@@ -1,0 +1,20 @@
+# 临时/检查/备份文件（根目录）
+_check_*
+_debug_*
+_final_*
+_test_*
+check_*
+debug_*
+full_*
+add_*
+backup_*
+test_*
+_bak_*/
+_bak_floors_0528_1403/
+__tmp_idx.html
+_original_map-valley.html
+
+# 地图备份文件
+pages/*.bak
+pages/map-*backup-*
+pages/map-tvstation_*bak.html
