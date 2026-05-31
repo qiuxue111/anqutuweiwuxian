@@ -446,5 +446,167 @@ function previewCommentFiles(input){
   </div>
 </div>
 
+<!-- ===== 感谢名单 ===== -->
+<div id="thanksSection" style="margin-top:3rem;padding:2rem 0;border-top:1px solid rgba(255,255,255,0.04);">
+  <h2 style="color:#ffc832;font-size:1.1rem;margin-bottom:1.5rem;text-align:center;">🎉 感谢名单</h2>
+  <div id="thanksContainer" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;min-height:60px;"></div>
+</div>
+
+<!-- 编辑按钮（仅管理员可见） -->
+<div id="thanksEditBtn" style="display:none;position:fixed;right:16px;bottom:16px;z-index:9999;width:48px;height:48px;border-radius:50%;background:rgba(255,200,50,0.15);border:1px solid rgba(255,200,50,0.25);color:#ffc832;font-size:1.4rem;cursor:pointer;align-items:center;justify-content:center;" onclick="openThanksEditor()">✏️</div>
+
+<!-- 编辑弹窗 -->
+<div id="thanksEditor" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:10001;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);overflow-y:auto;">
+  <div style="max-width:550px;margin:60px auto;background:#12121a;border:1px solid #1e1e2a;border-radius:14px;padding:1.5rem;position:relative;">
+    <button class="close-btn" onclick="closeThanksEditor()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#888;font-size:1.5rem;cursor:pointer;">✕</button>
+    <h2 style="color:#ffc832;margin:0 0 1rem 0;font-size:1.1rem;">✏️ 编辑感谢名单</h2>
+    <div id="thanksEditorList"></div>
+    <button onclick="addThanksMember()" style="width:100%;padding:10px;background:rgba(255,200,50,0.1);border:1px dashed rgba(255,200,50,0.3);border-radius:8px;color:#ffc832;cursor:pointer;font-size:0.9rem;margin-top:8px;">+ 添加成员</button>
+    <div style="display:flex;gap:8px;margin-top:1rem;justify-content:flex-end;">
+      <button onclick="closeThanksEditor()" style="padding:8px 20px;background:transparent;border:1px solid #333;border-radius:6px;color:#ccc;cursor:pointer;">取消</button>
+      <button onclick="saveThanksMembers()" style="padding:8px 20px;background:#ffc832;border:none;border-radius:6px;color:#0a0a0f;cursor:pointer;font-weight:600;">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 感谢名单 =====
+var ADMINS=['qiuxue111'];
+
+function isAdmin(){
+  try{
+    var u=localStorage.getItem('abi_user');
+    if(!u)return false;
+    var p=JSON.parse(u);
+    var name=p.user_metadata&&p.user_metadata.preferred_username||p.user_metadata&&p.user_metadata.user_name||p.email||'';
+    return name&&ADMINS.indexOf(name)>=0;
+  }catch(e){return false;}
+}
+
+var thanksData = [];
+
+async function loadThanks(){
+  try{
+    var r=await db('GET','thanks_members',null,'order=sort_order.asc');
+    if(!r.ok)throw new Error(r.status);
+    thanksData=await r.json();
+    renderThanks();
+  }catch(e){console.log('loadThanks:',e.message);}
+}
+
+function renderThanks(){
+  var el=document.getElementById('thanksContainer');
+  if(!el||!thanksData||!thanksData.length){
+    if(el)el.innerHTML='<span style="color:#555;font-size:0.85rem;">暂无感谢名单</span>';
+    return;
+  }
+  el.innerHTML=thanksData.map(function(m){
+    var hasLink=m.link&&m.link.trim();
+    return '<div class="thanks-ball" onclick="showThanksDetail('+i+')" style="width:60px;height:60px;border-radius:50%;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;font-size:0.75rem;color:#ffc832;text-align:center;word-break:break-all;padding:4px;position:relative;animation:thanksBounce 2s ease-in-out infinite;overflow:hidden;" title="'+esc(m.detail||'')+'">'+esc(m.name)+'</div>';
+  }).join('');
+}
+
+// 动画
+var styleSheet=document.createElement('style');
+styleSheet.textContent='@keyframes thanksBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.thanks-ball:hover{background:rgba(255,200,50,0.2)!important;transform:scale(1.1);box-shadow:0 0 20px rgba(255,200,50,0.15)}';
+document.head.appendChild(styleSheet);
+
+// 详情弹窗
+function showThanksDetail(idx){
+  var m=thanksData[idx];
+  if(!m)return;
+  if(m.link&&m.link.trim()){
+    window.open(m.link);
+    return;
+  }
+  var msg=m.detail||'暂无介绍';
+  // Simple modal
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:10002;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);';
+  overlay.onclick=function(){document.body.removeChild(overlay);};
+  var box=document.createElement('div');
+  box.style.cssText='background:#12121a;border:1px solid #1e1e2a;border-radius:14px;padding:2rem;max-width:400px;text-align:center;';
+  box.onclick=function(e){e.stopPropagation();};
+  box.innerHTML='<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:#ffc832;font-size:0.85rem;">'+esc(m.name)+'</div>'+
+    '<div style="color:#ccc;font-size:0.9rem;margin-bottom:1.5rem;">'+esc(msg)+'</div>'+
+    '<button onclick="document.body.removeChild(this.parentNode.parentNode.parentNode)" style="padding:6px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#ccc;cursor:pointer;font-size:0.8rem;">关闭</button>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+
+// 编辑功能
+function openThanksEditor(){
+  var el=document.getElementById('thanksEditor');
+  if(!el)return;
+  el.style.display='block';
+  renderEditorList();
+}
+
+function closeThanksEditor(){
+  // Reload from server (discard local changes)
+  document.getElementById('thanksEditor').style.display='none';
+  document.body.style.overflow='';
+  loadThanks();
+}
+
+function renderEditorList(){
+  var el=document.getElementById('thanksEditorList');
+  if(!el)return;
+  document.body.style.overflow='hidden';
+  if(!thanksData||!thanksData.length){
+    el.innerHTML='<div style="color:#555;font-size:0.85rem;text-align:center;padding:1rem;">名单为空，点击下方添加</div>';
+    return;
+  }
+  el.innerHTML=thanksData.map(function(m,i){
+    return '<div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px;margin-bottom:8px;">'+
+      '<div style="display:flex;gap:8px;align-items:center;">'+
+      '<input value="'+esc(m.name)+'" placeholder="名字" style="flex:1;padding:6px 10px;background:#1a1a22;color:#fff;border:1px solid #333;border-radius:6px;font-size:0.85rem;" oninput="thanksData['+i+'].name=this.value">'+
+      '<button onclick="removeThanksMember('+i+')" style="padding:4px 10px;background:rgba(255,50,50,0.15);border:1px solid rgba(255,50,50,0.3);border-radius:4px;color:#f55;cursor:pointer;font-size:0.75rem;">删除</button>'+
+      '</div>'+
+      '<input value="'+esc(m.detail||'')+'" placeholder="详细介绍（悬停显示）" style="width:100%;margin-top:6px;padding:6px 10px;background:#1a1a22;color:#aaa;border:1px solid #333;border-radius:6px;font-size:0.8rem;" oninput="thanksData['+i+'].detail=this.value">'+
+      '<input value="'+esc(m.link||'')+'" placeholder="跳转链接（可选）" style="width:100%;margin-top:4px;padding:6px 10px;background:#1a1a22;color:#888;border:1px solid #333;border-radius:6px;font-size:0.8rem;" oninput="thanksData['+i+'].link=this.value">'+
+      '</div>';
+  }).join('');
+}
+
+function addThanksMember(){
+  if(!thanksData)thanksData=[];
+  thanksData.push({name:'新成员',detail:'',link:''});
+  renderEditorList();
+}
+
+function removeThanksMember(idx){
+  if(!confirm('确定移除此成员?'))return;
+  thanksData.splice(idx,1);
+  renderEditorList();
+}
+
+async function saveThanksMembers(){
+  // Strategy: delete all, re-insert
+  try{
+    // Delete all existing
+    var d=await db('DELETE','thanks_members',null,'');
+    if(!d.ok&&d.status!==204)throw new Error('delete: '+d.status);
+    // Insert all
+    for(var i=0;i<thanksData.length;i++){
+      var m=thanksData[i];
+      var r=await db('POST','thanks_members',{name:m.name,detail:m.detail||'',link:m.link||'',sort_order:i});
+      if(!r.ok)throw new Error('insert '+i+': '+r.status);
+    }
+    closeThanksEditor();
+    loadThanks();
+  }catch(e){alert('保存失败: '+e.message);}
+}
+
+// 管理员可见编辑按钮
+(function(){
+  setTimeout(function(){
+    var btn=document.getElementById('thanksEditBtn');
+    if(btn)btn.style.display=isAdmin()?'flex':'none';
+  },600);
+  loadThanks();
+})();
+</script>
+
 </body>
 </html>
