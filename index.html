@@ -538,7 +538,9 @@ function renderThanks(){
       x:x, y:y, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed,
       radius:radius, color:col, name:m.name, idx:i,
       bounce:0,
-      driftAngle:angle, driftSpeed:speed, driftTimer:Math.random()*300
+      driftAngle:angle, driftSpeed:speed, driftTimer:Math.random()*300,
+      enterDelay:i*8, // 入场延迟（帧数），每个球间隔8帧
+      enterScale:0 // 从0放大到1
     });
   });
   
@@ -570,6 +572,19 @@ function renderThanks(){
     
     for(var bi=0;bi<thanksBalls.length;bi++){
       var b=thanksBalls[bi];
+      
+      // 入场动画：延迟后从中间弹出放大
+      if(b.enterDelay>0){b.enterDelay--;continue;}
+      if(b.enterScale<1){
+        b.enterScale=Math.min(1,b.enterScale+0.04);
+        // 入场时从中心位置出发
+        if(b.enterScale<0.1){
+          b.x=cw/2+(-5+Math.random()*10);
+          b.y=ch/2+(-5+Math.random()*10);
+        }
+        // 入场过程中不执行物理
+        continue;
+      }
       
       // 随机改变方向（每段时间换向，产生自然飘动感）
       b.driftTimer++;
@@ -692,14 +707,14 @@ function renderThanks(){
         ctx.arc(b.x,b.y,b.radius+8,0,Math.PI*2);
         // HSL转HSLA用于渐变
         var hslaBase=b.color.replace('hsl','hsla').replace(')',',');
-        ctx.fillStyle=ctx.createRadialGradient(b.x,b.y,b.radius-2,b.x,b.y,b.radius+8);
+        ctx.fillStyle=ctx.createRadialGradient(b.x,b.y,drawRadius-2,b.x,b.y,drawRadius+8);
         ctx.fillStyle.addColorStop(0,hslaBase+'0.8)');
         ctx.fillStyle.addColorStop(0.4,hslaBase+'0.4)');
         ctx.fillStyle.addColorStop(1,hslaBase+'0)');
         ctx.fill();
         // 外层彩色描边圈
         ctx.beginPath();
-        ctx.arc(b.x,b.y,b.radius+1,0,Math.PI*2);
+        ctx.arc(b.x,b.y,drawRadius+1,0,Math.PI*2);
         ctx.strokeStyle=b.color;
         ctx.lineWidth=2;
         ctx.globalAlpha=0.7;
@@ -727,8 +742,13 @@ function renderThanks(){
         ctx.fill();
       }
       
-      // 球体（带消失/出现渐隐渐显）
+      // 球体（带消失/出现渐隐渐显 + 入场放大）
       var ballAlpha=1;
+      var drawRadius=b.radius;
+      if(b.enterScale<1){
+        drawRadius=b.radius*b.enterScale;
+        ctx.globalAlpha=b.enterScale;
+      }
       if(b.fading){
         ballAlpha=b.fadeAlpha;
         ctx.globalAlpha=ballAlpha;
@@ -737,21 +757,21 @@ function renderThanks(){
         // 有头像——用圆形裁剪图片
         ctx.save();
         ctx.beginPath();
-        ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
+        ctx.arc(b.x,b.y,drawRadius,0,Math.PI*2);
         ctx.clip();
         var img=avatarImgs[b.idx];
         if(img&&img.complete&&img.naturalWidth>0){
-          ctx.drawImage(img,b.x-b.radius,b.y-b.radius,b.radius*2,b.radius*2);
+          ctx.drawImage(img,b.x-drawRadius,b.y-drawRadius,drawRadius*2,drawRadius*2);
         }
         ctx.restore();
         ctx.strokeStyle=b.color+'bb';
         ctx.lineWidth=1.5;
         ctx.stroke();
-        if(b.fading)ctx.globalAlpha=1;
+        if(b.fading||b.enterScale<1)ctx.globalAlpha=1;
       }else{
         // 无头像——渐变圆
         ctx.beginPath();
-        ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
+        ctx.arc(b.x,b.y,drawRadius,0,Math.PI*2);
         var grad=ctx.createRadialGradient(b.x-8,b.y-8,3,b.x,b.y,sr);
         grad.addColorStop(0,'rgba(255,255,255,0.4)');
         grad.addColorStop(0.4,b.color+'aa');
@@ -767,6 +787,7 @@ function renderThanks(){
       // 文字（渐显）
       var nameAlpha=1;
       if(b.fading)nameAlpha=b.fadeAlpha;
+      else if(b.enterScale<1)nameAlpha=b.enterScale;
       ctx.globalAlpha=nameAlpha;
       ctx.fillStyle=b.color;
       ctx.font='bold 12px -apple-system,sans-serif';
