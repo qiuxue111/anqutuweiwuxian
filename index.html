@@ -26,10 +26,28 @@
     }catch(e){}
   }
 }</script>
-<style>/* Reset & base */
+<style>
+/* CSS 变量 */
+:root{
+  --bg-page:#08080e;
+  --text-body:#ccc;
+  --accent:#ffc832;
+  --accent-rgb:255,200,50;
+  --card-bg:var(--card-bg);
+  --card-border:var(--card-border);
+  --user-bg:var(--user-bg);
+  --user-border:var(--user-border);
+  --menu-bg:var(--menu-bg);
+  --menu-border:var(--user-border);
+  --btn-blue-text:var(--btn-blue-text);
+  --btn-red-text:var(--btn-red-text);
+  --btn-green-text:var(--btn-green-text);
+  --btn-purple-text:var(--btn-purple-text);
+}
+/* Reset & base */
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#08080e;color:#ccc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
-a{color:#ffc832;text-decoration:none;}
+body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+a{color:var(--accent);text-decoration:none;}
 a:hover{opacity:0.8;}
 
 /* 入场动画 */
@@ -53,63 +71,63 @@ a:hover{opacity:0.8;}
 
 /* User area - top right */
 #userArea{position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;}
-#userName{color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:none;}
-#loginBtn{padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
-#loginBtn:hover{background:rgba(255,200,50,0.25);}
+#userName{color:var(--accent);font-size:0.85rem;background:var(--user-bg);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid var(--user-border);display:none;}
+#loginBtn{padding:6px 14px;background:rgba(var(--accent-rgb),0.12);color:var(--accent);border:1px solid rgba(var(--accent-rgb),0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+#loginBtn:hover{background:rgba(var(--accent-rgb),0.25);}
 
 /* Page content area */
 .content{padding:60px 16px 20px;max-width:900px;margin:0 auto;}
 
-#menuBtn{position:fixed;top:12px;left:12px;z-index:9999;width:38px;height:38px;border-radius:10px;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);color:#ccc;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-#menuBtn:hover{background:rgba(255,200,50,0.15);color:#ffc832;}
-#bubbleMenu{display:block;position:fixed;top:56px;left:12px;z-index:9998;background:rgba(15,15,24,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:8px;min-width:180px;box-shadow:0 8px 40px rgba(0,0,0,0.6);overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.2s ease,transform 0.2s ease;}
+#menuBtn{position:fixed;top:12px;left:12px;z-index:9999;width:38px;height:38px;border-radius:10px;background:var(--user-bg);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);color:#ccc;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+#menuBtn:hover{background:rgba(var(--accent-rgb),0.15);color:var(--accent);}
+#bubbleMenu{display:block;position:fixed;top:56px;left:12px;z-index:9998;background:var(--menu-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--user-border);border-radius:14px;padding:8px;min-width:180px;box-shadow:0 8px 40px rgba(0,0,0,0.6);overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.2s ease,transform 0.2s ease;}
 #menuBtn:hover + #bubbleMenu,#bubbleMenu:hover{opacity:1;pointer-events:all;transform:translateY(0);}
 #bubbleMenu a{display:flex;align-items:center;gap:10px;padding:10px 14px;color:#ccc;border-radius:8px;font-size:0.95rem;text-decoration:none;transition:all 0.15s;}
-#bubbleMenu a:hover{background:rgba(255,200,50,0.08);color:#ffc832;}
-#bubbleMenu .sep{height:1px;background:rgba(255,255,255,0.06);margin:4px 8px;}
+#bubbleMenu a:hover{background:rgba(var(--accent-rgb),0.08);color:var(--accent);}
+#bubbleMenu .sep{height:1px;background:var(--user-border);margin:4px 8px;}
 
 
     #postModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);overflow-y:auto;}
     #postModal .modal-content{max-width:650px;margin:60px auto;background:#12121a;border:1px solid #1e1e2a;border-radius:14px;padding:1.5rem;position:relative;}
     #postModal .close-btn{position:absolute;top:12px;right:14px;background:none;border:none;color:#888;font-size:1.5rem;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;}
-    #postModal .close-btn:hover{background:rgba(255,255,255,0.06);color:#ffc832;}
-    #postModal h2{color:#ffc832;margin:0 0 0.5rem 0;font-size:1.2rem;}
+    #postModal .close-btn:hover{background:var(--user-border);color:var(--accent);}
+    #postModal h2{color:var(--accent);margin:0 0 0.5rem 0;font-size:1.2rem;}
     #postModal .post-meta{display:flex;gap:12px;align-items:center;font-size:0.8rem;color:#666;margin-bottom:1rem;}
     #postModal .post-body{color:#ccc;font-size:0.95rem;line-height:1.7;margin-bottom:1.5rem;white-space:pre-wrap;word-break:break-word;}
     #postModal .post-images{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;}
     #postModal .post-images img{max-width:100%;max-height:300px;border-radius:8px;object-fit:contain;background:#0a0a0f;}
     #postModal h4{color:#aaa;font-size:0.9rem;margin:0 0 0.5rem 0;}
     .like-btn{cursor:pointer;padding:2px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#aaa;font-size:0.8rem;display:inline-flex;align-items:center;gap:4px;}
-    .like-btn:hover{border-color:#ffc83244;color:#ffc832;}
-    .like-btn.active{background:rgba(255,200,50,0.1);border-color:#ffc83255;color:#ffc832;}
+    .like-btn:hover{border-color:var(--accent)44;color:var(--accent);}
+    .like-btn.active{background:rgba(var(--accent-rgb),0.1);border-color:var(--accent)55;color:var(--accent);}
 
 </style>
 <button id="menuBtn" class="enter-fade enter-delay-1" onclick="toggleMenu()">☰</button>
-<div id="userArea"><span id="loginDot" style="display:none;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span><span id="userName" style="display:none;color:#ffc832;font-size:0.85rem;background:rgba(20,20,30,0.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);"></span><button id="loginBtn" class="enter-fade enter-delay-2" onclick="loginGitHub()" style="padding:6px 14px;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;">登录</button></div>
-<div id="bubbleMenu"><a href="index.html" style="color:#ffc832;">🏠 首页</a><a href="pages/maps.html">🗺 地图选图</a><a href="pages/weapons.html">🔧 改枪</a><a href="pages/strategy.html">💬 聊天</a><a href="pages/gear.html">📖 攻略</a><a href="pages/3x3.html" style="padding-left:22px;font-size:0.85rem;color:#999">│ 3×3一图流</a><a href="search.html">🔍 搜索</a><div class="sep"></div><a id="reviewBtn" href="pages/review.html" style="display:none;">✅ 审核中心</a><a href="#" onclick="showUserCenter()">👤 用户中心</a><a href="#" onclick="logout()">🚪 退出登录</a></div>
+<div id="userArea"><span id="loginDot" style="display:none;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span><span id="userName" style="display:none;color:var(--accent);font-size:0.85rem;background:var(--user-bg);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid var(--user-border);"></span><button id="loginBtn" class="enter-fade enter-delay-2" onclick="loginGitHub()" style="padding:6px 14px;background:rgba(var(--accent-rgb),0.12);color:var(--accent);border:1px solid rgba(var(--accent-rgb),0.15);border-radius:8px;font-size:0.85rem;cursor:pointer;">登录</button></div>
+<div id="bubbleMenu"><a href="index.html" style="color:var(--accent);">🏠 首页</a><a href="pages/maps.html">🗺 地图选图</a><a href="pages/weapons.html">🔧 改枪</a><a href="pages/strategy.html">💬 聊天</a><a href="pages/gear.html">📖 攻略</a><a href="pages/3x3.html" style="padding-left:22px;font-size:0.85rem;color:#999">│ 3×3一图流</a><a href="search.html">🔍 搜索</a><div class="sep"></div><a id="reviewBtn" href="pages/review.html" style="display:none;">✅ 审核中心</a><a href="#" onclick="showUserCenter()">👤 用户中心</a><a href="#" onclick="logout()">🚪 退出登录</a></div>
 <div class="content">
 
-  <h1 class="enter-fade enter-delay-3" style="color:#ffc832;font-size:1.8rem;margin-bottom:0.5rem;">暗区无限攻略站</h1>
+  <h1 class="enter-fade enter-delay-3" style="color:var(--accent);font-size:1.8rem;margin-bottom:0.5rem;">暗区无限攻略站</h1>
   <p class="enter-fade enter-delay-4" style="color:#888;margin-bottom:2rem;">暗区突围：无限 玩家社区</p>
 
   <div id="hotPosts" style="margin-bottom:2rem;">
-    <h2 class="enter-fade enter-delay-5" style="color:#ffc832;font-size:1.1rem;margin-bottom:1rem;">📌 最新帖子</h2>
+    <h2 class="enter-fade enter-delay-5" style="color:var(--accent);font-size:1.1rem;margin-bottom:1rem;">📌 最新帖子</h2>
     <div id="postList" style="display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 
   <div id="navLinks" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:2rem;padding:0.5rem 0;">
-  <a href="pages/maps.html" class="enter-fade enter-delay-6" style="padding:10px 20px;background:rgba(50,150,255,0.1);border:1px solid rgba(50,150,255,0.2);border-radius:10px;color:#4a9eff;font-size:0.95rem;text-decoration:none;transition:all 0.2s;">🗺 地图选图</a>
-  <a href="pages/weapons.html" class="enter-fade enter-delay-7" style="padding:10px 20px;background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.2);border-radius:10px;color:#ff6b6b;font-size:0.95rem;text-decoration:none;transition:all 0.2s;">🔧 改枪</a>
-  <a href="pages/strategy.html" class="enter-fade enter-delay-8" style="padding:10px 20px;background:rgba(100,200,100,0.1);border:1px solid rgba(100,200,100,0.2);border-radius:10px;color:#51cf66;font-size:0.95rem;text-decoration:none;transition:all 0.2s;">💬 聊天</a>
-  <a href="pages/gear.html" class="enter-fade enter-delay-9" style="padding:10px 20px;background:rgba(200,100,255,0.1);border:1px solid rgba(200,100,255,0.2);border-radius:10px;color:#cc5de8;font-size:0.95rem;text-decoration:none;transition:all 0.2s;">📖 攻略</a>
+  <a href="pages/maps.html" class="enter-fade enter-delay-6" style="padding:10px 20px;background:rgba(50,150,255,0.1);border:1px solid rgba(50,150,255,0.2);border-radius:10px;color:var(--btn-blue-text);font-size:0.95rem;text-decoration:none;transition:all 0.2s;">🗺 地图选图</a>
+  <a href="pages/weapons.html" class="enter-fade enter-delay-7" style="padding:10px 20px;background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.2);border-radius:10px;color:var(--btn-red-text);font-size:0.95rem;text-decoration:none;transition:all 0.2s;">🔧 改枪</a>
+  <a href="pages/strategy.html" class="enter-fade enter-delay-8" style="padding:10px 20px;background:rgba(100,200,100,0.1);border:1px solid rgba(100,200,100,0.2);border-radius:10px;color:var(--btn-green-text);font-size:0.95rem;text-decoration:none;transition:all 0.2s;">💬 聊天</a>
+  <a href="pages/gear.html" class="enter-fade enter-delay-9" style="padding:10px 20px;background:rgba(200,100,255,0.1);border:1px solid rgba(200,100,255,0.2);border-radius:10px;color:var(--btn-purple-text);font-size:0.95rem;text-decoration:none;transition:all 0.2s;">📖 攻略</a>
 </div>
 
   <!-- 3x3 入口卡片 -->
-  <a href="pages/3x3.html" class="enter-fade enter-delay-10" style="display:block;background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:14px;margin-top:1rem;text-decoration:none;transition:all 0.2s;">
+  <a href="pages/3x3.html" class="enter-fade enter-delay-10" style="display:block;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:14px;margin-top:1rem;text-decoration:none;transition:all 0.2s;">
     <div style="display:flex;align-items:center;gap:12px;">
       <span style="font-size:1.8rem;">🗺️</span>
       <div style="flex:1;">
-        <div style="color:#ffc832;font-size:1rem;font-weight:600;">3×3 赛季任务一图流</div>
+        <div style="color:var(--accent);font-size:1rem;font-weight:600;">3×3 赛季任务一图流</div>
         <div style="color:#777;font-size:0.8rem;margin-top:4px;">全地图赛季任务一目了然，点击查看完整交互地图</div>
       </div>
       <span style="color:#888;font-size:0.9rem;">→</span>
@@ -117,15 +135,15 @@ a:hover{opacity:0.8;}
   </a>
 
   <!-- 战术交互地图 -->
-  <div class="enter-fade enter-delay-10" style="margin-top:1rem;background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:14px;">
-    <div style="color:#ffc832;font-size:1rem;font-weight:600;margin-bottom:10px;">🗺️ 战术交互地图</div>
+  <div class="enter-fade enter-delay-10" style="margin-top:1rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:14px;">
+    <div style="color:var(--accent);font-size:1rem;font-weight:600;margin-bottom:10px;">🗺️ 战术交互地图</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <a href="pages/map-farm.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🌾</span><span style="color:#ddd;font-size:0.9rem;">农场</span></a>
-      <a href="pages/map-beishan.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🏔️</span><span style="color:#ddd;font-size:0.9rem;">北山</span></a>
-      <a href="pages/map-tvstation.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">📺</span><span style="color:#ddd;font-size:0.9rem;">电视台</span></a>
-      <a href="pages/map-armory.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🔫</span><span style="color:#ddd;font-size:0.9rem;">军械库</span></a>
-      <a href="pages/map-valley.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🏞️</span><span style="color:#ddd;font-size:0.9rem;">山谷</span></a>
-      <a href="pages/map-airport.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">✈️</span><span style="color:#ddd;font-size:0.9rem;">机场</span></a>
+      <a href="pages/map-farm.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--user-border);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🌾</span><span style="color:#ddd;font-size:0.9rem;">农场</span></a>
+      <a href="pages/map-beishan.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--user-border);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🏔️</span><span style="color:#ddd;font-size:0.9rem;">北山</span></a>
+      <a href="pages/map-tvstation.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--user-border);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">📺</span><span style="color:#ddd;font-size:0.9rem;">电视台</span></a>
+      <a href="pages/map-armory.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--user-border);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🔫</span><span style="color:#ddd;font-size:0.9rem;">军械库</span></a>
+      <a href="pages/map-valley.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--user-border);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🏞️</span><span style="color:#ddd;font-size:0.9rem;">山谷</span></a>
+      <a href="pages/map-airport.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--user-border);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">✈️</span><span style="color:#ddd;font-size:0.9rem;">机场</span></a>
     </div>
   </div>
 
@@ -217,13 +235,13 @@ async function loadHotPosts(){
       var prev=(p.content||'').substring(0,120);
       var cat=p.category||'杂谈';
       var cn={'general':'杂谈','question':'问答','guide':'攻略','showoff':'炫耀'}[cat]||'杂谈';
-      var hue=cat==='guide'?'#4a9eff':cat==='question'?'#ff6b6b':cat==='showoff'?'#ffc832':'#888';
+      var hue=cat==='guide'?'var(--btn-blue-text)':cat==='question'?'var(--btn-red-text)':cat==='showoff'?'var(--accent)':'#888';
       var pId=p.id;
       var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
       var imgHTML=imgs.length?'<div style="display:flex;gap:4px;margin-top:4px;">'+imgs.slice(0,3).map(function(u){return '<img src="'+u+'" style="width:40px;height:40px;border-radius:4px;object-fit:cover;border:1px solid #1e1e2a;">';}).join('')+(imgs.length>3?'<span style="color:#555;font-size:0.7rem;align-self:center;">+'+imgs.length+'</span>':'')+'</div>':'';
       var likes=p.likes_count||0;
       var delay=Math.min((i+1)*0.1,0.8); // 最大延迟0.8s
-      return '<div class="enter-fade" style="animation-delay:'+delay.toFixed(1)+'s;background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px;cursor:pointer;" onclick="openPostModal('+pId+')">'+
+      return '<div class="enter-fade" style="animation-delay:'+delay.toFixed(1)+'s;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;cursor:pointer;" onclick="openPostModal('+pId+')">'+
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'+
         '<span style="font-size:0.7rem;padding:2px 6px;border-radius:4px;background:'+hue+'22;color:'+hue+';">'+cn+'</span>'+
         '<span style="font-size:0.7rem;color:#555;">'+(p.author||'匿名')+'</span>'+
@@ -277,7 +295,7 @@ async function openPostModal(postId){
     var cat=p.category||'general';
     var catNames={'general':'\u6742\u8c08','question':'\u95ee\u7b54','guide':'\u653b\u7565','showoff':'\u70ab\u8000'};
     var cn=catNames[cat]||'\u6742\u8c08';
-    var hue=cat==='guide'?'#4a9eff':cat==='question'?'#ff6b6b':cat==='showoff'?'#ffc832':'#888';
+    var hue=cat==='guide'?'var(--btn-blue-text)':cat==='question'?'var(--btn-red-text)':cat==='showoff'?'var(--accent)':'#888';
     var catEl=document.getElementById('modalCategory');
     catEl.textContent=cn;
     catEl.style.background=hue+'22';
@@ -404,7 +422,7 @@ async function loadComments(postId, containerId){
       var cimgs=(c.images&&typeof c.images==='string')?JSON.parse(c.images):[];
       var cimgHTML=cimgs.length?'<div style="display:flex;gap:4px;margin-top:2px;">'+cimgs.map(function(u){return '<img src="'+u+'" style="max-width:80px;max-height:60px;border-radius:4px;object-fit:cover;cursor:pointer;border:1px solid #1e1e2a;" onclick="window.open(this.src)">';}).join('')+'</div>':'';
       return '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">'+
-        '<span style="color:#ffc832;font-size:0.8rem;white-space:nowrap;">'+esc(c.author)+'</span>'+
+        '<span style="color:var(--accent);font-size:0.8rem;white-space:nowrap;">'+esc(c.author)+'</span>'+
         '<div style="flex:1;"><span style="color:#ccc;font-size:0.85rem;">'+esc(c.content)+'</span>'+cimgHTML+'</div>'+
         '<span style="color:#555;font-size:0.65rem;">'+(c.created_at?new Date(c.created_at).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'')+'</span>'+
         delBtn+'</div>';
@@ -481,9 +499,9 @@ function previewCommentFiles(input){
     <div id="modalComments" class="post-comments"></div>
     <div style="display:flex;gap:6px;align-items:center;margin-top:8px;">
       <input id="modalCommentInput" placeholder="输入评论..." style="flex:1;padding:8px 12px;background:#1a1a22;color:#fff;border:1px solid #333;border-radius:8px;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addCommentFromModal()">
-      <button class="file-btn" style="width:34px;height:34px;border-radius:50%;background:rgba(255,200,50,0.12);color:#ffc832;border:1px solid rgba(255,200,50,0.15);font-size:1.2rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" onclick="document.getElementById('commentImages').click()">+</button>
+      <button class="file-btn" style="width:34px;height:34px;border-radius:50%;background:rgba(var(--accent-rgb),0.12);color:var(--accent);border:1px solid rgba(var(--accent-rgb),0.15);font-size:1.2rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" onclick="document.getElementById('commentImages').click()">+</button>
       <input id="commentImages" type="file" accept="image/*" multiple style="display:none;" onchange="previewCommentFiles(this)">
-      <button style="padding:8px 16px;background:#ffc832;color:#0a0a0f;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.85rem;" onclick="addCommentFromModal()">评论</button>
+      <button style="padding:8px 16px;background:var(--accent);color:#0a0a0f;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.85rem;" onclick="addCommentFromModal()">评论</button>
     </div>
     <div id="commentFilePreview" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;"></div>
   </div>
@@ -491,25 +509,25 @@ function previewCommentFiles(input){
 
 <!-- ===== 感谢名单 ===== -->
 <div id="thanksSection" style="margin-top:2rem;padding:1rem 0;border-top:1px solid rgba(255,255,255,0.04);">
-  <h2 style="color:#ffc832;font-size:1.1rem;margin-bottom:1rem;text-align:center;">🎉 感谢名单[小球]</h2>
+  <h2 style="color:var(--accent);font-size:1.1rem;margin-bottom:1rem;text-align:center;">🎉 感谢名单[小球]</h2>
 </div>
 
 <!-- 物理小球Canvas - 最底层覆盖全视口 -->
 <canvas id="thanksCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;display:block;"></canvas>
 
 <!-- 编辑按钮（仅管理员可见） -->
-<div id="thanksEditBtn" style="display:none;position:fixed;right:16px;bottom:16px;z-index:9999;width:48px;height:48px;border-radius:50%;background:rgba(255,200,50,0.15);border:1px solid rgba(255,200,50,0.25);color:#ffc832;font-size:1.4rem;cursor:pointer;align-items:center;justify-content:center;" onclick="openThanksEditor()">✏️</div>
+<div id="thanksEditBtn" style="display:none;position:fixed;right:16px;bottom:16px;z-index:9999;width:48px;height:48px;border-radius:50%;background:rgba(var(--accent-rgb),0.15);border:1px solid rgba(var(--accent-rgb),0.25);color:var(--accent);font-size:1.4rem;cursor:pointer;align-items:center;justify-content:center;" onclick="openThanksEditor()">✏️</div>
 
 <!-- 编辑弹窗 -->
 <div id="thanksEditor" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:10001;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);overflow-y:auto;">
   <div style="max-width:550px;margin:60px auto;background:#12121a;border:1px solid #1e1e2a;border-radius:14px;padding:1.5rem;position:relative;">
     <button class="close-btn" onclick="closeThanksEditor()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#888;font-size:1.5rem;cursor:pointer;">✕</button>
-    <h2 style="color:#ffc832;margin:0 0 1rem 0;font-size:1.1rem;">✏️ 编辑感谢名单</h2>
+    <h2 style="color:var(--accent);margin:0 0 1rem 0;font-size:1.1rem;">✏️ 编辑感谢名单</h2>
     <div id="thanksEditorList"></div>
-    <button onclick="addThanksMember()" style="width:100%;padding:10px;background:rgba(255,200,50,0.1);border:1px dashed rgba(255,200,50,0.3);border-radius:8px;color:#ffc832;cursor:pointer;font-size:0.9rem;margin-top:8px;">+ 添加成员</button>
+    <button onclick="addThanksMember()" style="width:100%;padding:10px;background:rgba(var(--accent-rgb),0.1);border:1px dashed rgba(var(--accent-rgb),0.3);border-radius:8px;color:var(--accent);cursor:pointer;font-size:0.9rem;margin-top:8px;">+ 添加成员</button>
     <div style="display:flex;gap:8px;margin-top:1rem;justify-content:flex-end;">
       <button onclick="closeThanksEditor()" style="padding:8px 20px;background:transparent;border:1px solid #333;border-radius:6px;color:#ccc;cursor:pointer;">取消</button>
-      <button onclick="saveThanksMembers()" style="padding:8px 20px;background:#ffc832;border:none;border-radius:6px;color:#0a0a0f;cursor:pointer;font-weight:600;">保存</button>
+      <button onclick="saveThanksMembers()" style="padding:8px 20px;background:var(--accent);border:none;border-radius:6px;color:#0a0a0f;cursor:pointer;font-weight:600;">保存</button>
     </div>
   </div>
 </div>
@@ -911,7 +929,7 @@ function showThanksTooltip(text,mx,my){
   if(!el){
     el=document.createElement('div');
     el.id='thanksTooltip';
-    el.style.cssText='position:fixed;z-index:10001;background:rgba(10,10,15,0.92);border:1px solid rgba(255,200,50,0.2);border-radius:8px;padding:6px 12px;color:#ccc;font-size:0.8rem;pointer-events:none;backdrop-filter:blur(4px);max-width:260px;word-break:break-word;line-height:1.4;';
+    el.style.cssText='position:fixed;z-index:10001;background:rgba(10,10,15,0.92);border:1px solid rgba(var(--accent-rgb),0.2);border-radius:8px;padding:6px 12px;color:#ccc;font-size:0.8rem;pointer-events:none;backdrop-filter:blur(4px);max-width:260px;word-break:break-word;line-height:1.4;';
     document.body.appendChild(el);
   }
   el.textContent=text;
@@ -946,7 +964,7 @@ function showThanksDetail(idx){
   var box=document.createElement('div');
   box.style.cssText='background:#12121a;border:1px solid #1e1e2a;border-radius:14px;padding:2rem;max-width:400px;text-align:center;';
   box.onclick=function(e){e.stopPropagation();};
-  box.innerHTML='<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:#ffc832;font-size:0.85rem;">'+esc(m.name)+'</div>'+
+  box.innerHTML='<div style="width:60px;height:60px;border-radius:50%;background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--accent);font-size:0.85rem;">'+esc(m.name)+'</div>'+
     '<div style="color:#ccc;font-size:0.9rem;margin-bottom:1.5rem;">'+esc(msg)+'</div>'+
     '<button onclick="document.body.removeChild(this.parentNode.parentNode.parentNode)" style="padding:6px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#ccc;cursor:pointer;font-size:0.8rem;">关闭</button>';
   overlay.appendChild(box);
@@ -979,10 +997,10 @@ function renderEditorList(){
     return;
   }
   el.innerHTML=thanksData.map(function(m,i){
-    return '<div style="background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px;margin-bottom:8px;">'+
+    return '<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;margin-bottom:8px;">'+
       '<div style="display:flex;gap:8px;align-items:center;">'+
       '<div style="position:relative;">'+
-      (m.avatar_url?'<img src="'+esc(m.avatar_url)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #333;">':'<div style="width:40px;height:40px;border-radius:50%;background:rgba(255,200,50,0.1);border:1px solid #333;display:flex;align-items:center;justify-content:center;color:#888;font-size:0.6rem;">无图</div>')+
+      (m.avatar_url?'<img src="'+esc(m.avatar_url)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #333;">':'<div style="width:40px;height:40px;border-radius:50%;background:rgba(var(--accent-rgb),0.1);border:1px solid #333;display:flex;align-items:center;justify-content:center;color:#888;font-size:0.6rem;">无图</div>')+
       '<input type="file" accept="image/*" style="position:absolute;top:0;left:0;width:40px;height:40px;opacity:0;cursor:pointer;" onchange="uploadAvatar('+i+',this)">'+
       '</div>'+
       '<input value="'+esc(m.name)+'" placeholder="名字" style="flex:1;padding:6px 10px;background:#1a1a22;color:#fff;border:1px solid #333;border-radius:6px;font-size:0.85rem;" oninput="thanksData['+i+'].name=this.value">'+
@@ -1076,52 +1094,105 @@ setTimeout(function(){
 </script>
 
 
-<div id="versionInfo" style="position:fixed;bottom:5px;left:10px;z-index:9999;font-size:11px;color:rgba(255,200,50,0.5);font-family:monospace;pointer-events:none">v1.16</div>
+<div id="versionInfo" style="position:fixed;bottom:5px;left:10px;z-index:9999;font-size:11px;color:rgba(var(--accent-rgb),0.5);font-family:monospace;pointer-events:none">v1.16</div>
 
 <!-- 调色盘 -->
-<button id="paletteBtn" style="position:fixed;bottom:14px;left:14px;z-index:9999;width:36px;height:36px;border-radius:50%;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.15);color:#ffc832;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;border:none;outline:none;" title="自定义配色">🎨</button>
-<div id="palettePanel" style="display:none;position:fixed;bottom:56px;left:14px;z-index:9998;background:rgba(15,15,24,0.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;min-width:220px;box-shadow:0 4px 24px rgba(0,0,0,0.5);">
-  <div style="color:#ffc832;font-size:0.85rem;font-weight:600;margin-bottom:8px;">🎨 自定义配色</div>
+<button id="paletteBtn" style="position:fixed;bottom:14px;left:14px;z-index:9999;width:36px;height:36px;border-radius:50%;background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.15);color:var(--accent);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;border:none;outline:none;" title="自定义配色">🎨</button>
+<div id="palettePanel" style="display:none;position:fixed;bottom:56px;left:14px;z-index:9998;background:var(--menu-bg);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--user-border);border-radius:10px;padding:12px;min-width:220px;box-shadow:0 4px 24px rgba(0,0,0,0.5);">
+  <div style="color:var(--accent);font-size:0.85rem;font-weight:600;margin-bottom:8px;">🎨 自定义配色</div>
   <div id="paletteItems" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;padding-right:4px;"></div>
   <div style="display:flex;gap:6px;margin-top:8px;">
-    <button id="resetPaletteBtn" style="flex:1;padding:4px 0;border-radius:5px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#888;font-size:0.75rem;cursor:pointer;">重置</button>
-    <button id="closePaletteBtn" style="flex:1;padding:4px 0;border-radius:5px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#888;font-size:0.75rem;cursor:pointer;">关闭</button>
+    <button id="resetPaletteBtn" style="flex:1;padding:4px 0;border-radius:5px;border:1px solid var(--user-border);background:transparent;color:#888;font-size:0.75rem;cursor:pointer;">重置</button>
+    <button id="closePaletteBtn" style="flex:1;padding:4px 0;border-radius:5px;border:1px solid var(--user-border);background:transparent;color:#888;font-size:0.75rem;cursor:pointer;">关闭</button>
   </div>
 </div>
 <script>
 (function(){
+var DEFAULTS={
+  '--accent':'#ffc832',
+  '--bg-page':'#08080e',
+  '--text-body':'#ccc',
+  '--card-bg':'rgba(20,20,30,0.6)',
+  '--btn-blue-text':'#4a9eff',
+  '--btn-red-text':'#ff6b6b',
+  '--btn-green-text':'#51cf66',
+  '--btn-purple-text':'#cc5de8'
+};
+var LABELS={k:'--accent',l:'主色调',k2:'--bg-page',l2:'背景色',k3:'--text-body',l3:'文字色',k4:'--card-bg',l4:'卡片底色',k5:'--btn-blue-text',l5:'地图按钮',k6:'--btn-red-text',l6:'改枪按钮',k7:'--btn-green-text',l7:'聊天按钮',k8:'--btn-purple-text',l8:'攻略按钮'};
 var COLORS=[
-  {k:'--accent',l:'主色调',v:'#ffc832'},
-  {k:'--bg-page',l:'背景色',v:'#08080e'},
-  {k:'--text-body',l:'文字色',v:'#ccc'},
-  {k:'--card-bg',l:'卡片底色',v:'rgba(20,20,30,0.6)'},
-  {k:'--btn-blue-text',l:'地图按钮',v:'#4a9eff'},
-  {k:'--btn-red-text',l:'改枪按钮',v:'#ff6b6b'},
-  {k:'--btn-green-text',l:'聊天按钮',v:'#51cf66'},
-  {k:'--btn-purple-text',l:'攻略按钮',v:'#cc5de8'}
+  {k:'--accent',l:'主色调',v:DEFAULTS['--accent']},
+  {k:'--bg-page',l:'背景色',v:DEFAULTS['--bg-page']},
+  {k:'--text-body',l:'文字色',v:DEFAULTS['--text-body']},
+  {k:'--card-bg',l:'卡片底色',v:DEFAULTS['--card-bg']},
+  {k:'--btn-blue-text',l:'地图按钮',v:DEFAULTS['--btn-blue-text']},
+  {k:'--btn-red-text',l:'改枪按钮',v:DEFAULTS['--btn-red-text']},
+  {k:'--btn-green-text',l:'聊天按钮',v:DEFAULTS['--btn-green-text']},
+  {k:'--btn-purple-text',l:'攻略按钮',v:DEFAULTS['--btn-purple-text']}
 ];
+var THEMES={
+  '默认暗色':DEFAULTS,
+  '暗红风暴':{'--accent':'#e74c3c','--bg-page':'#0a0a0a','--text-body':'#ccc','--card-bg':'rgba(30,10,10,0.6)','--btn-blue-text':'#e74c3c','--btn-red-text':'#ff5252','--btn-green-text':'#e74c3c','--btn-purple-text':'#e74c3c'},
+  '极地蓝':{'--accent':'#5dade2','--bg-page':'#0a0e14','--text-body':'#b0c4de','--card-bg':'rgba(10,20,35,0.6)','--btn-blue-text':'#5dade2','--btn-red-text':'#e74c3c','--btn-green-text':'#2ecc71','--btn-purple-text':'#9b59b6'},
+  '翡翠绿':{'--accent':'#2ecc71','--bg-page':'#080c08','--text-body':'#b0d0b0','--card-bg':'rgba(10,25,10,0.6)','--btn-blue-text':'#2ecc71','--btn-red-text':'#e74c3c','--btn-green-text':'#2ecc71','--btn-purple-text':'#27ae60'},
+  '蒸汽紫':{'--accent':'#b388ff','--bg-page':'#0a0810','--text-body':'#c0b0d0','--card-bg':'rgba(15,10,25,0.6)','--btn-blue-text':'#b388ff','--btn-red-text':'#e74c3c','--btn-green-text':'#69f0ae','--btn-purple-text':'#b388ff'},
+  '日落橙':{'--accent':'#ff7043','--bg-page':'#0e0804','--text-body':'#d0b090','--card-bg':'rgba(25,15,5,0.6)','--btn-blue-text':'#ff7043','--btn-red-text':'#ff5252','--btn-green-text':'#ff7043','--btn-purple-text':'#ff7043'},
+  '纯白极简':{'--accent':'#e8a838','--bg-page':'#f5f0ea','--text-body':'#333','--card-bg':'rgba(255,255,255,0.75)','--btn-blue-text':'#4a9eff','--btn-red-text':'#e74c3c','--btn-green-text':'#27ae60','--btn-purple-text':'#8e44ad'}
+};
+function getVal(k){
+  var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
+  return (s&&s[k]!==undefined)?s[k]:DEFAULTS[k];
+}
+function getHex(k){
+  var v=getVal(k);
+  if(v.indexOf('rgba')===0) return DEFAULTS['--accent'];
+  return v;
+}
+function applyAll(obj){
+  Object.keys(obj).forEach(function(k){document.documentElement.style.setProperty(k,obj[k]);});
+}
 function loadColors(){
   var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
-  COLORS.forEach(function(x){var v=(s&&s[x.k])||x.v;document.documentElement.style.setProperty(x.k,v);});
+  if(s) applyAll(s);
+  else applyAll(DEFAULTS);
 }
 function renderColors(){
   var el=document.getElementById('paletteItems');if(!el)return;
-  var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
   el.innerHTML='';
   COLORS.forEach(function(x){
-    var cur=(s&&s[x.k])||x.v;
-    var hex=cur.indexOf('rgba')===0?'#ffc832':cur;
+    var cur=getVal(x.k);
     var d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:5px;';
     var lb=document.createElement('span');lb.textContent=x.l;lb.style.cssText='font-size:0.75rem;color:#888;min-width:56px;';
-    var cp=document.createElement('input');cp.type='color';cp.value=hex;cp.style.cssText='width:28px;height:22px;border:none;border-radius:3px;padding:0;cursor:pointer;background:transparent;';
+    var cp=document.createElement('input');cp.type='color';cp.value=getHex(x.k);cp.style.cssText='width:28px;height:22px;border:none;border-radius:3px;padding:0;cursor:pointer;background:transparent;';
     var tx=document.createElement('input');tx.type='text';tx.value=cur;tx.style.cssText='flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:4px;color:#ddd;font-size:0.7rem;padding:2px 4px;outline:none;';
-    cp.oninput=function(){tx.value=this.value;applyColor(x.k,this.value);};
-    tx.oninput=function(){applyColor(x.k,this.value);if(this.value.indexOf('#')===0)cp.value=this.value;};
+    cp.oninput=function(){tx.value=this.value;saveColor(x.k,this.value);};
+    tx.oninput=function(){saveColor(x.k,this.value);if(this.value.indexOf('#')===0)cp.value=this.value;};
     d.appendChild(lb);d.appendChild(cp);d.appendChild(tx);el.appendChild(d);
   });
+  // 预设按钮
+  var themeRow=document.createElement('div');themeRow.style.cssText='display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);';
+  Object.keys(THEMES).forEach(function(name){
+    var btn=document.createElement('button');btn.textContent=name;btn.style.cssText='padding:3px 6px;border-radius:4px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);color:#aaa;font-size:0.68rem;cursor:pointer;transition:all 0.15s;';
+    btn.onmouseenter=function(){this.style.borderColor='var(--accent)';this.style.color='var(--accent)';};
+    btn.onmouseleave=function(){this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#aaa';};
+    btn.onclick=function(){
+      localStorage.setItem('abi_palette',JSON.stringify(THEMES[name]));
+      applyAll(THEMES[name]);
+      renderColors();
+    };
+    themeRow.appendChild(btn);
+  });
+  el.appendChild(themeRow);
 }
-function applyColor(k,v){document.documentElement.style.setProperty(k,v);var s;try{s=JSON.parse(localStorage.getItem('abi_palette'))||{};}catch(e){s={};}s[k]=v;localStorage.setItem('abi_palette',JSON.stringify(s));}
-function resetColors(){localStorage.removeItem('abi_palette');COLORS.forEach(function(x){document.documentElement.style.setProperty(x.k,x.v);});renderColors();}
+function saveColor(k,v){
+  document.documentElement.style.setProperty(k,v);
+  var s;try{s=JSON.parse(localStorage.getItem('abi_palette'))||{};}catch(e){s={};}
+  s[k]=v;localStorage.setItem('abi_palette',JSON.stringify(s));
+}
+function resetColors(){
+  localStorage.removeItem('abi_palette');
+  applyAll(DEFAULTS);
+  renderColors();
+}
 loadColors();
 document.getElementById('paletteBtn').onclick=function(){var p=document.getElementById('palettePanel');p.style.display=p.style.display==='none'?'block':'none';if(p.style.display==='block')renderColors();};
 document.getElementById('resetPaletteBtn').onclick=resetColors;
