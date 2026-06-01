@@ -502,7 +502,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   var labels=floorLabelsMap[mapName]||['\u5730\u56fe'];
   var curFloor=Math.min(Math.max(0,floor||0), imgs.length-1);
 
-  var zm=1300;
+  var zm=16;
   var offsetX=0, offsetY=0;
   var dragging=false, dsx=0, dsy=0, dox=0, doy=0;
 
@@ -571,7 +571,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     btn.onclick=function(fi){return function(){
       curFloor=fi;
       mapImg.src=imgs[fi];
-      zm=1300;offsetX=0;offsetY=0;updatePinSize();
+      zm=16;offsetX=0;offsetY=0;updatePinSize();
       floorBtns.forEach(function(b,j){b.style.background=j==fi?'#ffc832':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
       info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[fi];
       // Re-center on pin after image loads
@@ -599,7 +599,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     // Red circle (always)
   var pinCircle=document.createElement('div');
   pinCircle.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5';
-  var pcSize=Math.min(18,2000/zm), pcBorder=Math.min(3,300/zm), pcShadow=Math.min(12,1000/zm);
+  var pcSize=Math.min(10,32/zm), pcBorder=Math.min(2,8/zm), pcShadow=Math.min(8,24/zm);
   pinCircle.innerHTML='<div style="width:'+pcSize+'px;height:'+pcSize+'px;border:'+pcBorder+'px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 '+pcShadow+'px rgba(255,50,50,.5)"></div>';
   pin.appendChild(pinCircle);
   // Container icon (if available)
@@ -607,13 +607,13 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   if(ic){
     pinIcon=document.createElement('img');
     pinIcon.src=ic;
-    var piSize=Math.min(48,5000/zm), piBorder=Math.min(2,200/zm);
-    pinIcon.style.cssText='display:block;margin-left:auto;margin-right:auto;width:'+piSize+'px;height:'+piSize+'px;border-radius:'+Math.min(8,800/zm)+'px;object-fit:cover;border:'+piBorder+'px solid #ffc832;box-shadow:0 0 '+Math.min(10,800/zm)+'px rgba(255,200,50,.5)';
+    var piSize=Math.min(24,64/zm), piBorder=Math.min(1.5,6/zm);
+    pinIcon.style.cssText='display:block;margin-left:auto;margin-right:auto;width:'+piSize+'px;height:'+piSize+'px;border-radius:'+Math.min(4,12/zm)+'px;object-fit:cover;border:'+piBorder+'px solid #ffc832;box-shadow:0 0 '+Math.min(6,16/zm)+'px rgba(255,200,50,.5)';
     pin.appendChild(pinIcon);
   }
   // Update pin sizes on zoom
   function updatePinSize(){
-    var pcS=Math.min(18,2000/zm), pcB=Math.min(3,300/zm), pcSh=Math.min(12,1000/zm);
+    var pcS=Math.min(10,32/zm), pcB=Math.min(2,8/zm), pcSh=Math.min(8,24/zm);
     pinCircle.innerHTML='<div style="width:'+pcS+'px;height:'+pcS+'px;border:'+pcB+'px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 '+pcSh+'px rgba(255,50,50,.5)"></div>';
     if(pinIcon){
       var piS=Math.min(48,5000/zm), piB=Math.min(2,200/zm);
@@ -621,7 +621,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
       pinIcon.style.marginTop=-(piS+8)+'px';
       pinIcon.style.borderWidth=piB+'px';
     }
-    var fs=Math.min(14,1500/zm);
+    var fs=Math.min(11,24/zm);
     label.style.fontSize=fs+'px';
   }
   var label=document.createElement('div');
