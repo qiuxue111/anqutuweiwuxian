@@ -7,30 +7,47 @@
 <title>帮助指南 - 暗区突围攻略</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:900px;margin:0 auto;line-height:1.8}
-nav{display:flex;justify-content:space-between;align-items:center;padding:0 0 16px;margin-bottom:20px;border-bottom:1px solid #1e1e2a}
-.logo{color:#ffc832;font-weight:bold;font-size:16px;text-decoration:none}
-h1{color:#ffc832;font-size:24px;margin-bottom:20px}
-h2{color:#ffc832;font-size:18px;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid rgba(255,200,50,.15)}
+body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:900px;margin:0 auto;line-height:1.8}
+nav{display:flex;justify-content:space-between;align-items:center;padding:0 0 16px;margin-bottom:20px;border-bottom:1px solid var(--card-border)}
+.logo{color:var(--accent);font-weight:bold;font-size:16px;text-decoration:none}
+h1{color:var(--accent);font-size:24px;margin-bottom:20px}
+h2{color:var(--accent);font-size:18px;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid rgba(var(--accent-rgb),.15)}
 h3{color:#eebb55;font-size:15px;margin:20px 0 8px}
-p,li{color:#ccc;font-size:14px;margin-bottom:8px}
+p,li{color:var(--text-body);font-size:14px;margin-bottom:8px}
 ul{padding-left:20px;margin-bottom:12px}
 li{margin-bottom:6px}
-.step{background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:16px;margin:12px 0}
-.step-num{display:inline-block;background:#ffc832;color:#0a0a0f;width:24px;height:24px;text-align:center;line-height:24px;border-radius:50%;font-weight:bold;font-size:12px;margin-right:8px}
+.step{background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin:12px 0}
+.step-num{display:inline-block;background:var(--accent);color:var(--bg-page);width:24px;height:24px;text-align:center;line-height:24px;border-radius:50%;font-weight:bold;font-size:12px;margin-right:8px}
 .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;margin-right:4px}
 .tag-user{background:#1a3a1a;color:#6f6}
 .tag-admin{background:#3a1a1a;color:#e55}
 .tag-info{background:#1a1a3a;color:#88f}
-code{background:#0a0a10;padding:2px 6px;border-radius:4px;font-size:13px;color:#ffc832}
-.highlight{color:#ffc832;font-weight:600}
-.warn{background:#2a1a0a;border:1px solid rgba(255,200,50,.2);border-radius:8px;padding:12px;margin:12px 0}
+code{background:var(--bg-page);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent)}
+.highlight{color:var(--accent);font-weight:600}
+.warn{background:#2a1a0a;border:1px solid rgba(var(--accent-rgb),.2);border-radius:8px;padding:12px;margin:12px 0}
+
+:root{
+  --bg-page:#08080e;
+  --text-body:#ccc;
+  --accent:#ffc832;
+  --accent-rgb:255,200,50;
+  --card-bg:var(--card-bg);
+  --card-border:var(--card-border);
+  --user-bg:var(--user-bg);
+  --user-border:var(--user-border);
+  --menu-bg:var(--menu-bg);
+  --menu-border:var(--user-border);
+  --btn-blue-text:var(--btn-blue-text);
+  --btn-red-text:var(--btn-red-text);
+  --btn-green-text:var(--btn-green-text);
+  --btn-purple-text:var(--btn-purple-text);
+}
 </style>
 </head>
 <body>
 <nav>
   <a href="../index.html" class="logo">暗区无限</a>
-  <a href="maps.html" style="color:#888;font-size:13px;text-decoration:none">?返回地图</a>
+  <a href="maps.html" style="color:var(--text-body);font-size:13px;text-decoration:none">?返回地图</a>
 </nav>
 
 <h1>📖 帮助指南</h1>
@@ -42,7 +59,7 @@ code{background:#0a0a10;padding:2px 6px;border-radius:4px;font-size:13px;color:#
 
 <h3>📍 查看容器点位</h3>
 <div class="step">
-  <p><span class="step-num">1</span> 打开 <a href="map-farm.html" style="color:#ffc832">农场地图</a></p>
+  <p><span class="step-num">1</span> 打开 <a href="map-farm.html" style="color:var(--accent)">农场地图</a></p>
   <p><span class="step-num">2</span> 点击右上?<span class="tag tag-info">图层</span> 按钮，勾选你想看的容器类</p>
   <p><span class="step-num">3</span> 地图上会显示所有已审核通过的点位图</p>
   <p><span class="step-num">4</span> 点击任意图标，查看详细信息和他人评论</p>
@@ -122,8 +139,8 @@ code{background:#0a0a10;padding:2px 6px;border-radius:4px;font-size:13px;color:#
 <h3>📤 审核并发布（完整流程</h3>
 
 <div class="step">
-  <p><span class="step-num">1</span> 打开 <a href="map-farm.html" style="color:#ffc832">农场地图</a></p>
-  <p><span class="step-num">2</span> 点击控制?<span class="tag tag-admin" style="background:#2a1a0a;color:#ffc832;border:1px solid rgba(255,200,50,.3)">待审 N</span> 按钮</p>
+  <p><span class="step-num">1</span> 打开 <a href="map-farm.html" style="color:var(--accent)">农场地图</a></p>
+  <p><span class="step-num">2</span> 点击控制?<span class="tag tag-admin" style="background:#2a1a0a;color:var(--accent);border:1px solid rgba(var(--accent-rgb),.3)">待审 N</span> 按钮</p>
   <p><span class="step-num">3</span> 弹出窗口中显示所有待审批项的汇</p>
   <p><span class="step-num">4</span> 点击 <strong>确定</strong> 下载 <code>review-queue.json</code> 文件</p>
   <p><span class="step-num">5</span> <strong>将下载的文件放到网站根目录的 <code>data/</code> 文件夹内</strong></p>
@@ -150,7 +167,7 @@ code{background:#0a0a10;padding:2px 6px;border-radius:4px;font-size:13px;color:#
 <h3>?手动审核（不通过浏览器）</h3>
 <div class="step">
   <p>如果你不想从浏览器下载审核文件，可以直接编辑 <code>data/review-queue.json</code></p>
-  <pre style="background:#0a0a10;padding:12px;border-radius:8px;margin:8px 0;font-size:13px;overflow-x:auto">
+  <pre style="background:var(--bg-page);padding:12px;border-radius:8px;margin:8px 0;font-size:13px;overflow-x:auto">
 {
   "additions": [
     {"x":30,"y":50,"name":"保险?,"type":"safe","ic":"../assets/icons/保险.png","note":"","images":[],"comments":[]}
@@ -185,9 +202,9 @@ code{background:#0a0a10;padding:2px 6px;border-radius:4px;font-size:13px;color:#
 
 <h3>?回滚到旧版本</h3>
 <div class="step">
-  <p>如果发布错了版本，可以在 <a href="https://github.com/qiuxue111/anqutuweiwuxian/commits/main" style="color:#ffc832" target="_blank">GitHub 提交历史</a> 找到旧版本，复制?<code>data/pins.json</code> 内容覆盖即可</p>
+  <p>如果发布错了版本，可以在 <a href="https://github.com/qiuxue111/anqutuweiwuxian/commits/main" style="color:var(--accent)" target="_blank">GitHub 提交历史</a> 找到旧版本，复制?<code>data/pins.json</code> 内容覆盖即可</p>
   <p>或在本地执行</p>
-  <pre style="background:#0a0a10;padding:12px;border-radius:8px;margin:8px 0;font-size:13px">
+  <pre style="background:var(--bg-page);padding:12px;border-radius:8px;margin:8px 0;font-size:13px">
 git log --oneline            # 查看提交历史
 git checkout &lt;commit-id&gt; -- data/pins.json  # 恢复旧版点位
 git add . && git commit -m "回滚点位"
@@ -219,9 +236,12 @@ git push
 </ul>
 
 <div style="text-align:center;margin:40px 0;color:#666;font-size:13px">
-  暗区突围：无?&copy; 2026 | <a href="https://github.com/qiuxue111/anqutuweiwuxian" style="color:#888">GitHub 仓库</a>
+  暗区突围：无?&copy; 2026 | <a href="https://github.com/qiuxue111/anqutuweiwuxian" style="color:var(--text-body)">GitHub 仓库</a>
 </div>
 <script src="../supabase.js"></script>
+<script>
+(function(){var w=window.name||"";var p;try{p=JSON.parse(w)}catch(e){}if(!p||!p["--accent"]){try{p=JSON.parse(localStorage.getItem("abi_palette"))}catch(e){}}if(!p||!p["--accent"])p={"--accent":"#ffc832","--bg-page":"#08080e","--text-body":"#ccc","--card-bg":"rgba(20,20,30,0.6)","--btn-blue-text":"#4a9eff","--btn-red-text":"#ff6b6b","--btn-green-text":"#51cf66","--btn-purple-text":"#cc5de8"};var at=p["--accent"],bg=p["--bg-page"],tx=p["--text-body"],cd=p["--card-bg"];var ar=parseInt(at.slice(1,3),16)+","+parseInt(at.slice(3,5),16)+","+parseInt(at.slice(5,7),16);var css=["--bg-page","--text-body","--accent","--accent-rgb","--card-bg","--card-border","--user-border","--menu-bg","--btn-blue-text","--btn-red-text","--btn-green-text","--btn-purple-text"];var vals=[bg,tx,at,ar,cd,p["--card-border"],p["--user-border"],p["--menu-bg"],p["--btn-blue-text"],p["--btn-red-text"],p["--btn-green-text"],p["--btn-purple-text"]];for(var i=0;i<css.length;i++){if(vals[i])document.documentElement.style.setProperty(css[i],vals[i]);}document.body.style.background=bg;document.body.style.color=tx;})()
+</script>
 </body>
 </html>
 

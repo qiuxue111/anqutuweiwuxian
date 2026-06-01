@@ -7,49 +7,66 @@
 <title>审核中心 - 暗区突围：无限</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:960px;margin:0 auto}
-h1{color:#ffc832;font-size:22px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
-h1 a{color:#888;font-size:13px;text-decoration:none}
+body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:20px;max-width:960px;margin:0 auto}
+h1{color:var(--accent);font-size:22px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+h1 a{color:var(--text-body);font-size:13px;text-decoration:none}
 nav{display:flex;align-items:center;gap:16px;margin-bottom:16px}
 .stats{display:flex;gap:12px;margin-bottom:16px}
-.stat{flex:1;background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:12px;text-align:center}
-.stat-num{font-size:28px;font-weight:bold;color:#ffc832}
-.stat-label{font-size:12px;color:#888;margin-top:4px}
+.stat{flex:1;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;text-align:center}
+.stat-num{font-size:28px;font-weight:bold;color:var(--accent)}
+.stat-label{font-size:12px;color:var(--text-body);margin-top:4px}
 .tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
-.tab{padding:8px 20px;background:#12121a;border:1px solid #1e1e2a;border-radius:8px;cursor:pointer;font-size:14px;color:#888}
-.tab.active{background:#ffc832;color:#0a0a0f;font-weight:600;border-color:#ffc832}
+.tab{padding:8px 20px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text-body)}
+.tab.active{background:var(--accent);color:var(--bg-page);font-weight:600;border-color:var(--accent)}
 .tab.admin{color:#e55}
-.card{background:#12121a;border:1px solid #1e1e2a;border-radius:10px;padding:16px;margin-bottom:12px;position:relative}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-bottom:12px;position:relative}
 .card.expired{opacity:0.45;border-color:#4a1a1a}
 .card .icon{width:32px;height:32px;border-radius:6px;object-fit:cover;vertical-align:middle;margin-right:8px}
 .card .hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .card .hdr h3{font-size:16px;margin:0;display:flex;align-items:center;gap:6px}
-.card .hdr .badge{padding:2px 8px;border-radius:4px;font-size:11px;background:#333}
+.card .hdr .badge{padding:2px 8px;border-radius:4px;font-size:11px;background:var(--card-bg)}
 .card .hdr .badge.pending{background:#4a3a00;color:#fd2}
 .card .hdr .badge.admin-passed{background:#003a00;color:#5e5}
 .card .hdr .badge.expired-badge{background:#3a0000;color:#e55}
-.card .meta{font-size:13px;color:#888;margin-bottom:8px;line-height:1.7}
+.card .meta{font-size:13px;color:var(--text-body);margin-bottom:8px;line-height:1.7}
 .card .meta .coord{cursor:pointer;color:#88aaff;text-decoration:underline;font-family:monospace}
 .card .meta .coord:hover{color:#aaccff}
-.card .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #1e1e2a}
+.card .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--card-border)}
 .btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500}
 .btn-vote{background:#1a4a1a;color:#5e5}
 .btn-vote:hover{background:#2a5a2a}
-.btn-voted{background:#333;color:#888;cursor:default}
+.btn-voted{background:var(--card-bg);color:var(--text-body);cursor:default}
 .btn-pass{background:#1a3a1a;color:#5a5}
 .btn-pass:hover{background:#2a4a2a}
 .btn-reject{background:#4a1a1a;color:#e55}
 .btn-reject:hover{background:#5a2a2a}
 .btn-del{background:#222;color:#666;border:1px solid #444}
-.btn-del:hover{background:#333;color:#e55}
+.btn-del:hover{background:var(--card-bg);color:#e55}
 .btn-map{background:#1a1a3a;color:#88aaff;border:1px solid #335;font-size:12px;padding:3px 8px}
 .btn-map:hover{background:#2a2a4a}
 .admin-zone{margin-top:6px;display:flex;gap:6px}
-.admin-toggle{position:fixed;bottom:20px;right:20px;background:#1a1a1a;color:#555;border:1px solid #333;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;z-index:100}
+.admin-toggle{position:fixed;bottom:20px;right:20px;background:#1a1a1a;color:#555;border:1px solid var(--card-bg);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;z-index:100}
 .admin-toggle.active{color:#e55;border-color:#e55;background:#2a1a1a}
 .loading,.empty{text-align:center;padding:60px 20px;color:#555;font-size:15px}
-footer{margin-top:30px;text-align:center;font-size:12px;color:#333}
+footer{margin-top:30px;text-align:center;font-size:12px;color:var(--card-bg)}
 #authArea{display:flex;align-items:center;gap:10px;font-size:14px;white-space:nowrap}
+
+:root{
+  --bg-page:#08080e;
+  --text-body:#ccc;
+  --accent:#ffc832;
+  --accent-rgb:255,200,50;
+  --card-bg:var(--card-bg);
+  --card-border:var(--card-border);
+  --user-bg:var(--user-bg);
+  --user-border:var(--user-border);
+  --menu-bg:var(--menu-bg);
+  --menu-border:var(--user-border);
+  --btn-blue-text:var(--btn-blue-text);
+  --btn-red-text:var(--btn-red-text);
+  --btn-green-text:var(--btn-green-text);
+  --btn-purple-text:var(--btn-purple-text);
+}
 </style>
 </head>
 <body>
@@ -119,7 +136,7 @@ function updateAuthUI(){
     var av=currentUser.user_metadata&&currentUser.user_metadata.avatar_url||"";
     el.innerHTML="<img src='"+av+"' style='width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:4px'> <span style='color:#8c8;font-size:13px'>"+nm+"<\/span> <span onclick='logoutGit()' style='cursor:pointer;color:#e55;font-size:11px;margin-left:6px;background:#2a1a1a;padding:2px 8px;border-radius:4px'>退出<\/span>";
   }else{
-    el.innerHTML="<span onclick='loginGit()' style='cursor:pointer;color:#ffc832;font-size:13px;background:#2a2a10;padding:3px 10px;border-radius:4px;border:1px solid #ffc83244'>GitHub 登录<\/span>";
+    el.innerHTML="<span onclick='loginGit()' style='cursor:pointer;color:var(--accent);font-size:13px;background:#2a2a10;padding:3px 10px;border-radius:4px;border:1px solid var(--accent)44'>GitHub 登录<\/span>";
   }
 }
 function displayUser(u){try{var j=JSON.parse(u);if(j&&j.user_metadata&&j.user_metadata.user_name)return j.user_metadata.user_name;if(j&&j.user_metadata&&j.user_metadata.preferred_username)return j.user_metadata.preferred_username;if(j&&j.email)return j.email.split('@')[0];}catch(e){}return u;}
@@ -244,7 +261,7 @@ function renderList(items){
     html+="<h3>"+p.name+"<\/h3>";
     html+=passed?"<span class='badge admin-passed'>已通过<\/span>":"<span class='badge pending'>待审核<\/span>";
     if(expired)html+="<span class='badge expired-badge'>已过期<\/span>";
-    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>提交: "+displayUser(p.submitted_by)+"<\/span>";
+    if(p.submitted_by)html+="<span style='color:var(--text-body);font-size:11px;margin-left:auto'>提交: "+displayUser(p.submitted_by)+"<\/span>";
     html+="<\/div>";
     html+="<div class='meta'>";
     html+="坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\",\""+(p.map_name||"")+"\","+(p.floor||0)+")'>("+p.x+"%, "+p.y+"%)"+(p.floor||0)+"<\/span>";
@@ -261,7 +278,7 @@ function renderList(items){
     if(p.images&&p.images.length>0){
       html+="<div style='display:flex;gap:6px;margin:6px 0;flex-wrap:wrap'>";
       p.images.forEach(function(img){
-        if(img&&img.startsWith("data:"))html+="<img src='"+img+"' style='width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #333;cursor:pointer' onclick='window.open(this.src)'>";
+        if(img&&img.startsWith("data:"))html+="<img src='"+img+"' style='width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid var(--card-bg);cursor:pointer' onclick='window.open(this.src)'>";
       });
       html+="<\/div>";
     }
@@ -300,14 +317,14 @@ function renderPins(pins){
   pins.forEach(function(p){
     html+="<div class='card'><div class='hdr'>";
     html+="<h3>"+p.name+"</h3>";
-    html+="<span style='color:#888;font-size:11px'>地图: "+(p.map_name||"未指定")+"</span>";
+    html+="<span style='color:var(--text-body);font-size:11px'>地图: "+(p.map_name||"未指定")+"</span>";
     html+="</div>";
     html+="<div class='meta'>坐标: ("+p.x+"%, "+p.y+"%)  | 类型: "+(p.type||"")+"</div>";
     if(p.ic)html+="<div class='meta'>容器: "+p.ic+"</div>";
     html+="<div style='margin:6px 0'><span class='view-on-map-btn' style='cursor:pointer;display:inline-block;padding:4px 12px;background:#1a1a3a;color:#88aaff;border:1px solid #335;border-radius:6px;font-size:12px'>&#x1f4cd; 在地图上查看位置</span></div>";
     if(p.images&&p.images.length>0){
       html+="<div style='display:flex;gap:6px;margin:6px 0;flex-wrap:wrap'>";
-      p.images.forEach(function(img){if(img)html+="<img src='"+img+"' style='width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #333;cursor:pointer' onclick='window.open(this.src)'>";});
+      p.images.forEach(function(img){if(img)html+="<img src='"+img+"' style='width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid var(--card-bg);cursor:pointer' onclick='window.open(this.src)'>";});
       html+="</div>";
     }
     html+="</div>";
@@ -333,7 +350,7 @@ function renderDels(dels){
     html+="<div class='card'><div class='hdr'>";
     html+="<span style='color:#e55;font-size:14px'>删除请求<\/span>";
     html+="<h3>"+p.name+"<\/h3>"
-    if(p.submitted_by)html+="<span style='color:#888;font-size:11px;margin-left:auto'>请求人: "+displayUser(p.submitted_by)+"<\/span>";
+    if(p.submitted_by)html+="<span style='color:var(--text-body);font-size:11px;margin-left:auto'>请求人: "+displayUser(p.submitted_by)+"<\/span>";
     html+="<\/div>";
     html+="<div class='meta'>坐标: <span class='coord' onclick='viewOnMap("+p.x+","+p.y+",\""+encodeURIComponent(p.name||"").replace(/'/g,"\\u0027")+"\",\""+(p.type||"")+"\",\""+encodeURIComponent(p.ic||"").replace(/'/g,"\\u0027")+"\",\""+(p.map_name||"")+"\","+(p.floor||0)+")'>("+p.x+"%, "+p.y+"%)<\/span>";
     html+=" | "+votes+"/10 票（同意删除）<\/div>";
@@ -565,12 +582,12 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   imgs.forEach(function(s,i){
     var btn=document.createElement('button');
     btn.textContent=labels[i];
-    btn.style.cssText='padding:5px 14px;background:'+(i==curFloor?'#ffc832':'rgba(255,255,255,.08)')+';border:none;border-radius:6px;color:'+(i==curFloor?'#000':'#aaa')+';cursor:pointer;font-size:12px';
+    btn.style.cssText='padding:5px 14px;background:'+(i==curFloor?'var(--accent)':'rgba(255,255,255,.08)')+';border:none;border-radius:6px;color:'+(i==curFloor?'#000':'#aaa')+';cursor:pointer;font-size:12px';
     btn.onclick=function(fi){return function(){
       curFloor=fi;
       mapImg.src=imgs[fi];
       zm=3;offsetX=0;offsetY=0;
-      floorBtns.forEach(function(b,j){b.style.background=j==fi?'#ffc832':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
+      floorBtns.forEach(function(b,j){b.style.background=j==fi?'var(--accent)':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
       info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[fi];
       // Re-center on pin after image loads
       reposition();
@@ -582,7 +599,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
 
   // Container
   var wrap=document.createElement('div');
-  wrap.style.cssText='position:relative;width:90vw;max-width:1400px;height:75vh;overflow:hidden;border-radius:12px;border:1px solid #333;background:#111;cursor:grab';
+  wrap.style.cssText='position:relative;width:90vw;max-width:1400px;height:75vh;overflow:hidden;border-radius:12px;border:1px solid var(--card-bg);background:#111;cursor:grab';
 
   // Inner layer for transform
   var inner=document.createElement('div');
@@ -600,12 +617,12 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   if(ic){
     var pinImg=document.createElement('img');
     pinImg.src=ic;
-    pinImg.style.cssText='display:block;margin-top:-54px;margin-left:auto;margin-right:auto;width:48px;height:48px;border-radius:8px;object-fit:cover;border:2px solid #ffc832;box-shadow:0 0 10px rgba(255,200,50,.5)';
+    pinImg.style.cssText='display:block;margin-top:-54px;margin-left:auto;margin-right:auto;width:48px;height:48px;border-radius:8px;object-fit:cover;border:2px solid var(--accent);box-shadow:0 0 10px rgba(var(--accent-rgb),.5)';
     pin.appendChild(pinImg);
   }
 
   var label=document.createElement('div');
-  label.style.cssText='position:absolute;z-index:5;color:#ffc832;font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
+  label.style.cssText='position:absolute;z-index:5;color:var(--accent);font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
   label.textContent=name||'';
 
   inner.appendChild(mapImg);
@@ -726,5 +743,8 @@ function closeMapView(){
 initAuth();loadData();
 </script>
 <script src="../supabase.js"></script>
+<script>
+(function(){var w=window.name||"";var p;try{p=JSON.parse(w)}catch(e){}if(!p||!p["--accent"]){try{p=JSON.parse(localStorage.getItem("abi_palette"))}catch(e){}}if(!p||!p["--accent"])p={"--accent":"#ffc832","--bg-page":"#08080e","--text-body":"#ccc","--card-bg":"rgba(20,20,30,0.6)","--btn-blue-text":"#4a9eff","--btn-red-text":"#ff6b6b","--btn-green-text":"#51cf66","--btn-purple-text":"#cc5de8"};var at=p["--accent"],bg=p["--bg-page"],tx=p["--text-body"],cd=p["--card-bg"];var ar=parseInt(at.slice(1,3),16)+","+parseInt(at.slice(3,5),16)+","+parseInt(at.slice(5,7),16);var css=["--bg-page","--text-body","--accent","--accent-rgb","--card-bg","--card-border","--user-border","--menu-bg","--btn-blue-text","--btn-red-text","--btn-green-text","--btn-purple-text"];var vals=[bg,tx,at,ar,cd,p["--card-border"],p["--user-border"],p["--menu-bg"],p["--btn-blue-text"],p["--btn-red-text"],p["--btn-green-text"],p["--btn-purple-text"]];for(var i=0;i<css.length;i++){if(vals[i])document.documentElement.style.setProperty(css[i],vals[i]);}document.body.style.background=bg;document.body.style.color=tx;})()
+</script>
 </body>
 </html>
