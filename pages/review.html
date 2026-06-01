@@ -599,7 +599,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     // Red circle (always)
   var pinCircle=document.createElement('div');
   pinCircle.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5';
-  var pcSize=0.5, pcBorder=0.3, pcShadow=0.5;
+  var pcSize=1/zm, pcBorder=0.3/zm, pcShadow=1/zm;
   pinCircle.innerHTML='<div style="width:'+pcSize+'px;height:'+pcSize+'px;border:'+pcBorder+'px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 '+pcShadow+'px rgba(255,50,50,.5)"></div>';
   pin.appendChild(pinCircle);
   // Container icon (if available)
@@ -607,13 +607,13 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   if(ic){
     pinIcon=document.createElement('img');
     pinIcon.src=ic;
-    var piSize=Math.min(24,64/zm), piBorder=Math.min(1.5,6/zm);
+    var piSize=Math.min(24,32/zm), piBorder=Math.min(1.5,4/zm);
     pinIcon.style.cssText='display:block;margin-left:auto;margin-right:auto;width:'+piSize+'px;height:'+piSize+'px;border-radius:'+Math.min(4,12/zm)+'px;object-fit:cover;border:'+piBorder+'px solid #ffc832;box-shadow:0 0 '+Math.min(6,16/zm)+'px rgba(255,200,50,.5)';
     pin.appendChild(pinIcon);
   }
   // Update pin sizes on zoom
   function updatePinSize(){
-    var pcS=0.5, pcB=0.3, pcSh=0.5;
+    var pcS=1/zm, pcB=0.3/zm, pcSh=1/zm;
     pinCircle.innerHTML='<div style="width:'+pcS+'px;height:'+pcS+'px;border:'+pcB+'px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 '+pcSh+'px rgba(255,50,50,.5)"></div>';
     if(pinIcon){
       var piS=Math.min(48,5000/zm), piB=Math.min(2,200/zm);
@@ -621,7 +621,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
       pinIcon.style.marginTop=-(piS+8)+'px';
       pinIcon.style.borderWidth=piB+'px';
     }
-    var fs=Math.min(11,24/zm);
+    var fs=Math.min(11,14/zm);
     label.style.fontSize=fs+'px';
   }
   var label=document.createElement('div');
@@ -664,7 +664,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     pin.style.left=tarX+'px';
     pin.style.top=tarY+'px';
     label.style.left=tarX+'px';
-    label.style.top=(tarY+12)+'px';
+    label.style.top=(tarY+4/zm)+'px';
     // Apply zoom centered on target: shift so that (tarX,tarY) appears at wrap center
     var cx=cw/2, cy=ch/2;
     var dx=offsetX, dy=offsetY;
