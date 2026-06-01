@@ -526,12 +526,13 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   zoomInBtn.style.cssText='padding:3px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:16px;font-weight:600';
   zoomInBtn.onclick=function(){
     var newZm=zm*1.5;
-    if(newZm>20)newZm=20;
+    if(newZm>1600)newZm=1600;
     var cw=wrap.clientWidth, ch=wrap.clientHeight;
     offsetX=offsetX + (1-newZm/zm)*(cw/2 - offsetX);
     offsetY=offsetY + (1-newZm/zm)*(ch/2 - offsetY);
     zm=newZm;
     inner.style.transform='translate('+offsetX+'px,'+offsetY+'px) scale('+zm+')';
+    updatePinSize();
   };
   zoomBar.appendChild(zoomInBtn);
   var zoomOutBtn=document.createElement('button');
@@ -546,6 +547,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     offsetY=offsetY + (1-newZm/zm)*(ch/2 - offsetY);
     zm=newZm;
     inner.style.transform='translate('+offsetX+'px,'+offsetY+'px) scale('+zm+')';
+    updatePinSize();
   };
   zoomBar.appendChild(zoomOutBtn);
   var resetBtn=document.createElement('button');
@@ -569,7 +571,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     btn.onclick=function(fi){return function(){
       curFloor=fi;
       mapImg.src=imgs[fi];
-      zm=3;offsetX=0;offsetY=0;
+      zm=1300;offsetX=0;offsetY=0;updatePinSize();
       floorBtns.forEach(function(b,j){b.style.background=j==fi?'#ffc832':'rgba(255,255,255,.08)';b.style.color=j==fi?'#000':'#aaa';});
       info.innerHTML='\u5730\u56fe: '+mapName+' | \u697c\u5c42: '+labels[fi];
       // Re-center on pin after image loads
@@ -594,16 +596,35 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   // Pin - red circle + container icon
   var pin=document.createElement('div');
   pin.style.cssText='position:absolute;z-index:5;pointer-events:none;transform:translate(-50%,-50%)';
-  // Red circle (always)
-  pin.innerHTML='<div style="width:18px;height:18px;border:3px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 12px rgba(255,50,50,.5)"></div>';
+    // Red circle (always)
+  var pinCircle=document.createElement('div');
+  pinCircle.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5';
+  var pcSize=Math.min(18,2000/zm), pcBorder=Math.min(3,300/zm), pcShadow=Math.min(12,1000/zm);
+  pinCircle.innerHTML='<div style="width:'+pcSize+'px;height:'+pcSize+'px;border:'+pcBorder+'px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 '+pcShadow+'px rgba(255,50,50,.5)"></div>';
+  pin.appendChild(pinCircle);
   // Container icon (if available)
+  var pinIcon=null;
   if(ic){
-    var pinImg=document.createElement('img');
-    pinImg.src=ic;
-    pinImg.style.cssText='display:block;margin-top:-54px;margin-left:auto;margin-right:auto;width:48px;height:48px;border-radius:8px;object-fit:cover;border:2px solid #ffc832;box-shadow:0 0 10px rgba(255,200,50,.5)';
-    pin.appendChild(pinImg);
+    pinIcon=document.createElement('img');
+    pinIcon.src=ic;
+    var piSize=Math.min(48,5000/zm), piBorder=Math.min(2,200/zm);
+    pinIcon.style.cssText='display:block;margin-left:auto;margin-right:auto;width:'+piSize+'px;height:'+piSize+'px;border-radius:'+Math.min(8,800/zm)+'px;object-fit:cover;border:'+piBorder+'px solid #ffc832;box-shadow:0 0 '+Math.min(10,800/zm)+'px rgba(255,200,50,.5)';
+    pin.appendChild(pinIcon);
   }
-
+  // Update pin sizes on zoom
+  function updatePinSize(){
+    var pcS=Math.min(18,2000/zm), pcB=Math.min(3,300/zm), pcSh=Math.min(12,1000/zm);
+    pinCircle.innerHTML='<div style="width:'+pcS+'px;height:'+pcS+'px;border:'+pcB+'px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 '+pcSh+'px rgba(255,50,50,.5)"></div>';
+    if(pinIcon){
+      var piS=Math.min(48,5000/zm), piB=Math.min(2,200/zm);
+      pinIcon.style.width=piS+'px'; pinIcon.style.height=piS+'px';
+      pinIcon.style.marginTop=-(piS+8)+'px';
+      pinIcon.style.borderWidth=piB+'px';
+    }
+    var fs=Math.min(14,1500/zm);
+    label.style.fontSize=fs+'px';
+  }
+  updatePinSize();
   var label=document.createElement('div');
   label.style.cssText='position:absolute;z-index:5;color:#ffc832;font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
   label.textContent=name||'';
@@ -666,6 +687,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
       }
     }
     inner.style.transform='translate('+dx+'px,'+dy+'px) scale('+zm+')';
+    updatePinSize();
   }
 
   // Wheel zoom
@@ -674,7 +696,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     var f=e.deltaY>0?0.85:1.18;
     var newZm=zm*f;
     if(newZm<0.2)newZm=0.2;
-    if(newZm>20)newZm=20;
+    if(newZm>1600)newZm=1600;
     // Zoom centered on mouse position
     var rect=wrap.getBoundingClientRect();
     var mx=e.clientX-rect.left, my=e.clientY-rect.top;
