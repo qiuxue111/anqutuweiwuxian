@@ -624,10 +624,10 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     var fs=Math.min(14,1500/zm);
     label.style.fontSize=fs+'px';
   }
-  updatePinSize();
   var label=document.createElement('div');
   label.style.cssText='position:absolute;z-index:5;color:#ffc832;font-size:14px;font-weight:600;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;transform:translateX(-50%)';
   label.textContent=name||'';
+  updatePinSize();
 
   inner.appendChild(mapImg);
   inner.appendChild(pin);
