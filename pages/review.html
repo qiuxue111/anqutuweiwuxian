@@ -599,7 +599,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
     // Red circle (always)
   var pinCircle=document.createElement('div');
   pinCircle.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5';
-  var pcSize=1, pcBorder=0.5, pcShadow=2;
+  var pcSize=0.5, pcBorder=0.3, pcShadow=0.5;
   pinCircle.innerHTML='<div style="width:'+pcSize+'px;height:'+pcSize+'px;border:'+pcBorder+'px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 '+pcShadow+'px rgba(255,50,50,.5)"></div>';
   pin.appendChild(pinCircle);
   // Container icon (if available)
@@ -613,7 +613,7 @@ function viewOnMap(x,y,name,type,ic,mapName,floor){
   }
   // Update pin sizes on zoom
   function updatePinSize(){
-    var pcS=1, pcB=0.5, pcSh=2;
+    var pcS=0.5, pcB=0.3, pcSh=0.5;
     pinCircle.innerHTML='<div style="width:'+pcS+'px;height:'+pcS+'px;border:'+pcB+'px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.15);box-shadow:0 0 '+pcSh+'px rgba(255,50,50,.5)"></div>';
     if(pinIcon){
       var piS=Math.min(48,5000/zm), piB=Math.min(2,200/zm);
