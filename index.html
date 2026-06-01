@@ -116,6 +116,19 @@ a:hover{opacity:0.8;}
     </div>
   </a>
 
+  <!-- 战术交互地图 -->
+  <div class="enter-fade enter-delay-10" style="margin-top:1rem;background:rgba(20,20,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:14px;">
+    <div style="color:#ffc832;font-size:1rem;font-weight:600;margin-bottom:10px;">🗺️ 战术交互地图</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <a href="pages/map-farm.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🌾</span><span style="color:#ddd;font-size:0.9rem;">农场</span></a>
+      <a href="pages/map-beishan.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🏔️</span><span style="color:#ddd;font-size:0.9rem;">北山</span></a>
+      <a href="pages/map-tvstation.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">📺</span><span style="color:#ddd;font-size:0.9rem;">电视台</span></a>
+      <a href="pages/map-armory.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🔫</span><span style="color:#ddd;font-size:0.9rem;">军械库</span></a>
+      <a href="pages/map-valley.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">🏞️</span><span style="color:#ddd;font-size:0.9rem;">山谷</span></a>
+      <a href="pages/map-airport.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:all 0.15s;"><span style="font-size:1.2rem;">✈️</span><span style="color:#ddd;font-size:0.9rem;">机场</span></a>
+    </div>
+  </div>
+
 </div>
 <script>
 
@@ -1064,5 +1077,56 @@ setTimeout(function(){
 
 
 <div id="versionInfo" style="position:fixed;bottom:5px;left:10px;z-index:9999;font-size:11px;color:rgba(255,200,50,0.5);font-family:monospace;pointer-events:none">v1.16</div>
+
+<!-- 调色盘 -->
+<button id="paletteBtn" style="position:fixed;bottom:14px;left:14px;z-index:9999;width:36px;height:36px;border-radius:50%;background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.15);color:#ffc832;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;border:none;outline:none;" title="自定义配色">🎨</button>
+<div id="palettePanel" style="display:none;position:fixed;bottom:56px;left:14px;z-index:9998;background:rgba(15,15,24,0.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;min-width:220px;box-shadow:0 4px 24px rgba(0,0,0,0.5);">
+  <div style="color:#ffc832;font-size:0.85rem;font-weight:600;margin-bottom:8px;">🎨 自定义配色</div>
+  <div id="paletteItems" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;padding-right:4px;"></div>
+  <div style="display:flex;gap:6px;margin-top:8px;">
+    <button id="resetPaletteBtn" style="flex:1;padding:4px 0;border-radius:5px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#888;font-size:0.75rem;cursor:pointer;">重置</button>
+    <button id="closePaletteBtn" style="flex:1;padding:4px 0;border-radius:5px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#888;font-size:0.75rem;cursor:pointer;">关闭</button>
+  </div>
+</div>
+<script>
+(function(){
+var COLORS=[
+  {k:'--accent',l:'主色调',v:'#ffc832'},
+  {k:'--bg-page',l:'背景色',v:'#08080e'},
+  {k:'--text-body',l:'文字色',v:'#ccc'},
+  {k:'--card-bg',l:'卡片底色',v:'rgba(20,20,30,0.6)'},
+  {k:'--btn-blue-text',l:'地图按钮',v:'#4a9eff'},
+  {k:'--btn-red-text',l:'改枪按钮',v:'#ff6b6b'},
+  {k:'--btn-green-text',l:'聊天按钮',v:'#51cf66'},
+  {k:'--btn-purple-text',l:'攻略按钮',v:'#cc5de8'}
+];
+function loadColors(){
+  var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
+  COLORS.forEach(function(x){var v=(s&&s[x.k])||x.v;document.documentElement.style.setProperty(x.k,v);});
+}
+function renderColors(){
+  var el=document.getElementById('paletteItems');if(!el)return;
+  var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
+  el.innerHTML='';
+  COLORS.forEach(function(x){
+    var cur=(s&&s[x.k])||x.v;
+    var hex=cur.indexOf('rgba')===0?'#ffc832':cur;
+    var d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:5px;';
+    var lb=document.createElement('span');lb.textContent=x.l;lb.style.cssText='font-size:0.75rem;color:#888;min-width:56px;';
+    var cp=document.createElement('input');cp.type='color';cp.value=hex;cp.style.cssText='width:28px;height:22px;border:none;border-radius:3px;padding:0;cursor:pointer;background:transparent;';
+    var tx=document.createElement('input');tx.type='text';tx.value=cur;tx.style.cssText='flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:4px;color:#ddd;font-size:0.7rem;padding:2px 4px;outline:none;';
+    cp.oninput=function(){tx.value=this.value;applyColor(x.k,this.value);};
+    tx.oninput=function(){applyColor(x.k,this.value);if(this.value.indexOf('#')===0)cp.value=this.value;};
+    d.appendChild(lb);d.appendChild(cp);d.appendChild(tx);el.appendChild(d);
+  });
+}
+function applyColor(k,v){document.documentElement.style.setProperty(k,v);var s;try{s=JSON.parse(localStorage.getItem('abi_palette'))||{};}catch(e){s={};}s[k]=v;localStorage.setItem('abi_palette',JSON.stringify(s));}
+function resetColors(){localStorage.removeItem('abi_palette');COLORS.forEach(function(x){document.documentElement.style.setProperty(x.k,x.v);});renderColors();}
+loadColors();
+document.getElementById('paletteBtn').onclick=function(){var p=document.getElementById('palettePanel');p.style.display=p.style.display==='none'?'block':'none';if(p.style.display==='block')renderColors();};
+document.getElementById('resetPaletteBtn').onclick=resetColors;
+document.getElementById('closePaletteBtn').onclick=function(){document.getElementById('palettePanel').style.display='none';};
+})();
+</script>
 </body>
 </html>
