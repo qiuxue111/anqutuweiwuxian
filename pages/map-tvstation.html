@@ -1447,7 +1447,7 @@ function showPicker(){
       var ic=getIconUrl(item);
       if(ic&&ic.indexOf('http')===0){
         var img=document.createElement('img');img.src=ic;img.style.cssText='width:28px;height:28px;border-radius:3px;object-fit:cover';
-        var pc2=getPinColor(item)me);if(pc2==='#ff4444'){img.style.animation='pulseRed 1.5s ease-in-out infinite';}img.onerror=function(){this.style.display='none';};
+        var pc2=getPinColor(item);if(pc2==='#ff4444'){img.style.animation='pulseRed 1.5s ease-in-out infinite';}img.onerror=function(){this.style.display='none';};
         btn.appendChild(img);
       } else {
         var emoji=document.createElement('span');emoji.textContent='\ud83d\udce6';emoji.style.fontSize='18px';
