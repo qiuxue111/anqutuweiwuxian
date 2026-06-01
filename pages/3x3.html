@@ -131,6 +131,12 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .hm-item{padding:6px 12px 6px 30px;color:#999;font-size:12px;cursor:pointer;border-radius:5px}
 .hm-item:hover{background:rgba(255,255,255,0.04);color:#fff}
 .hm-item.active{color:#ffc832}
+
+/* 地图导航 — 田字格 */
+.map-nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9997;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:rgba(10,10,15,.88);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:6px;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
+.map-nav a{text-decoration:none;padding:6px 14px;border-radius:7px;font-size:11px;color:#888;text-align:center;transition:all .15s;white-space:nowrap;border:1px solid transparent}
+.map-nav a:hover{background:rgba(255,200,50,0.1);color:#ffc832;border-color:rgba(255,200,50,0.2)}
+.map-nav a:active{transform:scale(0.96)}
 </style>
 </head>
 <body>
@@ -144,6 +150,16 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 </div>
 
 <div class="canvas-panel" id="canvasPanel"></div>
+
+<!-- 地图导航 — 田字格 -->
+<div class="map-nav">
+  <a href="map-farm.html">🌾 农场</a>
+  <a href="map-beishan.html">🏔 北山</a>
+  <a href="map-tvstation.html">📺 电视台</a>
+  <a href="map-armory.html">🔫 军械库</a>
+  <a href="map-valley.html">🏞 山谷</a>
+  <a href="map-airport.html">✈️ 港口</a>
+</div>
 
 <div class="hamburger" id="hamburger">☰</div>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
