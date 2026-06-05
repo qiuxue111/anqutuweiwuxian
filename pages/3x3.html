@@ -1035,8 +1035,10 @@ function showCardMenu(e, cardId){
   document.querySelectorAll(".link-tip").forEach(function(m){m.remove()});
   var menu = document.createElement("div");
   menu.className = "ctx-menu";
-  menu.style.left = e.clientX+"px";
-  menu.style.top = e.clientY+"px";
+  var mx = Math.min(e.clientX, window.innerWidth - 170);
+  var my = Math.min(e.clientY, window.innerHeight - 100);
+  menu.style.left = Math.max(5, mx) + "px";
+  menu.style.top = Math.max(5, my) + "px";
   menu.innerHTML = '<div class="ctx-item" onclick="menuLinkCard(\''+cardId+'\')">🔗 连线到此卡<\/div><div class="ctx-item" onclick="menuDisconnect(\''+cardId+'\')">🔌 断开此卡全部连线<\/div><div class="ctx-sep"><\/div><div class="ctx-item" onclick="menuCleanup()">取消<\/div>';
   document.body.appendChild(menu);
 }
