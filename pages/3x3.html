@@ -726,6 +726,9 @@ function renderCard(c){
     });
   })(div, c);
 
+  /* 右键卡片显示菜单 */
+  div.addEventListener("contextmenu", function(e){ window.showCardMenu(e, c.id); });
+
   cvs.appendChild(div);
 }
 
@@ -1006,6 +1009,9 @@ vp.addEventListener("mousedown", function(e){
 vp.addEventListener("contextmenu", function(e){
   e.preventDefault();
   if(!editMode) return;
+  // 如果右键点在卡片上，不创建新卡片
+  var cardEl = e.target.closest(".card");
+  if(cardEl) return;
   var rect = vp.getBoundingClientRect();
   var vx = e.clientX - rect.left, vy = e.clientY - rect.top;
   var cx = (vx - panX) / scale - 150, cy = (vy - panY) / scale - 130;
