@@ -521,8 +521,8 @@ function saveData(){
   var cid = encodeURIComponent(currentCanvas);
   /* 只删当前画布的数据 */
   Promise.all([
-    fetch(SUPABASE_URL+'/rest/v1/task_cards?canvas_id=eq.'+cid, {method:'DELETE', headers:authHeaders}),
-    fetch(SUPABASE_URL+'/rest/v1/task_connections?canvas_id=eq.'+cid, {method:'DELETE', headers:authHeaders})
+    fetch(SUPABASE_URL+'/rest/v1/task_cards?canvas_id=eq.'+cid, {method:'DELETE', headers:authHeaders}).catch(function(){}),
+    fetch(SUPABASE_URL+'/rest/v1/task_connections?canvas_id=eq.'+cid, {method:'DELETE', headers:authHeaders}).catch(function(){})
   ]).then(function(){
     /* 删除当前画布所有卡片的评论 */
     if(cards.length){
@@ -534,8 +534,18 @@ function saveData(){
       return fetch(SUPABASE_URL+'/rest/v1/task_cards',{
         method:'POST', headers:authHeaders,
         body:JSON.stringify({id:c.id, canvas_id:currentCanvas, name:c.title||'', description:c.body||'', x:c.x, y:c.y})
-      });
+      }).catch(function(){});
     });
+    var connPromises = connections.map(function(cn){
+      return fetch(SUPABASE_URL+'/rest/v1/task_connections',{
+        method:'POST', headers:authHeaders,
+        body:JSON.stringify({id:Date.now()+''+Math.random().toString(36).slice(2), canvas_id:currentCanvas, from_card:cn.from, to_card:cn.to})
+      }).catch(function(){});
+    });
+    return Promise.all(cardPromises.concat(connPromises));
+  }).catch(function(e){
+    console.warn('saveData error',e);
+  }).then(function(){
     var connPromises = connections.map(function(conn){
       return fetch(SUPABASE_URL+'/rest/v1/task_connections',{
         method:'POST', headers:authHeaders,
