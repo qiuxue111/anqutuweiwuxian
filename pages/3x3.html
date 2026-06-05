@@ -287,14 +287,14 @@ function renderCanvasPanel(){
 
 /* ====== 画布切换按钮 ====== */
 function bindCanvasSwitch(){
-  document.getElementById("canvasSwitchBtn").addEventListener("click",function(e){
+  document.getElementById("canvasLabel").addEventListener("click",function(e){
     e.stopPropagation();
     var p=document.getElementById("canvasPanel");
     p.classList.toggle("show");
     if(p.classList.contains("show")) renderCanvasPanel();
   });
   document.addEventListener("click",function(e){
-    if(!e.target.closest("#canvasSwitchBtn")&&!e.target.closest("#canvasPanel")) document.getElementById("canvasPanel").classList.remove("show");
+    if(!e.target.closest("#canvasLabel")&&!e.target.closest("#canvasPanel")) document.getElementById("canvasPanel").classList.remove("show");
   });
 }
 
