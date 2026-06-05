@@ -599,6 +599,7 @@ function renderCard(c){
   div.id = "card_"+c.id;
   div.style.left = c.x + "px";
   div.style.top = c.y + "px";
+  div.oncontextmenu = function(e){ e.stopPropagation(); showCardMenu(e, c.id); };
   if(selectedCardIds[c.id]) div.classList.add("selected");
 
   /* 操作按钮 */
@@ -727,7 +728,7 @@ function renderCard(c){
   })(div, c);
 
   /* 右键卡片显示菜单 */
-  div.addEventListener("contextmenu", function(e){ window.showCardMenu(e, c.id); });
+  /* oncontextmenu set inline above */
 
   cvs.appendChild(div);
 }
