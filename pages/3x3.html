@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta name="robots" content="noindex">
 <meta charset="UTF-8">
@@ -219,40 +219,134 @@ var editingCardId = null;
 var selectedConnFrom = null;
 var undoStack = [];
 
+/* Supabase */
+var SUPABASE_URL='https://hanrfbciinkhgcumvous.supabase.co';var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+function db(m,t,b,q){var u=SUPABASE_URL+'/rest/v1/'+t;var o={method:m||'GET',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'}};if(b){o.body=JSON.stringify(b);var tk=localStorage.getItem('abi_token');if(tk){o.headers['Authorization']='Bearer '+tk;}}if(q) u+='?'+q;return fetch(u,o).then(function(r){if(r.status>=400)throw new Error(r.status+' '+r.statusText);return r.text().then(function(t){if(!t||t==='[]'||t==='{}')return null;try{return JSON.parse(t);}catch(e){return null;}});});}
+/* 首次加载时，从 localStorage 导入旧数据（如果数据库为空） */
+var localDataImported = false;
+function importLocalDataIfNeeded(){
+  if(localDataImported) return Promise.resolve(false);
+  var listRaw = localStorage.getItem('abi_3x3_canvas_list');
+  if(!listRaw) return Promise.resolve(false);
+  var canvases;
+  try{
+    canvases = JSON.parse(listRaw);
+    if(!canvases || !canvases.length) return Promise.resolve(false);
+  } catch(e){ return Promise.resolve(false); }
+  /* 检查数据库是否已有数据（防止重复导入） */
+  return db('GET','task_cards','','limit=1').then(function(rows){
+    if(rows && rows.length > 0) return false; /* DB 已有数据，不导入 */
+    /* 开始导入 */
+    localDataImported = true;
+    var tk = localStorage.getItem('abi_token');
+    if(!tk){ console.log('未登录，跳过导入'); return false; }
+    var allPromises = [];
+    canvases.forEach(function(cv){
+      if(cv.id !== 'default'){
+        allPromises.push(fetch(SUPABASE_URL+'/rest/v1/task_canvases',{
+          method:'POST', headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'},
+          body: JSON.stringify({id:cv.id, label:cv.label, color:cv.color||'#888'})
+        }));
+      }
+      var key = 'abi_3x3_canvas_' + cv.id;
+      var dataRaw = localStorage.getItem(key);
+      if(!dataRaw) return;
+      try {
+        var data = JSON.parse(dataRaw);
+        if(!data.cards || !data.cards.length) return;
+        data.cards.forEach(function(c){
+          allPromises.push(fetch(SUPABASE_URL+'/rest/v1/task_cards',{
+            method:'POST', headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'},
+            body: JSON.stringify({id:c.id, canvas_id:cv.id, name:c.name||'', description:c.desc||'', x:c.x, y:c.y})
+          }));
+        });
+        (data.connections||[]).forEach(function(conn){
+          allPromises.push(fetch(SUPABASE_URL+'/rest/v1/task_connections',{
+            method:'POST', headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'},
+            body: JSON.stringify({canvas_id:cv.id, from_card:conn.from, to_card:conn.to})
+          }));
+        });
+      } catch(e){}
+    });
+    if(allPromises.length > 0){
+      console.log('正在从 localStorage 导入 '+allPromises.length+' 条数据到数据库...');
+      return Promise.all(allPromises).then(function(){ console.log('✅ 数据导入完成！'); return true; });
+    }
+    return Promise.resolve(false);
+  }).catch(function(){ return false; });
+}
+
 /* 多画布 */
 var currentCanvas = null;
 var canvasList = [];
-
-function canvasKey(id){ return 'abi_3x3_canvas_' + id; }
 
 function loadCanvas(id){
   if(!id) { cards = []; connections = []; undoStack = []; renderAll(); document.getElementById("loading").style.display = "none"; return; }
   if(id === currentCanvas && cards.length) return;
   /* 先保存旧画布（仅在 currentCanvas 非空且与目标不同时） */
-  if(currentCanvas && currentCanvas !== id) saveCanvas(currentCanvas);
-  currentCanvas = id;
-  localStorage.setItem("abi_3x3_current", id);
-  var key = canvasKey(id);
-  var saved = localStorage.getItem(key);
-  if(saved){
-    try {
-      var d = JSON.parse(saved);
-      cards = d.cards || [];
-      connections = d.connections || [];
-    } catch(e){ cards = []; connections = []; }
+  var loadDone = function(){ renderAll(); document.getElementById("loading").style.display = "none"; };
+  if(currentCanvas && currentCanvas !== id) {
+    saveCanvas(currentCanvas).then(function(){ doLoadCanvas(id, loadDone); });
   } else {
-    cards = [];
-    connections = [];
+    doLoadCanvas(id, loadDone);
   }
-  undoStack = [];
-  docscroll();
-  renderAll();
-  document.getElementById("loading").style.display = "none";
+}
+
+function doLoadCanvas(id, cb){
+  currentCanvas = id;
+  /* 从 Supabase 加载卡片 */
+  Promise.all([
+    db('GET','task_cards','','canvas_id=eq.'+encodeURIComponent(id)+'&order=created_at'),
+    db('GET','task_connections','','canvas_id=eq.'+encodeURIComponent(id))
+  ]).then(function(results){
+    var cardRows = results[0] || [];
+    var connRows = results[1] || [];
+    cards = cardRows.map(function(r){ return {id:r.id, name:r.name||'', desc:r.description||'', x:r.x, y:r.y}; });
+    connections = connRows.map(function(r){ return {id:r.id, from:r.from_card, to:r.to_card}; });
+    undoStack = [];
+    docscroll();
+    if(cb) cb();
+  }).catch(function(e){
+    console.error('Load canvas error', e);
+    cards = []; connections = []; undoStack = [];
+    docscroll();
+    if(cb) cb();
+  });
 }
 
 function saveCanvas(id){
-  if(!id) return;
-  localStorage.setItem(canvasKey(id), JSON.stringify({cards:cards, connections:connections}));
+  if(!id) return Promise.resolve();
+  var tk = localStorage.getItem('abi_token');
+  if(!tk){
+    if(confirm('需要 GitHub 登录才能保存。去登录？')){ loginGitHub(); }
+    return Promise.reject('Not logged in');
+  }
+  /* 批量写入卡片和连线到 Supabase */
+  var promises = [];
+  /* 先删除当前画布的所有旧数据再重新写入（简单做法） */
+  var authHeaders = {'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'};
+  promises.push(fetch(SUPABASE_URL+'/rest/v1/task_cards?canvas_id=eq.'+encodeURIComponent(id),{method:'DELETE', headers:authHeaders}));
+  promises.push(fetch(SUPABASE_URL+'/rest/v1/task_connections?canvas_id=eq.'+encodeURIComponent(id),{method:'DELETE', headers:authHeaders}));
+  return Promise.all(promises).then(function(){
+    var cardPromises = cards.map(function(c){
+      return fetch(SUPABASE_URL+'/rest/v1/task_cards',{
+        method:'POST', headers:authHeaders,
+        body: JSON.stringify({id:c.id, canvas_id:id, name:c.name||'', description:c.desc||'', x:c.x, y:c.y})
+      });
+    });
+    var connPromises = connections.map(function(c){
+      return fetch(SUPABASE_URL+'/rest/v1/task_connections',{
+        method:'POST', headers:authHeaders,
+        body: JSON.stringify({canvas_id:id, from_card:c.from, to_card:c.to})
+      });
+    });
+    return Promise.all(cardPromises.concat(connPromises));
+  }).catch(function(e){
+    console.error('Save canvas error', e);
+    if(e.status === 401 || e.message === '401'){
+      if(confirm('保存失败，需要 GitHub 登录。去登录？')) loginGitHub();
+    }
+  });
 }
 
 /* Canvas transform */
@@ -263,17 +357,31 @@ var selectedCardIds = {};
 var isSelecting = false, selStartX = 0, selStartY = 0;
 
 function loadData(){
-  var last = localStorage.getItem("abi_3x3_current");
-  if(last){
-    /* 检查画布是否存在 */
-    var exists = canvasList.some(function(cv){ return cv.id === last; });
-    if(exists) currentCanvas = last;
+  /* 从 URL 参数读取画布 */
+  var urlParams = new URLSearchParams(window.location.search);
+  var canvasParam = urlParams.get('canvas');
+  if(canvasParam){
+    var exists = canvasList.some(function(cv){ return cv.id === canvasParam; });
+    if(exists) currentCanvas = canvasParam;
   }
+  if(!currentCanvas && canvasList.length > 0) currentCanvas = canvasList[0].id;
   loadCanvas(currentCanvas);
 }
 
 function saveData(){
   saveCanvas(currentCanvas);
+}
+
+/* 删除画布（从数据库） */
+function deleteCanvasDB(id){
+  var tk = localStorage.getItem('abi_token');
+  if(!tk){ if(confirm('需要登录才能删除。去登录？')) loginGitHub(); return Promise.reject('Not logged in'); }
+  var authHeaders = {'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'};
+  return Promise.all([
+    fetch(SUPABASE_URL+'/rest/v1/task_cards?canvas_id=eq.'+encodeURIComponent(id),{method:'DELETE', headers:authHeaders}),
+    fetch(SUPABASE_URL+'/rest/v1/task_connections?canvas_id=eq.'+encodeURIComponent(id),{method:'DELETE', headers:authHeaders}),
+    fetch(SUPABASE_URL+'/rest/v1/task_canvases?id=eq.'+encodeURIComponent(id),{method:'DELETE', headers:authHeaders})
+  ]);
 }
 
 function renderAll(){
@@ -972,17 +1080,16 @@ function renderCanvasPanel(){
         var del = document.createElement("span");
         del.className = "cp-del";
         del.textContent = "✕";
-        (function(cid){
+        (function(cvid, cvlabel){
           del.onclick = function(e){
             e.stopPropagation();
-            if(!confirm('确定删除赛季任务「' + cv.label + '」？')) return;
-            saveCanvas(currentCanvas);
-            localStorage.removeItem(canvasKey(cid));
-            canvasList = canvasList.filter(function(x){ return x.id !== cid; });
-            saveCanvasList();
-            renderCanvasPanel();
+            if(!confirm('确定删除赛季任务「' + cvlabel + '」？')) return;
+            deleteCanvasDB(cvid).then(function(){
+              canvasList = canvasList.filter(function(x){ return x.id !== cvid; });
+              renderCanvasPanel();
+            }).catch(function(e){ console.error('Delete canvas error', e); });
           };
-        })(cv.id);
+        })(cv.id, cv.label);
         item.appendChild(del);
     }
     (function(cid){
@@ -1010,12 +1117,17 @@ function renderCanvasPanel(){
       var name = prompt("新建赛季任务名称：");
       if(!name || !name.trim()) return;
       name = name.trim();
+      var tk = localStorage.getItem('abi_token');
+      if(!tk){ if(confirm('需要登录才能创建。去登录？')) loginGitHub(); return; }
       /* 查重 */
       var dup = canvasList.some(function(cv){ return cv.label === name; });
       if(dup){ alert('已存在同名赛季任务「' + name + '」'); return; }
       var id = 'custom_' + Date.now();
       canvasList.push({id:id, label:name, color:'#aaa'});
-      saveCanvasList();
+      fetch(SUPABASE_URL+'/rest/v1/task_canvases',{
+        method:'POST', headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'},
+        body: JSON.stringify({id:id, label:name, color:'#aaa'})
+      }).catch(function(e){ console.error('Save new canvas error', e); });
       renderCanvasPanel();
     };
     p.appendChild(addBtn);
@@ -1036,7 +1148,13 @@ function renderCanvasPanel(){
       var dup = canvasList.some(function(x){ return x.id !== currentCanvas && x.label === name; });
       if(dup){ alert('已存在同名赛季任务「' + name + '」'); return; }
       cv.label = name;
-      saveCanvasList();
+      var tk = localStorage.getItem('abi_token');
+      if(tk){
+        fetch(SUPABASE_URL+'/rest/v1/task_canvases?id=eq.'+encodeURIComponent(currentCanvas),{
+          method:'PATCH', headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'},
+          body: JSON.stringify({label:name})
+        }).catch(function(e){ console.error('Rename canvas error', e); });
+      }
       renderCanvasPanel();
     };
     p.appendChild(renameBtn);
@@ -1044,20 +1162,32 @@ function renderCanvasPanel(){
 }
 
 function saveCanvasList(){
-  localStorage.setItem("abi_3x3_canvas_list", JSON.stringify(canvasList));
+  /* 保存到 Supabase */
+  var promises = canvasList
+    .filter(function(cv){ return cv.id !== 'default'; })
+    .map(function(cv){
+      return db('POST','task_canvases',{id:cv.id, label:cv.label, color:cv.color||'#888'});
+    });
+  Promise.all(promises).catch(function(e){ console.error('Save canvas list error', e); });
 }
 
 function loadCanvasList(){
-  var saved = localStorage.getItem("abi_3x3_canvas_list");
-  if(saved){
-    try {
-      var d = JSON.parse(saved);
-      if(d && d.length){
-        canvasList = d;
-        return;
-      }
-    } catch(e){}
-  }
+  importLocalDataIfNeeded().then(function(){
+    return db('GET','task_canvases','','order=created_at');
+  }).then(function(rows){
+    if(rows && rows.length > 0){
+      canvasList = rows.map(function(r){ return {id:r.id, label:r.label, color:r.color||'#888'}; });
+    } else {
+      /* 如果没有画布，创建一个默认的 */
+      canvasList = [{id:'default', label:'默认赛季任务', color:'#ffc832'}];
+    }
+    /* 继续加载数据 */
+    loadData();
+  }).catch(function(e){
+    console.error('Load canvas list error', e);
+    canvasList = [{id:'default', label:'默认赛季任务', color:'#ffc832'}];
+    loadData();
+  });
 }
 
 /* 画布面板按钮 */
@@ -1224,8 +1354,7 @@ document.addEventListener('click', function(e){
 })();
 
 document.getElementById("editToggle").style.display = "inline-block";
-loadCanvasList();
-loadData();
+loadCanvasList(); /* loadCanvasList now calls loadData internally */
 window.addEventListener("resize", function(){
   updateTransform();
   renderConns();
@@ -1233,3 +1362,5 @@ window.addEventListener("resize", function(){
 </script>
 </body>
 </html>
+
+
