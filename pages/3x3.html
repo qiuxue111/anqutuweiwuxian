@@ -538,42 +538,6 @@ function renderAll(){
   updateTransform();
 }
 
-function renderConns(){
-  var svg = document.getElementById("connSvg");
-  /* 清除旧的线和箭头，保留 defs */
-  var toRemove = [];
-  for(var i = 0; i < svg.children.length; i++){
-    var ch = svg.children[i];
-    if(ch.tagName !== "defs") toRemove.push(ch);
-  }
-  toRemove.forEach(function(el){el.remove()});
-  connections.forEach(function(conn){
-    var fromEl = document.getElementById("card_"+conn.from);
-    var toEl = document.getElementById("card_"+conn.to);
-    if(!fromEl || !toEl) return;
-    var fh = fromEl.offsetHeight, th = toEl.offsetHeight;
-    var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
-    var fy = parseFloat(fromEl.style.top) + fh - 24;
-    var tx = parseFloat(toEl.style.left);
-    var ty = parseFloat(toEl.style.top) + th - 24;
-    var midX = (fx + tx)/2;
-    var d = "M "+fx+" "+fy+" C "+midX+" "+fy+", "+midX+" "+ty+", "+tx+" "+ty;
-    var path = document.createElementNS("http://www.w3.org/2000/svg","path");
-    path.setAttribute("d", d);
-    svg.appendChild(path);
-    /* 箭头 */
-    var angle = Math.atan2(ty - fy, tx - fx);
-    var a = 10, w = 8;
-    var p1x = tx - a * Math.cos(angle - w*Math.PI/180);
-    var p1y = ty - a * Math.sin(angle - w*Math.PI/180);
-    var p2x = tx - a * Math.cos(angle + w*Math.PI/180);
-    var p2y = ty - a * Math.sin(angle + w*Math.PI/180);
-    var arrow = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-    arrow.setAttribute("points", tx+","+ty+" "+p1x+","+p1y+" "+p2x+","+p2y);
-    svg.appendChild(arrow);
-  });
-}
-
 function renderCard(c){
   var cvs = document.getElementById("canvas");
   var div = document.createElement("div");
@@ -998,124 +962,121 @@ vp.addEventListener("contextmenu", function(e){
   renderAll();
 });
 
-/* ====== 连线功能 ====== */
-// 绿点开始连线，蓝点结束连线
-// 已连线的卡片，圆点变橙色 #ff8833
-function onDotClick(cardId, dir){
-  if(!editMode) return;
-  if(dir === "out"){
-    // 如果已有连线模式，取消或切换
-    if(connFrom){
-      if(connFrom === cardId){
-        // 点同一个绿点 = 取消
-        cancelConnect();
-        return;
-      } else {
-        cancelConnect();
-      }
-    }
-    // 开始连线
-    connFrom = cardId;
-    document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
-    var el = document.querySelector("#card_"+cardId+" .dot-green");
-    if(el) el.classList.add("active");
-    if(!connLine){
-      connLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      connLine.id = "connLine";
-      connLine.setAttribute("stroke-width", "2");
-      connLine.setAttribute("fill", "none");
-      connLine.setAttribute("stroke-dasharray", "6,4");
-      connLine.setAttribute("opacity", "0.5");
-      connLine.style.stroke = "#22cc66";
-      document.getElementById("connSvg").appendChild(connLine);
-    }
-  } else if(dir === "in"){
-    // 结束连线 — 只在 connFrom 不为空时响应
-    if(connFrom){
-      if(connFrom !== cardId){
-        var dup = connections.some(function(c){ return c.from === connFrom && c.to === cardId });
-        if(!dup){
-          connections.push({from:connFrom, to:cardId});
-          pushUndo();
-        }
-      }
-      cancelConnect();
-      renderAll();
-    }
+/* ====== 连线功能（原版逻辑）====== */
+var connFrom2 = null;
+var connLine2 = null;
+
+function startConnect(cardId){
+  connFrom2 = cardId;
+  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
+  var el = document.querySelector("#card_"+cardId+" .dot-green");
+  if(el) el.classList.add("active");
+  if(!connLine2){
+    connLine2 = document.createElementNS("http://www.w3.org/2000/svg","path");
+    connLine2.id = "connLine2";
+    connLine2.setAttribute("stroke-width","2");
+    connLine2.setAttribute("fill","none");
+    connLine2.setAttribute("stroke-dasharray","6,4");
+    connLine2.setAttribute("opacity","0.5");
+    connLine2.style.stroke = "#22cc66";
+    document.getElementById("connSvg").appendChild(connLine2);
   }
 }
 
-function cancelConnect(){
-  connFrom = null;
+function finishConnect(cardId){
+  if(!connFrom2) return;
+  if(connFrom2 !== cardId){
+    var dup = connections.some(function(c){ return c.from === connFrom2 && c.to === cardId });
+    if(!dup){
+      connections.push({from:connFrom2, to:cardId});
+      pushUndo();
+      renderConns();
+    }
+  }
+  connFrom2 = null;
   document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
-  if(connLine){ connLine.remove(); connLine = null; }
+  if(connLine2){ connLine2.remove(); connLine2 = null; }
 }
 
-// 鼠标移动时画拖拽线（从绿点位置到鼠标位置）
+function cancelConnect2(){
+  connFrom2 = null;
+  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
+  if(connLine2){ connLine2.remove(); connLine2 = null; }
+}
+
+// 鼠标移动时画拖拽线
 document.addEventListener("mousemove", function(e){
-  if(!connFrom) return;
-  var fromEl = document.getElementById("card_"+connFrom);
+  if(!connFrom2) return;
+  var fromEl = document.getElementById("card_"+connFrom2);
   if(!fromEl) return;
-  var rect = vp.getBoundingClientRect();
-  var vx = e.clientX - rect.left, vy = e.clientY - rect.top;
-  var cx = (vx - panX)/scale, cy = (vy - panY)/scale;
-  // 绿点位置 = 卡片左侧+18, 底部-12
-  var fx = parseFloat(fromEl.style.left) + 18;
-  var fy = parseFloat(fromEl.style.top) + fromEl.offsetHeight - 12;
+  var rect = document.getElementById("viewport").getBoundingClientRect();
+  var vx = e.clientX - rect.left;
+  var vy = e.clientY - rect.top;
+  var cx = (vx - panX)/scale;
+  var cy = (vy - panY)/scale;
+  var fh = fromEl.offsetHeight;
+  var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
+  var fy = parseFloat(fromEl.style.top) + fh - 15;
   var midX = (fx + cx)/2;
-  connLine.setAttribute("d", "M "+fx+" "+fy+" C "+midX+" "+fy+", "+midX+" "+cy+", "+cx+" "+cy);
+  connLine2.setAttribute("d","M "+fx+" "+fy+" C "+midX+" "+fy+", "+midX+" "+cy+", "+cx+" "+cy);
 });
 
-// 鼠标松开时检测是否落在蓝点上
+// 原版逻辑：mousedown检测绿点开始连线
+document.addEventListener("mousedown", function(e){
+  var dot = e.target.closest(".dot-green");
+  if(dot && editMode){
+    var cardEl = dot.closest(".card");
+    if(cardEl){
+      var cid = cardEl.id.replace("card_","");
+      startConnect(cid);
+    }
+    return;
+  }
+  if(connFrom2 && !e.target.closest(".dot-blue")){
+    cancelConnect2();
+  }
+});
+
+// 原版逻辑：mouseup检测蓝点完成连线
 document.addEventListener("mouseup", function(e){
-  if(!connFrom) return;
+  if(!connFrom2) return;
   var dot = e.target.closest(".dot-blue");
   if(dot){
     var cardEl = dot.closest(".card");
     if(cardEl){
       var tid = cardEl.id.replace("card_","");
-      // 如果已有相同连线，断开它
-      var existing = connections.findIndex(function(c){ return c.from === connFrom && c.to === tid });
+      var existing = connections.findIndex(function(c){ return c.from === connFrom2 && c.to === tid });
       if(existing >= 0){
         connections.splice(existing, 1);
         pushUndo();
-      } else if(connFrom !== tid) {
-        connections.push({from:connFrom, to:tid});
-        pushUndo();
+        renderConns();
+        cancelConnect2();
+      } else {
+        finishConnect(tid);
       }
-      cancelConnect();
-      renderAll();
     }
   }
 });
 
-// 在空白处/卡片上点击右键、滚轮、非蓝点处取消连线
+// 原版逻辑：非圆点区域取消连线
 document.addEventListener("mousedown", function(e){
-  if(connFrom && !e.target.closest(".dot-green,.dot-blue")) cancelConnect();
+  if(connFrom2 && !e.target.closest(".dot-green,.dot-blue")){
+    cancelConnect2();
+  }
 });
 
-// 改进 renderConns：已连线的圆点变橙色 + 连线橙色发光
+// 原版 renderConns：完全重绘 + 圆点变橙色
 function renderConns(){
   var svg = document.getElementById("connSvg");
-  // 清除旧的线和箭头，保留 defs
-  var toRemove = [];
-  for(var i = 0; i < svg.children.length; i++){
-    var ch = svg.children[i];
-    if(ch.tagName !== "defs") toRemove.push(ch);
-  }
-  toRemove.forEach(function(el){el.remove()});
-  
-  // 标记有连线的卡片
+  svg.innerHTML = "";
   var connectedIds = {};
   connections.forEach(function(conn){
     connectedIds[conn.from] = true;
     connectedIds[conn.to] = true;
   });
-  // 重置圆点颜色
   document.querySelectorAll(".dot-green, .dot-blue").forEach(function(dot){
     dot.style.background = dot.classList.contains("dot-blue") ? "#4488ff" : "#22cc66";
   });
-  // 有连线的圆点变橙色
   Object.keys(connectedIds).forEach(function(id){
     var el = document.getElementById("card_"+id);
     if(el){
@@ -1125,23 +1086,20 @@ function renderConns(){
       if(gg) gg.style.background = "#ff8833";
     }
   });
-  
   connections.forEach(function(conn){
     var fromEl = document.getElementById("card_"+conn.from);
     var toEl = document.getElementById("card_"+conn.to);
     if(!fromEl || !toEl) return;
-    // 绿点位置（左下）
-    var fx = parseFloat(fromEl.style.left) + 18;
-    var fy = parseFloat(fromEl.style.top) + fromEl.offsetHeight - 12;
-    // 蓝点位置（右下）
-    var tx = parseFloat(toEl.style.left) + toEl.offsetWidth - 18;
-    var ty = parseFloat(toEl.style.top) + toEl.offsetHeight - 12;
+    var fromH = fromEl.offsetHeight;
+    var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
+    var fy = parseFloat(fromEl.style.top) + fromH - 15;
+    var tx = parseFloat(toEl.style.left);
+    var ty = parseFloat(toEl.style.top) + toEl.offsetHeight - 15;
     var midX = (fx + tx)/2;
     var d = "M "+fx+" "+fy+" C "+midX+" "+fy+", "+midX+" "+ty+", "+tx+" "+ty;
     var path = document.createElementNS("http://www.w3.org/2000/svg","path");
     path.setAttribute("d", d);
     svg.appendChild(path);
-    // 箭头
     var angle = Math.atan2(ty - fy, tx - fx);
     var a = 12, w = 8;
     var p1x = tx - a * Math.cos(angle - w*Math.PI/180);
@@ -1152,9 +1110,7 @@ function renderConns(){
     arrow.setAttribute("points", tx+","+ty+" "+p1x+","+p1y+" "+p2x+","+p2y);
     svg.appendChild(arrow);
   });
-}
-
-/* ====== 导航汉堡（同地图页面）====== */
+}/* ====== 导航汉堡（同地图页面）====== */
 function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
 function logout(){localStorage.removeItem('abi_token');localStorage.removeItem('abi_user');window.location.reload();}
 function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
