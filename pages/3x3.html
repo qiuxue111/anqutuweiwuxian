@@ -407,7 +407,7 @@ function saveToCloud(){
       ps.push(fetch(SUPABASE_URL+'/rest/v1/task_cards', {method:'POST',headers:ah, body:JSON.stringify({id:c.id,canvas_id:currentCanvas,name:c.title||'',description:c.body||'',x:c.x,y:c.y})}));
     });
     connections.forEach(function(cn){
-      ps.push(fetch(SUPABASE_URL+'/rest/v1/task_connections', {method:'POST',headers:ah, body:JSON.stringify({id:crypto.randomUUID(),canvas_id:currentCanvas,from_card:cn.from,to_card:cn.to})}));
+      ps.push(fetch(SUPABASE_URL+'/rest/v1/task_connections', {method:'POST',headers:ah, body:JSON.stringify({id:Date.now()+''+Math.random().toString(36).slice(2),canvas_id:currentCanvas,from_card:cn.from,to_card:cn.to})}));
     });
     return Promise.all(ps);
   });
@@ -587,7 +587,7 @@ function renderAll(){
   cards.forEach(function(c){ renderCard(c) });
   renderConns();
   updateTransform();
-  setTimeout(function(){ renderConns(); }, 0); // 重算连线位置（布局完成后）
+  setTimeout(function(){ renderConns(); }, 100); // 等布局完成后再算位置
   try{localStorage.setItem('3x3_cards',JSON.stringify(cards));localStorage.setItem('3x3_connections',JSON.stringify(connections));}catch(e){}
 }
 
