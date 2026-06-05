@@ -628,6 +628,51 @@ function renderAll(){
 }
 
 /* 渲染区域 */
+
+/* 调色盘 */
+var _cpResolve = null;
+function showColorPicker(){
+  return new Promise(function(resolve){
+    var overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.style.cssText = "display:flex;align-items:center;justify-content:center;z-index:9999";
+    var palette = document.createElement("div");
+    palette.style.cssText = "background:rgba(15,15,22,0.96);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:24px;min-width:280px";
+    var title = document.createElement("div");
+    title.textContent = "选择区域颜色";
+    title.style.cssText = "font-size:16px;font-weight:700;margin-bottom:16px;color:#fff;text-align:center";
+    palette.appendChild(title);
+    var colors = [
+      ["rgba(255,200,50,0.15)", "#ffc832"],
+      ["rgba(255,80,80,0.15)", "#ff5050"],
+      ["rgba(80,160,255,0.15)", "#50a0ff"],
+      ["rgba(80,220,120,0.15)", "#50dc78"],
+      ["rgba(180,100,255,0.15)", "#b464ff"],
+      ["rgba(255,150,60,0.15)", "#ff963c"],
+      ["rgba(255,100,180,0.15)", "#ff64b4"],
+      ["rgba(100,200,255,0.15)", "#64c8ff"],
+      ["rgba(255,255,100,0.15)", "#ffff64"]
+    ];
+    var grid = document.createElement("div");
+    grid.style.cssText = "display:grid;grid-template-columns:repeat(3,1fr);gap:10px";
+    colors.forEach(function(c){
+      var btn = document.createElement("button");
+      btn.style.cssText = "width:70px;height:50px;border-radius:10px;border:2px solid rgba(255,255,255,0.1);cursor:pointer;background:"+c[1]+";opacity:0.5";
+      btn.onmouseenter = function(){ this.style.borderColor = "#fff"; this.style.opacity = "0.8"; };
+      btn.onmouseleave = function(){ this.style.borderColor = "rgba(255,255,255,0.1)"; this.style.opacity = "0.5"; };
+      btn.onclick = function(){ document.body.removeChild(overlay); resolve(c[0]); };
+      grid.appendChild(btn);
+    });
+    palette.appendChild(grid);
+    var cancel = document.createElement("button");
+    cancel.textContent = "取消";
+    cancel.style.cssText = "margin-top:14px;width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#999;cursor:pointer";
+    cancel.onclick = function(){ document.body.removeChild(overlay); resolve("rgba(255,200,50,0.15)"); };
+    palette.appendChild(cancel);
+    overlay.appendChild(palette);
+    document.body.appendChild(overlay);
+  });
+}
 function renderZone(z){
   var cvs = document.getElementById("canvas");
   var div = document.createElement("div");
