@@ -65,12 +65,12 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .card-footer .comment-count{font-size:11px;color:#888}
 
 /* 连线点 */
-.card-dot-bar{position:absolute;bottom:0;left:0;right:0;height:24px;display:none;align-items:center;justify-content:space-between;padding:0 6px;z-index:5}
-.editMode .card-dot-bar{display:flex}
-.card-dot{width:18px;height:18px;border-radius:50%;border:2px solid #111;cursor:crosshair;transition:transform .15s,box-shadow .15s;z-index:6}
-.card-dot:hover{transform:scale(1.2);box-shadow:0 0 8px currentColor}
-.dot-green{background:#22cc66}
-.dot-blue{background:#4488ff}
+.removed_dotbar-dotbar-removed{position:absolute;bottom:0;left:0;right:0;height:24px;display:none;align-items:center;justify-content:space-between;padding:0 6px;z-index:5}
+.editMode .removed_dotbar-dotbar-removed{display:flex}
+.removed_dot-removed{width:18px;height:18px;border-radius:50%;border:2px solid #111;cursor:crosshair;transition:transform .15s,box-shadow .15s;z-index:6}
+.removed_dot:hover{transform:scale(1.2);box-shadow:0 0 8px currentColor}
+.dot-removed{background:#22cc66}
+.dot-removed{background:#4488ff}
 
 /* 连线 SVG */
 #removed_connSvg path{stroke:#ff8833;stroke-width:3;fill:none;stroke-linecap:round;opacity:0.85;filter:url(#removed_connGlow)}
@@ -643,14 +643,14 @@ function renderCard(c){
 
   /* 连线点 */
   var dotBar = document.createElement("div");
-  dotBar.className = "card-dot-bar";
+  dotBar.className = "removed_dotbar";
   var blueDot = document.createElement("div");
-  blueDot.className = "card-dot dot-blue";
+  blueDot.className = "removed_dot removed_dotblue";
   blueDot.title = "连线终点（蓝）";
   // blueDot.onclick handled by global mouseup
   dotBar.appendChild(blueDot);
   var greenDot = document.createElement("div");
-  greenDot.className = "card-dot dot-green";
+  greenDot.className = "removed_dot removed_dotgreen";
   greenDot.title = "连线起点（绿）";
   // greenDot.onclick handled by global mousedown
   dotBar.appendChild(greenDot);
