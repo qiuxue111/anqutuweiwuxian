@@ -667,7 +667,6 @@ function renderCard(c){
 
   /* 单击选中（编辑模式） */
   div.addEventListener("click", function(e){
-    if(linkFromId !== null){ cardClicked_removed(c.id); return; }
     if(!editMode) return;
     if(e.target.closest(".card-actions-bar")) return;
     if(e.ctrlKey || e.metaKey){
@@ -1024,7 +1023,8 @@ vp.addEventListener("contextmenu", function(e){
 /* ====== 连线功能（原版逻辑）====== */
 
 // === 连线功能：按钮模式 ===
-/* toast */
+
+/* toast */
 function showToast(msg){
   var t = document.getElementById("toastMsg");
   if(!t){
