@@ -1029,7 +1029,7 @@ vp.addEventListener("contextmenu", function(e){
 
 function renderConns(){
   var svg = document.getElementById("connSvg");
-  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  if(svg.firstChild) while(svg.firstChild) svg.removeChild(svg.firstChild);
   if(!connections || !connections.length) return;
   connections.forEach(function(conn){
     var fromEl = document.getElementById("card_"+conn.from);
@@ -1119,7 +1119,8 @@ function cardClicked(cardId){
     renderAll();
     showToast('连线成功');
   }
-}/* toast */
+}
+/* toast */
 function showToast(msg){
   var t = document.getElementById("toastMsg");
   if(!t){
