@@ -73,8 +73,8 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .dot-blue{background:#4488ff}
 
 /* 连线 SVG */
-#connSvg path{stroke:#ff8833;stroke-width:3;fill:none;stroke-linecap:round;opacity:0.85;filter:url(#connGlow)}
-#connSvg polygon{fill:#ff8833;opacity:0.85;filter:url(#connGlow)}
+#removed_connSvg path{stroke:#ff8833;stroke-width:3;fill:none;stroke-linecap:round;opacity:0.85;filter:url(#removed_connGlow)}
+#removed_connSvg polygon{fill:#ff8833;opacity:0.85;filter:url(#removed_connGlow)}
 
 /* 顶栏底部工具栏 - 编辑时显示 */
 .edit-toolbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:none;gap:8px;background:rgba(10,10,15,.92);border:1px solid #333;border-radius:12px;padding:8px 14px;backdrop-filter:blur(8px);white-space:nowrap}
@@ -151,7 +151,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 
 <div class="viewport" id="viewport">
   <div class="canvas" id="canvas">
-    <svg id="connSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1"></svg>
+    
 </div>
 </div>
 <div class="selection-box" id="selectionBox"></div>
@@ -166,7 +166,6 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
   <button id="arrangeBtn" class="arrange-btn" style="display:none" onclick="autoArrange()">⊞ 自动排列</button>
   <button onclick="undoLast()" style="background:#2a2a3a;color:#aaa">↩ 撤销</button>
   <button onclick="clearConns()" style="background:#2a2a3a;color:#f88">⛌ 清空连线</button>
-  <button id="linkBtn" style="background:#2a2a4a;color:#ff8833" onclick="toggleLinkMode()">🔗 连线</button>
   <button id="saveCloudBtn" style="background:#1a1a3a;color:#ffc832" onclick="saveToCloud()">☁ 保存</button>
   <button class="et-del-batch" id="batchDelBtn" style="display:none" onclick="batchDelete()">🗑 批量删除</button>
 </div>
@@ -585,9 +584,8 @@ function renderAll(){
   var cvs = document.getElementById("canvas");
   cvs.querySelectorAll(".card").forEach(function(el){el.remove()});
   cards.forEach(function(c){ renderCard(c) });
-  renderConns();
+  
   updateTransform();
-  setTimeout(function(){ renderConns(); }, 100); // 等布局完成后再算位置
   try{localStorage.setItem('3x3_cards',JSON.stringify(cards));localStorage.setItem('3x3_connections',JSON.stringify(connections));}catch(e){}
 }
 
@@ -598,7 +596,7 @@ function renderCard(c){
   div.id = "card_"+c.id;
   div.style.left = c.x + "px";
   div.style.top = c.y + "px";
-  div.oncontextmenu = function(e){ e.stopPropagation(); showCardMenu(e, c.id); };
+  
   if(selectedCardIds[c.id]) div.classList.add("selected");
 
   /* 操作按钮 */
@@ -669,7 +667,7 @@ function renderCard(c){
 
   /* 单击选中（编辑模式） */
   div.addEventListener("click", function(e){
-    if(linkFromId !== null){ cardClicked(c.id); return; }
+    if(linkFromId !== null){ cardClicked_removed(c.id); return; }
     if(!editMode) return;
     if(e.target.closest(".card-actions-bar")) return;
     if(e.ctrlKey || e.metaKey){
@@ -728,7 +726,7 @@ function renderCard(c){
   })(div, c);
 
   /* 右键卡片显示菜单 */
-  /* oncontextmenu set inline above */
+  
 
   cvs.appendChild(div);
 }
@@ -1025,111 +1023,8 @@ vp.addEventListener("contextmenu", function(e){
 
 /* ====== 连线功能（原版逻辑）====== */
 
-function renderConns(){
-  var svg = document.getElementById("connSvg");
-  if(svg.firstChild) while(svg.firstChild) svg.removeChild(svg.firstChild);
-  if(!connections || !connections.length) return;
-  connections.forEach(function(conn){
-    var fromEl = document.getElementById("card_"+conn.from);
-    var toEl = document.getElementById("card_"+conn.to);
-    if(!fromEl || !toEl) return;
-    var canvas = document.getElementById("canvas");
-    var cRect = canvas.getBoundingClientRect();
-    var fRect = fromEl.getBoundingClientRect();
-    var tRect = toEl.getBoundingClientRect();
-    // 相对于 canvas 的坐标
-    var fx = fRect.left - cRect.left + fRect.width/2;
-    var fy = fRect.top - cRect.top + fRect.height/2;
-    var tx = tRect.left - cRect.left + tRect.width/2;
-    var ty = tRect.top - cRect.top + tRect.height/2;
-    var path = document.createElementNS("http://www.w3.org/2000/svg","path");
-    path.setAttribute("d","M "+fx+" "+fy+" Q "+(fx+tx)/2+" "+fy+", "+(fx+tx)/2+" "+(fy+ty)/2+" Q "+(fx+tx)/2+" "+ty+", "+tx+" "+ty);
-    path.style.stroke = "#ff8833";
-    path.style.strokeWidth = "2.5";
-    path.style.fill = "none";
-    path.style.strokeDasharray = "6,5";
-    path.style.opacity = "0.8";
-    svg.appendChild(path);
-    var angle = Math.atan2(ty - fy, tx - fx);
-    var p1 = (tx - 12*Math.cos(angle - 8*Math.PI/180))+","+(ty - 12*Math.sin(angle - 8*Math.PI/180));
-    var p2 = (tx - 12*Math.cos(angle + 8*Math.PI/180))+","+(ty - 12*Math.sin(angle + 8*Math.PI/180));
-    var arrow = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-    arrow.setAttribute("points",tx+","+ty+" "+p1+" "+p2);
-    arrow.style.fill = "#ff8833";
-    arrow.style.opacity = "0.8";
-    svg.appendChild(arrow);
-    var dot = document.createElementNS("http://www.w3.org/2000/svg","circle");
-    dot.setAttribute("cx",fx); dot.setAttribute("cy",fy);
-    dot.setAttribute("r","4");
-    dot.style.fill = "#ff8833";
-    dot.style.opacity = "0.8";
-    svg.appendChild(dot);
-  });
-}
-
 // === 连线功能：按钮模式 ===
-var linkFromId = null;
-
-function toggleLinkMode(){
-  if(linkFromId === null){
-    linkFromId = '__WAITING__';
-    document.getElementById('linkBtn').textContent = '⭕ 选起点';
-    document.getElementById('linkBtn').style.background = '#4a2a2a';
-    document.getElementById('viewport').classList.add('linking');
-    var tip = document.createElement('div');
-    tip.className = 'link-tip';
-    tip.id = 'linkTip';
-    tip.textContent = '点第一张卡片作为连线起点';
-    document.body.appendChild(tip);
-  } else {
-    cancelLinkMode();
-  }
-}
-
-function cancelLinkMode(){
-  linkFromId = null;
-  var btn = document.getElementById('linkBtn');
-  if(btn){
-    btn.textContent = '🔗 连线';
-    btn.style.background = '#2a2a4a';
-  }
-  document.getElementById('viewport').classList.remove('linking');
-  var tip = document.getElementById('linkTip');
-  if(tip) tip.remove();
-}
-
-function cardClicked(cardId){
-  if(linkFromId === null) return;
-  if(linkFromId === '__WAITING__'){
-    linkFromId = cardId;
-    document.getElementById('linkBtn').textContent = '🔻 选终点';
-    var tip = document.getElementById('linkTip');
-    if(tip) tip.textContent = '点第二张卡片完成连线';
-    return;
-  }
-  if(linkFromId === cardId){ cancelLinkMode(); return; }
-  var existing = connections.findIndex(function(c){ return c.from === linkFromId && c.to === cardId; });
-  if(existing >= 0){
-    connections.splice(existing, 1);
-    pushUndo();
-    cancelLinkMode();
-    renderAll();
-    showToast('已断开连线');
-  } else {
-    connections.push({from:linkFromId, to:cardId});
-    pushUndo();
-    cancelLinkMode();
-    renderAll();
-    // 调试：检查连线是否画上
-    setTimeout(function(){
-      var svg = document.getElementById('connSvg');
-      var paths = svg.querySelectorAll('path');
-      var fromEl = document.getElementById('card_'+cardId);
-      showToast('连线成功 (SVG paths: '+paths.length+', card offsetW: '+(fromEl?fromEl.offsetWidth:'?')+')');
-    }, 500);
-  }
-}
-/* toast */
+/* toast */
 function showToast(msg){
   var t = document.getElementById("toastMsg");
   if(!t){
