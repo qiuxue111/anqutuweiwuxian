@@ -254,7 +254,7 @@ async function loadHotPosts(){
       var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
       var imgHTML=imgs.length?'<div style="display:flex;gap:4px;margin-top:4px;">'+imgs.slice(0,3).map(function(u){return '<img src="'+u+'" style="width:40px;height:40px;border-radius:4px;object-fit:cover;border:1px solid #1e1e2a;">';}).join('')+(imgs.length>3?'<span style="color:#555;font-size:0.7rem;align-self:center;">+'+imgs.length+'</span>':'')+'</div>':'';
       var likes=p.likes_count||0;
-      var delay=Math.min((i+1)*0.2,1.5)+0.5; // 最大延迟0.8s
+      var delay=Math.min(1.5+(i+1)*0.2,3.5); // 最大延迟0.8s
       return '<div class="enter-fade" style="animation-delay:'+delay.toFixed(1)+'s;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;cursor:pointer;" onclick="openPostModal('+pId+')">'+
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'+
         '<span style="font-size:0.7rem;padding:2px 6px;border-radius:4px;background:'+hue+'22;color:'+hue+';">'+cn+'</span>'+
