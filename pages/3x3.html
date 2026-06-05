@@ -590,6 +590,7 @@ function renderAll(){
   cards.forEach(function(c){ renderCard(c) });
   renderConns();
   updateTransform();
+  setTimeout(function(){ renderConns(); }, 0); // 重算连线位置（布局完成后）
   try{localStorage.setItem('3x3_cards',JSON.stringify(cards));localStorage.setItem('3x3_connections',JSON.stringify(connections));}catch(e){}
 }
 
