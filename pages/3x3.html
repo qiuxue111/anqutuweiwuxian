@@ -385,7 +385,7 @@ function loadData(){
     document.getElementById("loading").style.display = "none";
   }).catch(function(e){
     console.warn('Load error, using localStorage',e);
-    try{var lc=localStorage.getItem('3x3_cards');if(lc){cards=JSON.parse(lc);}var lconn=localStorage.getItem('3x3_connections');if(lconn){connections=JSON.parse(lconn);}}catch(le){cards=[];}
+    try{var lc=localStorage.getItem('3x3_cards');if(lc && lc!=='[]'){cards=JSON.parse(lc);} else {cards=[];var nid='c'+Date.now();cards.push({id:nid,title:'示例卡片',body:'右键此卡片试试连线功能',x:100,y:100});}var lconn=localStorage.getItem('3x3_connections');if(lconn){connections=JSON.parse(lconn);}}catch(le){cards=[];}
     docscroll();
     renderAll();
     document.getElementById("loading").style.display = "none";
