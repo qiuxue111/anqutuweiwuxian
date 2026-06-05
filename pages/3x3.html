@@ -169,6 +169,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
   <button id="arrangeBtn" class="arrange-btn" style="display:none" onclick="autoArrange()">⊞ 自动排列</button>
   <button onclick="undoLast()" style="background:#2a2a3a;color:#aaa">↩ 撤销</button>
   <button onclick="clearConns()" style="background:#2a2a3a;color:#f88">⛌ 清空连线</button>
+  <button id="linkBtn" style="background:#2a2a4a;color:#ff8833" onclick="toggleLinkMode()">🔗 连线</button>
   <button id="saveCloudBtn" style="background:#1a1a3a;color:#ffc832" onclick="saveToCloud()">☁ 保存</button>
   <button class="et-del-batch" id="batchDelBtn" style="display:none" onclick="batchDelete()">🗑 批量删除</button>
 </div>
@@ -670,6 +671,7 @@ function renderCard(c){
 
   /* 单击选中（编辑模式） */
   div.addEventListener("click", function(e){
+    if(linkFromId !== null){ cardClicked(c.id); return; }
     if(!editMode) return;
     if(e.target.closest(".card-actions-bar")) return;
     if(e.ctrlKey || e.metaKey){
@@ -1024,64 +1026,6 @@ vp.addEventListener("contextmenu", function(e){
 });
 
 /* ====== 连线功能（原版逻辑）====== */
-// === 连线功能：右键菜单方式 ===
-// 编辑模式下，右键卡片→选"连线到此卡"→点击另一张卡片完成
-var linkModeId = null;
-
-function showCardMenu(e, cardId){
-  e.preventDefault();
-  e.stopPropagation();
-  if(!editMode) return;
-  document.querySelectorAll(".ctx-menu").forEach(function(m){m.remove()});
-  document.querySelectorAll(".link-tip").forEach(function(m){m.remove()});
-  var menu = document.createElement("div");
-  menu.className = "ctx-menu";
-  var mx = Math.min(e.clientX, window.innerWidth - 170);
-  var my = Math.min(e.clientY, window.innerHeight - 100);
-  menu.style.left = Math.max(5, mx) + "px";
-  menu.style.top = Math.max(5, my) + "px";
-  menu.innerHTML = '<div class="ctx-item" onclick="menuLinkCard(\''+cardId+'\')">🔗 连线到此卡<\/div><div class="ctx-item" onclick="menuDisconnect(\''+cardId+'\')">🔌 断开此卡全部连线<\/div><div class="ctx-sep"><\/div><div class="ctx-item" onclick="menuCleanup()">取消<\/div>';
-  document.body.appendChild(menu);
-}
-window.showCardMenu = showCardMenu;
-
-function menuLinkCard(fromId){
-  linkModeId = fromId;
-  document.querySelectorAll(".ctx-menu").forEach(function(m){m.remove()});
-  var tip = document.createElement("div");
-  tip.className = "link-tip";
-  tip.textContent = "🔗 点击目标卡片连线（右键/点空白取消）";
-  document.body.appendChild(tip);
-  document.getElementById("viewport").classList.add("linking");
-}
-
-function menuDisconnect(cardId){
-  connections = connections.filter(function(c){ return c.from !== cardId && c.to !== cardId; });
-  document.querySelectorAll(".ctx-menu").forEach(function(m){m.remove()});
-  pushUndo();
-  renderAll();
-}
-
-function menuCleanup(){
-  document.querySelectorAll(".ctx-menu").forEach(function(m){m.remove()});
-  document.querySelectorAll(".link-tip").forEach(function(m){m.remove()});
-  linkModeId = null;
-  document.getElementById("viewport").classList.remove("linking");
-}
-
-function tryLinkCard(toId){
-  if(!linkModeId || linkModeId === toId) return false;
-  var existing = connections.findIndex(function(c){ return c.from === linkModeId && c.to === toId; });
-  if(existing >= 0){
-    connections.splice(existing, 1);
-  } else {
-    connections.push({from:linkModeId, to:toId});
-  }
-  pushUndo();
-  menuCleanup();
-  renderAll();
-  return true;
-}
 
 function renderConns(){
   var svg = document.getElementById("connSvg");
@@ -1095,9 +1039,8 @@ function renderConns(){
     var fy = parseFloat(fromEl.style.top) + fromEl.offsetHeight/2;
     var tx = parseFloat(toEl.style.left) + toEl.offsetWidth/2;
     var ty = parseFloat(toEl.style.top) + toEl.offsetHeight/2;
-    var mx = (fx+tx)/2, my = (fy+ty)/2;
     var path = document.createElementNS("http://www.w3.org/2000/svg","path");
-    path.setAttribute("d","M "+fx+" "+fy+" Q "+mx+" "+fy+", "+mx+" "+my+" Q "+mx+" "+ty+", "+tx+" "+ty);
+    path.setAttribute("d","M "+fx+" "+fy+" Q "+(fx+tx)/2+" "+fy+", "+(fx+tx)/2+" "+(fy+ty)/2+" Q "+(fx+tx)/2+" "+ty+", "+tx+" "+ty);
     path.style.stroke = "#ff8833";
     path.style.strokeWidth = "2.5";
     path.style.fill = "none";
@@ -1105,9 +1048,8 @@ function renderConns(){
     path.style.opacity = "0.8";
     svg.appendChild(path);
     var angle = Math.atan2(ty - fy, tx - fx);
-    var a = 12, w = 8;
-    var p1 = tx - a*Math.cos(angle - w*Math.PI/180) +","+(ty - a*Math.sin(angle - w*Math.PI/180));
-    var p2 = tx - a*Math.cos(angle + w*Math.PI/180) +","+(ty - a*Math.sin(angle + w*Math.PI/180));
+    var p1 = (tx - 12*Math.cos(angle - 8*Math.PI/180))+","+(ty - 12*Math.sin(angle - 8*Math.PI/180));
+    var p2 = (tx - 12*Math.cos(angle + 8*Math.PI/180))+","+(ty - 12*Math.sin(angle + 8*Math.PI/180));
     var arrow = document.createElementNS("http://www.w3.org/2000/svg","polygon");
     arrow.setAttribute("points",tx+","+ty+" "+p1+" "+p2);
     arrow.style.fill = "#ff8833";
@@ -1120,6 +1062,58 @@ function renderConns(){
     dot.style.opacity = "0.8";
     svg.appendChild(dot);
   });
+}
+
+// === 连线功能：按钮模式 ===
+var linkFromId = null;
+
+function toggleLinkMode(){
+  if(linkFromId === null){
+    linkFromId = '__WAITING__';
+    document.getElementById('linkBtn').textContent = '⭕ 选起点';
+    document.getElementById('linkBtn').style.background = '#4a2a2a';
+    document.getElementById('viewport').classList.add('linking');
+    var tip = document.createElement('div');
+    tip.className = 'link-tip';
+    tip.id = 'linkTip';
+    tip.textContent = '点第一张卡片作为连线起点';
+    document.body.appendChild(tip);
+  } else {
+    cancelLinkMode();
+  }
+}
+
+function cancelLinkMode(){
+  linkFromId = null;
+  var btn = document.getElementById('linkBtn');
+  if(btn){
+    btn.textContent = '🔗 连线';
+    btn.style.background = '#2a2a4a';
+  }
+  document.getElementById('viewport').classList.remove('linking');
+  var tip = document.getElementById('linkTip');
+  if(tip) tip.remove();
+}
+
+function cardClicked(cardId){
+  if(linkFromId === null) return;
+  if(linkFromId === '__WAITING__'){
+    linkFromId = cardId;
+    document.getElementById('linkBtn').textContent = '🔻 选终点';
+    var tip = document.getElementById('linkTip');
+    if(tip) tip.textContent = '点第二张卡片完成连线';
+    return;
+  }
+  if(linkFromId === cardId){ cancelLinkMode(); return; }
+  var existing = connections.findIndex(function(c){ return c.from === linkFromId && c.to === cardId; });
+  if(existing >= 0){
+    connections.splice(existing, 1);
+  } else {
+    connections.push({from:linkFromId, to:cardId});
+  }
+  pushUndo();
+  cancelLinkMode();
+  renderAll();
 }
 /* ====== 导航汉堡（同地图页面）====== */
 function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
