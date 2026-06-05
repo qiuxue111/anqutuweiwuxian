@@ -1108,13 +1108,33 @@ function cardClicked(cardId){
   var existing = connections.findIndex(function(c){ return c.from === linkFromId && c.to === cardId; });
   if(existing >= 0){
     connections.splice(existing, 1);
+    pushUndo();
+    cancelLinkMode();
+    renderAll();
+    showToast('已断开连线');
   } else {
     connections.push({from:linkFromId, to:cardId});
+    pushUndo();
+    cancelLinkMode();
+    renderAll();
+    showToast('连线成功');
   }
-  pushUndo();
-  cancelLinkMode();
-  renderAll();
+}/* toast */
+function showToast(msg){
+  var t = document.getElementById("toastMsg");
+  if(!t){
+    t = document.createElement("div");
+    t.id = "toastMsg";
+    t.style.cssText = "position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#ffc832;padding:8px 20px;border-radius:8px;font-size:13px;z-index:9999;transition:opacity 0.3s;pointer-events:none";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = "1";
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.style.opacity = "0"; }, 2000);
 }
+
+
 /* ====== 导航汉堡（同地图页面）====== */
 function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
 function logout(){localStorage.removeItem('abi_token');localStorage.removeItem('abi_user');window.location.reload();}
