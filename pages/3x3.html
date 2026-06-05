@@ -115,8 +115,10 @@
 .card-zone{position:absolute;border-radius:12px;border:1.5px solid rgba(255,255,255,.08);z-index:1;pointer-events:none;display:flex;align-items:flex-start;justify-content:center;padding-top:8px}
 .card-zone.zone-edit{pointer-events:auto;cursor:move;border-style:dashed;border-color:rgba(255,200,50,.3)}
 .card-zone.zone-edit:hover{border-color:rgba(255,200,50,.6)}
-.zone-label{position:absolute;top:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:22px;font-weight:800;letter-spacing:2px;text-shadow:0 0 20px currentColor,0 0 40px currentColor;background:rgba(0,0,0,.5);padding:4px 16px;border-radius:8px;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.08)}
+.zone-label{position:absolute;top:-48px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:36px;font-weight:900;letter-spacing:3px;text-shadow:0 0 25px currentColor,0 0 50px currentColor;background:rgba(0,0,0,.5);padding:4px 20px;border-radius:10px;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.08);z-index:10}
 .zone-resize{position:absolute;bottom:4px;right:4px;width:12px;height:12px;background:rgba(255,200,50,.5);border-radius:2px;cursor:nwse-resize}
+.zone-del{position:absolute;top:-12px;right:-12px;width:28px;height:28px;border-radius:50%;background:rgba(255,50,50,.85);border:2px solid rgba(255,255,255,.2);color:#fff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;z-index:15;pointer-events:auto}
+.zone-edit:hover .zone-del{opacity:1}
 
 
 .hamburger{position:fixed;top:54px;left:8px;z-index:9999;width:30px;height:30px;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.06);border-radius:7px;color:#ccc;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:15px}
@@ -629,50 +631,7 @@ function renderAll(){
 
 /* 渲染区域 */
 
-/* 调色盘 */
-var _cpResolve = null;
-function showColorPicker(){
-  return new Promise(function(resolve){
-    var overlay = document.createElement("div");
-    overlay.className = "modal-overlay";
-    overlay.style.cssText = "display:flex;align-items:center;justify-content:center;z-index:9999";
-    var palette = document.createElement("div");
-    palette.style.cssText = "background:rgba(15,15,22,0.96);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:24px;min-width:280px";
-    var title = document.createElement("div");
-    title.textContent = "选择区域颜色";
-    title.style.cssText = "font-size:16px;font-weight:700;margin-bottom:16px;color:#fff;text-align:center";
-    palette.appendChild(title);
-    var colors = [
-      ["rgba(255,200,50,0.15)", "#ffc832"],
-      ["rgba(255,80,80,0.15)", "#ff5050"],
-      ["rgba(80,160,255,0.15)", "#50a0ff"],
-      ["rgba(80,220,120,0.15)", "#50dc78"],
-      ["rgba(180,100,255,0.15)", "#b464ff"],
-      ["rgba(255,150,60,0.15)", "#ff963c"],
-      ["rgba(255,100,180,0.15)", "#ff64b4"],
-      ["rgba(100,200,255,0.15)", "#64c8ff"],
-      ["rgba(255,255,100,0.15)", "#ffff64"]
-    ];
-    var grid = document.createElement("div");
-    grid.style.cssText = "display:grid;grid-template-columns:repeat(3,1fr);gap:10px";
-    colors.forEach(function(c){
-      var btn = document.createElement("button");
-      btn.style.cssText = "width:70px;height:50px;border-radius:10px;border:2px solid rgba(255,255,255,0.1);cursor:pointer;background:"+c[1]+";opacity:0.5";
-      btn.onmouseenter = function(){ this.style.borderColor = "#fff"; this.style.opacity = "0.8"; };
-      btn.onmouseleave = function(){ this.style.borderColor = "rgba(255,255,255,0.1)"; this.style.opacity = "0.5"; };
-      btn.onclick = function(){ document.body.removeChild(overlay); resolve(c[0]); };
-      grid.appendChild(btn);
-    });
-    palette.appendChild(grid);
-    var cancel = document.createElement("button");
-    cancel.textContent = "取消";
-    cancel.style.cssText = "margin-top:14px;width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#999;cursor:pointer";
-    cancel.onclick = function(){ document.body.removeChild(overlay); resolve("rgba(255,200,50,0.15)"); };
-    palette.appendChild(cancel);
-    overlay.appendChild(palette);
-    document.body.appendChild(overlay);
-  });
-}
+
 function renderZone(z){
   var cvs = document.getElementById("canvas");
   var div = document.createElement("div");
@@ -754,11 +713,14 @@ function finishZoneDraw(e){
   /* 删掉临时区域，弹出对话框 */
   zones = zones.filter(function(x){return x.id!=="_zone_temp"});
   renderAll();
-  /* 弹窗 */
+  /* 选色 */
+  var colorIdx = prompt("选颜色:\n1 金色\n2 红色\n3 蓝色\n4 绿色\n5 紫色\n6 橙色\n7 粉色\n8 天蓝\n9 明黄", "1");
+  if(colorIdx === null) return;
+  var cMap = {"1":"rgba(255,200,50,0.15)","2":"rgba(255,80,80,0.15)","3":"rgba(80,160,255,0.15)","4":"rgba(80,220,120,0.15)","5":"rgba(180,100,255,0.15)","6":"rgba(255,150,60,0.15)","7":"rgba(255,100,180,0.15)","8":"rgba(100,200,255,0.15)","9":"rgba(255,255,100,0.15)"};
+  var color = cMap[colorIdx] || "rgba(255,200,50,0.15)";
+  /* 标签 */
   var label = prompt("区域标签（如：第一阶段）", "第一阶段");
   if(label === null) return;
-  var colors = ["rgba(255,200,50,0.15)","rgba(255,50,50,0.15)","rgba(50,200,255,0.15)","rgba(50,255,100,0.15)","rgba(200,100,255,0.15)","rgba(255,150,50,0.15)"];
-  var color = colors[zones.length % colors.length];
   z.id = "z"+Date.now()+Math.random().toString(36).slice(2,6);
   z.label = label;
   z.color = color;
