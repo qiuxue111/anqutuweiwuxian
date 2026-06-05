@@ -763,8 +763,8 @@ function renderCard(c){
     });
   })(div, c);
 
-  /* 右键卡片显示菜单 */
-  
+  /* 阻止卡片内滚轮缩放到画布 */
+  div.addEventListener("wheel", function(e){ e.stopPropagation(); }, {passive:true});
 
   cvs.appendChild(div);
 }
