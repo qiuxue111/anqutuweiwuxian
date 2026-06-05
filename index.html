@@ -287,7 +287,8 @@ async function loadLeaderboard(){
     el.innerHTML=topNames.map(function(name,i){
       var medal=i<3?medals[i]:'';
       var barW=(stats[name]/stats[sorted[0]]*100).toFixed(0);
-      return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:8px;">'+
+      var dly=Math.min(0.5+i*0.15,2);
+      return '<div class="enter-fade" style="animation-delay:'+dly.toFixed(2)+'s;animation-duration:0.5s;display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:8px;">'+
         '<span style="width:20px;text-align:center;">'+medal+'</span>'+
         '<span style="color:#ddd;font-size:0.9rem;">'+esc(name)+'</span>'+
         '<div style="flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">'+
