@@ -595,12 +595,12 @@ function renderCard(c){
   var blueDot = document.createElement("div");
   blueDot.className = "card-dot dot-blue";
   blueDot.title = "连线终点（蓝）";
-  blueDot.onclick = function(e){ e.stopPropagation(); onDotClick(c.id, "in"); };
+  // blueDot.onclick handled by global mouseup
   dotBar.appendChild(blueDot);
   var greenDot = document.createElement("div");
   greenDot.className = "card-dot dot-green";
   greenDot.title = "连线起点（绿）";
-  greenDot.onclick = function(e){ e.stopPropagation(); onDotClick(c.id, "out"); };
+  // greenDot.onclick handled by global mousedown
   dotBar.appendChild(greenDot);
   div.appendChild(dotBar);
 
@@ -1068,7 +1068,21 @@ document.addEventListener("mousedown", function(e){
 // 原版 renderConns：完全重绘 + 圆点变橙色
 function renderConns(){
   var svg = document.getElementById("connSvg");
-  svg.innerHTML = "";
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  var defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
+  var filter = document.createElementNS("http://www.w3.org/2000/svg","filter");
+  filter.setAttribute("id","connGlow");
+  var blur = document.createElementNS("http://www.w3.org/2000/svg","feGaussianBlur");
+  blur.setAttribute("stdDeviation","2"); blur.setAttribute("result","blur");
+  filter.appendChild(blur);
+  var merge = document.createElementNS("http://www.w3.org/2000/svg","feMerge");
+  var mn1 = document.createElementNS("http://www.w3.org/2000/svg","feMergeNode");
+  mn1.setAttribute("in","blur"); merge.appendChild(mn1);
+  var mn2 = document.createElementNS("http://www.w3.org/2000/svg","feMergeNode");
+  mn2.setAttribute("in","SourceGraphic"); merge.appendChild(mn2);
+  filter.appendChild(merge);
+  defs.appendChild(filter);
+  svg.appendChild(defs);
   var connectedIds = {};
   connections.forEach(function(conn){
     connectedIds[conn.from] = true;
