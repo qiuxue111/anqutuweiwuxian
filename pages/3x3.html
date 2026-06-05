@@ -1033,10 +1033,15 @@ function renderConns(){
     var fromEl = document.getElementById("card_"+conn.from);
     var toEl = document.getElementById("card_"+conn.to);
     if(!fromEl || !toEl) return;
-    var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth/2;
-    var fy = parseFloat(fromEl.style.top) + fromEl.offsetHeight/2;
-    var tx = parseFloat(toEl.style.left) + toEl.offsetWidth/2;
-    var ty = parseFloat(toEl.style.top) + toEl.offsetHeight/2;
+    var canvas = document.getElementById("canvas");
+    var cRect = canvas.getBoundingClientRect();
+    var fRect = fromEl.getBoundingClientRect();
+    var tRect = toEl.getBoundingClientRect();
+    // 相对于 canvas 的坐标
+    var fx = fRect.left - cRect.left + fRect.width/2;
+    var fy = fRect.top - cRect.top + fRect.height/2;
+    var tx = tRect.left - cRect.left + tRect.width/2;
+    var ty = tRect.top - cRect.top + tRect.height/2;
     var path = document.createElementNS("http://www.w3.org/2000/svg","path");
     path.setAttribute("d","M "+fx+" "+fy+" Q "+(fx+tx)/2+" "+fy+", "+(fx+tx)/2+" "+(fy+ty)/2+" Q "+(fx+tx)/2+" "+ty+", "+tx+" "+ty);
     path.style.stroke = "#ff8833";
