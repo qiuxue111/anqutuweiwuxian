@@ -1115,7 +1115,13 @@ function cardClicked(cardId){
     pushUndo();
     cancelLinkMode();
     renderAll();
-    showToast('连线成功');
+    // 调试：检查连线是否画上
+    setTimeout(function(){
+      var svg = document.getElementById('connSvg');
+      var paths = svg.querySelectorAll('path');
+      var fromEl = document.getElementById('card_'+cardId);
+      showToast('连线成功 (SVG paths: '+paths.length+', card offsetW: '+(fromEl?fromEl.offsetWidth:'?')+')');
+    }, 500);
   }
 }
 /* toast */
