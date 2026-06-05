@@ -211,7 +211,28 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 /* ====== Supabase ====== */
 var SUPABASE_URL='https://hanrfbciinkhgcumvous.supabase.co';
 var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
-function db(m,t,b,q){var u=SUPABASE_URL+'/rest/v1/'+t;var o={method:m||'GET',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'}};if(b){o.body=JSON.stringify(b);var tk=localStorage.getItem('abi_token');if(tk) o.headers['Authorization']='Bearer '+tk;}if(q) u+='?'+q;return fetch(u,o).then(function(r){if(r.status>=400)throw new Error(r.status);return r.text().then(function(t){if(!t||t==='[]'||t==='{}')return null;try{return JSON.parse(t)}catch(e){return null}})})}
+function db(m,t,b,q){
+  var u=SUPABASE_URL+'/rest/v1/'+t;
+  var o={method:m||'GET',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'}};
+  if(b){o.body=JSON.stringify(b);var tk=localStorage.getItem('abi_token');if(tk) o.headers['Authorization']='Bearer '+tk;}
+  if(q) u+='?'+q;
+  return fetch(u,o).then(function(r){
+    if(r.status>=400) throw new Error(r.status);
+    return r.text().then(function(t2){
+      if(!t2||t2==='[]'||t2==='{}') return null;
+      try{return JSON.parse(t2)}catch(e){return null}
+    })
+  }).catch(function(e){
+    console.warn('Supabase '+m+' '+t+' failed, localStorage fallback',e);
+    if(m!='GET') throw e;
+    try{
+      var k='3x3_'+t.replace('task_','');
+      var d=localStorage.getItem(k);
+      if(d) return JSON.parse(d);
+    }catch(e2){}
+    return null;
+  });
+}
 
 /* ====== 数据 ====== */
 var cards = [];       // {id, title, body, x, y}
@@ -362,8 +383,8 @@ function loadData(){
     renderAll();
     document.getElementById("loading").style.display = "none";
   }).catch(function(e){
-    console.error('Load error',e);
-    cards = [];
+    console.warn('Load error, using localStorage',e);
+    try{var lc=localStorage.getItem('3x3_cards');if(lc){cards=JSON.parse(lc);}var lconn=localStorage.getItem('3x3_connections');if(lconn){connections=JSON.parse(lconn);}}catch(le){cards=[];}
     docscroll();
     renderAll();
     document.getElementById("loading").style.display = "none";
@@ -536,6 +557,7 @@ function renderAll(){
   cards.forEach(function(c){ renderCard(c) });
   renderConns();
   updateTransform();
+  try{localStorage.setItem('3x3_cards',JSON.stringify(cards));localStorage.setItem('3x3_connections',JSON.stringify(connections));}catch(e){}
 }
 
 function renderCard(c){
