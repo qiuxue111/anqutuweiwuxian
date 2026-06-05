@@ -990,12 +990,10 @@ function finishConnect(cardId){
     if(!dup){
       connections.push({from:connFrom2, to:cardId});
       pushUndo();
-      renderConns();
     }
   }
-  connFrom2 = null;
-  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
-  if(connLine2){ connLine2.remove(); connLine2 = null; }
+  cancelConnect2();
+  renderAll();
 }
 
 function cancelConnect2(){
@@ -1049,8 +1047,8 @@ document.addEventListener("mouseup", function(e){
       if(existing >= 0){
         connections.splice(existing, 1);
         pushUndo();
-        renderConns();
         cancelConnect2();
+        renderAll();
       } else {
         finishConnect(tid);
       }
