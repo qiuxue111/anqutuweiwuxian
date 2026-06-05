@@ -963,166 +963,102 @@ vp.addEventListener("contextmenu", function(e){
 });
 
 /* ====== 连线功能（原版逻辑）====== */
-var connFrom2 = null;
-var connLine2 = null;
+// === 连线功能：右键菜单方式 ===
+// 编辑模式下，右键卡片→选"连线到此卡"→点击另一张卡片完成
+var linkModeId = null;
 
-function startConnect(cardId){
-  connFrom2 = cardId;
-  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
-  var el = document.querySelector("#card_"+cardId+" .dot-green");
-  if(el) el.classList.add("active");
-  if(!connLine2){
-    connLine2 = document.createElementNS("http://www.w3.org/2000/svg","path");
-    connLine2.id = "connLine2";
-    connLine2.setAttribute("stroke-width","2");
-    connLine2.setAttribute("fill","none");
-    connLine2.setAttribute("stroke-dasharray","6,4");
-    connLine2.setAttribute("opacity","0.5");
-    connLine2.style.stroke = "#22cc66";
-    document.getElementById("connSvg").appendChild(connLine2);
-  }
+function showCardMenu(e, cardId){
+  e.preventDefault();
+  e.stopPropagation();
+  if(!editMode) return;
+  document.querySelectorAll(".ctx-menu").forEach(function(m){m.remove()});
+  document.querySelectorAll(".link-tip").forEach(function(m){m.remove()});
+  var menu = document.createElement("div");
+  menu.className = "ctx-menu";
+  menu.style.left = e.clientX+"px";
+  menu.style.top = e.clientY+"px";
+  menu.innerHTML = '<div class="ctx-item" onclick="menuLinkCard(\''+cardId+'\')">🔗 连线到此卡<\/div><div class="ctx-item" onclick="menuDisconnect(\''+cardId+'\')">🔌 断开此卡全部连线<\/div><div class="ctx-sep"><\/div><div class="ctx-item" onclick="menuCleanup()">取消<\/div>';
+  document.body.appendChild(menu);
+}
+window.showCardMenu = showCardMenu;
+
+function menuLinkCard(fromId){
+  linkModeId = fromId;
+  document.querySelectorAll(".ctx-menu").forEach(function(m){m.remove()});
+  var tip = document.createElement("div");
+  tip.className = "link-tip";
+  tip.textContent = "🔗 点击目标卡片连线（右键/点空白取消）";
+  document.body.appendChild(tip);
+  document.getElementById("viewport").classList.add("linking");
 }
 
-function finishConnect(cardId){
-  if(!connFrom2) return;
-  if(connFrom2 !== cardId){
-    var dup = connections.some(function(c){ return c.from === connFrom2 && c.to === cardId });
-    if(!dup){
-      connections.push({from:connFrom2, to:cardId});
-      pushUndo();
-    }
-  }
-  cancelConnect2();
+function menuDisconnect(cardId){
+  connections = connections.filter(function(c){ return c.from !== cardId && c.to !== cardId; });
+  document.querySelectorAll(".ctx-menu").forEach(function(m){m.remove()});
+  pushUndo();
   renderAll();
 }
 
-function cancelConnect2(){
-  connFrom2 = null;
-  document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
-  if(connLine2){ connLine2.remove(); connLine2 = null; }
+function menuCleanup(){
+  document.querySelectorAll(".ctx-menu").forEach(function(m){m.remove()});
+  document.querySelectorAll(".link-tip").forEach(function(m){m.remove()});
+  linkModeId = null;
+  document.getElementById("viewport").classList.remove("linking");
 }
 
-// 鼠标移动时画拖拽线
-document.addEventListener("mousemove", function(e){
-  if(!connFrom2) return;
-  var fromEl = document.getElementById("card_"+connFrom2);
-  if(!fromEl) return;
-  var rect = document.getElementById("viewport").getBoundingClientRect();
-  var vx = e.clientX - rect.left;
-  var vy = e.clientY - rect.top;
-  var cx = (vx - panX)/scale;
-  var cy = (vy - panY)/scale;
-  var fh = fromEl.offsetHeight;
-  var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
-  var fy = parseFloat(fromEl.style.top) + fh - 15;
-  var midX = (fx + cx)/2;
-  connLine2.setAttribute("d","M "+fx+" "+fy+" C "+midX+" "+fy+", "+midX+" "+cy+", "+cx+" "+cy);
-});
-
-// 原版逻辑：mousedown检测绿点开始连线
-document.addEventListener("mousedown", function(e){
-  var dot = e.target.closest(".dot-green");
-  if(dot && editMode){
-    var cardEl = dot.closest(".card");
-    if(cardEl){
-      var cid = cardEl.id.replace("card_","");
-      startConnect(cid);
-    }
-    return;
+function tryLinkCard(toId){
+  if(!linkModeId || linkModeId === toId) return false;
+  var existing = connections.findIndex(function(c){ return c.from === linkModeId && c.to === toId; });
+  if(existing >= 0){
+    connections.splice(existing, 1);
+  } else {
+    connections.push({from:linkModeId, to:toId});
   }
-  if(connFrom2 && !e.target.closest(".dot-blue")){
-    cancelConnect2();
-  }
-});
+  pushUndo();
+  menuCleanup();
+  renderAll();
+  return true;
+}
 
-// 原版逻辑：mouseup检测蓝点完成连线
-document.addEventListener("mouseup", function(e){
-  if(!connFrom2) return;
-  var dot = e.target.closest(".dot-blue");
-  if(dot){
-    var cardEl = dot.closest(".card");
-    if(cardEl){
-      var tid = cardEl.id.replace("card_","");
-      var existing = connections.findIndex(function(c){ return c.from === connFrom2 && c.to === tid });
-      if(existing >= 0){
-        connections.splice(existing, 1);
-        pushUndo();
-        cancelConnect2();
-        renderAll();
-      } else {
-        finishConnect(tid);
-      }
-    }
-  }
-});
-
-// 原版逻辑：非圆点区域取消连线
-document.addEventListener("mousedown", function(e){
-  if(connFrom2 && !e.target.closest(".dot-green,.dot-blue")){
-    cancelConnect2();
-  }
-});
-
-// 原版 renderConns：完全重绘 + 圆点变橙色
 function renderConns(){
   var svg = document.getElementById("connSvg");
   while(svg.firstChild) svg.removeChild(svg.firstChild);
-  var defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
-  var filter = document.createElementNS("http://www.w3.org/2000/svg","filter");
-  filter.setAttribute("id","connGlow");
-  var blur = document.createElementNS("http://www.w3.org/2000/svg","feGaussianBlur");
-  blur.setAttribute("stdDeviation","2"); blur.setAttribute("result","blur");
-  filter.appendChild(blur);
-  var merge = document.createElementNS("http://www.w3.org/2000/svg","feMerge");
-  var mn1 = document.createElementNS("http://www.w3.org/2000/svg","feMergeNode");
-  mn1.setAttribute("in","blur"); merge.appendChild(mn1);
-  var mn2 = document.createElementNS("http://www.w3.org/2000/svg","feMergeNode");
-  mn2.setAttribute("in","SourceGraphic"); merge.appendChild(mn2);
-  filter.appendChild(merge);
-  defs.appendChild(filter);
-  svg.appendChild(defs);
-  var connectedIds = {};
-  connections.forEach(function(conn){
-    connectedIds[conn.from] = true;
-    connectedIds[conn.to] = true;
-  });
-  document.querySelectorAll(".dot-green, .dot-blue").forEach(function(dot){
-    dot.style.background = dot.classList.contains("dot-blue") ? "#4488ff" : "#22cc66";
-  });
-  Object.keys(connectedIds).forEach(function(id){
-    var el = document.getElementById("card_"+id);
-    if(el){
-      var bg = el.querySelector(".dot-blue");
-      var gg = el.querySelector(".dot-green");
-      if(bg) bg.style.background = "#ff8833";
-      if(gg) gg.style.background = "#ff8833";
-    }
-  });
+  if(!connections || !connections.length) return;
   connections.forEach(function(conn){
     var fromEl = document.getElementById("card_"+conn.from);
     var toEl = document.getElementById("card_"+conn.to);
     if(!fromEl || !toEl) return;
-    var fromH = fromEl.offsetHeight;
-    var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
-    var fy = parseFloat(fromEl.style.top) + fromH - 15;
-    var tx = parseFloat(toEl.style.left);
-    var ty = parseFloat(toEl.style.top) + toEl.offsetHeight - 15;
-    var midX = (fx + tx)/2;
-    var d = "M "+fx+" "+fy+" C "+midX+" "+fy+", "+midX+" "+ty+", "+tx+" "+ty;
+    var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth/2;
+    var fy = parseFloat(fromEl.style.top) + fromEl.offsetHeight/2;
+    var tx = parseFloat(toEl.style.left) + toEl.offsetWidth/2;
+    var ty = parseFloat(toEl.style.top) + toEl.offsetHeight/2;
+    var mx = (fx+tx)/2, my = (fy+ty)/2;
     var path = document.createElementNS("http://www.w3.org/2000/svg","path");
-    path.setAttribute("d", d);
+    path.setAttribute("d","M "+fx+" "+fy+" Q "+mx+" "+fy+", "+mx+" "+my+" Q "+mx+" "+ty+", "+tx+" "+ty);
+    path.style.stroke = "#ff8833";
+    path.style.strokeWidth = "2.5";
+    path.style.fill = "none";
+    path.style.strokeDasharray = "6,5";
+    path.style.opacity = "0.8";
     svg.appendChild(path);
     var angle = Math.atan2(ty - fy, tx - fx);
     var a = 12, w = 8;
-    var p1x = tx - a * Math.cos(angle - w*Math.PI/180);
-    var p1y = ty - a * Math.sin(angle - w*Math.PI/180);
-    var p2x = tx - a * Math.cos(angle + w*Math.PI/180);
-    var p2y = ty - a * Math.sin(angle + w*Math.PI/180);
+    var p1 = tx - a*Math.cos(angle - w*Math.PI/180) +","+(ty - a*Math.sin(angle - w*Math.PI/180));
+    var p2 = tx - a*Math.cos(angle + w*Math.PI/180) +","+(ty - a*Math.sin(angle + w*Math.PI/180));
     var arrow = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-    arrow.setAttribute("points", tx+","+ty+" "+p1x+","+p1y+" "+p2x+","+p2y);
+    arrow.setAttribute("points",tx+","+ty+" "+p1+" "+p2);
+    arrow.style.fill = "#ff8833";
+    arrow.style.opacity = "0.8";
     svg.appendChild(arrow);
+    var dot = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    dot.setAttribute("cx",fx); dot.setAttribute("cy",fy);
+    dot.setAttribute("r","4");
+    dot.style.fill = "#ff8833";
+    dot.style.opacity = "0.8";
+    svg.appendChild(dot);
   });
-}/* ====== 导航汉堡（同地图页面）====== */
+}
+/* ====== 导航汉堡（同地图页面）====== */
 function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
 function logout(){localStorage.removeItem('abi_token');localStorage.removeItem('abi_user');window.location.reload();}
 function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
