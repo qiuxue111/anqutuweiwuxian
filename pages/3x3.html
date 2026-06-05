@@ -283,7 +283,7 @@ function renderCanvasPanel(){
       if(canvasList.some(function(x){return x.label===name.trim()})){alert('已存在同名画布');return;}
       var id='cv_'+Date.now();
       canvasList.push({id:id,label:name.trim()});
-      fetch(SUPABASE_URL+'/rest/v1/task_canvases',{method:'POST',headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'},body:JSON.stringify({id:id,label:name.trim(),color:'#aaa'})}).catch(function(e){console.error(e)});
+      fetch(SUPABASE_URL+'/rest/v1/task_canvases',{method:'POST',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},body:JSON.stringify({id:id,label:name.trim(),color:'#aaa'})}).catch(function(e){console.error(e)});
       renderCanvasPanel();
     };
     p.appendChild(addBtn);
@@ -296,7 +296,7 @@ function renderCanvasPanel(){
       var name = prompt("新名称：",cv.label); if(!name||!name.trim()) return;
       if(canvasList.some(function(x){return x.id!==currentCanvas&&x.label===name.trim()})){alert('已存在同名');return;}
       cv.label=name.trim(); var tk=localStorage.getItem('abi_token');
-      if(tk) fetch(SUPABASE_URL+'/rest/v1/task_canvases?id=eq.'+encodeURIComponent(currentCanvas),{method:'PATCH',headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'},body:JSON.stringify({label:name.trim()})}).catch(function(e){console.error(e)});
+      if(tk) fetch(SUPABASE_URL+'/rest/v1/task_canvases?id=eq.'+encodeURIComponent(currentCanvas),{method:'PATCH',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},body:JSON.stringify({label:name.trim()})}).catch(function(e){console.error(e)});
       renderCanvasPanel();
     };
     p.appendChild(rnBtn);
@@ -318,7 +318,7 @@ function bindCanvasSwitch(){
 
 function deleteCanvasDB(id){
   var tk=localStorage.getItem('abi_token');if(!tk){if(confirm('需要登录。去登录？'))loginGitHub();return Promise.reject();}
-  var h={'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'};
+  var h={'apikey':SUPABASE_ANON,'Content-Type':'application/json'};
   return Promise.all([
     fetch(SUPABASE_URL+'/rest/v1/task_cards?canvas_id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:h}),
     fetch(SUPABASE_URL+'/rest/v1/task_connections?canvas_id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:h}),
@@ -400,7 +400,7 @@ function saveToCloud(){
   var btn = document.getElementById('saveCloudBtn');
   if(btn) btn.textContent = '⏳ 保存中...';
   var cid = encodeURIComponent(currentCanvas);
-  var ah = {'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'};
+  var ah = {'apikey':SUPABASE_ANON,'Content-Type':'application/json'};
   var task = Promise.resolve();
   task = task.then(function(){ return fetch(SUPABASE_URL+'/rest/v1/task_cards?canvas_id=eq.'+cid, {method:'DELETE',headers:ah}).catch(function(){return null;}); });
   task = task.then(function(){ return fetch(SUPABASE_URL+'/rest/v1/task_connections?canvas_id=eq.'+cid, {method:'DELETE',headers:ah}).catch(function(){return null;}); });
@@ -535,7 +535,7 @@ function autoArrange(){
 function saveData(){
   var tk = localStorage.getItem('abi_token');
   if(!tk){ if(confirm('需要GitHub登录才能保存。去登录？')) loginGitHub(); return; }
-  var authHeaders = {'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'};
+  var authHeaders = {'apikey':SUPABASE_ANON,'Content-Type':'application/json'};
   var cid = encodeURIComponent(currentCanvas);
   /* 统一的失败处理 - 未登录时静默失败 */
   var safefetch = function(u,o){ return fetch(u,o).catch(function(){}); };
