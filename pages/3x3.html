@@ -64,6 +64,18 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .card-footer .comment-icon{font-size:12px}
 .card-footer .comment-count{font-size:11px;color:#888}
 
+/* 连线点 */
+.card-dot-bar{position:absolute;bottom:0;left:0;right:0;height:24px;display:none;align-items:center;justify-content:space-between;padding:0 6px;z-index:5}
+.editMode .card-dot-bar{display:flex}
+.card-dot{width:18px;height:18px;border-radius:50%;border:2px solid #111;cursor:crosshair;transition:transform .15s,box-shadow .15s;z-index:6}
+.card-dot:hover{transform:scale(1.2);box-shadow:0 0 8px currentColor}
+.dot-green{background:#22cc66}
+.dot-blue{background:#4488ff}
+
+/* 连线 SVG */
+#connSvg path{stroke:#ff8833;stroke-width:3;fill:none;stroke-linecap:round;opacity:0.85}
+#connSvg polygon{fill:#ff8833;opacity:0.85}
+
 /* 顶栏底部工具栏 - 编辑时显示 */
 .edit-toolbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:none;gap:8px;background:rgba(10,10,15,.92);border:1px solid #333;border-radius:12px;padding:8px 14px;backdrop-filter:blur(8px);white-space:nowrap}
 .edit-toolbar button{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;color:#ddd;transition:background .15s;white-space:nowrap}
@@ -129,11 +141,18 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 <div class="canvas-panel" id="canvasPanel"></div>
 
 <div class="viewport" id="viewport">
+  <svg id="connSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1">
+    <defs>
+      <filter id="connGlow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+  </svg>
   <div class="canvas" id="canvas"></div>
 </div>
 
 <div class="edit-toolbar" id="editToolbar">
   <button class="et-add" onclick="addCard()">+ 添加卡片</button>
+  <button onclick="undoLast()" style="background:#2a2a3a;color:#aaa">↩ 撤销</button>
+  <button onclick="clearConns()" style="background:#2a2a3a;color:#f88">⛌ 清空连线</button>
   <button class="et-del-batch" id="batchDelBtn" style="display:none" onclick="batchDelete()">🗑 批量删除</button>
 </div>
 
@@ -189,6 +208,10 @@ var isPanning = false, panStartX = 0, panStartY = 0, panOX = 0, panOY = 0;
 var selectedCardIds = {};
 var currentCanvas = null;
 var canvasList = [];
+var connections = [];  // {from, to}
+var connFrom = null;
+var connLine = null;
+var undoStack = [];
 
 /* ====== 画布切换 ====== */
 function renderCanvasPanel(){
@@ -301,15 +324,18 @@ function loadData(){
   var cid = encodeURIComponent(currentCanvas);
   Promise.all([
     db('GET','task_cards','','canvas_id=eq.'+cid+'&order=created_at'),
+    db('GET','task_connections','','canvas_id=eq.'+cid),
     db('GET','task_comments','','order=created_at')
   ]).then(function(results){
     var cardRows = results[0] || [];
-    var commentRows = results[1] || [];
+    var connRows = results[1] || [];
+    var commentRows = results[2] || [];
     if(cardRows.length > 0){
       cards = cardRows.map(function(r){ return {id:r.id, title:r.name||'', body:r.description||'', x:r.x, y:r.y}; });
     } else {
       cards = [];
     }
+    connections = connRows.map(function(r){ return {from:r.from_card, to:r.to_card}; });
     comments = {};
     commentRows.filter(function(cr){ return cards.some(function(c){ return c.id === cr.card_id }) }).forEach(function(cr){
       if(!comments[cr.card_id]) comments[cr.card_id] = [];
@@ -349,6 +375,12 @@ function saveData(){
         body:JSON.stringify({id:c.id, canvas_id:currentCanvas, name:c.title||'', description:c.body||'', x:c.x, y:c.y})
       });
     });
+    var connPromises = connections.map(function(conn){
+      return fetch(SUPABASE_URL+'/rest/v1/task_connections',{
+        method:'POST', headers:authHeaders,
+        body:JSON.stringify({canvas_id:currentCanvas, from_card:conn.from, to_card:conn.to})
+      });
+    });
     var commentPromises = [];
     Object.keys(comments).forEach(function(cardId){
       (comments[cardId]||[]).forEach(function(cm){
@@ -358,7 +390,7 @@ function saveData(){
         }));
       });
     });
-    return Promise.all(cardPromises.concat(commentPromises));
+    return Promise.all(cardPromises.concat(commentPromises).concat(connPromises));
   }).then(function(){
     editMode = false;
     document.getElementById("editToggle").style.display = "inline-block";
@@ -377,13 +409,50 @@ function renderAll(){
   var cvs = document.getElementById("canvas");
   cvs.querySelectorAll(".card").forEach(function(el){el.remove()});
   cards.forEach(function(c){ renderCard(c) });
+  renderConns();
   updateTransform();
+}
+
+function renderConns(){
+  var svg = document.getElementById("connSvg");
+  /* 清除旧的线和箭头，保留 defs */
+  var toRemove = [];
+  for(var i = 0; i < svg.children.length; i++){
+    var ch = svg.children[i];
+    if(ch.tagName !== "defs") toRemove.push(ch);
+  }
+  toRemove.forEach(function(el){el.remove()});
+  connections.forEach(function(conn){
+    var fromEl = document.getElementById("card_"+conn.from);
+    var toEl = document.getElementById("card_"+conn.to);
+    if(!fromEl || !toEl) return;
+    var fh = fromEl.offsetHeight, th = toEl.offsetHeight;
+    var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
+    var fy = parseFloat(fromEl.style.top) + fh - 24;
+    var tx = parseFloat(toEl.style.left);
+    var ty = parseFloat(toEl.style.top) + th - 24;
+    var midX = (fx + tx)/2;
+    var d = "M "+fx+" "+fy+" C "+midX+" "+fy+", "+midX+" "+ty+", "+tx+" "+ty;
+    var path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d", d);
+    svg.appendChild(path);
+    /* 箭头 */
+    var angle = Math.atan2(ty - fy, tx - fx);
+    var a = 10, w = 8;
+    var p1x = tx - a * Math.cos(angle - w*Math.PI/180);
+    var p1y = ty - a * Math.sin(angle - w*Math.PI/180);
+    var p2x = tx - a * Math.cos(angle + w*Math.PI/180);
+    var p2y = ty - a * Math.sin(angle + w*Math.PI/180);
+    var arrow = document.createElementNS("http://www.w3.org/2000/svg","polygon");
+    arrow.setAttribute("points", tx+","+ty+" "+p1x+","+p1y+" "+p2x+","+p2y);
+    svg.appendChild(arrow);
+  });
 }
 
 function renderCard(c){
   var cvs = document.getElementById("canvas");
   var div = document.createElement("div");
-  div.className = "card";
+  div.className = "card" + (editMode ? " editMode" : "");
   div.id = "card_"+c.id;
   div.style.left = c.x + "px";
   div.style.top = c.y + "px";
@@ -430,6 +499,21 @@ function renderCard(c){
   cnt.textContent = ((comments[c.id]||[]).length) + " 条评论";
   footer.appendChild(cnt);
   div.appendChild(footer);
+
+  /* 连线点 */
+  var dotBar = document.createElement("div");
+  dotBar.className = "card-dot-bar";
+  var blueDot = document.createElement("div");
+  blueDot.className = "card-dot dot-blue";
+  blueDot.title = "连线终点（蓝）";
+  blueDot.onclick = function(e){ e.stopPropagation(); onDotClick(c.id, "in"); };
+  dotBar.appendChild(blueDot);
+  var greenDot = document.createElement("div");
+  greenDot.className = "card-dot dot-green";
+  greenDot.title = "连线起点（绿）";
+  greenDot.onclick = function(e){ e.stopPropagation(); onDotClick(c.id, "out"); };
+  dotBar.appendChild(greenDot);
+  div.appendChild(dotBar);
 
   /* 双击卡片打开评论 */
   div.addEventListener("dblclick", function(e){
@@ -545,6 +629,7 @@ function addCard(){
   var vp = document.getElementById("viewport");
   var cx = (vp.clientWidth - 300)/4, cy = (vp.clientHeight - 260)/4;
   cards.push({id:id, title:'新卡片', body:'点击编辑填写内容', x:cx, y:cy});
+  pushUndo();
   renderAll();
   openEditModal(id);
 }
@@ -554,6 +639,7 @@ function deleteCard(id){
     var idx = cards.findIndex(function(c){ return c.id === id });
     if(idx >= 0) cards.splice(idx,1);
     delete comments[id];
+    pushUndo();
     renderAll();
   }
 }
@@ -568,6 +654,7 @@ function batchDelete(){
     delete comments[id];
   });
   selectedCardIds = {};
+  pushUndo();
   renderAll();
   updateBatchBtn();
 }
@@ -576,6 +663,28 @@ function updateBatchBtn(){
   var cnt = Object.keys(selectedCardIds).length;
   if(cnt > 0){ document.getElementById("batchDelBtn").textContent = "🗑 批量删除 ("+cnt+")"; document.getElementById("batchDelBtn").style.display = "inline-block"; }
   else document.getElementById("batchDelBtn").style.display = "none";
+}
+
+function pushUndo(){
+  undoStack.push(JSON.stringify({cards:cards,connections:connections,comments:comments}));
+  if(undoStack.length>20) undoStack.shift();
+}
+
+function undoLast(){
+  if(undoStack.length<2) return;
+  undoStack.pop();
+  var prev = JSON.parse(undoStack[undoStack.length-1]);
+  cards = prev.cards;
+  connections = prev.connections;
+  comments = prev.comments || {};
+  renderAll();
+}
+
+function clearConns(){
+  if(!confirm("确定清空所有连线？")) return;
+  connections = [];
+  pushUndo();
+  renderAll();
 }
 
 /* ====== 编辑弹窗 ====== */
@@ -593,6 +702,7 @@ function saveCardEdit(){
   if(!c) return;
   c.title = document.getElementById("edTitle").value || "无标题";
   c.body = document.getElementById("edBody").value || "";
+  pushUndo();
   closeEditModal();
   renderAll();
 }
@@ -698,6 +808,84 @@ vp.addEventListener("mousedown", function(e){
   selectedCardIds = {};
   document.querySelectorAll(".card.selected").forEach(function(el){el.classList.remove("selected")});
   updateBatchBtn();
+});
+
+/* 右键空白添加卡片 */
+vp.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+  if(!editMode) return;
+  var rect = vp.getBoundingClientRect();
+  var vx = e.clientX - rect.left, vy = e.clientY - rect.top;
+  var cx = (vx - panX) / scale - 150, cy = (vy - panY) / scale - 130;
+  var id = "c"+Date.now()+Math.random().toString(36).slice(2,6);
+  cards.push({id:id, title:"新卡片", body:"", x:cx, y:cy});
+  pushUndo();
+  openEditModal(id);
+  renderAll();
+});
+
+/* ====== 连线功能 ====== */
+function onDotClick(cardId, dir){
+  if(!editMode) return;
+  if(dir === "out"){
+    connFrom = cardId;
+    document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
+    var el = document.querySelector("#card_"+cardId+" .dot-green");
+    if(el) el.classList.add("active");
+    if(!connLine){
+      connLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      connLine.setAttribute("stroke-width", "2");
+      connLine.setAttribute("fill", "none");
+      connLine.setAttribute("stroke-dasharray", "6,4");
+      connLine.setAttribute("opacity", "0.5");
+      connLine.style.stroke = "#22cc66";
+      document.getElementById("connSvg").appendChild(connLine);
+    }
+  } else if(dir === "in" && connFrom){
+    if(connFrom !== cardId){
+      var dup = connections.some(function(c){ return c.from === connFrom && c.to === cardId });
+      if(!dup){ connections.push({from:connFrom, to:cardId}); }
+    }
+    connFrom = null;
+    document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
+    if(connLine){ connLine.remove(); connLine = null; }
+    renderAll();
+  }
+}
+
+document.addEventListener("mousemove", function(e){
+  if(!connFrom) return;
+  var fromEl = document.getElementById("card_"+connFrom);
+  if(!fromEl) return;
+  var rect = vp.getBoundingClientRect();
+  var vx = e.clientX - rect.left, vy = e.clientY - rect.top;
+  var cx = (vx - panX)/scale, cy = (vy - panY)/scale;
+  var fh = fromEl.offsetHeight;
+  var fx = parseFloat(fromEl.style.left) + fromEl.offsetWidth;
+  var fy = parseFloat(fromEl.style.top) + fh - 24;
+  var midX = (fx + cx)/2;
+  connLine.setAttribute("d", "M "+fx+" "+fy+" C "+midX+" "+fy+", "+midX+" "+cy+", "+cx+" "+cy);
+});
+
+document.addEventListener("mouseup", function(e){
+  if(!connFrom) return;
+  var dot = e.target.closest(".dot-blue");
+  if(dot){
+    var cardEl = dot.closest(".card");
+    if(cardEl){
+      var tid = cardEl.id.replace("card_","");
+      var existing = connections.findIndex(function(c){ return c.from === connFrom && c.to === tid });
+      if(existing >= 0){
+        connections.splice(existing, 1);
+      } else {
+        if(connFrom !== tid) connections.push({from:connFrom, to:tid});
+      }
+      connFrom = null;
+      document.querySelectorAll(".dot-green").forEach(function(el){el.classList.remove("active")});
+      if(connLine){ connLine.remove(); connLine = null; }
+      renderAll();
+    }
+  }
 });
 
 /* ====== 导航汉堡（同地图页面）====== */
