@@ -40,8 +40,8 @@
 .canvas{position:absolute;top:0;left:0;transform-origin:0 0;width:200vw;height:200vh;background:#111;background-image:radial-gradient(circle at 25px 25px,#1a1a4a 2px,transparent 2px);background-size:40px 40px;min-width:100000px;min-height:100000px}
 
 /* 卡片 - 固定宽高 300×260 */
-.card{position:absolute;width:300px;height:260px;background:rgba(18,18,28,.96);border:1.5px solid rgba(255,255,255,.08);border-radius:14px;cursor:pointer;z-index:2;overflow:hidden;transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
-.card:hover{box-shadow:0 0 20px rgba(255,200,50,.18);border-color:rgba(255,200,50,.3)}
+.card{position:absolute;width:300px;height:260px;background:var(--card-bg,rgba(20,20,30,.75));border:1.5px solid rgba(255,255,255,.08);border-radius:14px;cursor:pointer;z-index:2;overflow:hidden;transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
+.card:hover{box-shadow:0 0 20px color-mix(in srgb, var(--accent) 18%, transparent);border-color:color-mix(in srgb, var(--accent) 30%, transparent)}
 .card.selected{border-color:var(--accent)!important;box-shadow:0 0 30px color-mix(in srgb, var(--accent) 40%, transparent)!important}
 
 /* 卡片操作按钮 */
@@ -62,7 +62,7 @@
 /* 卡片底部 - 评论计数 */
 .card-footer{padding:4px 14px 8px;border-top:1px solid rgba(255,255,255,.04);flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-body,#666)}
 .card-footer .comment-icon{font-size:12px}
-.card-footer .comment-count{font-size:11px;color:#888}
+.card-footer .comment-count{font-size:11px;color:var(--text-body,#888)}
 
 /* 顶栏底部工具栏 - 编辑时显示 */
 .edit-toolbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:none;gap:8px;background:rgba(10,10,15,.92);border:1px solid #333;border-radius:12px;padding:8px 14px;backdrop-filter:blur(8px);white-space:nowrap}
