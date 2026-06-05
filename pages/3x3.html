@@ -11,7 +11,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 
 /* 顶栏 */
 .app-bar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(10,10,15,.95);backdrop-filter:blur(8px);border-bottom:1px solid #222;display:flex;align-items:center;padding:8px 16px;gap:12px;height:48px}
-.app-bar h1{color:#ffc832;font-size:18px;font-weight:600;flex:1;white-space:nowrap}
+.app-bar .app-title{color:#ffc832;font-size:20px;font-weight:700;flex:1;white-space:nowrap;text-shadow:0 0 12px rgba(255,200,50,0.3)}
 .app-bar .btn{padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;white-space:nowrap}
 .btn-edit{background:#2a2a3a;color:#88aaff}
 .btn-save{background:#1a4a1a;color:#4f4}
@@ -63,18 +63,6 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .card-footer{padding:4px 14px 8px;border-top:1px solid rgba(255,255,255,.04);flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:11px;color:#666}
 .card-footer .comment-icon{font-size:12px}
 .card-footer .comment-count{font-size:11px;color:#888}
-
-/* 连线点 */
-.removed_dotbar-dotbar-removed{position:absolute;bottom:0;left:0;right:0;height:24px;display:none;align-items:center;justify-content:space-between;padding:0 6px;z-index:5}
-.editMode .removed_dotbar-dotbar-removed{display:flex}
-.removed_dot-removed{width:18px;height:18px;border-radius:50%;border:2px solid #111;cursor:crosshair;transition:transform .15s,box-shadow .15s;z-index:6}
-.removed_dot:hover{transform:scale(1.2);box-shadow:0 0 8px currentColor}
-.dot-removed{background:#22cc66}
-.dot-removed{background:#4488ff}
-
-/* 连线 SVG */
-#removed_connSvg path{stroke:#ff8833;stroke-width:3;fill:none;stroke-linecap:round;opacity:0.85;filter:url(#removed_connGlow)}
-#removed_connSvg polygon{fill:#ff8833;opacity:0.85;filter:url(#removed_connGlow)}
 
 /* 顶栏底部工具栏 - 编辑时显示 */
 .edit-toolbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:none;gap:8px;background:rgba(10,10,15,.92);border:1px solid #333;border-radius:12px;padding:8px 14px;backdrop-filter:blur(8px);white-space:nowrap}
@@ -138,16 +126,14 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 </head>
 <body>
 
-<div class="app-bar">
-  <h1>📋 画布看板 <span id="canvasLabel" style="font-size:13px;color:#888;font-weight:400">默认</span></h1>
-  <button class="bg-switch" id="canvasSwitchBtn">📂 切换画布</button>
-  <button class="btn btn-add-card" id="addCardBtn" onclick="addCard()" title="在当前画布添加新卡片">+ 添加卡片</button>
-  <button class="btn btn-edit" id="editToggle" onclick="toggleEdit()">进入编辑</button>
+<div <div class="app-bar">
+  <div class="hamburger" id="hamburger">☰</div>
+  <span class="app-title" id="canvasLabel">默认</span>
+  <button class="btn btn-edit" id="editToggle" onclick="toggleEdit()">编辑</button>
   <button class="btn btn-save" id="saveBtn" style="display:none" onclick="saveData()">保存</button>
   <button class="btn btn-cancel" id="cancelBtn" style="display:none" onclick="cancelEdit()">取消</button>
+  <button class="btn btn-add-card" id="addCardBtn" onclick="addCard()">+ 添加</button>
 </div>
-
-<div class="canvas-panel" id="canvasPanel"></div>
 
 <div class="viewport" id="viewport">
   <div class="canvas" id="canvas">
@@ -171,7 +157,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 </div>
 
 <div class="zoom-info" id="zoomInfo">100%</div>
-<div class="hamburger" id="hamburger">☰</div>
+
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="loading" id="loading">加载中...</div>
 
