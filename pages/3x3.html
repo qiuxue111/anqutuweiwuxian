@@ -652,6 +652,18 @@ function renderZone(z){
     resize.className = "zone-resize";
     div.appendChild(resize);
   }
+  /* 右键删除区域 */
+  if(editMode){
+    div.oncontextmenu = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(confirm("删除区域「"+z.label+"」？")){
+        zones = zones.filter(function(x){ return x.id !== z.id; });
+        pushUndo();
+        renderAll();
+      }
+    };
+  }
   cvs.appendChild(div);
 }
 
