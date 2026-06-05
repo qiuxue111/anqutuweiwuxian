@@ -52,15 +52,15 @@
 .card.ca-del:hover{color:#f44;background:rgba(255,50,50,.15)}
 
 /* 卡片标题 */
-.card-title{padding:10px 14px 4px;font-size:14px;font-weight:600;color:#fff;text-align:center;letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+.card-title{padding:10px 14px 4px;font-size:14px;font-weight:600;color:var(--text-body,#fff);text-align:center;letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
 
 /* 卡片子内容 - 可换行滚动 */
-.card-body{flex:1;padding:6px 14px 8px;font-size:12px;color:#999;line-height:1.6;overflow-y:auto;word-break:break-word;white-space:pre-wrap}
+.card-body{flex:1;padding:6px 14px 8px;font-size:12px;color:var(--text-body,#999);line-height:1.6;overflow-y:auto;word-break:break-word;white-space:pre-wrap}
 .card-body::-webkit-scrollbar{width:3px}
 .card-body::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
 
 /* 卡片底部 - 评论计数 */
-.card-footer{padding:4px 14px 8px;border-top:1px solid rgba(255,255,255,.04);flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:11px;color:#666}
+.card-footer{padding:4px 14px 8px;border-top:1px solid rgba(255,255,255,.04);flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-body,#666)}
 .card-footer .comment-icon{font-size:12px}
 .card-footer .comment-count{font-size:11px;color:#888}
 
@@ -212,13 +212,13 @@
 <script>
 /* 主题同步 - 跟随主页调色盘 */
 (function(){
-  try{
-    var s=JSON.parse(localStorage.getItem('abi_palette'));
-    if(s){
-      var r=document.documentElement;
-      Object.keys(s).forEach(function(k){ r.style.setProperty(k, s[k]); });
-    }
-  }catch(e){}
+  var DEFAULTS={'--accent':'#ffc832','--bg-page':'#08080e','--text-body':'#ccc','--card-bg':'rgba(20,20,30,0.6)','--btn-blue-text':'#4a9eff','--btn-red-text':'#ff6b6b','--btn-green-text':'#51cf66','--btn-purple-text':'#cc5de8'};
+  function getVal(k){
+    var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
+    return (s&&s[k]!==undefined)?s[k]:DEFAULTS[k];
+  }
+  var r=document.documentElement;
+  Object.keys(DEFAULTS).forEach(function(k){ r.style.setProperty(k, getVal(k)); });
 })();
 
 /* ====== Supabase ====== */
