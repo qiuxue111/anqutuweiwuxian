@@ -125,6 +125,15 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 .hm-item.active{color:#ffc832;background:rgba(255,200,50,0.1)}
 .hm-sep{height:1px;background:rgba(255,255,255,0.06);margin:4px 8px}
 .loading{position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0f;z-index:9999;color:#666;font-size:14px}
+
+/* 框选 */
+.selection-box{position:fixed;border:1.5px solid #ffc832;background:rgba(255,200,50,.08);pointer-events:none;z-index:999;display:none}
+
+/* 选择计数 */
+.sel-count{display:none;color:#ffc832;font-size:11px;margin-left:8px}
+.align-btn{background:#2a2a3a;color:#aaf!important}
+.space-btn{background:#2a3a2a;color:#6f6!important}
+.arrange-btn{background:#3a2a1a;color:#fc8!important}
 </style>
 </head>
 <body>
@@ -148,9 +157,16 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
   </svg>
   <div class="canvas" id="canvas"></div>
 </div>
+<div class="selection-box" id="selectionBox"></div>
 
 <div class="edit-toolbar" id="editToolbar">
   <button class="et-add" onclick="addCard()">+ 添加卡片</button>
+  <span class="sel-count" id="selCount"></span>
+  <button id="alignBtn" class="align-btn" style="display:none" onclick="alignCards('h')">⇕ 水平对齐</button>
+  <button id="alignBtnV" class="align-btn" style="display:none" onclick="alignCards('v')">⇔ 垂直对齐</button>
+  <button id="spaceBtnH" class="space-btn" style="display:none" onclick="spaceEvenly('h')">≡ 等距水平</button>
+  <button id="spaceBtnV" class="space-btn" style="display:none" onclick="spaceEvenly('v')">≡ 等距垂直</button>
+  <button id="arrangeBtn" class="arrange-btn" style="display:none" onclick="autoArrange()">⊞ 自动排列</button>
   <button onclick="undoLast()" style="background:#2a2a3a;color:#aaa">↩ 撤销</button>
   <button onclick="clearConns()" style="background:#2a2a3a;color:#f88">⛌ 清空连线</button>
   <button class="et-del-batch" id="batchDelBtn" style="display:none" onclick="batchDelete()">🗑 批量删除</button>
@@ -205,6 +221,7 @@ var editingCardId = null;
 var commentCardId = null;
 var scale = 0.8, panX = 0, panY = 0;
 var isPanning = false, panStartX = 0, panStartY = 0, panOX = 0, panOY = 0;
+var isSelecting = false, selStartX = 0, selStartY = 0;
 var selectedCardIds = {};
 var currentCanvas = null;
 var canvasList = [];
@@ -351,6 +368,114 @@ function loadData(){
     renderAll();
     document.getElementById("loading").style.display = "none";
   });
+}
+
+/* ====== 框选 + 排列功能 ====== */
+function confirmSelection(){
+  var sb = document.getElementById("selectionBox");
+  var l = parseFloat(sb.style.left);
+  var t = parseFloat(sb.style.top);
+  var r = l + parseFloat(sb.style.width);
+  var b = t + parseFloat(sb.style.height);
+  if(isNaN(l) || r - l < 5) return;
+  selectedCardIds = {};
+  document.querySelectorAll(".card.selected").forEach(function(el){el.classList.remove("selected");});
+  var vpRect = document.getElementById("viewport").getBoundingClientRect();
+  cards.forEach(function(c){
+    var el = document.getElementById("card_"+c.id);
+    if(!el) return;
+    var corners = [
+      {x:c.x, y:c.y},
+      {x:c.x + el.offsetWidth, y:c.y},
+      {x:c.x, y:c.y + el.offsetHeight},
+      {x:c.x + el.offsetWidth, y:c.y + el.offsetHeight}
+    ];
+    var inSel = false;
+    for(var i = 0; i < 4; i++){
+      var sx = corners[i].x * scale + panX + vpRect.left;
+      var sy = corners[i].y * scale + panY + vpRect.top;
+      if(sx >= l && sx <= r && sy >= t && sy <= b){ inSel = true; break; }
+    }
+    if(inSel){ selectedCardIds[c.id] = true; el.classList.add("selected"); }
+  });
+  updateBatchBtn();
+}
+
+function alignCards(dir){
+  var ids = Object.keys(selectedCardIds);
+  if(ids.length < 2) return;
+  var selected = [];
+  ids.forEach(function(id){
+    var c = cards.find(function(x){ return x.id === id; });
+    if(c) selected.push(c);
+  });
+  if(dir === 'h'){
+    var sum = 0;
+    selected.forEach(function(c){ sum += c.y; });
+    var avg = sum / selected.length;
+    selected.forEach(function(c){ c.y = avg; });
+  } else {
+    var sum = 0;
+    selected.forEach(function(c){ sum += c.x; });
+    var avg = sum / selected.length;
+    selected.forEach(function(c){ c.x = avg; });
+  }
+  pushUndo();
+  renderAll();
+}
+
+function spaceEvenly(dir){
+  var ids = Object.keys(selectedCardIds);
+  if(ids.length < 3) return;
+  var sel = [];
+  ids.forEach(function(id){
+    var c = cards.find(function(x){ return x.id === id; });
+    if(c) sel.push(c);
+  });
+  if(dir === 'h'){
+    sel.sort(function(a,b){ return a.x - b.x; });
+    var min = sel[0].x, max = sel[sel.length-1].x;
+    var gap = (max - min) / (sel.length - 1);
+    sel.forEach(function(c, i){ c.x = min + gap * i; });
+  } else {
+    sel.sort(function(a,b){ return a.y - b.y; });
+    var min = sel[0].y, max = sel[sel.length-1].y;
+    var gap = (max - min) / (sel.length - 1);
+    sel.forEach(function(c, i){ c.y = min + gap * i; });
+  }
+  pushUndo();
+  renderAll();
+}
+
+function autoArrange(){
+  var ids = Object.keys(selectedCardIds);
+  if(ids.length < 2) return;
+  var sel = [];
+  ids.forEach(function(id){
+    var c = cards.find(function(x){ return x.id === id; });
+    if(c) sel.push(c);
+  });
+  sel.sort(function(a,b){
+    if(Math.abs(a.y - b.y) < 30) return b.x - a.x;
+    return a.y - b.y;
+  });
+  var startX = sel[0].x;
+  var startY = sel[0].y;
+  var cardW = 300, gap = 30;
+  var total = sel.length;
+  var cols = Math.min(Math.max(Math.ceil(Math.sqrt(total)), 2), 6);
+  var idx = 0;
+  for(var row = 0; idx < total; row++){
+    var remain = total - idx;
+    var thisCols = remain < cols ? remain : cols;
+    for(var col = 0; col < thisCols && idx < total; col++){
+      sel[idx].x = startX + col * (cardW + gap);
+      sel[idx].y = startY + row * (130 + gap);
+      idx++;
+    }
+  }
+  pushUndo();
+  renderAll();
 }
 
 function saveData(){
@@ -661,8 +786,23 @@ function batchDelete(){
 
 function updateBatchBtn(){
   var cnt = Object.keys(selectedCardIds).length;
-  if(cnt > 0){ document.getElementById("batchDelBtn").textContent = "🗑 批量删除 ("+cnt+")"; document.getElementById("batchDelBtn").style.display = "inline-block"; }
-  else document.getElementById("batchDelBtn").style.display = "none";
+  var selCount = document.getElementById("selCount");
+  var showAlign = cnt >= 2;
+  var showSpace = cnt >= 3;
+  if(cnt > 0){
+    document.getElementById("batchDelBtn").textContent = "🗑 批量删除 ("+cnt+")";
+    document.getElementById("batchDelBtn").style.display = "inline-block";
+    selCount.textContent = "已选 "+cnt+" 张";
+    selCount.style.display = "inline";
+  } else {
+    document.getElementById("batchDelBtn").style.display = "none";
+    selCount.style.display = "none";
+  }
+  document.getElementById("alignBtn").style.display = showAlign ? "inline-block" : "none";
+  document.getElementById("alignBtnV").style.display = showAlign ? "inline-block" : "none";
+  document.getElementById("arrangeBtn").style.display = showAlign ? "inline-block" : "none";
+  document.getElementById("spaceBtnH").style.display = showSpace ? "inline-block" : "none";
+  document.getElementById("spaceBtnV").style.display = showSpace ? "inline-block" : "none";
 }
 
 function pushUndo(){
@@ -775,18 +915,51 @@ var vp = document.getElementById("viewport");
 vp.addEventListener("mousedown", function(e){
   if(e.target.closest(".card") && editMode) return;
   if(e.button !== 0) return;
+  /* Ctrl+点击 = 框选 */
+  if(e.ctrlKey || e.metaKey){
+    if(!editMode) return;
+    isSelecting = true;
+    selStartX = e.clientX; selStartY = e.clientY;
+    var sb = document.getElementById("selectionBox");
+    sb.style.left = e.clientX+"px";
+    sb.style.top = e.clientY+"px";
+    sb.style.width = "0px";
+    sb.style.height = "0px";
+    sb.style.display = "block";
+    e.preventDefault();
+    return;
+  }
   isPanning = true;
   panStartX = e.clientX; panStartY = e.clientY;
   panOX = panX; panOY = panY;
   this.classList.add("dragging");
 });
 document.addEventListener("mousemove", function(e){
+  if(isSelecting){
+    var sb = document.getElementById("selectionBox");
+    var l = Math.min(selStartX, e.clientX);
+    var t = Math.min(selStartY, e.clientY);
+    var r = Math.max(selStartX, e.clientX);
+    var b = Math.max(selStartY, e.clientY);
+    sb.style.left = l+"px";
+    sb.style.top = t+"px";
+    sb.style.width = (r-l)+"px";
+    sb.style.height = (b-t)+"px";
+    return;
+  }
   if(!isPanning) return;
   panX = panOX + e.clientX - panStartX;
   panY = panOY + e.clientY - panStartY;
   updateTransform();
 });
 document.addEventListener("mouseup", function(){
+  if(isSelecting){
+    isSelecting = false;
+    var sb = document.getElementById("selectionBox");
+    sb.style.display = "none";
+    confirmSelection();
+    return;
+  }
   if(isPanning){ isPanning = false; vp.classList.remove("dragging"); }
 });
 vp.addEventListener("wheel", function(e){
@@ -800,11 +973,12 @@ vp.addEventListener("wheel", function(e){
   updateTransform();
 }, {passive:false});
 
-/* 点击空白取消选中 */
+/* 点击空白取消选中（非Ctrl时） */
 vp.addEventListener("mousedown", function(e){
   if(!editMode) return;
   if(e.target.closest(".card")) return;
   if(e.button !== 0) return;
+  if(e.ctrlKey || e.metaKey) return;  // Ctrl+点击是框选
   selectedCardIds = {};
   document.querySelectorAll(".card.selected").forEach(function(el){el.classList.remove("selected")});
   updateBatchBtn();
