@@ -169,6 +169,7 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
   <button id="arrangeBtn" class="arrange-btn" style="display:none" onclick="autoArrange()">⊞ 自动排列</button>
   <button onclick="undoLast()" style="background:#2a2a3a;color:#aaa">↩ 撤销</button>
   <button onclick="clearConns()" style="background:#2a2a3a;color:#f88">⛌ 清空连线</button>
+  <button id="saveCloudBtn" style="background:#1a1a3a;color:#ffc832" onclick="saveToCloud()">☁ 保存</button>
   <button class="et-del-batch" id="batchDelBtn" style="display:none" onclick="batchDelete()">🗑 批量删除</button>
 </div>
 
@@ -390,6 +391,37 @@ function loadData(){
     document.getElementById("loading").style.display = "none";
   });
 }
+
+/* ====== 保存到云端 ====== */
+function saveToCloud(){
+  var tk = localStorage.getItem('abi_token');
+  if(!tk){ alert('需要 GitHub 登录才能保存到云端。请点击右上角 GitHub 图标登录。'); return; }
+  var btn = document.getElementById('saveCloudBtn');
+  if(btn) btn.textContent = '⏳ 保存中...';
+  var cid = encodeURIComponent(currentCanvas);
+  var ah = {'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tk,'Content-Type':'application/json'};
+  var task = Promise.resolve();
+  task = task.then(function(){ return fetch(SUPABASE_URL+'/rest/v1/task_cards?canvas_id=eq.'+cid, {method:'DELETE',headers:ah}).catch(function(){return null;}); });
+  task = task.then(function(){ return fetch(SUPABASE_URL+'/rest/v1/task_connections?canvas_id=eq.'+cid, {method:'DELETE',headers:ah}).catch(function(){return null;}); });
+  task = task.then(function(){
+    var ps = [];
+    cards.forEach(function(c){
+      ps.push(fetch(SUPABASE_URL+'/rest/v1/task_cards', {method:'POST',headers:ah, body:JSON.stringify({id:c.id,canvas_id:currentCanvas,name:c.title||'',description:c.body||'',x:c.x,y:c.y})}));
+    });
+    connections.forEach(function(cn){
+      ps.push(fetch(SUPABASE_URL+'/rest/v1/task_connections', {method:'POST',headers:ah, body:JSON.stringify({canvas_id:currentCanvas,from_card:cn.from,to_card:cn.to})}));
+    });
+    return Promise.all(ps);
+  });
+  task.then(function(){
+    if(btn) btn.textContent = '✔ 已保存';
+    setTimeout(function(){ if(btn) btn.textContent = '☁ 保存'; }, 2000);
+  }).catch(function(e){
+    console.error('Save failed',e);
+    if(btn) btn.textContent = '✘ 失败';
+  });
+}
+
 
 /* ====== 框选 + 排列功能 ====== */
 function confirmSelection(){
