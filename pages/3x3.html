@@ -150,12 +150,9 @@ body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",s
 <div class="canvas-panel" id="canvasPanel"></div>
 
 <div class="viewport" id="viewport">
-  <svg id="connSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1">
-    <defs>
-      <filter id="connGlow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    </defs>
-  </svg>
-  <div class="canvas" id="canvas"></div>
+  <div class="canvas" id="canvas">
+    <svg id="connSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1"></svg>
+</div>
 </div>
 <div class="selection-box" id="selectionBox"></div>
 
@@ -410,7 +407,7 @@ function saveToCloud(){
       ps.push(fetch(SUPABASE_URL+'/rest/v1/task_cards', {method:'POST',headers:ah, body:JSON.stringify({id:c.id,canvas_id:currentCanvas,name:c.title||'',description:c.body||'',x:c.x,y:c.y})}));
     });
     connections.forEach(function(cn){
-      ps.push(fetch(SUPABASE_URL+'/rest/v1/task_connections', {method:'POST',headers:ah, body:JSON.stringify({canvas_id:currentCanvas,from_card:cn.from,to_card:cn.to})}));
+      ps.push(fetch(SUPABASE_URL+'/rest/v1/task_connections', {method:'POST',headers:ah, body:JSON.stringify({id:crypto.randomUUID(),canvas_id:currentCanvas,from_card:cn.from,to_card:cn.to})}));
     });
     return Promise.all(ps);
   });
