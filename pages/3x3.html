@@ -1172,13 +1172,11 @@ function addCard(type){
 }
 
 function deleteCard(id){
-  if(editMode){
-    var idx = cards.findIndex(function(c){ return c.id === id });
-    if(idx >= 0) cards.splice(idx,1);
-    delete comments[id];
-    pushUndo();
-    renderAll();
-  }
+  var idx = cards.findIndex(function(c){ return c.id === id });
+  if(idx >= 0) cards.splice(idx,1);
+  delete comments[id];
+  pushUndo();
+  renderAll();
 }
 
 function batchDelete(){
