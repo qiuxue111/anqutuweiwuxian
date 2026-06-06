@@ -4,13 +4,13 @@
   <link rel="icon" href="../favicon.ico" type="image/jpeg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>山谷地图 - 暗区突围：无限</title>
+<title>电视台地图 - 暗区突围：无限</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0;padding:0;overflow:hidden}
+body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0;padding:0;overflow:hidden;padding-bottom:60px!important}
 nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem;height:50px;background:#0f0f16;border-bottom:1px solid #222}
 .logo{color:#ffc832;font-weight:bold;font-size:12px;text-decoration:none}
-.map-wrap{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;max-width:none!important;margin:0!important;border:none!important;border-radius:0!important;overflow:hidden!important}
+.map-wrap{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;max-width:none!important;margin:0!important;border:none!important;border-radius:0!important;overflow:visible!important}
 .map-wrap img{display:block;width:100%;-webkit-user-drag:none;user-select:none;pointer-events:none}
 .ctrl{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#0f0f16;border-top:1px solid #1e1e2a;flex-wrap:wrap}
 .ctrl button{background:#1e1e2a;border:none;color:#ccc;padding:3px 6px;border-radius:6px;cursor:pointer;font-size:12px}
@@ -99,11 +99,11 @@ body{overflow:hidden;background:#0a0a0f}
 .mat-ctrl-btn{padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:#aaa;cursor:pointer;font-size:9px;transition:all .1s;flex:1}
 .mat-ctrl-btn:hover{background:rgba(255,200,50,0.1);color:#ffc832;border-color:#ffc832}
 .mat-cat{font-size:12px;color:#666;padding:3px 4px 2px;font-weight:600}
-.mat-items{display:flex;flex-wrap:wrap;gap:3px;padding:0 2px 4px}
-.mat-item{width:46px;padding:3px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;transition:all .1s}
+.mat-items{display:flex;flex-wrap:wrap;gap:4px;padding:0 2px 6px}
+.mat-item{width:60px;padding:4px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .1s}
 .mat-item:hover{background:rgba(255,200,50,0.06);border-color:rgba(255,200,50,0.2)}
-.mat-item img{width:20px;height:20px;border-radius:2px;object-fit:cover}
-.mat-item .mi-name{font-size:8px;color:#999;text-align:center;line-height:1.1}
+.mat-item img{width:28px;height:28px;border-radius:4px;object-fit:cover}
+.mat-item .mi-name{font-size:10px;color:#999;text-align:center;line-height:1.1}
 
 
 .floor-wrap{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;gap:3px;background:rgba(10,10,15,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:4px 5px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
@@ -149,19 +149,30 @@ body{overflow:hidden;background:#0a0a0f}
 .pd-box{max-width:90vw!important;width:auto!important;min-width:300px!important}
 .ly-pop{min-width:280px!important;max-width:90vw!important;width:auto!important}
 </style></head>
-<!DOCTYPE html>
+<body>
+<div id="mapBgHint" onclick="resetView()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0a0a0f;display:flex;align-items:center;justify-content:center;z-index:0;cursor:pointer"><span style="color:#666;font-size:130px;font-family:sans-serif;user-select:none">如果没有地图请点击复位</span></div>
+<div class="hamburger" id="hamburger" onclick="toggleHamburger()">☰</div>
+<div class="hamburger-menu" id="hamburgerMenu"></div>
+<div class="top-bar" id="topBar">
+<a href="../index.html" class="logo">暗区无限</a>
+<div class="sep"></div>
+<button class="btn" onclick="resetView()">复位</button>
+<div class="sep"></div>
+<span id="loginStatus"></span>
+<button class="btn" id="reviewBtn2" onclick="window.location.href='review.html?from=map-tvstation'" style="display:none">审核</button>
+</div><!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta name="robots" content="noindex">
   <link rel="icon" href="../favicon.ico" type="image/jpeg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>山谷地图 - 暗区突围：无限</title>
+<title>电视台地图 - 暗区突围：无限</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0;padding:0;overflow:hidden}
+body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif}
 nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem;height:50px;background:#0f0f16;border-bottom:1px solid #222}
 .logo{color:#ffc832;font-weight:bold;font-size:12px;text-decoration:none}
-.map-wrap{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;max-width:none!important;margin:0!important;border:none!important;border-radius:0!important;overflow:hidden!important}
+.map-wrap{position:relative;width:100%;max-width:1200px;margin:1rem auto;border:1px solid #1e1e2a;border-radius:12px;overflow:hidden}
 .map-wrap img{display:block;width:100%;-webkit-user-drag:none;user-select:none;pointer-events:none}
 .ctrl{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#0f0f16;border-top:1px solid #1e1e2a;flex-wrap:wrap}
 .ctrl button{background:#1e1e2a;border:none;color:#ccc;padding:3px 6px;border-radius:6px;cursor:pointer;font-size:12px}
@@ -232,7 +243,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 1rem
 <style>
 body{overflow:hidden;background:#0a0a0f}
 .navbar,.ctrl,.ly-btn,.controls-inner,#fpl,#mdBtn,#sb,#userArea,#sideMenu,#reviewBtnNN,#zr,#lbb,#vl{display:none!important}
-.top-bar{position:fixed!important;top:8px!important;left:50%!important;transform:translateX(-50%)!important;z-index:10000!important;position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:6px;background:rgba(10,10,15,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:4px 10px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
+.top-bar{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:6px;background:rgba(10,10,15,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:4px 10px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
 .top-bar .logo{color:#ffc832;font-weight:bold;font-size:12px;text-decoration:none}
 .top-bar .sep{width:1px;height:16px;background:rgba(255,255,255,0.06)}
 .top-bar .btn{padding:3px 6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:5px;color:#bbb;cursor:pointer;font-size:12px;transition:all .15s;white-space:nowrap}
@@ -250,11 +261,11 @@ body{overflow:hidden;background:#0a0a0f}
 .mat-ctrl-btn{padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:#aaa;cursor:pointer;font-size:9px;transition:all .1s;flex:1}
 .mat-ctrl-btn:hover{background:rgba(255,200,50,0.1);color:#ffc832;border-color:#ffc832}
 .mat-cat{font-size:10px;color:#666;padding:3px 4px 2px;font-weight:600}
-.mat-items{display:flex;flex-wrap:wrap;gap:3px;padding:0 2px 4px}
-.mat-item{width:46px;padding:3px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;transition:all .1s}
+.mat-items{display:flex;flex-wrap:wrap;gap:4px;padding:0 2px 6px}
+.mat-item{width:60px;padding:4px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .1s}
 .mat-item:hover{background:rgba(255,200,50,0.06);border-color:rgba(255,200,50,0.2)}
-.mat-item img{width:20px;height:20px;border-radius:2px;object-fit:cover}
-.mat-item .mi-name{font-size:8px;color:#999;text-align:center;line-height:1.1}
+.mat-item img{width:28px;height:28px;border-radius:4px;object-fit:cover}
+.mat-item .mi-name{font-size:10px;color:#999;text-align:center;line-height:1.1}
 
 
 .floor-wrap{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;gap:3px;background:rgba(10,10,15,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:4px 5px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
@@ -302,13 +313,15 @@ body{overflow:hidden;background:#0a0a0f}
 </style></head>
 <body>
 <div id="mapBgHint" onclick="resetView()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0a0a0f;display:flex;align-items:center;justify-content:center;z-index:0;cursor:pointer"><span style="color:#666;font-size:130px;font-family:sans-serif;user-select:none">如果没有地图请点击复位</span></div>
-<div id="versionInfo" style="position:fixed;top:12px;left:55px;z-index:99999999;font-size:11px;color:rgba(255,200,50,0.7);font-family:monospace;pointer-events:none">v1.18</div>
 <div class="hamburger" id="hamburger" onclick="toggleHamburger()">☰</div>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar"><a href="../index.html" class="logo">暗区无限</a><div class="sep"></div><button class="btn" onclick="resetView()">复位</button>
-<button class="btn" onclick="resetPositions()">↺ 归位</button><div class="sep"></div><span class="user-name" id="userName2"></span><button class="btn" id="loginBtn2" onclick="loginGitHub()">登录</button><button class="btn" id="reviewBtn2" onclick="window.location.href='review.html?from=map-valley'" style="display:none">审核</button></div>
+<button class="btn" onclick="resetPositions()">↺ 归位</button><div class="sep"></div><span class="user-name" id="userName2"></span><button class="btn" id="loginBtn2" onclick="loginGitHub()">登录</button><button class="btn" id="reviewBtn2" onclick="window.location.href='review.html?from=map-tvstation'" style="display:none">审核</button></div>
 <div class="mat-panel" id="matPanel"><button class="mat-btn" id="matBtn" onclick="toggleMat()">📦 物资</button><div class="mat-content" id="matContent"></div></div>
-<div class="floor-wrap" id="floorWrap" style="display:none"
+<div class="floor-wrap" id="floorWrap" style="position:fixed!important;bottom:10px!important;left:50%!important;transform:translateX(-50%)!important;z-index:99999!important;display:flex;gap:6px;background:rgba(10,10,15,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:4px 5px">
+  <button class="floor-btn active" data-floor="0" onclick="switchFloor(0)">电视台全境</button>
+  <button class="floor-btn" data-floor="1" onclick="switchFloor(1)">电视台二楼</button>
+</div>
 <div class="action-bar" id="actionBar"><button class="action-btn" onclick="toggleMode()">📦<span class="ab-tip"></span></button><button class="action-btn" onclick="toggleFullscreen()">⛶<span class="ab-tip">全屏</span></button></div>
 <div class="zoom-wrap" id="zoomWrap"><button class="zoom-btn" onclick="zoom(1.25)">+</button><div class="zoom-sep"></div><button class="zoom-btn" onclick="zoom(0.8)">-</button><div class="zoom-sep"></div><div class="zoom-pct" id="zl2">100%</div></div>
 <nav class="navbar">
@@ -358,8 +371,9 @@ body{font-size:14px!important}
 .floor-btn{min-width:80px!important;height:30px!important;padding:4px 10px!important;font-size:12px!important}
 #hamburger{width:36px!important;height:36px!important;font-size:18px!important}
 .mat-panel{width:170px!important;min-width:170px!important;max-width:170px!important}
-.mat-item{width:46px!important;min-width:46px!important;max-width:46px!important;height:54px!important}
-.mat-item img{width:22px!important;height:22px!important}
+.mat-item{width:60px!important;min-width:60px!important;max-width:60px!important;height:68px!important}
+.mat-item img{width:28px!important;height:28px!important}
+.mat-item .mi-name{font-size:10px!important}
 .mat-btn{min-width:154px!important;height:auto!important;font-size:inherit!important;white-space:nowrap!important}
 .mat-ctrl-btn{height:28px!important;font-size:12px!important;padding:2px 10px!important}
 .mat-ctrl-btn.all-on{background:rgba(255,200,50,0.15)!important;color:#ffc832!important;border-color:#ffc832!important;font-weight:600!important}
@@ -376,7 +390,7 @@ body{font-size:14px!important}
 </style>
   <button class="ly-btn" id="lbb">图层</button>
   <div id="mv" style="transform-origin:0 0;cursor:grab">
-    <img src="../assets/maps/valley.png" draggable="false" id="mapImg" style="display:block;width:100%">
+    <img src="../assets/maps/tvstation.png" draggable="false" id="mapImg" style="display:block;width:100%">
   </div>
   </div>
   <div class="ctrl">
@@ -450,7 +464,7 @@ try { isMobile = ('ontouchstart' in window && window.innerWidth < 600 && !naviga
   if(m) window.location.href = 'map-mobile.html?map=' + m[1];
 })();
 
-// ===== 归一化坐标辅助函数 (由 map-common 注入) =====
+// ===== 归一化坐标辅助函数 =====
 function getImgSize2(){var img$$1=document.getElementById('mapImg');if(!img$$1)return{w:0,h:0};return{w:img$$1.naturalWidth||img$$1.width||0,h:img$$1.naturalHeight||img$$1.height||0};}
 function pctToPx(pctX,pctY,imgW,imgH){if(!imgW){var s=getImgSize2();imgW=s.w;imgH=s.h;}if(!imgW||!imgH)return{px:0,py:0};return{px:Math.round(pctX/100*imgW),py:Math.round(pctY/100*imgH)};}
 function pxToPct(px,py,imgW,imgH){if(!imgW){var s=getImgSize2();imgW=s.w;imgH=s.h;}if(!imgW||!imgH)return{x:0,y:0};return{x:px/imgW*100,y:py/imgH*100};}
@@ -462,12 +476,15 @@ function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return
 function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return localStorage.getItem('abi_user')||'已登录';}}
 (function(){normalizeUser();var t=localStorage.getItem('abi_token');var un=document.getElementById('userName');var lb=document.getElementById('loginBtn');var rb=document.getElementById('reviewBtnMM');if(t&&un){un.style.display='inline';un.textContent=getUserName();}if(t&&lb)lb.style.display='none';if(rb)rb.style.display=t?'block':'none';setTimeout(function(){normalizeUser();var t2=localStorage.getItem('abi_token');var un2=document.getElementById('userName');var lb2=document.getElementById('loginBtn');var rb2=document.getElementById('reviewBtnMM');if(t2&&un2){un2.style.display='inline';un2.textContent=getUserName();}if(t2&&lb2)lb2.style.display='none';if(rb2)rb2.style.display=t2?'block':'none';},500);})();
 if((window.location.hash||'').indexOf('access_token')>=0||(window.location.search||'').indexOf('access_token')>=0){try{var raw=(window.location.hash||window.location.search).replace(/^[#?]/,'');var p={};raw.split('&').forEach(function(s){var kv=s.split('=');p[kv[0]]=decodeURIComponent(kv[1]||'');});if(p.access_token){localStorage.setItem('abi_token',p.access_token);try{var b64=p.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var u=JSON.parse(atob(b64));localStorage.setItem('abi_user',JSON.stringify(u));}catch(e){localStorage.setItem('abi_user','{"user_metadata":{"preferred_username":"User"}}');}history.replaceState(null,'',window.location.pathname+window.location.search);window.location.href=window.location.pathname+window.location.search;}}catch(e){console.error('Auth err',e);}}
-var mapNameEng='valley',mapNameCN='山谷',cloudPins=[],cloudComments=[];
+var mapNameEng='tvstation',mapNameCN='电视台',cloudPins=[],cloudComments=[];
 // ========== 楼层切换 ==========
-var floorImages = ["../assets/maps/valley.png"];
+var floorImages = [
+  '../assets/maps/tvstation.png',
+  '../assets/maps/tvstation_电视台二楼.png'
+];
 var floorLabels = [
-  '山谷全境',
-  '山谷二楼'
+  '电视台全境',
+  '电视台二楼'
 ];
 var currentFloor = 0;
 
@@ -498,9 +515,14 @@ function supabase(t,m,b,f){var u='https://hanrfbciinkhgcumvous.supabase.co/rest/
 function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
 function logout(){localStorage.removeItem('abi_token');localStorage.removeItem('abi_user');window.location.reload();}
 function ut(){var el=document.getElementById('mv');if(!el)return;el.style.transform='translate('+panX+'px,'+panY+'px) scale('+scaleM+')';var zr=document.getElementById('zr');if(zr)zr.value=Math.round(scaleM*100);var zl=document.getElementById('zl');if(zl)zl.textContent=Math.round(scaleM*100)+'%';try{renderMarkers();}catch(e){}}
-function zoom(f,cx,cy){if(cx===void 0||cy===void 0){scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>1600)scaleM=10;ut();return;}var prev=scaleM;scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>1600)scaleM=10;var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=cx-wr.left,my=cy-wr.top;var imgX=(mx-panX)/prev,imgY=(my-panY)/prev;panX=mx-imgX*scaleM;panY=my-imgY*scaleM;ut();}
+function zoom(f,cx,cy){if(cx===void 0||cy===void 0){scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>10)scaleM=10;ut();return;}var prev=scaleM;scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>10)scaleM=10;var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=cx-wr.left,my=cy-wr.top;var imgX=(mx-panX)/prev,imgY=(my-panY)/prev;panX=mx-imgX*scaleM;panY=my-imgY*scaleM;ut();}
 function zoomTo(v,cx,cy){v=v/100;if(v<0.1)v=0.1;if(v>10)v=10;if(cx!==void 0&&cy!==void 0){var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=cx-wr.left,my=cy-wr.top;var imgX=(mx-panX)/scaleM,imgY=(my-panY)/scaleM;panX=mx-imgX*v;panY=my-imgY*v;}scaleM=v;ut();}
 function resetView(){scaleM=1;panX=0;panY=0;var e=document.getElementById('mv');if(e)e.style.transform='translate(0px,0px) scale(1)';var zr=document.getElementById('zr');if(zr)zr.value=100;var zl=document.getElementById('zl');if(zl)zl.textContent='100%';}
+document.addEventListener('DOMContentLoaded',function(){
+  document.addEventListener('click',function(e){
+    if(e.target===document.body){resetView();}
+  });
+});
 window.onerror=function(m,s,l,c,err){console.error('JS err',m,l,c);alert('Err: '+m);return true;};
 function toggleMode(){mode=(mode==='browse')?'place':'browse';var btn=document.getElementById('mdBtn');if(btn)btn.textContent=(mode==='place')?'[P] 放置':'[B] 浏览';document.getElementById('ch').classList.toggle('show',mode==='place');document.getElementById('cv').textContent='-';document.getElementById('ab').style.display='none';}
 document.body.addEventListener('mousedown',function(e){if(mode==='place')return;var btn=e.button;var mv=document.getElementById('mv');if(!mv||e.target.closest('.pin-marker')||e.target.closest('.pd-overlay')||e.target.closest('.controls')||e.target.closest('#fp'))return;var sx=e.clientX,sy=e.clientY,px=panX,py=panY;var moved=false;function mm(ev){if(mode==='place'){document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);return;}var dx=ev.clientX-sx,dy=ev.clientY-sy;if(Math.abs(dx)>3||Math.abs(dy)>3)moved=true;panX=px+dx;panY=py+dy;ut();}function mu(ev){document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);if(!moved&&btn===0){var ch=document.getElementById('ch');if(mode==='place'){ch.style.left=ev.clientX+'px';ch.style.top=ev.clientY+'px';ch.classList.add('show');extractPos(ev);}}else if(moved&&btn===0){document.getElementById('ch').classList.remove('show');}}document.addEventListener('mousemove',mm);document.addEventListener('mouseup',mu);});
@@ -514,10 +536,9 @@ var sb=document.getElementById('sb');if(sb)sb.onclick=function(){showPicker();mo
 var lb=document.getElementById('lbb');if(lb){var lp=document.getElementById('lp');if(lp){lb.onclick=function(e){e.stopPropagation();lp.classList.toggle('show');if(lp.classList.contains('show')){renderLayers();}};document.addEventListener('click',function(ev){if(lp&&!lp.contains(ev.target)&&ev.target!==document.getElementById('lbb'))lp.classList.remove('show');});}}
 if(typeof renderMarkers==='function')renderMarkers();
 function toggleMenu(){var m=document.getElementById('sideMenu');if(m){m.style.display=(m.style.display==='none'||!m.style.display)?'block':'none';}}
-var us=new URLSearchParams(window.location.search);setTimeout(function(){if(us.get('x')&&us.get('y')){jumpToFromUrl();}else{loadCloudPins();}checkReviewBtn();if(typeof currentFloor==='number'){filterPinsByFloor(currentFloor);}},300);
+var us=new URLSearchParams(window.location.search);setTimeout(function(){if(us.get('x')&&us.get('y')){jumpToFromUrl();}loadCloudPins();checkReviewBtn();if(typeof currentFloor==='number'){filterPinsByFloor(currentFloor);}},300);
 var layerData={'红色':['保险箱','滴滴保险','电子保险','小保险','军用保险箱'],'金色':['大衣','高级工具箱','文件箱','商务旅行箱','空调罐'],'紫色':['抽屉','运动包','白色旅行箱','工具箱'],'白色':['刮刮乐','置物箱','大型物料箱','垃圾箱','饼干盒','蓝领工装','衣服'],'电子':['收银机','家用机箱','军用主机'],'弹药':['子弹箱','手雷箱'],'医疗':['大型医疗箱','医疗箱','高级医疗箱','小型医疗箱'],'武器':['大型武器箱','中型武器箱','木质武器箱','军需物资箱','高级武器箱','长条武器箱','配件箱'],'其他':['三色灯','共鸣球','奉献雕像','后备箱'],'人机':['BOSS','清道夫','黑金人机','白狼人机']};
-var orders=['红色','金色','紫色','白色','电子','弹药','医疗','武器','其他','人机'];
-function getPinColor(n){
+var orders=['红色','金色','紫色','白色','电子','弹药','医疗','武器','其他','人机'];function getPinColor(n){
   for(var k in layerData){
     if(layerData[k].indexOf(n)>=0){
       if(k==='红色')return '#ff4444';
@@ -555,9 +576,9 @@ function getMatColor(n){
 }
 
 function showPicker(){var old=document.getElementById('cpMenu');if(old)old.remove();var menu=document.createElement('div');menu.id='cpMenu';menu.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a24;border:1px solid #333;border-radius:12px;padding:16px;max-height:80vh;overflow-y:auto;z-index:9999;min-width:320px;max-width:420px';var title=document.createElement('div');title.style.cssText='font-size:15px;color:#ffc832;font-weight:600;margin-bottom:12px;text-align:center';title.textContent='Select Container';menu.appendChild(title);orders.forEach(function(layer){var items=layerData[layer];if(!items||items.length===0)return;var group=document.createElement('div');group.style.cssText='margin-bottom:12px';var label=document.createElement('div');label.style.cssText='font-size:12px;color:#888;margin-bottom:6px;font-weight:600';label.textContent='['+layer+']';group.appendChild(label);var grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(2,1fr);gap:8px';items.forEach(function(item){var btn=document.createElement('button');btn.style.cssText='padding:8px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:8px;color:#ddd;cursor:pointer;font-size:12px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px';var ic=getIconUrl(item);if(ic){var img=document.createElement('img');img.src=ic;img.style.cssText='width:48px;height:48px;border-radius:6px;object-fit:cover';img.onerror=function(){this.style.display='none';};btn.appendChild(img);}var span=document.createElement('span');span.textContent=item;btn.appendChild(span);btn.onclick=function(t){return function(){placePin(t);menu.remove();};}(item);grid.appendChild(btn);});group.appendChild(grid);menu.appendChild(group);});var cb=document.createElement('button');cb.textContent='Cancel';cb.style.cssText='margin-top:12px;padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:8px;color:#888;cursor:pointer;font-size:14px;width:100%';cb.onclick=function(){menu.remove();};menu.appendChild(cb);document.body.appendChild(menu);}
-function placePin(tp){if(!localStorage.getItem('abi_token')){alert('Login required to submit');loginGitHub();return;}var cv=document.getElementById('cv');if(!cv||cv.textContent==='-'){alert('Click map first');return;}var parts=cv.textContent.split(',');var x=parseFloat(parts[0]);var y=parseFloat(parts[1]);if(isNaN(x)||isNaN(y)){alert('Invalid pos');return;}var uj=localStorage.getItem('abi_user');var uname='Anon';try{if(uj){var uo=JSON.parse(uj);if(uo&&uo.user_metadata&&uo.user_metadata.user_name)uname=uo.user_metadata.user_name;else if(uo&&uo.email)uname=uo.email.split('@')[0];}}catch(e){}var cf=typeof currentFloor==='number'?currentFloor:0;var p={name:tp,x:x,y:y,note:'',images:[],comments:[],};pins.push(p);renderMarkers();cv.textContent='-';document.getElementById('ab').style.display='none';var btn=document.getElementById('mdBtn');if(btn)btn.textContent='[B] 浏览';var type='other';for(var cat in layerData){if(layerData[cat].indexOf(tp)>=0){type=cat;break;}}supabase('pending_pins','POST',{name:tp,x:x,y:y,map_name:mapNameCN,type:type,ic:'',note:'',images:[],floor:cf,submitted_by:uname}).then(function(r){alert('\u5df2\u63d0\u4ea4\u5ba1\u6838');var ov=document.createElement('div');ov.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #ffc832;border-radius:10px;padding:12px 20px;z-index:99999;max-width:90vw;text-align:center';var u=window.location.origin+window.location.pathname.replace(/\/[^\/]+$/,'/map-valley.html')+'?x='+x+'&y='+y+'&floor='+cf;ov.innerHTML='<div style="color:#ffc832;font-size:14px;font-weight:600;margin-bottom:8px">\u5df2\u63d0\u4ea4\u5ba1\u6838<\/div><div style="color:#888;font-size:12px;margin-bottom:10px">\u7b49\u5f85\u7ba1\u7406\u5458\u5ba1\u6838\u540e\u5c06\u663e\u793a\u5728\u5730\u56fe\u4e0a<\/div><a href="'+u+'" style="color:#88aaff;font-size:12px;text-decoration:underline">\ud83d\udccd \u5728\u5730\u56fe\u4e0a\u67e5\u770b\u4f4d\u7f6e<\/a><br><button onclick="this.parentElement.remove()" style="margin-top:10px;padding:4px 16px;background:#333;border:none;border-radius:6px;color:#888;cursor:pointer">\u5173\u95ed<\/button>';document.body.appendChild(ov);})['catch'](function(e){alert('Upload failed: '+e.message);});localStorage.setItem('abi_'+mapNameEng+'_pins',JSON.stringify({pins:pins,mapComments:mapComments}));}
-function renderMarkers(){var mv=document.getElementById('mv');if(!mv)return;mv.querySelectorAll('.pin-marker').forEach(function(el){el.remove();});pins.forEach(function(p,i){if(typeof selectedLayers!=='undefined'&&selectedLayers[p.name]===false)return;var el=document.createElement('div');el.className='pin-marker';el.setAttribute('data-pin-idx',i);var imgW__=img?img.naturalWidth||img.width||0:0,imgH__=img?img.naturalHeight||img.height||0:0;var lp__=p.px!==void 0&&p.py!==void 0&&imgW__>0?(p.px/imgW__*100)+'%':p.x+'%';var tp__=p.px!==void 0&&p.py!==void 0&&imgH__>0?(p.py/imgH__*100)+'%':p.y+'%';el.style.cssText='position:absolute;left:'+lp__+';top:'+tp__+';transform:translate(-50%,-50%);pointer-events:none;z-index:5000;overflow:hidden;display:flex;align-items:center;justify-content:center;visibility:visible';var ic=getIconUrl(p.name);if(ic&&ic.indexOf('http')===0){var img=document.createElement('img');img.src=ic;var s=Math.max(3,Math.min(100,48/scaleM));var bw=Math.max(0.25,Math.min(2,1.2/scaleM));var br=Math.max(2,Math.min(6,3/scaleM));img.style.cssText="width:"+s+"px;height:"+s+"px;max-width:"+s+"px;max-height:"+s+"px;border-radius:"+br+"px;object-fit:cover;border:"+bw+"px solid "+(getPinColor(p.name)||"rgba(255,200,50,0.6)")+";box-shadow:0 0 "+Math.min(6,1.5/scaleM)+"px rgba(0,0,0,0.5);pointer-events:auto";img.onerror=function(){this.style.display="none";};var bg=document.createElement("div");bg.style.cssText="width:"+s+"px;height:"+s+"px;border-radius:"+br+"px;background:rgba(0,0,0,0.35);position:absolute;left:0;top:0;pointer-events:none;border:"+bw+"px solid rgba(255,255,255,0.08)";el.appendChild(bg);el.appendChild(img);}else if(ic){var sp=document.createElement('span');sp.textContent=ic;var fs=scaleM>=17?2.5:Math.min(36,20/Math.pow(scaleM,1.176));sp.style.cssText='font-size:'+fs+'px;line-height:1;text-align:center;display:block';el.appendChild(sp);var dot=document.createElement('div');var ds=scaleM>=17?2.5:Math.min(60,36/Math.pow(scaleM,1.176));dot.style.cssText='width:'+ds+'px;height:'+ds+'px;border-radius:50%;background:'+(scaleM>=12?'transparent':(getPinColor(p.name)||'#ffc832'))+';border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid '+(scaleM>=12?'transparent':'#fff')+';box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5);display:none';el.appendChild(dot);}else{var dot=document.createElement('div');var ds=scaleM>=12?3:Math.min(60,36/Math.pow(scaleM,1.176));dot.style.cssText='width:'+ds+'px;height:'+ds+'px;border-radius:50%;background:'+(getPinColor(p.name)||'#ffc832')+';border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid #fff;box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5)';el.appendChild(dot);}el.onclick=function(e){e.stopPropagation();showPinDetail(i);};if(p.note) el.title=p.name+(p.note?' - '+p.note:''); else if(!p.note) el.title=p.name;var pf=(p.floor!==undefined&&p.floor!==null)?p.floor:0;el.style.display=pf===currentFloor?"":"none";mv.appendChild(el);});setTimeout(dispatchLayerCheck,100);}
-function showPinDetail(idx){curPinIdx=idx;var p=pins[idx];var ic=getIconUrl(p.name);var title=document.getElementById('pdTitle');if(title){title.innerHTML='';if(ic){var img=document.createElement('img');img.src=ic;img.style.cssText='width:28px;height:28px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px';title.appendChild(img);}title.appendChild(document.createTextNode(' '+(p.name||p.type||'?')));}var ps=document.getElementById('pdSubmit');if(ps){  ps.textContent=(p.submitted_by?'贡献者: '+p.submitted_by:'');}var pc=document.getElementById('pdCoord');if(pc)pc.textContent=Math.round(p.x)+'%, '+Math.round(p.y)+'%';var note=document.getElementById('pdNote');if(note)note.value=p.note||'';// renderPinImages removed
+function placePin(tp){if(!localStorage.getItem('abi_token')){alert('Login required to submit');loginGitHub();return;}var cv=document.getElementById('cv');if(!cv||cv.textContent==='-'){alert('Click map first');return;}var parts=cv.textContent.split(',');var x=parseFloat(parts[0]);var y=parseFloat(parts[1]);if(isNaN(x)||isNaN(y)){alert('Invalid pos');return;}var uj=localStorage.getItem('abi_user');var uname='Anon';try{if(uj){var uo=JSON.parse(uj);if(uo&&uo.user_metadata&&uo.user_metadata.user_name)uname=uo.user_metadata.user_name;else if(uo&&uo.email)uname=uo.email.split('@')[0];}}catch(e){}var cf=typeof currentFloor==='number'?currentFloor:0;var p={name:tp,x:x,y:y,note:'',images:[],comments:[],};pins.push(p);renderMarkers();cv.textContent='-';document.getElementById('ab').style.display='none';var btn=document.getElementById('mdBtn');if(btn)btn.textContent='[B] 浏览';var type='other';for(var cat in layerData){if(layerData[cat].indexOf(tp)>=0){type=cat;break;}}supabase('pending_pins','POST',{name:tp,x:x,y:y,px:px__,py:py__,map_name:mapNameCN,type:type,ic:'',note:'',images:[],floor:cf,submitted_by:uname}).then(function(r){alert('\u5df2\u63d0\u4ea4\u5ba1\u6838');var ov=document.createElement('div');ov.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #ffc832;border-radius:10px;padding:12px 20px;z-index:99999;max-width:90vw;text-align:center';var u=window.location.origin+window.location.pathname.replace(/\/[^\/]+$/,'/map-tvstation.html')+'?x='+x+'&y='+y+'&floor='+cf;ov.innerHTML='<div style="color:#ffc832;font-size:14px;font-weight:600;margin-bottom:8px">\u5df2\u63d0\u4ea4\u5ba1\u6838<\/div><div style="color:#888;font-size:12px;margin-bottom:10px">\u7b49\u5f85\u7ba1\u7406\u5458\u5ba1\u6838\u540e\u5c06\u663e\u793a\u5728\u5730\u56fe\u4e0a<\/div><a href="'+u+'" style="color:#88aaff;font-size:12px;text-decoration:underline">\ud83d\udccd \u5728\u5730\u56fe\u4e0a\u67e5\u770b\u4f4d\u7f6e<\/a><br><button onclick="this.parentElement.remove()" style="margin-top:10px;padding:4px 16px;background:#333;border:none;border-radius:6px;color:#888;cursor:pointer">\u5173\u95ed<\/button>';document.body.appendChild(ov);})['catch'](function(e){alert('Upload failed: '+e.message);});localStorage.setItem('abi_'+mapNameEng+'_pins',JSON.stringify({pins:pins,mapComments:mapComments}));}
+function renderMarkers(){var mv=document.getElementById('mv');if(!mv)return;mv.querySelectorAll('.pin-marker').forEach(function(el){el.remove();});pins.forEach(function(p,i){if(typeof selectedLayers!=='undefined'&&selectedLayers[p.name]===false)return;var el=document.createElement('div');el.className='pin-marker';el.setAttribute('data-pin-idx',i);var imgW__=img?(img.naturalWidth||img.width||0):0,imgH__=img?(img.naturalHeight||img.height||0):0;var lp__=p.px!==void 0&&p.py!==void 0&&imgW__>0?(p.px/imgW__*100)+'%':p.x+'%';var tp__=p.px!==void 0&&p.py!==void 0&&imgH__>0?(p.py/imgH__*100)+'%':p.y+'%';el.style.cssText='position:absolute;left:'+lp__+';top:'+tp__+';transform:translate(-50%,-50%);cursor:pointer;z-index:100;';var ic=getIconUrl(p.name);if(ic&&ic.indexOf('http')===0){var img=document.createElement('img');img.src=ic;var s=Math.min(100,60/Math.pow(scaleM,1.176));img.style.cssText='width:'+s+'px;height:'+s+'px;border-radius:'+Math.min(10,4/Math.pow(scaleM,1.176))+'px;object-fit:cover;border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid '+(getPinColor(p.name)||'rgba(255,200,50,0.6)')+';box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5)';img.onerror=function(){this.style.display='none';};el.appendChild(img);var dot=document.createElement('div');var ds=Math.min(60,36/Math.pow(scaleM,1.176));dot.style.cssText='width:'+ds+'px;height:'+ds+'px;border-radius:50%;background:'+(getPinColor(p.name)||'#ffc832')+';border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid #fff;box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5);display:none';el.appendChild(dot);}else if(ic){var sp=document.createElement('span');sp.textContent=ic;var fs=Math.min(36,20/Math.pow(scaleM,1.176));sp.style.cssText='font-size:'+fs+'px;line-height:1;text-align:center;display:block';el.appendChild(sp);var dot=document.createElement('div');var ds=Math.min(60,36/Math.pow(scaleM,1.176));dot.style.cssText='width:'+ds+'px;height:'+ds+'px;border-radius:50%;background:'+(getPinColor(p.name)||'#ffc832')+';border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid #fff;box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5);display:none';el.appendChild(dot);}else{var dot=document.createElement('div');var ds=Math.min(60,36/Math.pow(scaleM,1.176));dot.style.cssText='width:'+ds+'px;height:'+ds+'px;border-radius:50%;background:'+(getPinColor(p.name)||'#ffc832')+';border:'+Math.min(3,2/Math.pow(scaleM,1.176))+'px solid #fff;box-shadow:0 0 '+Math.min(12,5/Math.pow(scaleM,1.176))+'px rgba(0,0,0,0.5)';el.appendChild(dot);}el.onclick=function(e){e.stopPropagation();showPinDetail(i);};if(p.note) el.title=p.note;var pf=(p.floor!==undefined&&p.floor!==null)?p.floor:0;el.style.display=pf===currentFloor?"":"none";mv.appendChild(el);});setTimeout(dispatchLayerCheck,100);}
+function showPinDetail(idx){curPinIdx=idx;var p=pins[idx];var ic=getIconUrl(p.name);var title=document.getElementById('pdTitle');if(title){title.innerHTML='';if(ic){var img=document.createElement('img');img.src=ic;img.style.cssText='width:28px;height:28px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px';title.appendChild(img);}title.appendChild(document.createTextNode(' '+(p.name||p.type||'?')));}var ps=document.getElementById('pdSubmit');if(ps){  ps.textContent=(p.submitted_by?'贡献者: '+p.submitted_by:'');}var pc=document.getElementById('pdCoord');if(pc)pc.textContent=Math.round(p.x)+'%, '+Math.round(p.y)+'%';var note=document.getElementById('pdNote');if(note){note.value=p.note||'';saveNote(idx,note);}var nd=document.getElementById('pdNoteDisplay');if(nd){if(p.note){nd.textContent='✉ '+p.note;nd.style.display='block';}else{nd.style.display='none';}}
 var pd=document.getElementById('pd');if(pd)pd.classList.add('show');loadPinComments(idx);}
 async function loadPinComments(pinIdx){
   if(pinIdx===undefined||pinIdx===null)return;
@@ -596,7 +617,7 @@ function closePinDetail(){document.getElementById('pd').classList.remove('show')
 
 // removed addPinImages
 
-function deleteCurrentPin(){if(curPinIdx===null)return;var p=pins[curPinIdx];if(!confirm('确定删除该容器?'))return;var ustr=localStorage.getItem('abi_user');var uname='Anon';try{var uj=JSON.parse(ustr);uname=uj.user_metadata&&uj.user_metadata.preferred_username||uj.user_metadata&&uj.user_metadata.user_name||'Anon';}catch(e){}if(p.id){supabase('deletion_requests','POST',{pin_id:p.id,name:p.name,x:Number(p.x),y:Number(p.y),submitted_by:uname,reason:p.note||'',floor:Number(p.floor)||0,map_name:mapNameCN||''}).then(function(){alert('已提交删除审核');pins.splice(curPinIdx,1);closePinDetail();renderMarkers();})}else{pins.splice(curPinIdx,1);closePinDetail();renderMarkers();}
+function deleteCurrentPin(){if(curPinIdx===null)return;var p=pins[curPinIdx];if(!confirm('确定删除该容器?'))return;var ustr=localStorage.getItem('abi_user');var uname='Anon';try{var uj=JSON.parse(ustr);uname=uj.user_metadata&&uj.user_metadata.preferred_username||uj.user_metadata&&uj.user_metadata.user_name||'Anon';}catch(e){}if(p.id){supabase('deletion_requests','POST',{pin_id:p.id,name:p.name,x:Number(p.x),y:Number(p.y),px:Number(p.px)||0,py:Number(p.py)||0,submitted_by:uname,reason:p.note||'',floor:Number(p.floor)||0,map_name:mapNameCN||''}).then(function(){alert('已提交删除审核');pins.splice(curPinIdx,1);closePinDetail();renderMarkers();})}else{pins.splice(curPinIdx,1);closePinDetail();renderMarkers();}
 }
 
 function renderPinComments(){
@@ -851,9 +872,9 @@ function renderLayers(){
 function toggleAllLayers(c){var lp=document.getElementById('lp');if(lp)lp.querySelectorAll('input[type=checkbox]').forEach(function(cb){cb.checked=c;});dispatchLayerCheck();}
 function toggleLayer(n,c){var lp=document.getElementById('lp');if(lp)lp.querySelectorAll('input[data-name]').forEach(function(cb){var t=cb.getAttribute('data-name');if(layerData[n]&&layerData[n].indexOf(t)>=0)cb.checked=c;});dispatchLayerCheck();}
 function loadCloudPins(){supabase('pins?map_name=eq.'+encodeURIComponent(mapNameCN),'GET').then(function(d){if(d&&d.length){cloudPins=d;}loadCloudMarkers();loadMapComments();filterPinsByFloor(currentFloor);})['catch'](function(){loadCloudMarkers();filterPinsByFloor(currentFloor);});}
-function loadCloudMarkers(){try{if(cloudPins.length){cloudPins.forEach(function(cp){if(cp.x!==void 0){ensurePxPy(cp); pins.push({name:cp.name,x:cp.x,y:cp.y,px:cp.px,py:cp.py,id:cp.id,note:cp.note||'',images:cp.images||[],comments:cp.comments||[],floor:cp.floor||0,map_name:cp.map_name||''});}});}if(cloudComments.length){cloudComments.forEach(function(cc){mapComments.push(cc);});}renderMarkers();renderMapComments();}catch(e){}}
+function loadCloudMarkers(){try{if(cloudPins.length){cloudPins.forEach(function(cp){if(cp.x!==void 0){ensurePxPy(cp);pins.push({name:cp.name,x:cp.x,y:cp.y,px:cp.px,py:cp.py,id:cp.id,note:cp.note||'',images:cp.images||[],comments:cp.comments||[],floor:cp.floor||0,map_name:cp.map_name||''});}});}if(cloudComments.length){cloudComments.forEach(function(cc){mapComments.push(cc);});}renderMarkers();renderMapComments();}catch(e){}}
 function loadFromLocal(){try{var d=JSON.parse(localStorage.getItem('abi_'+mapNameEng+'_pins'));if(d){if(d.pins)pins=d.pins;if(d.mapComments)mapComments=d.mapComments;}}catch(e){}}
-function jumpToFromUrl(){var s=new URLSearchParams(window.location.search);var x=s.get('x'),y=s.get('y'),fl=s.get('floor');if(!x||!y)return;_jumpingMarker=true;var xf=parseFloat(x),yf=parseFloat(y),targetFloor=-1;if(fl&&typeof switchFloor==='function'){var fi=parseInt(fl);if(!isNaN(fi)&&fi>0&&fi<floorImages.length){targetFloor=fi;}}var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var img=document.getElementById('mapImg');if(!img||!img.complete||img.naturalWidth===0){setTimeout(jumpToFromUrl,200);return;}if(targetFloor>=0){switchFloor(targetFloor);targetFloor=-1;setTimeout(jumpToFromUrl,500);return;}scaleM=8;panX=(wr.width/2)-xf/100*img.clientWidth*scaleM;panY=(wr.height/2)-yf/100*img.clientHeight*scaleM;ut();document.getElementById('zr').value=800;document.getElementById('zl').textContent='800%';var mv=document.getElementById('mv');if(!mv)return;var name=s.get('name')||'';setTimeout(function(){var div=document.createElement('div');div.style.cssText='position:absolute;left:'+xf+'%;top:'+yf+'%;transform:translate(-50%,-50%);z-index:998;text-align:center;pointer-events:none;width:14px;height:14px;border:2px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.08);animation:blinkBorder 1.2s ease-in-out infinite';var inner=document.createElement('div');inner.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center';var ic=getIconUrl(name);if(ic){var imgE=document.createElement('img');imgE.src=ic;imgE.style.cssText='width:6px;height:6px;border-radius:1px;object-fit:cover';imgE.onerror=function(){var d=document.createElement('div');d.style.cssText='width:6px;height:6px;background:#ff4444;border-radius:50%';this.parentElement.replaceChild(d,this);};inner.appendChild(imgE);}else{var dot=document.createElement('div');dot.style.cssText='width:6px;height:6px;background:#ff4444;border-radius:50%';inner.appendChild(dot);}div.appendChild(inner);mv.appendChild(div);setTimeout(loadCloudPins,500);},100);var style=document.createElement('style');style.textContent='@keyframes blinkBorder{0%,100%{border-color:#ff3333;box-shadow:0 0 4px rgba(255,50,50,.5)}50%{border-color:#ff8888;box-shadow:0 0 10px rgba(255,50,50,.9)}}';document.head.appendChild(style);}
+function jumpToFromUrl(){var s=new URLSearchParams(window.location.search);var x=s.get('x'),y=s.get('y'),fl=s.get('floor');if(!x||!y)return;_jumpingMarker=true;var xf=parseFloat(x),yf=parseFloat(y);if(fl&&typeof switchFloor==='function'){var fi=parseInt(fl);if(!isNaN(fi)&&fi>0&&fi<floorImages.length){switchFloor(fi);}}scaleM=8;var img=document.getElementById('mapImg');if(!img||!img.complete||img.naturalWidth===0){setTimeout(jumpToFromUrl,100);return;}var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();panX=(wr.width/2)-xf/100*img.clientWidth*scaleM;panY=(wr.height/2)-yf/100*img.clientHeight*scaleM;ut();document.getElementById('zr').value=800;document.getElementById('zl').textContent='800%';var mv=document.getElementById('mv');if(!mv)return;var name=s.get('name')||'';setTimeout(function(){var div=document.createElement('div');div.style.cssText='position:absolute;left:'+xf+'%;top:'+yf+'%;transform:translate(-50%,-50%);z-index:998;text-align:center;pointer-events:none;width:14px;height:14px;border:2px solid #ff3333;border-radius:50%;background:rgba(255,50,50,.08);animation:blinkBorder 1.2s ease-in-out infinite';var inner=document.createElement('div');inner.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center';var ic=getIconUrl(name);if(ic){var imgE=document.createElement('img');imgE.src=ic;imgE.style.cssText='width:6px;height:6px;border-radius:1px;object-fit:cover';imgE.onerror=function(){var d=document.createElement('div');d.style.cssText='width:6px;height:6px;background:#ff4444;border-radius:50%';this.parentElement.replaceChild(d,this);};inner.appendChild(imgE);}else{var dot=document.createElement('div');dot.style.cssText='width:6px;height:6px;background:#ff4444;border-radius:50%';inner.appendChild(dot);}div.appendChild(inner);mv.appendChild(div);setTimeout(loadCloudPins,500);},100);var style=document.createElement('style');style.textContent='@keyframes blinkBorder{0%,100%{border-color:#ff3333;box-shadow:0 0 4px rgba(255,50,50,.5)}50%{border-color:#ff8888;box-shadow:0 0 10px rgba(255,50,50,.9)}}';document.head.appendChild(style);}
 
 async function deleteMapComment(commentId){
   var token=localStorage.getItem('abi_token');
@@ -909,31 +930,21 @@ function selectAllMat(v){
 }
 function syncMatPins(){
   document.querySelectorAll('.mat-item').forEach(function(x){ var v=x.getAttribute('data-item'); if(v){x.classList.toggle('active',!!selectedLayers[v]);var mc=getMatColor(v);if(x.classList.contains('active')){x.style.setProperty('--cat-color',mc.color);x.style.setProperty('--cat-bg',mc.bg);x.style.accentColor=mc.color;}else{x.style.removeProperty('--cat-color');x.style.removeProperty('--cat-bg');x.style.removeProperty('accent-color');}}});
-  // 同步分类勾选按钮状态
-  var cats=document.querySelectorAll('.mat-cat[data-layer]');
-  cats.forEach(function(cat){
-    var layer=cat.getAttribute('data-layer');
-    if(!layer||!layerData[layer])return;
-    var all=layerData[layer].every(function(it){return selectedLayers[it];});
-    var selBtn=cat.querySelector('span');
-    if(selBtn) selBtn.textContent=all?'☑':'☐';
-  });
   updateCtrlBtnState();
 }
 function updateCtrlBtnState(){
   var allBtn=document.querySelector('.mat-ctrl-btn:first-child');
   var noneBtn=document.querySelector('.mat-ctrl-btn:last-child');
   if(!allBtn||!noneBtn)return;
-  var all=true,none=true;
-  orders.forEach(function(layer){ var items=layerData[layer]; if(items) items.forEach(function(it){
-    if(!selectedLayers[it]) all=false; else none=false;
-  });});
+  var all=orders.every(function(layer){ var items=layerData[layer]; return items&&items.every(function(it){ return selectedLayers[it]; }); });
+  var none=orders.every(function(layer){ var items=layerData[layer]; return !items||items.every(function(it){ return !selectedLayers[it]; }); });
   allBtn.classList.remove('all-on','all-off','partial');
   noneBtn.classList.remove('all-on','all-off','partial');
   if(all){ allBtn.classList.add('all-on'); noneBtn.classList.add('partial'); }
   else if(none){ noneBtn.classList.add('all-off'); allBtn.classList.add('partial'); }
   else { allBtn.classList.add('partial'); noneBtn.classList.add('partial'); }
-}function toggleMat(){
+}
+function toggleMat(){
   var btn=document.getElementById('matBtn'),mc=document.getElementById('matContent');
   if(!mc) return;
   if(mc.animating) return;
@@ -964,7 +975,7 @@ function updateCtrlBtnState(){
   ctrl.appendChild(allBtn); ctrl.appendChild(noneBtn); mc.appendChild(ctrl);
   orders.forEach(function(layer){
     var items=layerData[layer]; if(!items||items.length===0) return;
-    var cat=document.createElement('div'); cat.className='mat-cat'; cat.setAttribute('data-layer',layer); cat.style.cssText='cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:12px';var selBtn=document.createElement('span');selBtn.textContent='☑';selBtn.style.cssText='font-size:18px;cursor:pointer;width:30px;text-align:center;border-radius:4px;transition:.15s;padding:2px 0';selBtn.onclick=(function(l){return function(e){e.stopPropagation();var items=layerData[l];if(!items)return;var all=items.every(function(it){return selectedLayers[it];});items.forEach(function(it){selectedLayers[it]=!all;});if(typeof renderMarkers==='function')renderMarkers();syncMatPins();};})(layer);cat.appendChild(selBtn);var lbl=document.createElement('span');lbl.textContent='['+layer+']';cat.appendChild(lbl);cat.onclick=(function(){var r=cat.nextElementSibling;if(r&&r.className==='mat-items'){var h=r.style.display==='none';r.style.display=h?'':'none';cat.style.opacity=h?'1':'0.5';}});mc.appendChild(cat);
+    var cat=document.createElement('div'); cat.className='mat-cat'; cat.textContent='['+layer+']'; cat.style.cssText='cursor:pointer;display:flex;justify-content:space-between;align-items:center';var selBtn=document.createElement('span');selBtn.textContent='☑';selBtn.style.cssText='font-size:13px;cursor:pointer;width:22px;text-align:center;border-radius:3px;transition:.15s';selBtn.onclick=(function(l){return function(e){e.stopPropagation();var items=layerData[l];if(!items)return;var all=items.every(function(it){return selectedLayers[it];});items.forEach(function(it){selectedLayers[it]=!all;});if(typeof renderMarkers==='function')renderMarkers();syncMatPins();};})(layer);cat.appendChild(selBtn);cat.onclick=(function(){var r=cat.nextElementSibling;if(r&&r.className==='mat-items'){var h=r.style.display==='none';r.style.display=h?'':'none';cat.style.opacity=h?'1':'0.5';}});mc.appendChild(cat);
     var row=document.createElement('div'); row.className='mat-items';
     items.forEach(function(it){
       var el=document.createElement('div'); el.className='mat-item'; el.setAttribute('data-item',it);
@@ -993,7 +1004,7 @@ function placePin(tp,noteText){
   .then(function(r){
     alert('已提交审核');
     var ov=document.createElement('div'); ov.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #ffc832;border-radius:10px;padding:12px 20px;z-index:99999;max-width:90vw;text-align:center';
-    var u=window.location.origin+window.location.pathname.replace(/\/[^\/]+$/,'/map-valley.html')+'?x='+x+'&y='+y+'&floor='+cf;
+    var u=window.location.origin+window.location.pathname.replace(/\/[^\/]+$/,'/map-tvstation.html')+'?x='+x+'&y='+y+'&floor='+cf;
     ov.innerHTML='<div style="color:#ffc832;font-size:14px;font-weight:600;margin-bottom:8px">已提交审核</div><div style="color:#888;font-size:12px;margin-bottom:10px">等待管理员审核后将显示在地图上</div><a href="'+u+'" style="color:#88aaff;font-size:12px;text-decoration:underline">📍 在地图上查看位置</a><br><button onclick="this.parentElement.remove()" style="margin-top:10px;padding:4px 16px;background:#333;border:none;border-radius:6px;color:#888;cursor:pointer">关闭</button>';
     document.body.appendChild(ov);
   })['catch'](function(e){ alert('Upload failed: '+e.message); });
@@ -1012,11 +1023,26 @@ function showPinDetail(idx){
 
 function saveNote(idx,el){
   if(!el) el=document.getElementById('pdNote'); if(!el||idx===undefined) return;
-  var handler=function(){ if(pins[idx]){ pins[idx].note=this.value; var marker=document.querySelector('.pin-marker[data-pin-idx="'+idx+'"]'); if(marker){ if(this.value) marker.setAttribute('title',this.value); else marker.removeAttribute('title'); } } };
-  el.oninput=handler;
+  var handler=function(){
+    if(pins[idx]){
+      pins[idx].note=this.value;
+      var marker=document.querySelector('.pin-marker[data-pin-idx="'+idx+'"]');
+      if(marker){ if(this.value) marker.setAttribute('title',this.value); else marker.removeAttribute('title'); }
+      // 保存到Supabase
+      if(pins[idx].id){
+        var ustr=localStorage.getItem('abi_user');
+        var uname='Anon';
+        try{ var uj=JSON.parse(ustr); uname=uj.user_metadata&&uj.user_metadata.preferred_username||uj.user_metadata&&uj.user_metadata.user_name||'Anon'; }catch(e){}
+        if(pins[idx].submitted_by && pins[idx].submitted_by === uname){
+          supabase('pins','PATCH',{note:pins[idx].note},'id=eq.'+pins[idx].id).catch(function(e){console.error('note save fail',e);});
+        }
+      }
+    }
+  };
+  el.onchange=handler;
+  el.onblur=handler;
   if(pins[idx]&&pins[idx].note) el.value=pins[idx].note;
 }
-
 
 function submitPinNote(){
   var idx = curPinIdx;
@@ -1074,7 +1100,7 @@ var navGroups = [
   { label: '💬 聊天', url: 'strategy.html' },
   { label: '📖 攻略', url: 'gear.html' },
   { label: '🔍 搜索', url: '../search.html' },
-  { label: '✅ 审核中心', url: 'review.html?from=map-valley' },
+  { label: '✅ 审核中心', url: 'review.html?from=map-tvstation' },
   { label: '👤 用户中心', action: 'userCenter' },
   { sep: true },
   { label: '🚪 退出登录', action: 'logout' }
@@ -1410,7 +1436,7 @@ function showPicker(){
       var ic=getIconUrl(item);
       if(ic&&ic.indexOf('http')===0){
         var img=document.createElement('img');img.src=ic;img.style.cssText='width:28px;height:28px;border-radius:3px;object-fit:cover';
-        var pc2=getPinColor(item);if(pc2==='#ff4444'){img.style.animation='pulseRed 1.5s ease-in-out infinite';}img.onerror=function(){this.style.display='none';};
+        var pc2=getPinColor(p.name);if(pc2==='#ff4444'){img.style.animation='pulseRed 1.5s ease-in-out infinite';}img.onerror=function(){this.style.display='none';};
         btn.appendChild(img);
       } else {
         var emoji=document.createElement('span');emoji.textContent='\ud83d\udce6';emoji.style.fontSize='18px';
@@ -1573,10 +1599,6 @@ document.addEventListener('click', function(e) {
     alert('Shift+Click: 请先点击地图上的📦按钮进入投稿模式');
   }
 });
+
 </script><div style="position:fixed;bottom:4px;right:60px;z-index:99999;font-size:30px;color:rgba(255,255,255,0.25);pointer-events:none;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.8)">📦 Shift+左键投稿容器</div></body>
-
-<script>
-
-
-</script>
 </html>

@@ -1,0 +1,1384 @@
+if(location.hash.indexOf('access_token')>=0||location.search.indexOf('access_token')>=0){
+  var raw=(location.hash||location.search).replace(/^[#?]/,'');
+  var idx=raw.indexOf('access_token=');
+  if(idx>=0){
+    var t=raw.substring(idx+13);
+    var amp=t.indexOf('&');
+    if(amp>=0)t=t.substring(0,amp);
+    try{
+      var b64=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+      while(b64.length%4)b64+='=';
+      localStorage.setItem('abi_token',t);
+      localStorage.setItem('abi_user',JSON.stringify(JSON.parse(atob(b64))));
+      history.replaceState(null,'',location.pathname+location.search);
+      location.href=location.pathname+location.search;
+    }catch(e){}
+  }
+}
+
+
+var SUPABASE_URL='https://hanrfbciinkhgcumvous.supabase.co';
+var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbnJmYmNpaW5raGdjdW12b3VzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4ODAsImV4cCI6MjA5NTM4Njg4MH0.Q7JBpwAqpYbEpwLq7werjtAtgjU4pIcHg4JbwFZ2vok';
+function db(method,table,body,query){
+  var token=localStorage.getItem('abi_token');
+  var useToken=(method==='POST'||method==='PATCH'||method==='DELETE');
+  var auth=useToken&&token?'Bearer '+token:'Bearer '+SUPABASE_ANON;
+  return fetch(SUPABASE_URL+'/rest/v1/'+table+(query?'?'+query:''),{
+    method:method,
+    headers:{'Authorization':auth,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:body?JSON.stringify(body):null
+  });
+}
+
+
+// ===== GLOBAL AUTH =====
+function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
+function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return localStorage.getItem('abi_user')||'已登录';}}
+function loginGitHub(){
+  var p=window.location.pathname;
+  var i=p.lastIndexOf('/pages/');
+  var isSub=i>=0;
+  var cb=window.location.origin+(isSub?p.substring(0,i+1)+'index.html':p.replace(/index\.html$/,'')+'index.html');
+  var u='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);
+  window.location.href=u;
+}
+
+(function(){
+  var token=localStorage.getItem('abi_token');
+  if(token){
+    var un=document.getElementById('userName');
+    var lb=document.getElementById('loginBtn');
+    var dot=document.getElementById('loginDot');if(dot)dot.style.display='inline-block';if(un){un.style.display='inline';un.textContent=getUserName();}
+    if(lb)lb.style.display='none';
+    var rb=document.getElementById('reviewBtn');if(rb)rb.style.display='flex';
+  }
+  // Safety check again after DOM ready
+  function checkAgain(){
+    var tok=localStorage.getItem('abi_token');
+    var un2=document.getElementById('userName');
+    var lb2=document.getElementById('loginBtn');
+    if(tok&&un2){un2.style.display='inline';un2.textContent=getUserName();}
+    if(tok&&lb2)lb2.style.display='none';
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',checkAgain);}
+  else{setTimeout(checkAgain,100);}
+  setTimeout(checkAgain,1000);
+})();
+
+function toggleMenu(){
+  var m=document.getElementById('bubbleMenu');
+  if(!m)return;
+  var vis=m.style.opacity==='1'||m.style.opacity==='';
+  m.style.opacity=vis?'0':'1';
+  m.style.pointerEvents=vis?'none':'all';
+  m.style.transform=vis?'translateY(-8px)':'translateY(0)';
+}
+
+function logout(){
+  localStorage.removeItem('abi_token');
+  localStorage.removeItem('abi_user');
+  location.reload();
+}
+
+function showUserCenter(){
+  toggleMenu();
+  var u=localStorage.getItem('abi_user');
+  if(!u){alert('请先登录');return;}
+  alert('用户: '+getUserName()+'\n(更多功能开发中)');
+}
+
+
+async function loadHotPosts(){
+  try{
+    var r=await db('GET','map_posts',null,'order=likes_count.desc.nullslast,created_at.desc&limit=20');
+    if(!r.ok)throw new Error(r.status);
+    var posts=await r.json();
+    var el=document.getElementById('postList');
+    if(!posts||posts.length===0){
+      el.innerHTML='<div style="text-align:center;color:#555;padding:2rem;">暂无帖子</div>';
+      return;
+    }
+    el.innerHTML=posts.map(function(p,i){
+      var prev=(p.content||'').substring(0,120);
+      var cat=p.category||'杂谈';
+      var cn={'general':'杂谈','question':'问答','guide':'攻略','showoff':'炫耀'}[cat]||'杂谈';
+      var hue=cat==='guide'?'var(--btn-blue-text)':cat==='question'?'var(--btn-red-text)':cat==='showoff'?'var(--accent)':'#888';
+      var pId=p.id;
+      var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
+      var imgHTML=imgs.length?'<div style="display:flex;gap:4px;margin-top:4px;">'+imgs.slice(0,3).map(function(u){return '<img src="'+u+'" style="width:40px;height:40px;border-radius:4px;object-fit:cover;border:1px solid #1e1e2a;">';}).join('')+(imgs.length>3?'<span style="color:#555;font-size:0.7rem;align-self:center;">+'+imgs.length+'</span>':'')+'</div>':'';
+      var likes=p.likes_count||0;
+      var delay=Math.min(1.5+(i+1)*0.2,3.5); // 最大延迟0.8s
+      return '<div class="enter-fade" style="animation-delay:'+delay.toFixed(1)+'s;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;cursor:pointer;" onclick="openPostModal('+pId+')">'+
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'+
+        '<span style="font-size:0.7rem;padding:2px 6px;border-radius:4px;background:'+hue+'22;color:'+hue+';">'+cn+'</span>'+
+        '<span style="font-size:0.7rem;color:#555;">'+(p.author||'匿名')+'</span>'+
+        '<span style="font-size:0.7rem;color:#444;">'+(p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'')+'</span>'+
+        '<span style="margin-left:auto;font-size:0.7rem;color:#888;">❤️ '+likes+'</span></div>'+
+        '<div style="color:#ddd;font-size:0.95rem;font-weight:500;">'+esc(p.title||'无标题')+'</div>'+
+        '<div style="color:#777;font-size:0.8rem;margin-top:4px;">'+esc(prev)+(prev.length>=120?'...':'')+'</div>'+
+        imgHTML+'</div>';
+    }).join('');
+  }catch(e){
+    var lel=document.getElementById('postList');
+    if(lel)lel.innerHTML='<div style="text-align:center;color:#555;padding:2rem;">加载失败</div>';
+  }
+}
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s||''));return d.innerHTML;}
+
+async function loadLeaderboard(){
+  try{
+    var r=await db('GET','pins',null,'select=submitted_by');
+    if(!r.ok)throw new Error(r.status);
+    var all=await r.json();
+    var stats={}, total=0;
+    all.forEach(function(p){
+      var n=p.submitted_by||'匿名';
+      if(!stats[n])stats[n]=0;
+      stats[n]++; total++;
+    });
+    var sorted=Object.keys(stats).sort(function(a,b){return stats[b]-stats[a];});
+    var el=document.getElementById('lbList');
+    var topNames=sorted.slice(0,15);
+    var medals=['🥇','🥈','🥉'];
+    el.innerHTML=topNames.map(function(name,i){
+      var medal=i<3?medals[i]:'';
+      var barW=(stats[name]/stats[sorted[0]]*100).toFixed(0);
+      var dly=Math.min(0.5+i*0.15,2);
+      return '<div class="enter-fade" style="animation-delay:'+dly.toFixed(2)+'s;animation-duration:0.5s;display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:8px;">'+
+        '<span style="width:20px;text-align:center;">'+medal+'</span>'+
+        '<span style="color:#ddd;font-size:0.9rem;">'+esc(name)+'</span>'+
+        '<div style="flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">'+
+        '<div style="height:100%;width:'+barW+'%;background:linear-gradient(90deg,var(--accent),#ff8c00);border-radius:3px;transition:width 0.5s;"></div></div>'+
+        '<span style="color:var(--accent);font-size:0.8rem;font-weight:600;min-width:50px;text-align:right;">'+stats[name]+' 个</span>'+
+        '</div>';
+    }).join('');
+    var te=document.getElementById('lbTotal');
+    te.textContent='共 '+total+' 个点位';
+  }catch(e){
+    var el2=document.getElementById('lbList');
+    if(el2)el2.innerHTML='<div style="text-align:center;color:#555;padding:1rem;">加载失败</div>';
+  }
+}
+document.addEventListener('DOMContentLoaded',loadHotPosts);
+document.addEventListener('DOMContentLoaded',loadLeaderboard);
+
+
+  // Safety: force check login state after 500ms
+  setTimeout(function(){
+    var token=localStorage.getItem('abi_token');
+    var un=document.getElementById('userName');
+    var lb=document.getElementById('loginBtn');
+    if(token){
+      if(un){un.style.display='inline';un.textContent=getUserName();}
+      if(lb)lb.style.display='none';
+      var rb=document.getElementById('reviewBtn');if(rb)rb.style.display='flex';
+    }else{
+      var dot=document.getElementById('loginDot');if(dot)dot.style.display='none';if(un)un.style.display='none';
+      if(lb)lb.style.display='inline-block';
+      var rb=document.getElementById('reviewBtn');if(rb)rb.style.display='none';
+    }
+  },500);
+
+
+var currentModalPostId = null;
+
+async function openPostModal(postId){
+  var token=localStorage.getItem('abi_token');
+  try{
+    var r=await db('GET','map_posts',null,'id=eq.'+postId+'&limit=1');
+    if(!r.ok){alert('\u52a0\u8f7d\u5931\u8d25');return;}
+    var posts=await r.json();
+    var p=posts&&posts[0];
+    if(!p){alert('\u5e16\u5b50\u4e0d\u5b58\u5728');return;}
+    currentModalPostId=postId;
+    document.getElementById('modalTitle').textContent=p.title||'\u65e0\u6807\u9898';
+    document.getElementById('modalBody').textContent=p.content||'';
+    document.getElementById('modalAuthor').textContent=(p.author||'\u533f\u540d');
+    document.getElementById('modalDate').textContent=p.created_at?new Date(p.created_at).toLocaleDateString('zh-CN'):'';
+    var cat=p.category||'general';
+    var catNames={'general':'\u6742\u8c08','question':'\u95ee\u7b54','guide':'\u653b\u7565','showoff':'\u70ab\u8000'};
+    var cn=catNames[cat]||'\u6742\u8c08';
+    var hue=cat==='guide'?'var(--btn-blue-text)':cat==='question'?'var(--btn-red-text)':cat==='showoff'?'var(--accent)':'#888';
+    var catEl=document.getElementById('modalCategory');
+    catEl.textContent=cn;
+    catEl.style.background=hue+'22';
+    catEl.style.color=hue;
+    try{
+      var un=getUserName();
+      if(un&&token){
+        var lr=await db('GET','post_likes',null,'post_id=eq.'+postId+'&user_id=eq.'+encodeURIComponent(un)+'&limit=1');
+        if(lr.ok){
+          var likes=await lr.json();
+          if(likes&&likes.length>0){
+            var el=document.getElementById('modalLikes');
+            if(el)el.classList.add('active');
+          }
+        }
+      }
+    }catch(e){}
+    var imgEl=document.getElementById('modalImages');
+    var imgs=((p.images&&typeof p.images==='string')?JSON.parse(p.images):[])||[];
+    imgEl.innerHTML=imgs.length?imgs.map(function(u){return '<img src="'+u+'" onclick="window.open(this.src)">';}).join(''):'';
+    var delBtn=document.getElementById('modalDelBtn');
+    var userName=getUserName();
+    delBtn.style.display=(token&&p.author===userName)?'inline':'none';
+    loadComments(postId,'modalComments');
+    document.getElementById('postModal').style.display='block';
+    document.body.style.overflow='hidden';
+  }catch(e){alert('\u52a0\u8f7d\u5931\u8d25: '+e.message);}
+}
+
+function closePostModal(){
+  document.getElementById('postModal').style.display='none';
+  document.body.style.overflow='';
+}
+
+async function toggleLike(){
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('请先登录');return;}
+  var id=currentModalPostId;
+  try{
+    // Just increment likes_count via RPC (needs function)
+    // Fallback: PATCH the map_posts record to increment
+    var userName=getUserName();
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/like_post',{
+      method:'POST',
+      headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({post_id:id,user_name:userName})
+    });
+    if(r.ok){
+      var newCount=await r.json();
+      var el=document.getElementById('modalLikes');
+      if(el){
+        var isLiked=el.classList.contains('active');
+        if(isLiked)el.classList.remove('active');else el.classList.add('active');
+        el.textContent='❤️ '+(newCount||0);
+      }
+      loadHotPosts();
+    }else{
+      alert('点赞失败');
+    }
+  }catch(e){alert('点赞失败: '+e.message);}
+}
+
+async function addCommentFromModal(){
+  var input=document.getElementById('modalCommentInput');
+  var content=input?input.value.trim():'';
+  if(!content){alert('请输入评论内容');return;}
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('请先登录');return;}
+  var author=getUserName();
+  try{
+    var body={post_id:currentModalPostId,content:content,author:author};
+    if(commentImages&&commentImages.length>0){
+      var imgUrls=[];
+      for(var i=0;i<commentImages.length;i++){
+        var f=commentImages[i];
+        var fn='comment_'+Date.now()+'_'+i+'.jpg';
+        var ur=await fetch(SUPABASE_URL.replace('/rest/v1','')+'/storage/v1/object/post_images/'+fn,{
+          method:'POST',
+          headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON},
+          body:f
+        });
+        if(ur.ok){
+          imgUrls.push(SUPABASE_URL.replace('/rest/v1','')+'/storage/v1/object/public/post_images/'+fn);
+        }
+      }
+      if(imgUrls.length>0)body.images=JSON.stringify(imgUrls);
+    }
+    var r=await fetch(SUPABASE_URL+'/rest/v1/post_comments',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+SUPABASE_ANON,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify(body)
+    });
+    if(!r.ok){var err=await r.json().catch(function(){});alert('评论失败: '+(err&&err.message?err.message:r.status));return;}
+    if(r.ok||r.status===204||r.status===201){
+      var ci=document.getElementById('modalCommentInput');
+      if(ci)ci.value='';
+      var fi=document.getElementById('commentImages');
+      if(fi)fi.value='';
+      var pp=document.getElementById('commentPreview');
+      if(pp)pp.innerHTML='';
+      commentImages=[];
+      loadComments(currentModalPostId,'modalComments');
+    }
+  }catch(e){
+    alert('发布失败:'+e.message);
+  }
+}
+
+async function loadComments(postId, containerId){
+  try{
+    var r=await db('GET','post_comments',null,'post_id=eq.'+postId+'&order=created_at.asc');
+    if(!r.ok)return;
+    var comments=await r.json();
+    var el=document.getElementById(containerId);
+    if(!el)return;
+    if(!comments||comments.length===0){
+      el.innerHTML='<div style="color:#555;font-size:0.8rem;padding:4px 0;">暂无评论</div>';
+      return;
+    }
+    var userName=getUserName();
+    var token=localStorage.getItem('abi_token');
+    el.innerHTML=comments.map(function(c){
+      var delBtn=(token&&c.author===userName)?'<button style="background:none;border:none;color:#f55;font-size:0.65rem;cursor:pointer;margin-left:8px;" onclick="deleteComment('+c.id+',\''+containerId+'\','+postId+')">删除</button>':'';
+      var cimgs=(c.images&&typeof c.images==='string')?JSON.parse(c.images):[];
+      var cimgHTML=cimgs.length?'<div style="display:flex;gap:4px;margin-top:2px;">'+cimgs.map(function(u){return '<img src="'+u+'" style="max-width:80px;max-height:60px;border-radius:4px;object-fit:cover;cursor:pointer;border:1px solid #1e1e2a;" onclick="window.open(this.src)">';}).join('')+'</div>':'';
+      return '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">'+
+        '<span style="color:var(--accent);font-size:0.8rem;white-space:nowrap;">'+esc(c.author)+'</span>'+
+        '<div style="flex:1;"><span style="color:#ccc;font-size:0.85rem;">'+esc(c.content)+'</span>'+cimgHTML+'</div>'+
+        '<span style="color:#555;font-size:0.65rem;">'+(c.created_at?new Date(c.created_at).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'')+'</span>'+
+        delBtn+'</div>';
+    }).join('');
+  }catch(e){}
+}
+
+async function deleteComment(commentId, containerId, postId){
+  if(!confirm('确定删除这条评论？'))return;
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/delete_my_comment',{
+      method:'POST',
+      headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({comment_id:commentId})
+    });
+    if(r.ok||r.status===204){
+      alert('评论已删除');
+      loadComments(postId, containerId);
+    }else alert('删除评论失败');
+  }catch(e){alert('删除失败: '+e.message);}
+}
+
+async function deletePostFromModal(){
+  if(!confirm('确定删除这条帖子？'))return;
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/delete_my_post',{
+      method:'POST',
+      headers:{'apiKey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({post_id:currentModalPostId})
+    });
+    if(r.ok||r.status===204){
+      alert('\uD83D\uDDD1 帖子已删除');
+      closePostModal();
+      loadHotPosts();
+    }else alert('删除失败');
+  }catch(e){alert('删除失败: '+e.message);}
+}
+
+function previewCommentFiles(input){
+  var preview=document.getElementById('commentFilePreview');
+  if(!preview)return;
+  if(!input.files||!input.files.length){preview.innerHTML='';return;}
+  preview.innerHTML='';
+  for(var i=0;i<input.files.length;i++){
+    (function(file){
+      var reader=new FileReader();
+      reader.onload=function(e){
+        var img=document.createElement('img');
+        img.style.cssText='width:50px;height:50px;border-radius:4px;object-fit:cover;border:1px solid #1e1e2a;';
+        img.src=e.target.result;
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    })(input.files[i]);
+  }
+}
+
+
+
+// ===== 感谢名单 =====
+var ADMINS=['qiuxue111'];
+
+function isAdmin(){
+  try{
+    var u=localStorage.getItem('abi_user');
+    if(!u)return false;
+    var p=JSON.parse(u);
+    var name=p.user_metadata&&p.user_metadata.preferred_username||p.user_metadata&&p.user_metadata.user_name||p.email||'';
+    return name&&ADMINS.indexOf(name)>=0;
+  }catch(e){return false;}
+}
+
+var thanksData = [];
+
+async function loadThanks(){
+  try{
+    var r=await db('GET','thanks_members',null,'order=sort_order.asc');
+    if(!r.ok)throw new Error(r.status);
+    thanksData=await r.json();
+  }catch(e){
+    console.log('loadThanks:',e.message);
+  }
+  renderThanks(); // 无论如何都渲染（有数据渲染小球，无数据渲染空画布）
+}
+
+var thanksBalls = []; // 物理球数组
+var thanksAnimId = null;
+
+function renderThanks(){
+  var canvas=document.getElementById('thanksCanvas');
+  if(!canvas)return;
+  
+  var W=window.innerWidth;
+  var H=window.innerHeight;
+  canvas.width=W*2;
+  canvas.height=H*2;
+  canvas.style.width=W+'px';
+  canvas.style.height=H+'px';
+  var ctx=canvas.getContext('2d');
+  ctx.scale(2,2);
+  
+  if(!thanksData||!thanksData.length){
+    if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
+    ctx.clearRect(0,0,W,H);
+    return;
+  }
+  
+  // 如果已有物理引擎在跑，先停止
+  if(thanksAnimId){cancelAnimationFrame(thanksAnimId);thanksAnimId=null;}
+  
+  // 彩色列表
+  // 创建物理球（随机HSL亮色，到处乱飘）
+  thanksBalls=[];
+  var radius=30;
+  thanksData.forEach(function(m,i){
+    var hue=Math.floor(Math.random()*360);
+    var col='hsl('+hue+',100%,65%)';
+    var angle=Math.random()*Math.PI*2;
+    var speed=0.4+Math.random()*0.8;
+    var x=radius+Math.random()*(W-radius*2);
+    var y=radius+Math.random()*(H-radius*2);
+    thanksBalls.push({
+      x:x, y:y, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed,
+      radius:radius, color:col, name:m.name, idx:i,
+      bounce:0,
+      driftAngle:angle, driftSpeed:speed, driftTimer:Math.random()*300,
+      enterDelay:i*8, // 入场延迟（帧数），每个球间隔8帧
+      enterScale:0 // 从0放大到1
+    });
+  });
+  
+  // 预加载所有头像图片
+  var avatarImgs={};
+  thanksData.forEach(function(m,i){
+    if(m.avatar_url){
+      var img=new Image();
+      img.crossOrigin='anonymous';
+      img.src=m.avatar_url;
+      avatarImgs[i]=img;
+    }
+  });
+  
+  // 物理循环——到处乱飘模式
+  function physicsLoop(){
+    // 每次循环重新获取视口大小，支持窗口变化
+    var cw=window.innerWidth;
+    var ch=window.innerHeight;
+    
+    // Canvas尺寸同步
+    if(canvas.width!==cw*2||canvas.height!==ch*2){
+      canvas.width=cw*2;
+      canvas.height=ch*2;
+      canvas.style.width=cw+'px';
+      canvas.style.height=ch+'px';
+      ctx.setTransform(2,0,0,2,0,0);
+    }
+    
+    for(var bi=0;bi<thanksBalls.length;bi++){
+      var b=thanksBalls[bi];
+      
+      // 入场动画：延迟后从中间弹出放大
+      if(b.enterDelay>0){b.enterDelay--;continue;}
+      if(b.enterScale<1){
+        b.enterScale=Math.min(1,b.enterScale+0.04);
+        // 入场时从中心位置出发
+        if(b.enterScale<0.1){
+          b.x=cw/2+(-5+Math.random()*10);
+          b.y=ch/2+(-5+Math.random()*10);
+        }
+        // 入场过程中不执行物理
+        continue;
+      }
+      
+      // 随机改变方向（每段时间换向，产生自然飘动感）
+      b.driftTimer++;
+      if(b.driftTimer>100+Math.random()*200){
+        b.driftTimer=0;
+        b.driftAngle+=(-0.5+Math.random())*1.2; // 随机转方向
+        b.driftSpeed=0.3+Math.random()*0.8;
+      }
+      // 目标速度（飘动方向）
+      var targetVx=Math.cos(b.driftAngle)*b.driftSpeed;
+      var targetVy=Math.sin(b.driftAngle)*b.driftSpeed;
+      // 柔和地向目标速度靠近
+      b.vx+=(targetVx-b.vx)*0.02;
+      b.vy+=(targetVy-b.vy)*0.02;
+      
+      // 空气阻力
+      b.vx*=0.995;
+      b.vy*=0.995;
+      
+      // 移动
+      b.x+=b.vx;
+      b.y+=b.vy;
+      
+      // 鼠标推力——鼠标移近时推开小球
+      if(thanksMouseX!==null&&thanksMouseY!==null){
+        var mdx=b.x-thanksMouseX;
+        var mdy=b.y-thanksMouseY;
+        var mdist=Math.sqrt(mdx*mdx+mdy*mdy);
+        if(mdist<b.radius*4&&mdist>1){
+          var force=(b.radius*4-mdist)/(b.radius*4)*3;
+          b.vx+=mdx/mdist*force;
+          b.vy+=mdy/mdist*force;
+          if(mdist<b.radius+5)b.bounce=1;
+        }
+      }
+      
+      // 边界碰撞——触边从中间重出现（渐隐→瞬移→渐显）
+      if(b.x-b.radius<0||b.x+b.radius>cw||b.y-b.radius<0||b.y+b.radius>ch){
+        if(!b.fading){
+          b.fading=true;
+          b.fadeStep=0; // 0=渐隐中, 1=瞬移, 2=渐显中
+          b.fadeAlpha=1; // 透明度(0-1)
+          b.fadeHold=0; // 计时
+        }
+      }
+      if(b.fading){
+        b.fadeHold++;
+        if(b.fadeStep===0){
+          // 渐隐阶段：1.5秒内变透明
+          b.fadeAlpha=Math.max(0,1-b.fadeHold/90);
+          if(b.fadeAlpha<=0){
+            b.fadeStep=1;
+            b.fadeHold=0;
+            // 瞬移中间，换方向，换颜色
+            b.x=cw/2+(-30+Math.random()*60);
+            b.y=ch/2+(-30+Math.random()*60);
+            var a=Math.random()*Math.PI*2;
+            var sp=0.8+Math.random()*1.5;
+            b.vx=Math.cos(a)*sp;
+            b.vy=Math.sin(a)*sp;
+            b.color='hsl('+Math.floor(Math.random()*360)+',100%,65%)';
+            b.bounce=1;
+          }
+        }else if(b.fadeStep===1){
+          // 瞬移后停顿0.3秒
+          if(b.fadeHold>18){b.fadeStep=2;b.fadeHold=0;}
+        }else{
+          // 渐显阶段：1.5秒内变实
+          b.fadeAlpha=Math.min(1,b.fadeHold/90);
+          if(b.fadeAlpha>=1){
+            b.fading=false;
+            b.fadeAlpha=1;
+          }
+        }
+      }
+      
+      // 球间碰撞
+      for(var bj=bi+1;bj<thanksBalls.length;bj++){
+        var o=thanksBalls[bj];
+        var dx=o.x-b.x;
+        var dy=o.y-b.y;
+        var dist=Math.sqrt(dx*dx+dy*dy);
+        var minDist=b.radius+o.radius;
+        if(dist<minDist&&dist>0.01){
+          var overlap=(minDist-dist)/2;
+          var nx=dx/dist;
+          var ny=dy/dist;
+          b.x-=nx*overlap;
+          b.y-=ny*overlap;
+          o.x+=nx*overlap;
+          o.y+=ny*overlap;
+          var dvx=b.vx-o.vx;
+          var dvy=b.vy-o.vy;
+          var dot=dvx*nx+dvy*ny;
+          if(dot<0){
+            b.vx-=dot*nx*0.8;
+            b.vy-=dot*ny*0.8;
+            o.vx+=dot*nx*0.8;
+            o.vy+=dot*ny*0.8;
+            b.bounce=1;
+            o.bounce=1;
+          }
+        }
+      }
+      
+      // 弹跳光晕衰减
+      if(b.bounce>0)b.bounce*=0.9;
+      if(b.bounce<0.01)b.bounce=0;
+    }
+    
+    // 渲染
+    ctx.clearRect(0,0,cw,ch);
+    for(var bi=0;bi<thanksBalls.length;bi++){
+      var b=thanksBalls[bi];
+      var m=thanksData[b.idx];
+      
+      // 计算渲染半径（入场缩放用）
+      var drawRadius=b.radius;
+      if(b.enterScale<1)drawRadius=b.radius*b.enterScale;
+
+      // 外层彩色发光——用渐变光晕（渐隐/入场时不显示）
+      if((!b.fading||b.fadeAlpha>0.3)&&drawRadius>4){
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.radius+8,0,Math.PI*2);
+        // HSL转HSLA用于渐变
+        var hslaBase=b.color.replace('hsl','hsla').replace(')',',');
+        ctx.fillStyle=ctx.createRadialGradient(b.x,b.y,drawRadius-2,b.x,b.y,drawRadius+8);
+        ctx.fillStyle.addColorStop(0,hslaBase+'0.8)');
+        ctx.fillStyle.addColorStop(0.4,hslaBase+'0.4)');
+        ctx.fillStyle.addColorStop(1,hslaBase+'0)');
+        ctx.fill();
+        // 外层彩色描边圈
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,drawRadius+1,0,Math.PI*2);
+        ctx.strokeStyle=b.color;
+        ctx.lineWidth=2;
+        ctx.globalAlpha=0.7;
+        ctx.stroke();
+        ctx.globalAlpha=1;
+      }
+      
+      // 弹跳光晕（白色强光+彩色扩散）
+      if(b.bounce>0.05){
+        // 白色冲击波
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.radius+b.bounce*8,0,Math.PI*2);
+        ctx.fillStyle='rgba(255,255,255,'+Math.min(0.3,b.bounce*0.3)+')';
+        ctx.fill();
+        // 彩色扩散光晕
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.radius+b.bounce*18,0,Math.PI*2);
+        ctx.fillStyle=b.color.replace(')',',0.2)').replace('hsl','hsla');
+        if(b.color.indexOf('hsl')<0)ctx.fillStyle=b.color+'33';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.radius+b.bounce*28,0,Math.PI*2);
+        ctx.fillStyle=b.color.replace(')',',0.1)').replace('hsl','hsla');
+        if(b.color.indexOf('hsl')<0)ctx.fillStyle=b.color+'1a';
+        ctx.fill();
+      }
+      
+      // 球体（带消失/出现渐隐渐显 + 入场放大）
+      var ballAlpha=1;
+      if(b.enterScale<1)ctx.globalAlpha=b.enterScale;
+      if(b.fading){
+        ballAlpha=b.fadeAlpha;
+        ctx.globalAlpha=ballAlpha;
+      }
+      if(m.avatar_url){
+        // 有头像——用圆形裁剪图片
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,drawRadius,0,Math.PI*2);
+        ctx.clip();
+        var img=avatarImgs[b.idx];
+        if(img&&img.complete&&img.naturalWidth>0){
+          ctx.drawImage(img,b.x-drawRadius,b.y-drawRadius,drawRadius*2,drawRadius*2);
+        }
+        ctx.restore();
+        ctx.strokeStyle=b.color+'bb';
+        ctx.lineWidth=1.5;
+        ctx.stroke();
+        if(b.fading||b.enterScale<1)ctx.globalAlpha=1;
+      }else{
+        // 无头像——渐变圆
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,drawRadius,0,Math.PI*2);
+        var grad=ctx.createRadialGradient(b.x-8,b.y-8,3,b.x,b.y,sr);
+        grad.addColorStop(0,'rgba(255,255,255,0.4)');
+        grad.addColorStop(0.4,b.color+'aa');
+        grad.addColorStop(1,b.color+'55');
+        ctx.fillStyle=grad;
+        ctx.fill();
+        ctx.strokeStyle=b.color+'bb';
+        ctx.lineWidth=1.5;
+        ctx.stroke();
+        if(b.fading)ctx.globalAlpha=1;
+      }
+      
+      // 文字（渐显）
+      var nameAlpha=1;
+      if(b.fading)nameAlpha=b.fadeAlpha;
+      else if(b.enterScale<1)nameAlpha=b.enterScale;
+      ctx.globalAlpha=nameAlpha;
+      ctx.fillStyle=b.color;
+      ctx.font='bold 12px -apple-system,sans-serif';
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.shadowColor='rgba(0,0,0,0.7)';
+      ctx.shadowBlur=4;
+      var displayName=m.name.length>4?m.name.slice(0,3)+'..':m.name;
+      ctx.fillText(displayName,b.x,b.y);
+      ctx.shadowBlur=0;
+      ctx.globalAlpha=1;
+    }
+    
+    thanksAnimId=requestAnimationFrame(physicsLoop);
+  }
+  
+  physicsLoop();
+}
+
+// 全局点击检测小球（canvas pointer-events:none，监听window的点击）
+document.addEventListener('click',function(e){
+  var canvas=document.getElementById('thanksCanvas');
+  if(!canvas||!thanksBalls||!thanksBalls.length)return;
+  var rect=canvas.getBoundingClientRect();
+  var mx=e.clientX-rect.left;
+  var my=e.clientY-rect.top;
+  for(var i=0;i<thanksBalls.length;i++){
+    var b=thanksBalls[i];
+    var dx=mx-b.x;
+    var dy=my-b.y;
+    if(dx*dx+dy*dy<=b.radius*b.radius){
+      showThanksDetail(b.idx);
+      e.stopPropagation();
+      e.preventDefault();
+      return;
+    }
+  }
+});
+
+// 鼠标推球+悬停tooltip
+var thanksHoverIdx=-1;
+var thanksMouseDown=false;
+var thanksMouseX=null, thanksMouseY=null;
+document.addEventListener('mousedown',function(e){thanksMouseDown=true;});
+document.addEventListener('mouseup',function(e){thanksMouseDown=false;thanksMouseX=null;thanksMouseY=null;});
+document.addEventListener('mousemove',function(e){
+  var canvas=document.getElementById('thanksCanvas');
+  if(!canvas||!thanksBalls||!thanksBalls.length){
+    if(thanksHoverIdx>=0){thanksHoverIdx=-1;hideThanksTooltip();}
+    return;
+  }
+  var rect=canvas.getBoundingClientRect();
+  var mx=e.clientX-rect.left;
+  var my=e.clientY-rect.top;
+  
+  // 悬停tooltip检测
+  var found=-1;
+  for(var i=0;i<thanksBalls.length;i++){
+    var b=thanksBalls[i];
+    var dx=mx-b.x;
+    var dy=my-b.y;
+    if(dx*dx+dy*dy<=b.radius*b.radius){found=i;break;}
+  }
+  if(found!==thanksHoverIdx){
+    thanksHoverIdx=found;
+    if(found>=0&&thanksData[found]&&thanksData[found].detail)showThanksTooltip(thanksData[found].detail,e.clientX,e.clientY);
+    else hideThanksTooltip();
+  }
+  
+  // 鼠标推球
+  if(!thanksMouseDown)return;
+  thanksMouseX=mx;
+  thanksMouseY=my;
+});
+
+function showThanksTooltip(text,mx,my){
+  var el=document.getElementById('thanksTooltip');
+  if(!el){
+    el=document.createElement('div');
+    el.id='thanksTooltip';
+    el.style.cssText='position:fixed;z-index:10001;background:rgba(10,10,15,0.92);border:1px solid rgba(var(--accent-rgb),0.2);border-radius:8px;padding:6px 12px;color:#ccc;font-size:0.8rem;pointer-events:none;backdrop-filter:blur(4px);max-width:260px;word-break:break-word;line-height:1.4;';
+    document.body.appendChild(el);
+  }
+  el.textContent=text;
+  el.style.display='block';
+  el.style.left=(mx+14)+'px';
+  el.style.top=(my+14)+'px';
+  var r=el.getBoundingClientRect();
+  if(r.right>window.innerWidth)el.style.left=(mx-r.width-14)+'px';
+  if(r.bottom>window.innerHeight)el.style.top=(my-r.height-14)+'px';
+}
+
+function hideThanksTooltip(){
+  var el=document.getElementById('thanksTooltip');
+  if(el)el.style.display='none';
+}
+
+// 物理引擎（在renderThanks中实现）
+
+// 详情弹窗
+function showThanksDetail(idx){
+  var m=thanksData[idx];
+  if(!m)return;
+  if(m.link&&m.link.trim()){
+    window.open(m.link);
+    return;
+  }
+  var msg=m.detail||'暂无介绍';
+  // Simple modal
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:10002;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);';
+  overlay.onclick=function(){document.body.removeChild(overlay);};
+  var box=document.createElement('div');
+  box.style.cssText='background:#12121a;border:1px solid #1e1e2a;border-radius:14px;padding:2rem;max-width:400px;text-align:center;';
+  box.onclick=function(e){e.stopPropagation();};
+  box.innerHTML='<div style="width:60px;height:60px;border-radius:50%;background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--accent);font-size:0.85rem;">'+esc(m.name)+'</div>'+
+    '<div style="color:#ccc;font-size:0.9rem;margin-bottom:1.5rem;">'+esc(msg)+'</div>'+
+    '<button onclick="document.body.removeChild(this.parentNode.parentNode.parentNode)" style="padding:6px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#ccc;cursor:pointer;font-size:0.8rem;">关闭</button>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+
+// 编辑功能
+function openThanksEditor(){
+  var el=document.getElementById('thanksEditor');
+  if(!el)return;
+  el.style.display='block';
+  document.body.style.overflow='hidden';
+  renderEditorList();
+  renderThanks(); // 确保球显出来
+}
+
+function closeThanksEditor(){
+  // Reload from server (discard local changes)
+  document.getElementById('thanksEditor').style.display='none';
+  document.body.style.overflow='';
+  loadThanks();
+}
+
+function renderEditorList(){
+  var el=document.getElementById('thanksEditorList');
+  if(!el)return;
+  document.body.style.overflow='hidden';
+  if(!thanksData||!thanksData.length){
+    el.innerHTML='<div style="color:#555;font-size:0.85rem;text-align:center;padding:1rem;">名单为空，点击下方添加</div>';
+    return;
+  }
+  el.innerHTML=thanksData.map(function(m,i){
+    return '<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;margin-bottom:8px;">'+
+      '<div style="display:flex;gap:8px;align-items:center;">'+
+      '<div style="position:relative;">'+
+      (m.avatar_url?'<img src="'+esc(m.avatar_url)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #333;">':'<div style="width:40px;height:40px;border-radius:50%;background:rgba(var(--accent-rgb),0.1);border:1px solid #333;display:flex;align-items:center;justify-content:center;color:#888;font-size:0.6rem;">无图</div>')+
+      '<input type="file" accept="image/*" style="position:absolute;top:0;left:0;width:40px;height:40px;opacity:0;cursor:pointer;" onchange="uploadAvatar('+i+',this)">'+
+      '</div>'+
+      '<input value="'+esc(m.name)+'" placeholder="名字" style="flex:1;padding:6px 10px;background:#1a1a22;color:#fff;border:1px solid #333;border-radius:6px;font-size:0.85rem;" oninput="thanksData['+i+'].name=this.value">'+
+      '<button onclick="removeThanksMember('+i+')" style="padding:4px 10px;background:rgba(255,50,50,0.15);border:1px solid rgba(255,50,50,0.3);border-radius:4px;color:#f55;cursor:pointer;font-size:0.75rem;">删除</button>'+
+      '</div>'+
+      '<input value="'+esc(m.detail||'')+'" placeholder="详细介绍（悬停显示）" style="width:100%;margin-top:6px;padding:6px 10px;background:#1a1a22;color:#aaa;border:1px solid #333;border-radius:6px;font-size:0.8rem;" oninput="thanksData['+i+'].detail=this.value">'+
+      '<input value="'+esc(m.link||'')+'" placeholder="跳转链接（可选）" style="width:100%;margin-top:4px;padding:6px 10px;background:#1a1a22;color:#888;border:1px solid #333;border-radius:6px;font-size:0.8rem;" oninput="thanksData['+i+'].link=this.value">'+
+      '</div>';
+  }).join('');
+}
+
+function addThanksMember(){
+  if(!thanksData)thanksData=[];
+  thanksData.push({name:'新成员',detail:'',link:'',avatar_url:''});
+  renderEditorList();
+}
+
+function uploadAvatar(idx,input){
+  if(!input.files||!input.files[0])return;
+  var file=input.files[0];
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      // 取图片中心圆形区域，输出 100x100
+      var size=Math.min(img.width,img.height);
+      var sx=(img.width-size)/2;
+      var sy=(img.height-size)/2;
+      var c=document.createElement('canvas');
+      c.width=100;
+      c.height=100;
+      var ctx=c.getContext('2d');
+      ctx.beginPath();
+      ctx.arc(50,50,50,0,Math.PI*2);
+      ctx.clip();
+      ctx.drawImage(img,sx,sy,size,size,0,0,100,100);
+      thanksData[idx].avatar_url=c.toDataURL('image/jpeg',0.7);
+      renderEditorList();
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeThanksMember(idx){
+  if(!confirm('确定移除此成员?'))return;
+  thanksData.splice(idx,1);
+  renderEditorList();
+}
+
+async function saveThanksMembers(){
+  var token=localStorage.getItem('abi_token');
+  if(!token){alert('请先登录后再保存');return;}
+  try{
+    // First get all existing IDs
+    var getAll=await fetch(SUPABASE_URL+'/rest/v1/thanks_members?select=id',{
+      headers:{'Authorization':'Bearer '+token,'apiKey':SUPABASE_ANON}
+    });
+    if(!getAll.ok)throw new Error('fetch ids: '+getAll.status);
+    var existing=await getAll.json();
+    // Delete each one individually (Supabase requires WHERE clause)
+    for(var di=0;di<existing.length;di++){
+      var dd=await fetch(SUPABASE_URL+'/rest/v1/thanks_members?id=eq.'+existing[di].id,{
+        method:'DELETE',
+        headers:{'Authorization':'Bearer '+token,'apiKey':SUPABASE_ANON,'Content-Type':'application/json'}
+      });
+      if(!dd.ok&&dd.status!==204)throw new Error('delete id='+existing[di].id+': '+dd.status);
+    }
+    // Insert all
+    for(var i=0;i<thanksData.length;i++){
+      var m=thanksData[i];
+      var r=await fetch(SUPABASE_URL+'/rest/v1/thanks_members',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+token,'apiKey':SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify({name:m.name,detail:m.detail||'',link:m.link||'',avatar_url:m.avatar_url||'',sort_order:i})
+      });
+      if(!r.ok)throw new Error('insert '+i+': '+r.status+' '+await r.text().catch(function(){return'';}));
+    }
+    closeThanksEditor();
+    loadThanks();
+    alert('保存成功');
+  }catch(e){alert('保存失败: '+e.message);}
+}
+
+// 管理员可见编辑按钮
+setTimeout(function(){
+  var btn=document.getElementById('thanksEditBtn');
+  if(btn)btn.style.display=isAdmin()?'flex':'none';
+  loadThanks(); // loadThanks 完成后会自动调 renderThanks
+},100);
+
+
+(function(){
+var DEFAULTS={
+  '--accent':'#ffc832',
+  '--bg-page':'#08080e',
+  '--text-body':'#ccc',
+  '--card-bg':'rgba(20,20,30,0.6)',
+  '--btn-blue-text':'#4a9eff',
+  '--btn-red-text':'#ff6b6b',
+  '--btn-green-text':'#51cf66',
+  '--btn-purple-text':'#cc5de8'
+};
+var LABELS={k:'--accent',l:'主色调',k2:'--bg-page',l2:'背景色',k3:'--text-body',l3:'文字色',k4:'--card-bg',l4:'卡片底色',k5:'--btn-blue-text',l5:'地图按钮',k6:'--btn-red-text',l6:'改枪按钮',k7:'--btn-green-text',l7:'聊天按钮',k8:'--btn-purple-text',l8:'攻略按钮'};
+var COLORS=[
+  {k:'--accent',l:'主色调',v:DEFAULTS['--accent']},
+  {k:'--bg-page',l:'背景色',v:DEFAULTS['--bg-page']},
+  {k:'--text-body',l:'文字色',v:DEFAULTS['--text-body']},
+  {k:'--card-bg',l:'卡片底色',v:DEFAULTS['--card-bg']},
+  {k:'--btn-blue-text',l:'地图按钮',v:DEFAULTS['--btn-blue-text']},
+  {k:'--btn-red-text',l:'改枪按钮',v:DEFAULTS['--btn-red-text']},
+  {k:'--btn-green-text',l:'聊天按钮',v:DEFAULTS['--btn-green-text']},
+  {k:'--btn-purple-text',l:'攻略按钮',v:DEFAULTS['--btn-purple-text']}
+];
+var THEMES_DATA={
+  "暗色":{
+    "默认暗色":{"--accent":"#ffc832","--bg-page":"#08080e","--text-body":"#ccc","--card-bg":"rgba(20,20,30,0.6)","--btn-blue-text":"#4a9eff","--btn-red-text":"#ff6b6b","--btn-green-text":"#51cf66","--btn-purple-text":"#cc5de8"},
+    "暗红风暴":{"--accent":"#e74c3c","--bg-page":"#0a0a0a","--text-body":"#ccc","--card-bg":"rgba(30,10,10,0.6)","--btn-blue-text":"#e74c3c","--btn-red-text":"#ff5252","--btn-green-text":"#e74c3c","--btn-purple-text":"#e74c3c"},
+    "极地蓝":{"--accent":"#5dade2","--bg-page":"#0a0e14","--text-body":"#b0c4de","--card-bg":"rgba(10,20,35,0.6)","--btn-blue-text":"#5dade2","--btn-red-text":"#e74c3c","--btn-green-text":"#2ecc71","--btn-purple-text":"#9b59b6"},
+    "翡翠绿":{"--accent":"#2ecc71","--bg-page":"#080c08","--text-body":"#b0d0b0","--card-bg":"rgba(10,25,10,0.6)","--btn-blue-text":"#2ecc71","--btn-red-text":"#e74c3c","--btn-green-text":"#2ecc71","--btn-purple-text":"#27ae60"},
+    "蒸汽紫":{"--accent":"#b388ff","--bg-page":"#0a0810","--text-body":"#c0b0d0","--card-bg":"rgba(15,10,25,0.6)","--btn-blue-text":"#b388ff","--btn-red-text":"#e74c3c","--btn-green-text":"#69f0ae","--btn-purple-text":"#b388ff"},
+    "日落橙":{"--accent":"#ff7043","--bg-page":"#0e0804","--text-body":"#d0b090","--card-bg":"rgba(25,15,5,0.6)","--btn-blue-text":"#ff7043","--btn-red-text":"#ff5252","--btn-green-text":"#ff7043","--btn-purple-text":"#ff7043"},
+    "深海蓝":{"--accent":"#00bcd4","--bg-page":"#060a0e","--text-body":"#90a4ae","--card-bg":"rgba(5,15,25,0.6)","--btn-blue-text":"#00bcd4","--btn-red-text":"#e57373","--btn-green-text":"#4db6ac","--btn-purple-text":"#7986cb"},
+    "赛博霓虹":{"--accent":"#00e5ff","--bg-page":"#050008","--text-body":"#b0b0c0","--card-bg":"rgba(5,0,15,0.6)","--btn-blue-text":"#00e5ff","--btn-red-text":"#ff1744","--btn-green-text":"#00e676","--btn-purple-text":"#d500f9"},
+    "血月":{"--accent":"#ff1744","--bg-page":"#080000","--text-body":"#d0a0a0","--card-bg":"rgba(15,0,0,0.6)","--btn-blue-text":"#ff1744","--btn-red-text":"#ff1744","--btn-green-text":"#ff1744","--btn-purple-text":"#ff1744"},
+    "琥珀光":{"--accent":"#ffb300","--bg-page":"#0a0800","--text-body":"#d0c088","--card-bg":"rgba(20,15,0,0.6)","--btn-blue-text":"#ffb300","--btn-red-text":"#ff6f00","--btn-green-text":"#ffb300","--btn-purple-text":"#ffb300"},
+    "岩石灰":{"--accent":"#78909c","--bg-page":"#0c0e10","--text-body":"#b0b8bc","--card-bg":"rgba(15,18,20,0.6)","--btn-blue-text":"#78909c","--btn-red-text":"#e57373","--btn-green-text":"#81c784","--btn-purple-text":"#ba68c8"},
+    "暗夜紫":{"--accent":"#ce93d8","--bg-page":"#040008","--text-body":"#b0a0c0","--card-bg":"rgba(8,0,15,0.6)","--btn-blue-text":"#ce93d8","--btn-red-text":"#f48fb1","--btn-green-text":"#80cbc4","--btn-purple-text":"#ce93d8"}
+  },
+  "淡色":{
+    "纯白极简":{"--accent":"#d4a843","--bg-page":"#efe8de","--text-body":"#3d3833","--card-bg":"rgba(255,252,248,0.82)","--btn-blue-text":"#5b7fb5","--btn-red-text":"#c0392b","--btn-green-text":"#2d7d46","--btn-purple-text":"#7d4e9a"},
+    "樱花粉":{"--accent":"#e8839a","--bg-page":"#f5eae8","--text-body":"#4a3e40","--card-bg":"rgba(255,248,246,0.8)","--btn-blue-text":"#c48090","--btn-red-text":"#c0392b","--btn-green-text":"#5a8a6a","--btn-purple-text":"#a07a9a"},
+    "青草绿":{"--accent":"#5aa85a","--bg-page":"#eef2e8","--text-body":"#3a4038","--card-bg":"rgba(248,252,242,0.8)","--btn-blue-text":"#5a8a7a","--btn-red-text":"#c0392b","--btn-green-text":"#5aa85a","--btn-purple-text":"#7a6a8a"},
+    "天空蓝":{"--accent":"#4a8fc8","--bg-page":"#e6ecf0","--text-body":"#384248","--card-bg":"rgba(242,248,252,0.8)","--btn-blue-text":"#4a8fc8","--btn-red-text":"#c0392b","--btn-green-text":"#4a8f6a","--btn-purple-text":"#7a5a98"},
+    "暖阳米":{"--accent":"#c4935a","--bg-page":"#ece4d8","--text-body":"#423a33","--card-bg":"rgba(252,248,238,0.82)","--btn-blue-text":"#9a7a5a","--btn-red-text":"#b85a30","--btn-green-text":"#6a8a4a","--btn-purple-text":"#8a6a5a"},
+    "薰衣草":{"--accent":"#8a6ac8","--bg-page":"#eae6f0","--text-body":"#3a3442","--card-bg":"rgba(246,242,252,0.8)","--btn-blue-text":"#7a6aaa","--btn-red-text":"#b84a5a","--btn-green-text":"#5a8a6a","--btn-purple-text":"#8a6ac8"},
+    "马卡龙":{"--accent":"#d4a030","--bg-page":"#f0ead8","--text-body":"#403a30","--card-bg":"rgba(252,250,238,0.82)","--btn-blue-text":"#5a8ab0","--btn-red-text":"#c05a4a","--btn-green-text":"#4a9a6a","--btn-purple-text":"#8a7aa0"},
+    "奶油白":{"--accent":"#d88a8a","--bg-page":"#f0eaea","--text-body":"#423838","--card-bg":"rgba(253,250,248,0.82)","--btn-blue-text":"#8a8ac0","--btn-red-text":"#c05a5a","--btn-green-text":"#6a9a6a","--btn-purple-text":"#9a7aaa"},
+    "薄荷冰":{"--accent":"#6ab0aa","--bg-page":"#e8eeec","--text-body":"#384242","--card-bg":"rgba(242,250,248,0.8)","--btn-blue-text":"#6a9aaa","--btn-red-text":"#b05a5a","--btn-green-text":"#5a9a7a","--btn-purple-text":"#7a8a9a"},
+    "蜜桃橘":{"--accent":"#e8946a","--bg-page":"#efe6e0","--text-body":"#423a38","--card-bg":"rgba(254,248,242,0.8)","--btn-blue-text":"#c07a6a","--btn-red-text":"#b85a4a","--btn-green-text":"#6a8a5a","--btn-purple-text":"#9a7a7a"},
+    "雾霾蓝":{"--accent":"#7a909a","--bg-page":"#e2e6ea","--text-body":"#383e42","--card-bg":"rgba(244,248,250,0.8)","--btn-blue-text":"#7a909a","--btn-red-text":"#a05a5a","--btn-green-text":"#6a8a7a","--btn-purple-text":"#7a7a8a"},
+    "香槟金":{"--accent":"#b8944e","--bg-page":"#ece6da","--text-body":"#403a33","--card-bg":"rgba(252,250,240,0.82)","--btn-blue-text":"#9a7a5a","--btn-red-text":"#b86a4a","--btn-green-text":"#6a7a4a","--btn-purple-text":"#8a7a5a"}
+  }
+};
+function getVal(k){
+  var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
+  return (s&&s[k]!==undefined)?s[k]:DEFAULTS[k];
+}
+function getHex(k){
+  var v=getVal(k);
+  if(v.indexOf('rgba')===0) return DEFAULTS['--accent'];
+  return v;
+}
+var SCENE_MAP = {
+  "纯白极简":"clean",
+  "樱花粉":"sakura",
+  "青草绿":"grass",
+  "天空蓝":"sky",
+  "暖阳米":"warm",
+  "薰衣草":"lavender",
+  "马卡龙":"macaron",
+  "奶油白":"cream",
+  "薄荷冰":"mint",
+  "蜜桃橘":"peach",
+  "雾霾蓝":"haze",
+  "香槟金":"champagne",
+  "默认暗色":"starry",
+  "暗红风暴":"storm",
+  "极地蓝":"starry",
+  "翡翠绿":"starry",
+  "蒸汽紫":"starry",
+  "日落橙":"starry",
+  "深海蓝":"starry",
+  "赛博霓虹":"starry",
+  "血月":"storm",
+  "琥珀光":"starry",
+  "岩石灰":"starry",
+  "暗夜紫":"starry"
+};
+function applyAll(obj, themeName){
+  Object.keys(obj).forEach(function(k){document.documentElement.style.setProperty(k,obj[k]);});
+  /* 应用主题背景特效 */
+  var tn = themeName || localStorage.getItem('abi_theme_name') || '默认暗色';
+  var sceneClass = SCENE_MAP[tn] || 'starry';
+  applyScene(sceneClass);
+}
+
+/* ====== 主题场景特效系统 ====== */
+function applyScene(sceneClass){
+  /* 移除旧场景和背景 */
+  var old = document.querySelector('.theme-scene');
+  if(old) old.remove();
+  var oldCanvas = document.getElementById('themeCanvas');
+  if(oldCanvas) oldCanvas.remove();
+  var oldBg = document.getElementById('themeBg');
+  if(oldBg) oldBg.remove();
+  if(sceneClass === 'clean' || !sceneClass){ return; }
+  
+  /* 创建背景容器 */
+  var el = document.createElement('div');
+  el.className = 'theme-scene scene-'+sceneClass;
+  document.body.insertBefore(el, document.body.firstChild);
+  
+  /* 深色主题 - 星空生成 */
+  if(sceneClass === 'starry'){
+    var darkBg = document.createElement('div');
+    darkBg.id = 'themeBg';
+    darkBg.style.cssText = 'position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 0%,#1a1a2e 0%,#08080e 100%)';
+    document.body.insertBefore(darkBg, document.body.firstChild);
+    for(var i=0;i<80;i++){
+      var s = document.createElement('div');
+      s.className = 'star';
+      s.style.cssText = 'left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;width:'+(1+Math.random()*2)+'px;height:'+(1+Math.random()*2)+'px;--dur:'+(2+Math.random()*4)+'s;animation-delay:'+(Math.random()*3)+'s';
+      el.appendChild(s);
+    }
+  }
+  
+  /* 暗红风暴 - 灰烬粒子 */
+  if(sceneClass === 'storm'){
+    var darkBg2 = document.createElement('div');
+    darkBg2.id = 'themeBg';
+    darkBg2.style.cssText = 'position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 0%,#2a0a0a 0%,#0a0000 100%)';
+    document.body.insertBefore(darkBg2, document.body.firstChild);
+    for(var i=0;i<30;i++){
+      var e = document.createElement('div');
+      e.className = 'ember';
+      e.style.cssText = 'left:'+(Math.random()*100)+'%;bottom:-10px;--dur:'+(3+Math.random()*5)+'s;animation-delay:'+(Math.random()*5)+'s';
+      el.appendChild(e);
+    }
+  }
+  
+  /* Canvas粒子特效 */
+  var canvas = document.createElement('canvas');
+  canvas.id = 'themeCanvas';
+  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.15';
+  document.body.insertBefore(canvas, el.nextSibling);
+  
+  var ctx = canvas.getContext('2d');
+  var W,H,particles=[],animId;
+  
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize(); window.addEventListener('resize', resize);
+  
+  /* 樱花花瓣 */
+  if(sceneClass === 'sakura'){
+    for(var i=0;i<25;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H*1.2 - H*0.2,
+        size:3+Math.random()*5, speedY:0.3+Math.random()*0.6, speedX:-0.3+Math.random()*0.6,
+        rot:Math.random()*Math.PI*2, rotSpeed:-0.03+Math.random()*0.06,
+        alpha:0.2+Math.random()*0.4
+      });
+    }
+  }
+  
+  /* 青草绿 - 光点飘浮 */
+  if(sceneClass === 'grass'){
+    for(var i=0;i<15;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H, size:2+Math.random()*4,
+        speedY:-0.1-Math.random()*0.3, speedX:-0.2+Math.random()*0.4,
+        alpha:0.1+Math.random()*0.3, phase:Math.random()*Math.PI*2
+      });
+    }
+  }
+  
+  /* 天空蓝 - 微光 */
+  if(sceneClass === 'sky'){
+    for(var i=0;i<10;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H*0.5, size:15+Math.random()*25,
+        speedX:0.2+Math.random()*0.3, alpha:0.05+Math.random()*0.1, phase:Math.random()*Math.PI*2
+      });
+    }
+  }
+  
+  /* 暖阳 - 金色粒子 */
+  if(sceneClass === 'warm'){
+    for(var i=0;i<20;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H, size:1+Math.random()*3,
+        speedY:-0.2-Math.random()*0.4, speedX:-0.2+Math.random()*0.4,
+        alpha:0.1+Math.random()*0.3, phase:Math.random()*Math.PI*2
+      });
+    }
+  }
+  
+  /* 薰衣草 - 光点 */
+  if(sceneClass === 'lavender'){
+    for(var i=0;i<20;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H, size:2+Math.random()*4,
+        speedY:-0.1-Math.random()*0.2, speedX:-0.1+Math.random()*0.2,
+        alpha:0.1+Math.random()*0.25, phase:Math.random()*Math.PI*2
+      });
+    }
+  }
+  
+  /* 马卡龙 - 泡泡 */
+  if(sceneClass === 'macaron'){
+    for(var i=0;i<12;i++){
+      var colors = ['ffb3ba','ffdfba','baffc9','bae1ff','e8b4f8'];
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H, size:8+Math.random()*15,
+        speedY:-0.1-Math.random()*0.3, speedX:-0.2+Math.random()*0.4,
+        alpha:0.08+Math.random()*0.15, color:colors[Math.floor(Math.random()*colors.length)],
+        phase:Math.random()*Math.PI*2
+      });
+    }
+  }
+  
+  /* 薄荷冰 - 冰晶 */
+  if(sceneClass === 'mint'){
+    for(var i=0;i<20;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H*1.2 - H*0.2,
+        size:2+Math.random()*4, speedY:0.2+Math.random()*0.5, speedX:-0.2+Math.random()*0.4,
+        alpha:0.1+Math.random()*0.3, rot:Math.random()*Math.PI*2, rotSpeed:-0.02+Math.random()*0.04
+      });
+    }
+  }
+  
+  /* 蜜桃橘 */
+  if(sceneClass === 'peach'){
+    for(var i=0;i<15;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H, size:2+Math.random()*5,
+        speedY:-0.1-Math.random()*0.2, speedX:-0.1+Math.random()*0.2,
+        alpha:0.1+Math.random()*0.3, phase:Math.random()*Math.PI*2,
+        color:'ffab91'
+      });
+    }
+  }
+  
+  /* 雾霾蓝 - 薄雾 */
+  if(sceneClass === 'haze'){
+    for(var i=0;i<8;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H*0.7, size:80+Math.random()*120,
+        speedX:0.1+Math.random()*0.2, alpha:0.02+Math.random()*0.04, phase:Math.random()*Math.PI*2,
+        color:'a8c4de'
+      });
+    }
+  }
+  
+  /* 香槟金 */
+  if(sceneClass === 'champagne'){
+    for(var i=0;i<25;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H*1.2 - H*0.2,
+        size:1+Math.random()*2, speedY:0.2+Math.random()*0.8, speedX:-0.3+Math.random()*0.6,
+        alpha:0.1+Math.random()*0.4, phase:Math.random()*Math.PI*2
+      });
+    }
+  }
+  
+  /* 奶油白 - 波纹 */
+  if(sceneClass === 'cream'){
+    for(var i=0;i<5;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H*0.6 + H*0.2,
+        size:50+Math.random()*80, phase:Math.random()*Math.PI*2,
+        alpha:0.03+Math.random()*0.05, color:'f0d9b5',
+        speedY:0, speedX:0
+      });
+    }
+  }
+  
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(function(p){
+      var t = Date.now()/1000;
+      if(p.speedY) p.y += p.speedY;
+      if(p.speedX) p.x += p.speedX;
+      if(p.rot !== undefined) p.rot += p.rotSpeed || 0;
+      
+      /* 循环 */
+      if(p.y > H + 20) p.y = -20;
+      if(p.x > W + 20) p.x = -20;
+      if(p.x < -20) p.x = W + 20;
+      if(p.y < -20) p.y = H + 20;
+      
+      ctx.save();
+      ctx.globalAlpha = p.alpha * (0.6 + 0.4 * Math.sin(t * 0.5 + (p.phase||0)));
+      
+      if(p.color){
+        ctx.fillStyle = '#' + p.color;
+      } else if(sceneClass === 'sakura'){
+        ctx.fillStyle = '#e8839a';
+      } else if(sceneClass === 'grass'){
+        ctx.fillStyle = '#5aa85a';
+      } else if(sceneClass === 'warm'){
+        ctx.fillStyle = '#c4935a';
+      } else if(sceneClass === 'champagne'){
+        ctx.fillStyle = '#d4a844';
+      } else if(sceneClass === 'mint'){
+        ctx.fillStyle = '#80cbc4';
+      } else if(sceneClass === 'peach'){
+        ctx.fillStyle = '#ffab91';
+      } else {
+        ctx.fillStyle = '#fff';
+      }
+      
+      if(sceneClass === 'sakura'){
+        /* 画花瓣形状 */
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot||0);
+        ctx.beginPath();
+        ctx.ellipse(0, p.size*0.3, p.size*0.5, p.size*0.3, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(p.size*0.1, -p.size*0.1, p.size*0.4, p.size*0.25, 0.3, 0, Math.PI*2);
+        ctx.fill();
+      } else if(sceneClass === 'macaron' || sceneClass === 'haze' || sceneClass === 'cream'){
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fill();
+      } else if(sceneClass === 'mint'){
+        /* 画冰晶（六角星） */
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot||0);
+        ctx.font = (p.size*3)+'px serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('✦', 0, 0);
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+    });
+    animId = requestAnimationFrame(draw);
+  }
+  if(particles.length > 0) draw();
+}
+function loadColors(){
+  var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
+  var storedTheme = localStorage.getItem('abi_theme_name') || '默认暗色';
+  if(s) applyAll(s, storedTheme);
+  else applyAll(DEFAULTS, storedTheme);
+}
+function renderColors(){
+  var el=document.getElementById('paletteItems');if(!el)return;
+  el.innerHTML='';
+  COLORS.forEach(function(x){
+    var cur=getVal(x.k);
+    var d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:5px;';
+    var lb=document.createElement('span');lb.textContent=x.l;lb.style.cssText='font-size:0.75rem;color:#888;min-width:56px;';
+    var cp=document.createElement('input');cp.type='color';cp.value=getHex(x.k);cp.style.cssText='width:28px;height:22px;border:none;border-radius:3px;padding:0;cursor:pointer;background:transparent;';
+    var tx=document.createElement('input');tx.type='text';tx.value=cur;tx.style.cssText='flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:4px;color:#ddd;font-size:0.7rem;padding:2px 4px;outline:none;';
+    cp.oninput=function(){tx.value=this.value;saveColor(x.k,this.value);};
+    tx.oninput=function(){saveColor(x.k,this.value);if(this.value.indexOf('#')===0)cp.value=this.value;};
+    d.appendChild(lb);d.appendChild(cp);d.appendChild(tx);el.appendChild(d);
+  });
+    // 跟随系统
+  var sysBtn=document.createElement("button");sysBtn.textContent="\uD83D\uDD0D 跟随系统";sysBtn.style.cssText="padding:3px 6px;border-radius:4px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);color:#aaa;font-size:0.68rem;cursor:pointer;transition:all 0.15s;margin-bottom:4px;";
+sysBtn.onmouseenter=function(){this.style.borderColor="var(--accent)";this.style.color="var(--accent)";};
+sysBtn.onmouseleave=function(){this.style.borderColor="rgba(255,255,255,0.06)";this.style.color="#aaa";};
+sysBtn.onclick=function(){
+  var dark=window.matchMedia("(prefers-color-scheme:dark)").matches;
+  var cat=dark?"暗色":"淡色";
+  var t=THEMES_DATA[cat][Object.keys(THEMES_DATA[cat])[0]];
+  var firstName=Object.keys(THEMES_DATA[cat])[0];
+  localStorage.setItem("abi_theme_name",firstName);
+  localStorage.setItem("abi_palette",JSON.stringify(t));
+  applyAll(t,firstName);window.name=JSON.stringify(t);
+  renderColors();
+};
+el.appendChild(sysBtn);
+// 调色板标签页
+  var catNames=Object.keys(THEMES_DATA);
+  var curCat=localStorage.getItem('abi_palette_cat')||catNames[0];
+  var catBar=document.createElement('div');catBar.style.cssText='display:flex;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);';
+  var themeWrap=document.createElement('div');themeWrap.style.cssText='margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;';
+  function renderThemes(cat){
+    themeWrap.innerHTML='';
+    var list=THEMES_DATA[cat];
+    Object.keys(list).forEach(function(name){
+      var t=list[name];
+      var preview=t['--accent'];
+      var btn=document.createElement('button');
+      var dot=document.createElement('span');dot.style.cssText='display:inline-block;width:8px;height:8px;border-radius:50%;background:'+preview+';margin-right:4px;vertical-align:middle;';
+      btn.appendChild(dot);
+      btn.appendChild(document.createTextNode(name));
+      btn.style.cssText='padding:3px 6px;border-radius:4px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);color:#aaa;font-size:0.68rem;cursor:pointer;transition:all 0.15s;';
+      btn.onmouseenter=function(){this.style.borderColor='var(--accent)';this.style.color='var(--accent)';};
+      btn.onmouseleave=function(){this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#aaa';};
+      btn.onclick=function(){
+        localStorage.setItem('abi_palette',JSON.stringify(t));
+        localStorage.setItem('abi_theme_name',name);
+        applyAll(t,name);
+        renderColors();
+      };
+      themeWrap.appendChild(btn);
+    });
+  }
+  catNames.forEach(function(n){
+    var tab=document.createElement('button');tab.textContent=n;tab.style.cssText='padding:2px 10px;border-radius:4px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);color:#888;font-size:0.68rem;cursor:pointer;transition:all 0.15s;';
+    tab.onclick=function(){
+      curCat=n;
+      localStorage.setItem('abi_palette_cat',n);
+      catBar.querySelectorAll('button').forEach(function(b){b.style.background='rgba(255,255,255,0.04)';b.style.color='#888';b.style.fontWeight='normal';});
+      this.style.background='rgba(255,200,50,0.15)';this.style.color='var(--accent)';this.style.fontWeight='600';
+      renderThemes(n);
+    };
+    catBar.appendChild(tab);
+  });
+  renderThemes(curCat);
+  catBar.querySelectorAll('button').forEach(function(b){if(b.textContent===curCat){b.style.background='rgba(255,200,50,0.15)';b.style.color='var(--accent)';b.style.fontWeight='600';}});
+  el.appendChild(catBar);
+  el.appendChild(themeWrap);
+}
+function saveColor(k,v){
+  document.documentElement.style.setProperty(k,v);
+  var s;try{s=JSON.parse(localStorage.getItem('abi_palette'))||{};}catch(e){s={};}
+  s[k]=v;localStorage.setItem('abi_palette',JSON.stringify(s));
+}
+function resetColors(){
+  localStorage.removeItem('abi_palette');
+  localStorage.setItem('abi_theme_name','默认暗色');
+  applyAll(DEFAULTS,'默认暗色');
+  renderColors();
+}
+loadColors();
+document.getElementById('paletteBtn').onclick=function(){var p=document.getElementById('palettePanel');p.style.display=p.style.display==='none'?'block':'none';if(p.style.display==='block')renderColors();};
+document.getElementById('resetPaletteBtn').onclick=resetColors;
+document.getElementById('closePaletteBtn').onclick=function(){document.getElementById('palettePanel').style.display='none';};
+})();
+
