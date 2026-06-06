@@ -918,21 +918,23 @@ function renderCard(c){
   div.style.left = c.x + "px";
   div.style.top = c.y + "px";
   if(selectedCardIds[c.id]) div.classList.add("selected");
-  var actions = document.createElement("div");
-  actions.className = "card-actions-bar";
-  var editBtn = document.createElement("span");
-  editBtn.className = "card ca";
-  editBtn.textContent = "✎";
-  editBtn.title = "编辑";
-  editBtn.onclick = function(e){ e.stopPropagation(); openEditModal(c.id) };
-  actions.appendChild(editBtn);
-  var delBtn = document.createElement("span");
-  delBtn.className = "card ca ca-del";
-  delBtn.textContent = "✕";
-  delBtn.title = "删除";
-  delBtn.onclick = function(e){ e.stopPropagation(); deleteCard(c.id) };
-  actions.appendChild(delBtn);
-  div.appendChild(actions);
+  if(canEdit()){
+    var actions = document.createElement("div");
+    actions.className = "card-actions-bar";
+    var editBtn = document.createElement("span");
+    editBtn.className = "card ca";
+    editBtn.textContent = "✎";
+    editBtn.title = "编辑";
+    editBtn.onclick = function(e){ e.stopPropagation(); openEditModal(c.id) };
+    actions.appendChild(editBtn);
+    var delBtn = document.createElement("span");
+    delBtn.className = "card ca ca-del";
+    delBtn.textContent = "✕";
+    delBtn.title = "删除";
+    delBtn.onclick = function(e){ e.stopPropagation(); deleteCard(c.id) };
+    actions.appendChild(delBtn);
+    div.appendChild(actions);
+  }
   var title = document.createElement("div");
   title.className = "card-title";
   title.textContent = c.title || "无标题";
@@ -1069,10 +1071,12 @@ function renderImageCard(c){
   }
   div.appendChild(img);
   var ttl = document.createElement("div"); ttl.className = "img-title"; ttl.textContent = c.title||"无标题"; div.appendChild(ttl);
-  var acts = document.createElement("div"); acts.className = "card-actions-bar";
-  var eb = document.createElement("span"); eb.className="card ca"; eb.textContent="✎"; eb.title="编辑"; eb.onclick=function(e){e.stopPropagation();openEditModal(c.id)}; acts.appendChild(eb);
-  var db = document.createElement("span"); db.className="card ca ca-del"; db.textContent="✕"; db.title="删除"; db.onclick=function(e){e.stopPropagation();deleteCard(c.id)}; acts.appendChild(db);
-  div.appendChild(acts);
+  if(canEdit()){
+    var acts = document.createElement("div"); acts.className = "card-actions-bar";
+    var eb = document.createElement("span"); eb.className="card ca"; eb.textContent="✎"; eb.title="编辑"; eb.onclick=function(e){e.stopPropagation();openEditModal(c.id)}; acts.appendChild(eb);
+    var db = document.createElement("span"); db.className="card ca ca-del"; db.textContent="✕"; db.title="删除"; db.onclick=function(e){e.stopPropagation();deleteCard(c.id)}; acts.appendChild(db);
+    div.appendChild(acts);
+  }
   div.addEventListener("dblclick",function(e){if(editMode)openEditModal(c.id)});
   div.addEventListener("click",function(e){if(!editMode)return;if(e.target.closest(".card-actions-bar"))return;if(e.ctrlKey||e.metaKey){if(selectedCardIds[c.id]){delete selectedCardIds[c.id];div.classList.remove("selected")}else{selectedCardIds[c.id]=true;div.classList.add("selected")}updateBatchBtn()}});
   (function(el,cd){el.addEventListener("mousedown",function(e){if(editMode&&!e.target.closest(".card-actions-bar")&&e.button===0){if(!e.ctrlKey&&!e.metaKey&&!selectedCardIds[cd.id]){selectedCardIds={};document.querySelectorAll(".card.selected,.card-image.selected,.card-title-only.selected").forEach(function(x){x.classList.remove("selected")});updateBatchBtn()}selectedCardIds[cd.id]=true;el.classList.add("selected");updateBatchBtn();var dl=cards.filter(function(oc){return selectedCardIds[oc.id]}).map(function(oc){return{card:oc,ox:oc.x,oy:oc.y}});if(dl.length===0)dl.push({card:cd,ox:cd.x,oy:cd.y});var sx=e.clientX,sy=e.clientY;function mm(ev){var dx=(ev.clientX-sx)/scale,dy=(ev.clientY-sy)/scale;dl.forEach(function(dc){dc.card.x=dc.ox+dx;dc.card.y=dc.oy+dy;var e2=document.getElementById("card_"+dc.card.id);if(e2){e2.style.left=dc.card.x+"px";e2.style.top=dc.card.y+"px"}})}function mu(){document.removeEventListener("mousemove",mm);document.removeEventListener("mouseup",mu)}document.addEventListener("mousemove",mm);document.addEventListener("mouseup",mu);e.preventDefault();return}e.stopPropagation()})})(div,c);
@@ -1093,10 +1097,12 @@ function renderTitleCard(c){
   txt.style.color = c.fontColor||"#ffc832";
   if(c.glow !== false) txt.style.textShadow = "0 0 15px currentColor, 0 0 30px currentColor, 0 0 60px currentColor";
   div.appendChild(txt);
-  var acts = document.createElement("div"); acts.className = "card-actions-bar";
-  var eb = document.createElement("span"); eb.className="card ca"; eb.textContent="✎"; eb.title="编辑"; eb.onclick=function(e){e.stopPropagation();openEditModal(c.id)}; acts.appendChild(eb);
-  var db = document.createElement("span"); db.className="card ca ca-del"; db.textContent="✕"; db.title="删除"; db.onclick=function(e){e.stopPropagation();deleteCard(c.id)}; acts.appendChild(db);
-  div.appendChild(acts);
+  if(canEdit()){
+    var acts = document.createElement("div"); acts.className = "card-actions-bar";
+    var eb = document.createElement("span"); eb.className="card ca"; eb.textContent="✎"; eb.title="编辑"; eb.onclick=function(e){e.stopPropagation();openEditModal(c.id)}; acts.appendChild(eb);
+    var db = document.createElement("span"); db.className="card ca ca-del"; db.textContent="✕"; db.title="删除"; db.onclick=function(e){e.stopPropagation();deleteCard(c.id)}; acts.appendChild(db);
+    div.appendChild(acts);
+  }
   div.addEventListener("dblclick",function(e){if(editMode)openEditModal(c.id)});
   div.addEventListener("click",function(e){if(!editMode)return;if(e.target.closest(".card-actions-bar"))return;if(e.ctrlKey||e.metaKey){if(selectedCardIds[c.id]){delete selectedCardIds[c.id];div.classList.remove("selected")}else{selectedCardIds[c.id]=true;div.classList.add("selected")}updateBatchBtn()}});
   (function(el,cd){el.addEventListener("mousedown",function(e){if(editMode&&!e.target.closest(".card-actions-bar")&&e.button===0){if(!e.ctrlKey&&!e.metaKey&&!selectedCardIds[cd.id]){selectedCardIds={};document.querySelectorAll(".card.selected,.card-image.selected,.card-title-only.selected").forEach(function(x){x.classList.remove("selected")});updateBatchBtn()}selectedCardIds[cd.id]=true;el.classList.add("selected");updateBatchBtn();var dl=cards.filter(function(oc){return selectedCardIds[oc.id]}).map(function(oc){return{card:oc,ox:oc.x,oy:oc.y}});if(dl.length===0)dl.push({card:cd,ox:cd.x,oy:cd.y});var sx=e.clientX,sy=e.clientY;function mm(ev){var dx=(ev.clientX-sx)/scale,dy=(ev.clientY-sy)/scale;dl.forEach(function(dc){dc.card.x=dc.ox+dx;dc.card.y=dc.oy+dy;var e2=document.getElementById("card_"+dc.card.id);if(e2){e2.style.left=dc.card.x+"px";e2.style.top=dc.card.y+"px"}})}function mu(){document.removeEventListener("mousemove",mm);document.removeEventListener("mouseup",mu)}document.addEventListener("mousemove",mm);document.addEventListener("mouseup",mu);e.preventDefault();return}e.stopPropagation()})})(div,c);
