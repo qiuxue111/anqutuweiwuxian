@@ -494,7 +494,7 @@ function loadData(){
   var creep = 5;
   var creepTimer = setInterval(function(){
     creep += 0.3 + Math.random() * 0.5;
-    if(creep >= 25) { clearInterval(creepTimer); return; }
+    if(creep >= 75) { clearInterval(creepTimer); return; }
     lp(creep, "连接服务器...");
   }, 50);
   
