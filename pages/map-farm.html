@@ -518,7 +518,7 @@ var lb=document.getElementById('lbb');if(lb){var lp=document.getElementById('lp'
 if(typeof renderMarkers==='function')renderMarkers();
 function toggleMenu(){var m=document.getElementById('sideMenu');if(m){m.style.display=(m.style.display==='none'||!m.style.display)?'block':'none';}}
 var us=new URLSearchParams(window.location.search);setTimeout(function(){if(us.get('x')&&us.get('y')){jumpToFromUrl();}else{loadCloudPins();}checkReviewBtn();if(typeof currentFloor==='number'){filterPinsByFloor(currentFloor);}},300);
-var layerData={'红色':['保险箱','滴滴保险','电子保险','小保险','军用保险箱'],'金色':['大衣','高级工具箱','文件箱','商务旅行箱','空调罐'],'紫色':['抽屉','运动包','白色旅行箱','工具箱'],'白色':['刮刮乐','置物箱','大型物料箱','垃圾箱','饼干盒','蓝领工装','衣服'],'电子':['收银机','家用机箱','军用主机'],'弹药':['子弹箱','手雷箱'],'医疗':['大型医疗箱','医疗箱','高级医疗箱','小型医疗箱'],'武器':['大型武器箱','中型武器箱','木质武器箱','军需物资箱','高级武器箱','长条武器箱','配件箱'],'其他':['三色灯','共鸣球','奉献雕像','后备箱'],'人机':['BOSS','清道夫','黑金人机','白狼人机']};
+var layerData={'红色':['保险箱','滴滴保险','电子保险','小保险','军用保险箱'],'金色':['大衣','高级工具箱','文件箱','商务旅行箱','空投罐'],'紫色':['抽屉','运动包','白色旅行箱','工具箱'],'白色':['刮刮乐','置物箱','大型物料箱','垃圾箱','饼干盒','蓝领工装','衣服'],'电子':['收银机','家用机箱','军用主机'],'弹药':['子弹箱','手雷箱'],'医疗':['大型医疗箱','医疗箱','高级医疗箱','小型医疗箱'],'武器':['大型武器箱','中型武器箱','木质武器箱','军需物资箱','高级武器箱','长条武器箱','配件箱'],'其他':['三色灯','共鸣球','奉献雕像','后备箱'],'人机':['BOSS','清道夫','黑金人机','白狼人机']};
 var orders=['红色','金色','紫色','白色','电子','弹药','医疗','武器','其他','人机'];function getPinColor(n){
   for(var k in layerData){
     if(layerData[k].indexOf(n)>=0){
