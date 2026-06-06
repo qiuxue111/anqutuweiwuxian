@@ -7,7 +7,14 @@
 <link rel="icon" href="../favicon.ico" type="image/jpeg">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--accent:#ffc832;--bg-page:#0a0a0f;--text-body:#ddd;--card-bg:rgba(20,20,30,.75);--btn-blue-text:#4a9eff;--btn-red-text:#ff6b6b;--btn-green-text:#51cf66;--btn-purple-text:#cc5de8}body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,"Microsoft YaHei",sans-serif;overflow:hidden;user-select:none}
+:root{--accent:#ffc832;--bg-page:#0a0a0f;--text-body:#ddd;--card-bg:rgba(20,20,30,.75);--btn-blue-text:#4a9eff;--btn-red-text:#ff6b6b;--btn-green-text:#51cf66;--btn-purple-text:#cc5de8}
+body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,"Microsoft YaHei",sans-serif;overflow:hidden;user-select:none}
+
+/* 深色主题星空背景（仿主页） */
+.scene-starry{position:fixed;inset:0;z-index:0;pointer-events:none}
+.scene-starry .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:0.1}50%{opacity:0.8}}
+.scene-clean{display:none}
 
 /* 顶栏 */
 .app-bar{position:fixed;top:0;left:0;right:0;z-index:1000;background:color-mix(in srgb, var(--bg-page) 95%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid #222;display:flex;align-items:center;padding:8px 16px;gap:12px;height:48px}
@@ -37,7 +44,7 @@
 /* 视口 */
 .viewport{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab}
 .viewport.dragging{cursor:grabbing}
-.canvas{position:absolute;top:0;left:0;transform-origin:0 0;width:200vw;height:200vh;background:#111;background-image:radial-gradient(circle at 25px 25px,#1a1a4a 2px,transparent 2px);background-size:40px 40px;min-width:100000px;min-height:100000px}
+.canvas{position:absolute;top:0;left:0;transform-origin:0 0;width:200vw;height:200vh;background:#111;background-image:radial-gradient(circle at 25px 25px,rgba(100,130,200,0.12) 2px,transparent 2px);background-size:40px 40px;min-width:100000px;min-height:100000px}
 
 /* 卡片 - 固定宽高 300×260 */
 .card{position:absolute;width:300px;height:260px;background:var(--card-bg,rgba(20,20,30,.75));border:1.5px solid rgba(255,255,255,.08);border-radius:14px;cursor:pointer;z-index:2;overflow:hidden;transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
@@ -414,8 +421,42 @@ function switchCanvas(id){
   loadData();
 }
 
+/* ====== 生成星空背景（深色主题） ====== */
+function initScene(){
+  var bgPage = getComputedStyle(document.documentElement).getPropertyValue('--bg-page').trim();
+  var isDark = !bgPage || bgPage.indexOf('08080e')>=0 || bgPage.indexOf('0a0a0f')>=0 || parseInt(bgPage.replace('#',''),16) < 0x222222;
+  
+  // 移除旧星空
+  var old = document.querySelector('.scene-starry');
+  if(old) old.remove();
+  var oldBg = document.getElementById('themeBg');
+  if(oldBg) oldBg.remove();
+  
+  if(!isDark) return; // 浅色主题留白
+  
+  // 创建星空容器
+  var el = document.createElement('div');
+  el.className = 'scene-starry';
+  document.body.insertBefore(el, document.body.firstChild);
+  
+  // 深色渐变背景
+  var darkBg = document.createElement('div');
+  darkBg.id = 'themeBg';
+  darkBg.style.cssText = 'position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 0%,#1a1a2e 0%,#08080e 100%)';
+  document.body.insertBefore(darkBg, document.body.firstChild);
+  
+  // 生成星星
+  for(var i=0;i<80;i++){
+    var s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = 'left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;width:'+(1+Math.random()*2)+'px;height:'+(1+Math.random()*2)+'px;--dur:'+(2+Math.random()*4)+'s;animation-delay:-'+(Math.random()*4)+'s';
+    el.appendChild(s);
+  }
+}
+
 /* ====== 初始化 ====== */
 function init(){
+  initScene();
   bindCanvasSwitch();
   document.getElementById("loading").style.display = "flex";
   db('GET','task_canvases','','order=created_at').then(function(rows){
