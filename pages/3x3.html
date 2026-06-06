@@ -234,11 +234,11 @@ body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,
 <div class="zoom-info" id="zoomInfo">100%</div>
 
 <div class="hamburger-menu" id="hamburgerMenu"></div>
-<div class="loading" id="loading"><div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="font-size:16px;font-weight:600;color:#fff"><span id="loadingText">加载中...</span> <span id="loadingPercent" style="color:#8af;font-size:13px">0%</span></div><div style="width:220px;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;box-shadow:0 0 8px rgba(0,0,0,.2)"><div id="loadingBarInit" style="width:100%;height:100%;background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#9b59b6);background-size:400% 100%;background-position:0% 0%;border-radius:3px"></div></div></div></div>
+<div class="loading" id="loading"><div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="font-size:16px;font-weight:600;color:#fff"><span id="loadingText">加载中...</span> <span id="loadingPercent" style="color:#8af;font-size:13px">0%</span></div><div style="width:220px;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;box-shadow:0 0 8px rgba(0,0,0,.2);position:relative"><div id="loadingBar" style="width:5%;height:100%;background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#9b59b6);background-size:400% 100%;background-position:0% 0%;border-radius:3px;transition:width .3s ease"></div></div></div></div>
 <script>
 /* 彩虹加载条动画 */
 (function(){
-  var bar = document.getElementById('loadingBarInit');
+  var bar = document.getElementById('loadingBar');
   if(!bar) return;
   var pos = 0;
   setInterval(function(){
