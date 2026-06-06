@@ -1035,6 +1035,8 @@ function saveNote(idx,el){
   if(pins[idx]&&pins[idx].note) el.value=pins[idx].note;
 }
 
+function showNoteToast(val){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:8px 16px;z-index:99999;color:#ccc;font-size:13px;transition:opacity 0.3s';t.textContent=val?'\u2705 \u5907\u6ce8\u5df2\u4fdd\u5b58':'\u2705 \u5907\u6ce8\u5df2\u6e05\u7a7a';document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove();},300);},1500);}
+
 
 
 function mergeLocalNotes(){try{var d=JSON.parse(localStorage.getItem('abi_'+mapNameEng+'_pins'));if(d&&d.pins&&d.pins.length>0){var lookup={};d.pins.forEach(function(lp){if(lp.note){if(lp.id)lookup['id_'+lp.id]=lp;else lookup['p_'+Math.round(lp.x*100)+'_'+Math.round(lp.y*100)]=lp;}});pins.forEach(function(p,i){var found;if(p.id&&lookup['id_'+p.id])found=lookup['id_'+p.id];else found=lookup['p_'+Math.round(p.x*100)+'_'+Math.round(p.y*100)];if(found)pins[i].note=found.note;});renderMarkers();}}catch(e){}}
