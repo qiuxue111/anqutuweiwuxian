@@ -496,7 +496,7 @@ function loadData(){
     creep += 0.3 + Math.random() * 0.5;
     if(creep >= 25) { clearInterval(creepTimer); return; }
     lp(creep, "连接服务器...");
-  }, 400);
+  }, 200);
   
   var cid = encodeURIComponent(currentCanvas);
   Promise.all([
