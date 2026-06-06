@@ -104,141 +104,45 @@ a:hover{opacity:0.8;}
 
 
 /* ====== 主题背景插画与特效 ====== */
+/* ====== 主题背景插画（SVG 矢量点缀，占画面约1/4） ====== */
 .theme-scene{position:fixed;inset:0;z-index:0;pointer-events:none}
-
-/* 樱花粉 - 樱花树枝 + 花瓣 */
-.scene-sakura::before{content:'';position:fixed;inset:0;z-index:-2;background:#fbe8e4}
-.scene-sakura::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
-  radial-gradient(circle 200px at 15% 85%, #e8839a88 0%, transparent 60%),
-  radial-gradient(circle 180px at 35% 70%, #d46b8366 0%, transparent 55%),
-  radial-gradient(circle 220px at 60% 80%, #e8839a77 0%, transparent 60%),
-  radial-gradient(circle 160px at 80% 65%, #d46b8355 0%, transparent 55%),
-  radial-gradient(circle 150px at 50% 45%, #e8839a44 0%, transparent 50%),
-  radial-gradient(circle 120px at 25% 30%, #d46b8344 0%, transparent 50%),
-  radial-gradient(circle 100px at 70% 30%, #e8839a33 0%, transparent 50%);
-  background-repeat:no-repeat
-}
-.sakura-dots{position:absolute;inset:0}
-.sakura-dots span{position:absolute;width:6px;height:6px;background:#e8839a;border-radius:50%;opacity:0;animation:sakuraFall linear infinite}
-@keyframes sakuraFall{0%{opacity:0;transform:translateY(-10px) rotate(0deg) scale(0.5)}10%{opacity:0.6}90%{opacity:0.3}100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(0.2)}}
-
-/* 青草绿 - 草地/草原 */
-.scene-grass::before{content:'';position:fixed;inset:0;z-index:-2;background:#e2ecd0}
-.scene-grass::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.3;background:
-  radial-gradient(circle 250px at 20% 90%, #5aa85a88 0%, transparent 55%),
-  radial-gradient(circle 200px at 50% 85%, #4a9a4a77 0%, transparent 50%),
-  radial-gradient(circle 220px at 75% 92%, #5aa85a66 0%, transparent 55%),
-  radial-gradient(circle 180px at 10% 60%, #5aa85a44 0%, transparent 50%),
-  radial-gradient(circle 160px at 90% 55%, #4a9a4a44 0%, transparent 50%);
-  background-repeat:no-repeat
-}
-
-/* 天空蓝 - 蓝天白云 */
-.scene-sky::before{content:'';position:fixed;inset:0;z-index:-2;background:#d6e6f0}
-.scene-sky::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.3;background:
-  radial-gradient(ellipse 300px 100px at 15% 15%, #ffffffcc 0%, transparent 60%),
-  radial-gradient(ellipse 250px 80px at 50% 18%, #ffffffbb 0%, transparent 55%),
-  radial-gradient(ellipse 200px 70px at 75% 12%, #ffffffaa 0%, transparent 55%),
-  radial-gradient(ellipse 150px 50px at 30% 30%, #ffffff88 0%, transparent 50%),
-  radial-gradient(ellipse 180px 60px at 65% 28%, #ffffff99 0%, transparent 55%);
-  background-repeat:no-repeat
-}
-@keyframes cloudDrift{0%{transform:translateX(-100px)}100%{transform:translateX(calc(100vw + 100px))}}
-
-/* 暖阳米 - 阳光/麦田 */
-.scene-warm::before{content:'';position:fixed;inset:0;z-index:-2;background:#f0e4c8}
-.scene-warm::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.35;background:
-  radial-gradient(ellipse 300px 200px at 30% 0%, #f5d78eaa 0%, transparent 60%),
-  radial-gradient(ellipse 250px 180px at 60% 0%, #e8c87888 0%, transparent 55%),
-  radial-gradient(circle 200px at 40% 80%, #d4a84477 0%, transparent 50%),
-  radial-gradient(circle 180px at 70% 90%, #c4935a66 0%, transparent 50%),
-  radial-gradient(circle 150px at 15% 85%, #d4a84455 0%, transparent 50%);
-  background-repeat:no-repeat
-}
-@keyframes sunPulse{0%,100%{opacity:0.5}50%{opacity:1}}
-
-/* 纯白极简 - 无 */
+/* 纯白极简 */
 .scene-clean{display:none}
+/* 樱花粉 - 樱花树枝从底部两侧伸出 */
+.scene-sakura{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 500 500%27%3E%3Cpath d=%27M-30,530 Q40,420 120,380 Q150,350 180,320%27 stroke=%27%23e8839a%27 stroke-width=%274.5%27 fill=%27none%27 opacity=%270.6%27/%3E%3Cpath d=%27M40,420 Q70,380 100,400%27 stroke=%27%23e8839a%27 stroke-width=%272.5%27 fill=%27none%27 opacity=%270.5%27/%3E%3Ccircle cx=%2790%27 cy=%27390%27 r=%279%27 fill=%27%23e8839a%27 opacity=%270.5%27/%3E%3Ccircle cx=%2770%27 cy=%27410%27 r=%278%27 fill=%27%23e8839a%27 opacity=%270.45%27/%3E%3Ccircle cx=%27130%27 cy=%27365%27 r=%276%27 fill=%27%23e8839a%27 opacity=%270.4%27/%3E%3C/svg%3E") no-repeat -10px 100%/45% auto,url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 500 500%27%3E%3Cpath d=%27M530,530 Q440,450 380,420 Q350,390 310,360%27 stroke=%27%23d46b83%27 stroke-width=%274%27 fill=%27none%27 opacity=%270.55%27/%3E%3Ccircle cx=%27340%27 cy=%27400%27 r=%277%27 fill=%27%23d46b83%27 opacity=%270.45%27/%3E%3Ccircle cx=%27320%27 cy=%27415%27 r=%276%27 fill=%27%23d46b83%27 opacity=%270.4%27/%3E%3C/svg%3E") no-repeat 105% 100%/35% auto;background-color:#f5eae8}
 
-/* 薰衣草 - 紫色花田 */
-.scene-lavender::before{content:'';position:fixed;inset:0;z-index:-2;background:#e8dff0}
-.scene-lavender::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.3;background:
-  radial-gradient(circle 220px at 20% 90%, #b39ddb88 0%, transparent 55%),
-  radial-gradient(circle 200px at 50% 85%, #9575cd77 0%, transparent 50%),
-  radial-gradient(circle 180px at 75% 92%, #b39ddb66 0%, transparent 55%),
-  radial-gradient(circle 160px at 10% 60%, #9575cd44 0%, transparent 50%),
-  radial-gradient(circle 140px at 90% 50%, #b39ddb44 0%, transparent 50%);
-  background-repeat:no-repeat
-}
+/* 青草绿 - 草叶从底部 */
+.scene-grass{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 500 300%27%3E%3Cpath d=%27M60,300 Q70,200 100,150 Q130,100 140,50%27 stroke=%27%235aa85a%27 stroke-width=%273%27 fill=%27none%27 opacity=%270.5%27/%3E%3Cpath d=%27M120,300 Q130,220 155,180 Q180,140 170,80%27 stroke=%27%235aa85a%27 stroke-width=%272.5%27 fill=%27none%27 opacity=%270.45%27/%3E%3Cpath d=%27M190,300 Q195,240 220,210 Q245,180 230,120%27 stroke=%27%235aa85a%27 stroke-width=%272%27 fill=%27none%27 opacity=%270.4%27/%3E%3Cpath d=%27M260,300 Q270,250 290,220%27 stroke=%27%235aa85a%27 stroke-width=%272%27 fill=%27none%27 opacity=%270.35%27/%3E%3Cpath d=%27M310,300 Q315,260 335,240 Q355,220 340,170%27 stroke=%27%235aa85a%27 stroke-width=%272.5%27 fill=%27none%27 opacity=%270.4%27/%3E%3Cpath d=%27M380,300 Q385,250 400,230%27 stroke=%27%235aa85a%27 stroke-width=%272%27 fill=%27none%27 opacity=%270.35%27/%3E%3Cpath d=%27M440,300 Q445,270 460,250%27 stroke=%27%235aa85a%27 stroke-width=%271.5%27 fill=%27none%27 opacity=%270.3%27/%3E%3C/svg%3E") no-repeat 50% 100%/80% auto;background-color:#eef2e8}
+
+/* 天空蓝 - 云朵从顶部 */
+.scene-sky{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 600 200%27%3E%3Cellipse cx=%27150%27 cy=%2740%27 rx=%2770%27 ry=%2730%27 fill=%27%234a8fc8%27 opacity=%270.35%27/%3E%3Cellipse cx=%27190%27 cy=%2730%27 rx=%2750%27 ry=%2725%27 fill=%27%234a8fc8%27 opacity=%270.3%27/%3E%3Cellipse cx=%27400%27 cy=%2750%27 rx=%2780%27 ry=%2735%27 fill=%27%234a8fc8%27 opacity=%270.3%27/%3E%3Cellipse cx=%27450%27 cy=%2740%27 rx=%2755%27 ry=%2728%27 fill=%27%234a8fc8%27 opacity=%270.25%27/%3E%3C/svg%3E") no-repeat 50% 0%/100% auto;background-color:#e6ecf0}
+
+/* 暖阳米 - 阳光从右上 */
+.scene-warm{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 300%27%3E%3Ccircle cx=%27320%27 cy=%2730%27 r=%2730%27 fill=%27%23c4935a%27 opacity=%270.35%27/%3E%3Cpath d=%27M320,60 Q310,90 300,120%27 stroke=%27%23c4935a%27 stroke-width=%272.5%27 fill=%27none%27 opacity=%270.3%27/%3E%3Cpath d=%27M320,60 Q335,100 345,140%27 stroke=%27%23c4935a%27 stroke-width=%272.5%27 fill=%27none%27 opacity=%270.3%27/%3E%3Cpath d=%27M320,60 Q350,90 375,110%27 stroke=%27%23c4935a%27 stroke-width=%272%27 fill=%27none%27 opacity=%270.25%27/%3E%3C/svg%3E") no-repeat 100% 0%/50% auto;background-color:#ece4d8}
+
+/* 薰衣草 - 花穗从底部 */
+.scene-lavender{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 500 300%27%3E%3Cpath d=%27M50,300 Q55,230 60,180%27 stroke=%27%23b39ddb%27 stroke-width=%272.5%27 fill=%27none%27 opacity=%270.5%27/%3E%3Ccircle cx=%2760%27 cy=%27180%27 r=%277%27 fill=%27%23b39ddb%27 opacity=%270.5%27/%3E%3Ccircle cx=%2763%27 cy=%27190%27 r=%276%27 fill=%27%23b39ddb%27 opacity=%270.45%27/%3E%3Cpath d=%27M180,300 Q185,250 190,210%27 stroke=%27%239575cd%27 stroke-width=%272.5%27 fill=%27none%27 opacity=%270.45%27/%3E%3Ccircle cx=%27190%27 cy=%27210%27 r=%277%27 fill=%27%239575cd%27 opacity=%270.45%27/%3E%3Cpath d=%27M310,300 Q315,260 320,230%27 stroke=%27%23b39ddb%27 stroke-width=%272%27 fill=%27none%27 opacity=%270.4%27/%3E%3Ccircle cx=%27320%27 cy=%27230%27 r=%276%27 fill=%27%23b39ddb%27 opacity=%270.4%27/%3E%3C/svg%3E") no-repeat 50% 100%/70% auto;background-color:#ede8f0}
 
 /* 马卡龙 - 彩色圆点 */
-.scene-macaron::before{content:'';position:fixed;inset:0;z-index:-2;background:#f5f0f0}
-.scene-macaron::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.3;background:
-  radial-gradient(circle 180px at 20% 25%, #ffb3ba88 0%, transparent 50%),
-  radial-gradient(circle 150px at 55% 35%, #baffc977 0%, transparent 45%),
-  radial-gradient(circle 160px at 75% 60%, #bae1ff77 0%, transparent 50%),
-  radial-gradient(circle 140px at 35% 70%, #e8b4f877 0%, transparent 45%),
-  radial-gradient(circle 130px at 50% 10%, #ffdfba77 0%, transparent 45%);
-  background-repeat:no-repeat
-}
+.scene-macaron{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 400%27%3E%3Ccircle cx=%2730%27 cy=%27350%27 r=%2720%27 fill=%27%23ffb3ba%27 opacity=%270.35%27/%3E%3Ccircle cx=%2760%27 cy=%27330%27 r=%2715%27 fill=%27%23baffc9%27 opacity=%270.3%27/%3E%3Ccircle cx=%27350%27 cy=%27360%27 r=%2722%27 fill=%27%23bae1ff%27 opacity=%270.3%27/%3E%3Ccircle cx=%27320%27 cy=%27340%27 r=%2718%27 fill=%27%23e8b4f8%27 opacity=%270.25%27/%3E%3Ccircle cx=%27370%27 cy=%27330%27 r=%2720%27 fill=%27%23ffdfba%27 opacity=%270.25%27/%3E%3C/svg%3E") no-repeat 50% 100%/70% auto;background-color:#f5f0f0}
 
-/* 奶油白 - 柔和波纹 */
-.scene-cream::before{content:'';position:fixed;inset:0;z-index:-2;background:#f8f0e8}
-.scene-cream::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
-  radial-gradient(ellipse 300px 150px at 25% 40%, #f0d9b588 0%, transparent 50%),
-  radial-gradient(ellipse 250px 120px at 55% 35%, #e8c8a877 0%, transparent 45%),
-  radial-gradient(ellipse 200px 100px at 75% 55%, #f0d9b566 0%, transparent 45%),
-  radial-gradient(ellipse 180px 90px at 40% 70%, #e8c8a855 0%, transparent 45%);
-  background-repeat:no-repeat
-}
+/* 奶油白 - 波纹 */
+.scene-cream{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 600 200%27%3E%3Cpath d=%27M0,80 Q50,40 100,80 T200,80 T300,80 T400,80 T500,80 T600,80%27 stroke=%27%23c4935a%27 stroke-width=%272.5%27 fill=%27none%27 opacity=%270.3%27/%3E%3Cpath d=%27M0,110 Q50,145 100,110 T200,110 T300,110 T400,110 T500,110 T600,110%27 stroke=%27%23c4935a%27 stroke-width=%272%27 fill=%27none%27 opacity=%270.2%27/%3E%3C/svg%3E") no-repeat 50% 100%/90% auto;background-color:#f5ede5}
 
-/* 薄荷冰 - 冰蓝色调 */
-.scene-mint::before{content:'';position:fixed;inset:0;z-index:-2;background:#dce8e8}
-.scene-mint::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
-  radial-gradient(circle 200px at 20% 15%, #80cbc488 0%, transparent 50%),
-  radial-gradient(circle 180px at 65% 20%, #b2dfdb77 0%, transparent 45%),
-  radial-gradient(circle 220px at 50% 80%, #80cbc466 0%, transparent 50%),
-  radial-gradient(circle 160px at 80% 55%, #b2dfdb55 0%, transparent 45%),
-  radial-gradient(circle 140px at 10% 60%, #80cbc444 0%, transparent 45%);
-  background-repeat:no-repeat
-}
-@keyframes sparkle{0%,100%{opacity:0.3;transform:scale(0.8) rotate(0deg)}50%{opacity:0.6;transform:scale(1.1) rotate(180deg)}}
+/* 薄荷冰 - 冰晶叶片左上 */
+.scene-mint{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 300 250%27%3E%3Cpath d=%27M0,0 Q40,30 80,50 Q60,20 0,0%27 fill=%27%2380cbc4%27 opacity=%270.45%27/%3E%3Cpath d=%27M30,0 Q70,20 100,40 Q80,10 30,0%27 fill=%27%2380cbc4%27 opacity=%270.4%27/%3E%3Cpath d=%27M60,0 Q100,15 120,30 Q95,5 60,0%27 fill=%27%2380cbc4%27 opacity=%270.35%27/%3E%3C/svg%3E") no-repeat 0% 0%/35% auto;background-color:#e6efef}
 
-/* 蜜桃橘 - 蜜桃色 */
-.scene-peach::before{content:'';position:fixed;inset:0;z-index:-2;background:#faede8}
-.scene-peach::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
-  radial-gradient(circle 200px at 20% 20%, #ffab9188 0%, transparent 50%),
-  radial-gradient(circle 180px at 60% 25%, #ffcc8077 0%, transparent 45%),
-  radial-gradient(circle 220px at 45% 75%, #ffab9166 0%, transparent 50%),
-  radial-gradient(circle 160px at 75% 60%, #ffcc8055 0%, transparent 45%),
-  radial-gradient(circle 140px at 85% 30%, #ffab9144 0%, transparent 45%);
-  background-repeat:no-repeat
-}
-@keyframes glowFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.2)}}
+/* 蜜桃橘 - 蜜桃从右侧 */
+.scene-peach{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 350 300%27%3E%3Cpath d=%27M350,250 Q300,230 260,240 Q240,245 220,230%27 stroke=%27%23ffab91%27 stroke-width=%273.5%27 fill=%27none%27 opacity=%270.5%27/%3E%3Cpath d=%27M260,240 Q250,220 240,215%27 stroke=%27%23ffab91%27 stroke-width=%272%27 fill=%27none%27 opacity=%270.4%27/%3E%3Cellipse cx=%27270%27 cy=%27250%27 rx=%2720%27 ry=%2722%27 fill=%27%23ffab91%27 opacity=%270.4%27/%3E%3Cellipse cx=%27280%27 cy=%27245%27 rx=%2717%27 ry=%2718%27 fill=%27%23ffcc80%27 opacity=%270.35%27/%3E%3C/svg%3E") no-repeat 100% 100%/40% auto;background-color:#faede8}
 
-/* 雾霾蓝 - 远山 + 薄雾 */
-.scene-haze::before{content:'';position:fixed;inset:0;z-index:-2;background:#d0dce4}
-.scene-haze::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
-  radial-gradient(circle 250px at 10% 85%, #8eafcb88 0%, transparent 50%),
-  radial-gradient(circle 200px at 40% 80%, #a8c4de77 0%, transparent 45%),
-  radial-gradient(circle 220px at 65% 90%, #8eafcb66 0%, transparent 50%),
-  radial-gradient(circle 180px at 85% 75%, #a8c4de55 0%, transparent 45%);
-  background-repeat:no-repeat
-}
+/* 雾霾蓝 - 远山底部 */
+.scene-haze{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 600 200%27%3E%3Cpath d=%27M0,200 L80,100 L150,160 L220,80 L300,140 L380,70 L460,130 L550,90 L600,110 L600,200 Z%27 fill=%27%238eafcb%27 opacity=%270.4%27/%3E%3Cpath d=%27M0,200 L100,130 L180,170 L250,110 L330,155 L400,100 L480,145 L560,115 L600,130 L600,200 Z%27 fill=%27%23a8c4de%27 opacity=%270.3%27/%3E%3C/svg%3E") no-repeat 50% 100%/90% auto;background-color:#dce4ea}
 
-/* 香槟金 - 金色渐变 */
-.scene-champagne::before{content:'';position:fixed;inset:0;z-index:-2;background:#f2e6cc}
-.scene-champagne::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
-  radial-gradient(circle 220px at 25% 20%, #d4a84488 0%, transparent 50%),
-  radial-gradient(circle 200px at 60% 30%, #e8c87877 0%, transparent 45%),
-  radial-gradient(circle 180px at 35% 75%, #d4a84466 0%, transparent 50%),
-  radial-gradient(circle 160px at 75% 65%, #e8c87855 0%, transparent 45%);
-  background-repeat:no-repeat
-}
+/* 香槟金 - 金色光点 */
+.scene-champagne{background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 300%27%3E%3Ccircle cx=%2740%27 cy=%2740%27 r=%274%27 fill=%27%23d4a844%27 opacity=%270.5%27/%3E%3Ccircle cx=%2785%27 cy=%2755%27 r=%272.5%27 fill=%27%23d4a844%27 opacity=%270.45%27/%3E%3Ccircle cx=%27350%27 cy=%2730%27 r=%275%27 fill=%27%23d4a844%27 opacity=%270.4%27/%3E%3Ccircle cx=%27330%27 cy=%2780%27 r=%273%27 fill=%27%23d4a844%27 opacity=%270.35%27/%3E%3Ccircle cx=%2755%27 cy=%27270%27 r=%274%27 fill=%27%23d4a844%27 opacity=%270.35%27/%3E%3Ccircle cx=%27320%27 cy=%27260%27 r=%275%27 fill=%27%23d4a844%27 opacity=%270.3%27/%3E%3C/svg%3E") no-repeat 50% 50%/80% auto;background-color:#f2e8d4}
 
 /* 深色主题 - 星空 */
-.scene-starry{opacity:0.15}
-.scene-starry .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite}
+.scene-starry .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite}.scene-starry .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite}
 @keyframes twinkle{0%,100%{opacity:0.15}50%{opacity:0.8}}
 
 /* 暗红风暴 */
