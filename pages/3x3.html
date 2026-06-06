@@ -435,6 +435,21 @@ function loadData(){
     var commentRows = results[2] || [];
     if(cardRows.length > 0){
       cards = cardRows.map(function(r){ return {id:r.id, title:r.name||'', body:r.description||'', x:r.x, y:r.y}; });
+      /* 从 localStorage 恢复卡片扩展属性 */
+      try{
+        var extras = JSON.parse(localStorage.getItem('3x3_cardExtras')||'{}');
+        cards.forEach(function(c){
+          var ex = extras[c.id];
+          if(ex){
+            if(ex.type) c.type = ex.type;
+            if(ex.imageData) c.imageData = ex.imageData;
+            if(ex.fontSize) c.fontSize = ex.fontSize;
+            if(ex.fontColor) c.fontColor = ex.fontColor;
+            if(ex.glow !== undefined) c.glow = ex.glow;
+            if(ex.bgColor) c.bgColor = ex.bgColor;
+          }
+        });
+      }catch(e){}
     } else {
       cards = [];
     }
@@ -646,6 +661,21 @@ function saveData(){
   }).catch(function(e){
     console.warn('saveData complete', e);
   });
+  /* 存储卡片扩展属性到 localStorage（类型/图片/标题样式） */
+  try{
+    var extras = {};
+    cards.forEach(function(c){
+      if(c.type && c.type !== 'normal'){
+        extras[c.id] = {type:c.type};
+        if(c.imageData) extras[c.id].imageData = c.imageData;
+        if(c.fontSize) extras[c.id].fontSize = c.fontSize;
+        if(c.fontColor) extras[c.id].fontColor = c.fontColor;
+        if(c.glow !== undefined) extras[c.id].glow = c.glow;
+        if(c.bgColor) extras[c.id].bgColor = c.bgColor;
+      }
+    });
+    localStorage.setItem('3x3_cardExtras', JSON.stringify(extras));
+  }catch(e){}
 }
 
 /* ====== 渲染 ====== */
@@ -657,7 +687,9 @@ function renderAll(){
   cards.forEach(function(c){ renderCard(c) });
   
   updateTransform();
-  try{localStorage.setItem('3x3_cards',JSON.stringify(cards));localStorage.setItem('3x3_connections',JSON.stringify(connections));localStorage.setItem('3x3_zones',JSON.stringify(zones));}catch(e){}
+  try{localStorage.setItem('3x3_cards',JSON.stringify(cards));localStorage.setItem('3x3_connections',JSON.stringify(connections));localStorage.setItem('3x3_zones',JSON.stringify(zones));
+  /* render时也保存card extras */
+  var extras={};cards.forEach(function(c){if(c.type&&c.type!=='normal'){extras[c.id]={type:c.type};if(c.imageData)extras[c.id].imageData=c.imageData;if(c.fontSize)extras[c.id].fontSize=c.fontSize;if(c.fontColor)extras[c.id].fontColor=c.fontColor;if(c.glow!==undefined)extras[c.id].glow=c.glow;if(c.bgColor)extras[c.id].bgColor=c.bgColor;}});localStorage.setItem('3x3_cardExtras',JSON.stringify(extras));}catch(e){}
 }
 
 /* 渲染区域 */
