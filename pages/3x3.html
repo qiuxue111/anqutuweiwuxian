@@ -250,9 +250,12 @@
     <h2 id="commentModalTitle">评论</h2>
     <div class="comment-list" id="commentList"></div>
     <div class="cm-input-wrap">
-      <input id="cmInput" placeholder="写评论..." onkeydown="if(event.key==='Enter')addComment()">
-      <button onclick="addComment()">发送</button>
+      <input id="cmInput" placeholder="写评论..." onkeydown="if(event.key==='Enter')addComment()" style="flex:1">
+      <label id="cmImgBtn" style="padding:6px 10px;background:rgba(255,200,50,.1);border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap">🖼 图片</label>
+      <input id="cmImgInput" type="file" accept="image/*" style="display:none">
+      <button onclick="addComment()" style="padding:6px 14px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">发送</button>
     </div>
+    <div id="cmPreviewArea" style="display:none;padding:6px;margin-top:6px;background:rgba(255,255,255,.03);border-radius:6px;font-size:11px;color:var(--accent)"></div>
     <div class="btn-row" style="margin-top:10px">
       <button class="btn-cancel-m" onclick="closeCommentModal()">关闭</button>
     </div>
@@ -434,22 +437,8 @@ function loadData(){
     var connRows = results[1] || [];
     var commentRows = results[2] || [];
     if(cardRows.length > 0){
-      cards = cardRows.map(function(r){ return {id:r.id, title:r.name||'', body:r.description||'', x:r.x, y:r.y}; });
-      /* 从 localStorage 恢复卡片扩展属性 */
-      try{
-        var extras = JSON.parse(localStorage.getItem('3x3_cardExtras')||'{}');
-        cards.forEach(function(c){
-          var ex = extras[c.id];
-          if(ex){
-            if(ex.type) c.type = ex.type;
-            if(ex.imageData) c.imageData = ex.imageData;
-            if(ex.fontSize) c.fontSize = ex.fontSize;
-            if(ex.fontColor) c.fontColor = ex.fontColor;
-            if(ex.glow !== undefined) c.glow = ex.glow;
-            if(ex.bgColor) c.bgColor = ex.bgColor;
-          }
-        });
-      }catch(e){}
+      cards = cardRows.map(function(r){ return {id:r.id, title:r.name||'', body:r.description||'', x:r.x, y:r.y, type:r.card_type||'normal', imageData:r.image_data||'', fontSize:r.font_size||42, fontColor:r.font_color||'#ffc832', glow:r.glow!==false, bgColor:r.bg_color||''}; });
+
     } else {
       cards = [];
     }
@@ -633,7 +622,7 @@ function saveData(){
     cards.forEach(function(c){
       upserts.push(safefetch(SUPABASE_URL+'/rest/v1/task_cards',{
         method:'POST', headers:authHeaders,
-        body:JSON.stringify({id:c.id, canvas_id:currentCanvas, name:c.title||'', description:c.body||'', x:c.x, y:c.y})
+        body:JSON.stringify({id:c.id, canvas_id:currentCanvas, name:c.title||'', description:c.body||'', x:c.x, y:c.y, card_type:c.type||'normal', image_data:c.imageData||null, font_size:c.fontSize||null, font_color:c.fontColor||null, glow:c.glow!==false, bg_color:c.bgColor||null})
       }));
     });
     connections.forEach(function(cn){
@@ -661,21 +650,7 @@ function saveData(){
   }).catch(function(e){
     console.warn('saveData complete', e);
   });
-  /* 存储卡片扩展属性到 localStorage（类型/图片/标题样式） */
-  try{
-    var extras = {};
-    cards.forEach(function(c){
-      if(c.type && c.type !== 'normal'){
-        extras[c.id] = {type:c.type};
-        if(c.imageData) extras[c.id].imageData = c.imageData;
-        if(c.fontSize) extras[c.id].fontSize = c.fontSize;
-        if(c.fontColor) extras[c.id].fontColor = c.fontColor;
-        if(c.glow !== undefined) extras[c.id].glow = c.glow;
-        if(c.bgColor) extras[c.id].bgColor = c.bgColor;
-      }
-    });
-    localStorage.setItem('3x3_cardExtras', JSON.stringify(extras));
-  }catch(e){}
+
 }
 
 /* ====== 渲染 ====== */
@@ -688,8 +663,7 @@ function renderAll(){
   
   updateTransform();
   try{localStorage.setItem('3x3_cards',JSON.stringify(cards));localStorage.setItem('3x3_connections',JSON.stringify(connections));localStorage.setItem('3x3_zones',JSON.stringify(zones));
-  /* render时也保存card extras */
-  var extras={};cards.forEach(function(c){if(c.type&&c.type!=='normal'){extras[c.id]={type:c.type};if(c.imageData)extras[c.id].imageData=c.imageData;if(c.fontSize)extras[c.id].fontSize=c.fontSize;if(c.fontColor)extras[c.id].fontColor=c.fontColor;if(c.glow!==undefined)extras[c.id].glow=c.glow;if(c.bgColor)extras[c.id].bgColor=c.bgColor;}});localStorage.setItem('3x3_cardExtras',JSON.stringify(extras));}catch(e){}
+}catch(e){}
 }
 
 /* 渲染区域 */
@@ -1324,7 +1298,30 @@ function openCommentModal(cardId, cardTitle){
 function closeCommentModal(){
   document.getElementById("commentModal").classList.remove("show");
   commentCardId = null;
+  var pa = document.getElementById("cmPreviewArea");
+  if(pa){ pa.innerHTML = ""; pa.removeAttribute("data-img"); pa.style.display = "none"; }
 }
+/* 评论区图片上传 */
+document.addEventListener("DOMContentLoaded", function(){
+  var btn = document.getElementById("cmImgBtn");
+  var inp = document.getElementById("cmImgInput");
+  if(btn && inp){
+    btn.onclick = function(){ inp.click(); };
+    inp.onchange = function(e){
+      var file = e.target.files[0];
+      if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        var pa = document.getElementById("cmPreviewArea");
+        if(!pa) return;
+        pa.setAttribute("data-img", ev.target.result);
+        pa.innerHTML = "已选择图片 <span onclick=\"this.parentNode.innerHTML='';this.parentNode.removeAttribute('data-img');this.parentNode.style.display='none'\" style=\"color:#f66;cursor:pointer\">✕</span>";
+        pa.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+});
 
 function renderComments(){
   var list = document.getElementById("commentList");
@@ -1359,12 +1356,20 @@ function renderComments(){
 function addComment(){
   var input = document.getElementById("cmInput");
   var text = input.value.trim();
-  if(!text || !commentCardId) return;
+  var imgInput = document.getElementById("cmImgInput");
+  var imgPreview = document.getElementById("cmPreviewArea");
+  var imageData = imgPreview ? imgPreview.getAttribute("data-img") || "" : "";
+  if(!text && !imageData) return;
+  if(!commentCardId) return;
   var id = "cmt_"+Date.now()+"_"+Math.random().toString(36).slice(2,6);
   var author = getUserName() || "匿名";
   if(!comments[commentCardId]) comments[commentCardId] = [];
-  comments[commentCardId].push({id:id, author:author, content:text, created_at:new Date().toISOString()});
+  var cmData = {id:id, author:author, content:text||"", created_at:new Date().toISOString()};
+  if(imageData) cmData.imageData = imageData;
+  comments[commentCardId].push(cmData);
   input.value = "";
+  if(imgPreview){ imgPreview.innerHTML = ""; imgPreview.removeAttribute("data-img"); imgPreview.style.display = "none"; }
+  if(imgInput) imgInput.value = "";
   renderComments();
   renderAll();
 }
