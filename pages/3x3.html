@@ -204,7 +204,7 @@ body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,
   <button class="btn btn-save" id="saveBtn" style="display:none" onclick="saveData()">保存</button>
   <button class="btn btn-cancel" id="cancelBtn" style="display:none" onclick="cancelEdit()">取消</button>
   <button class="btn btn-add-card" id="addCardBtn" onclick="addCard()">+ 添加</button>
-<select id="cardTypeSelect" style="padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.08);background:#1a1a22;color:#ddd;font-size:12px;cursor:pointer"><option value="normal">普通</option><option value="image">图片</option><option value="title">标题</option></select>
+<select id="cardTypeSelect" style="padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.08);background:#1a1a22;color:#ddd;font-size:12px;cursor:pointer;display:none"><option value="normal">普通</option><option value="image">图片</option><option value="title">标题</option></select>
 </div>
 
 <div class="canvas-panel" id="canvasPanel"></div>
@@ -457,6 +457,7 @@ function initScene(){
 /* ====== 初始化 ====== */
 function init(){
   initScene();
+  applyEditVisibility();
   bindCanvasSwitch();
   document.getElementById("loading").style.display = "flex";
   db('GET','task_canvases','','order=created_at').then(function(rows){
@@ -1639,6 +1640,14 @@ function uploadImgToGitHub(base64Data, ext, cb){
 if((window.location.hash||'').indexOf('access_token')>=0||(window.location.search||'').indexOf('access_token')>=0){try{var raw=(window.location.hash||window.location.search).replace(/^[#?]/,'');var p={};raw.split('&').forEach(function(s){var kv=s.split('=');p[kv[0]]=decodeURIComponent(kv[1]||'');});if(p.access_token){localStorage.setItem('abi_token',p.access_token);try{var b64=p.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var u=JSON.parse(atob(b64));localStorage.setItem('abi_user',JSON.stringify(u));}catch(e){}history.replaceState(null,'',window.location.pathname+window.location.search);window.location.href=window.location.pathname+window.location.search;}}catch(e){}}
 var ALLOWED_GITHUB_USER='qiuxue111';
 function canEdit(){var token=localStorage.getItem('abi_token');if(!token)return false;try{var b64=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var payload=JSON.parse(atob(b64));return payload.email===ALLOWED_GITHUB_USER+'@users.noreply.github.com'||payload.user_metadata&&payload.user_metadata.user_name===ALLOWED_GITHUB_USER||payload.preferred_username===ALLOWED_GITHUB_USER||payload.email&&payload.email.split('@')[0]===ALLOWED_GITHUB_USER;}catch(e){return false;}}
+/* 管理按钮可见性 */
+function applyEditVisibility(){
+  var show = canEdit();
+  ['editToggle','addCardBtn','cardTypeSelect','saveCloudBtn','batchDelBtn','saveBtn','cancelBtn','bgSwitch'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.style.display = show ? '' : 'none';
+  });
+}
 (function(){normalizeUser();localStorage.getItem('abi_token')})();
 
 /* 汉堡 */
