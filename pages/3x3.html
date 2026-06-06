@@ -425,14 +425,22 @@ function init(){
 
 /* ====== 数据库操作 ====== */
 function loadData(){
+  var lp = function(p,t){
+    var b = document.getElementById("loadingBar");
+    var l = document.getElementById("loadingText");
+    if(b) b.style.width = p+"%";
+    if(l && t) l.textContent = t;
+  };
   if(!currentCanvas){document.getElementById("loading").style.display="none";return;}
   document.getElementById("loading").style.display = "flex";
+  lp(5,"连接服务器...");
   var cid = encodeURIComponent(currentCanvas);
   Promise.all([
     db('GET','task_cards','','canvas_id=eq.'+cid+'&order=created_at'),
     db('GET','task_connections','','canvas_id=eq.'+cid),
-    db('GET','task_comments','','order=created_at')
+    db('GET','task_comments','','canvas_id=eq.'+cid+'&order=created_at')
   ]).then(function(results){
+    lp(30,"解析卡片数据...");
     var cardRows = results[0] || [];
     var connRows = results[1] || [];
     var commentRows = results[2] || [];
@@ -444,13 +452,17 @@ function loadData(){
     }
     connections = connRows.map(function(r){ return {from:r.from_card, to:r.to_card}; });
     comments = {};
-    commentRows.filter(function(cr){ return cards.some(function(c){ return c.id === cr.card_id }) }).forEach(function(cr){
+    commentRows.filter(function(cr){ return cr.canvas_id===currentCanvas && cards.some(function(c){ return c.id === cr.card_id }) }).forEach(function(cr){
       if(!comments[cr.card_id]) comments[cr.card_id] = [];
       comments[cr.card_id].push({id:cr.id, author:cr.author||'', content:cr.content||'', created_at:cr.created_at});
     });
+    lp(70,"渲染界面...");
     docscroll();
     renderAll();
-    document.getElementById("loading").style.display = "none";
+    lp(100,"完成");
+    setTimeout(function(){
+      document.getElementById("loading").style.display = "none";
+    }, 300);
   }).catch(function(e){
     console.warn('Load error, using localStorage',e);
     try{var lc=localStorage.getItem('3x3_cards');if(lc && lc!=='[]'){cards=JSON.parse(lc);} else {cards=[];var nid='c'+Date.now();cards.push({id:nid,title:'示例卡片',body:'右键此卡片试试连线功能',x:100,y:100});}var lconn=localStorage.getItem('3x3_connections');if(lconn){connections=JSON.parse(lconn);}}catch(le){cards=[];}
