@@ -482,19 +482,29 @@ function loadData(){
     var b = document.getElementById("loadingBar");
     var l = document.getElementById("loadingText");
     var pct = document.getElementById("loadingPercent");
-    if(b) b.style.width = p+"%";
+    if(b) b.style.width = Math.min(p,98)+"%";
     if(l && t) l.textContent = t;
     if(pct) pct.textContent = Math.round(p)+"%";
   };
   if(!currentCanvas){document.getElementById("loading").style.display="none";return;}
   document.getElementById("loading").style.display = "flex";
   lp(5,"连接服务器...");
+  
+  // 请求等待时，进度条慢慢蠕动（给用户真实反馈感）
+  var creep = 5;
+  var creepTimer = setInterval(function(){
+    creep += 0.3 + Math.random() * 0.5;
+    if(creep >= 25) { clearInterval(creepTimer); return; }
+    lp(creep, "连接服务器...");
+  }, 400);
+  
   var cid = encodeURIComponent(currentCanvas);
   Promise.all([
     db('GET','task_cards','','canvas_id=eq.'+cid+'&order=created_at'),
     db('GET','task_connections','','canvas_id=eq.'+cid),
     db('GET','task_comments','','order=created_at')
   ]).then(function(results){
+    if(creepTimer) clearInterval(creepTimer);
     lp(30,"解析卡片数据...");
     var cardRows = results[0] || [];
     var connRows = results[1] || [];
