@@ -1328,11 +1328,11 @@ var SCENE_MAP = {
   "岩石灰":"starry",
   "暗夜紫":"starry"
 };
-function applyAll(obj){
+function applyAll(obj, themeName){
   Object.keys(obj).forEach(function(k){document.documentElement.style.setProperty(k,obj[k]);});
   /* 应用主题背景特效 */
-  var themeName = localStorage.getItem('abi_theme_name') || '默认暗色';
-  var sceneClass = SCENE_MAP[themeName] || 'starry';
+  var tn = themeName || localStorage.getItem('abi_theme_name') || '默认暗色';
+  var sceneClass = SCENE_MAP[tn] || 'starry';
   applyScene(sceneClass);
 }
 
@@ -1582,8 +1582,9 @@ function applyScene(sceneClass){
 }
 function loadColors(){
   var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
-  if(s) applyAll(s);
-  else applyAll(DEFAULTS);
+  var storedTheme = localStorage.getItem('abi_theme_name') || '默认暗色';
+  if(s) applyAll(s, storedTheme);
+  else applyAll(DEFAULTS, storedTheme);
 }
 function renderColors(){
   var el=document.getElementById('paletteItems');if(!el)return;
@@ -1606,8 +1607,10 @@ sysBtn.onclick=function(){
   var dark=window.matchMedia("(prefers-color-scheme:dark)").matches;
   var cat=dark?"暗色":"淡色";
   var t=THEMES_DATA[cat][Object.keys(THEMES_DATA[cat])[0]];
+  var firstName=Object.keys(THEMES_DATA[cat])[0];
+  localStorage.setItem("abi_theme_name",firstName);
   localStorage.setItem("abi_palette",JSON.stringify(t));
-  applyAll(t);window.name=JSON.stringify(t);
+  applyAll(t,firstName);window.name=JSON.stringify(t);
   renderColors();
 };
 el.appendChild(sysBtn);
@@ -1631,8 +1634,8 @@ el.appendChild(sysBtn);
       btn.onmouseleave=function(){this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#aaa';};
       btn.onclick=function(){
         localStorage.setItem('abi_palette',JSON.stringify(t));
-        applyAll(t);
         localStorage.setItem('abi_theme_name',name);
+        applyAll(t,name);
         renderColors();
       };
       themeWrap.appendChild(btn);
@@ -1661,7 +1664,8 @@ function saveColor(k,v){
 }
 function resetColors(){
   localStorage.removeItem('abi_palette');
-  applyAll(DEFAULTS);
+  localStorage.setItem('abi_theme_name','默认暗色');
+  applyAll(DEFAULTS,'默认暗色');
   renderColors();
 }
 loadColors();
