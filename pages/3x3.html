@@ -1663,22 +1663,24 @@ function toggleHamburger(){
   if(!m) return;
   if(m.classList.contains('show')){ m.classList.remove('show'); return; }
   m.classList.add('show'); m.innerHTML='';
-  // token 状态提示
-  var hasToken = !!localStorage.getItem('gh_token');
-  var tkItem = document.createElement('div');
-  tkItem.className = 'hm-item';
-  tkItem.textContent = '🔑 图片Token '+(hasToken ? '✅' : '❌');
-  tkItem.onclick = function(){
-    var current = localStorage.getItem('gh_token') || '';
-    var newToken = prompt('输入 GitHub Token（只需要设置一次）:', current);
-    if(newToken !== null){
-      if(newToken.trim()){ localStorage.setItem('gh_token', newToken.trim()); alert('Token 已保存'); }
-      else { localStorage.removeItem('gh_token'); alert('Token 已清除'); }
-    }
-    toggleHamburger();
-  };
-  m.appendChild(tkItem);
-  var sep = document.createElement('div'); sep.className = 'hm-sep'; m.appendChild(sep);
+  // token 设置（仅你自己可见）
+  if(canEdit()){
+    var hasToken = !!localStorage.getItem('gh_token');
+    var tkItem = document.createElement('div');
+    tkItem.className = 'hm-item';
+    tkItem.textContent = '🔑 图片Token '+(hasToken ? '✅' : '❌');
+    tkItem.onclick = function(){
+      var current = localStorage.getItem('gh_token') || '';
+      var newToken = prompt('输入 GitHub Token:', current);
+      if(newToken !== null){
+        if(newToken.trim()){ localStorage.setItem('gh_token', newToken.trim()); alert('Token 已保存'); }
+        else { localStorage.removeItem('gh_token'); alert('Token 已清除'); }
+      }
+      toggleHamburger();
+    };
+    m.appendChild(tkItem);
+    var sep = document.createElement('div'); sep.className = 'hm-sep'; m.appendChild(sep);
+  }
   var curPath=window.location.pathname;
   var curFile=curPath.substring(curPath.lastIndexOf('/')+1)||'index.html';
   navGroups.forEach(function(g){
