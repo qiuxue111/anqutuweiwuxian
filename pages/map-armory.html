@@ -569,7 +569,7 @@ async function loadPinComments(pinIdx){
   if(pinIdx===undefined||pinIdx===null)return;
   var p=pins[pinIdx];
   if(!p||!p.id){
-    document.getElementById('pdCommentList').innerHTML='<div style="color:#666;font-size:10px;padding:4px">暂未提交，无评论</div>';
+    var el=document.getElementById('pdCommentList');if(el)el.innerHTML='<div style="color:#666;font-size:10px;padding:4px">暂未提交，无评论</div>';
     return;
   }
   try{
