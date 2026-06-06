@@ -1338,11 +1338,13 @@ function applyAll(obj, themeName){
 
 /* ====== 主题场景特效系统 ====== */
 function applyScene(sceneClass){
-  /* 移除旧场景 */
+  /* 移除旧场景和背景 */
   var old = document.querySelector('.theme-scene');
   if(old) old.remove();
   var oldCanvas = document.getElementById('themeCanvas');
   if(oldCanvas) oldCanvas.remove();
+  var oldBg = document.getElementById('themeBg');
+  if(oldBg) oldBg.remove();
   if(sceneClass === 'clean' || !sceneClass){ return; }
   
   /* 创建背景容器 */
@@ -1353,6 +1355,7 @@ function applyScene(sceneClass){
   /* 深色主题 - 星空生成 */
   if(sceneClass === 'starry'){
     var darkBg = document.createElement('div');
+    darkBg.id = 'themeBg';
     darkBg.style.cssText = 'position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 0%,#1a1a2e 0%,#08080e 100%)';
     document.body.insertBefore(darkBg, document.body.firstChild);
     for(var i=0;i<80;i++){
@@ -1366,6 +1369,7 @@ function applyScene(sceneClass){
   /* 暗红风暴 - 灰烬粒子 */
   if(sceneClass === 'storm'){
     var darkBg2 = document.createElement('div');
+    darkBg2.id = 'themeBg';
     darkBg2.style.cssText = 'position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 0%,#2a0a0a 0%,#0a0000 100%)';
     document.body.insertBefore(darkBg2, document.body.firstChild);
     for(var i=0;i<30;i++){
