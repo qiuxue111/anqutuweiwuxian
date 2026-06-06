@@ -104,86 +104,137 @@ a:hover{opacity:0.8;}
 
 
 /* ====== 主题背景插画与特效 ====== */
-.theme-scene{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;opacity:0.15}
+.theme-scene{position:fixed;inset:0;z-index:0;pointer-events:none}
 
 /* 樱花粉 - 樱花树枝 + 花瓣 */
-.scene-sakura{opacity:0.5}
-.scene-sakura::before{content:'';position:absolute;bottom:0;left:-10%;right:-10%;height:50%;background:
-  radial-gradient(ellipse 120px 60px at 15% 100%, #e8839a33 0%, transparent 60%),
-  radial-gradient(ellipse 80px 40px at 25% 60%, #e8839a44 0%, transparent 55%),
-  radial-gradient(ellipse 100px 50px at 40% 80%, #d46b8333 0%, transparent 55%),
-  radial-gradient(ellipse 90px 45px at 55% 65%, #e8839a33 0%, transparent 50%),
-  radial-gradient(ellipse 110px 55px at 70% 90%, #d46b8344 0%, transparent 55%),
-  radial-gradient(ellipse 70px 35px at 85% 60%, #e8839a33 0%, transparent 50%);
-  mask-image:linear-gradient(to top,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0) 100%)
+.scene-sakura::before{content:'';position:fixed;inset:0;z-index:-2;background:#fbe8e4}
+.scene-sakura::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
+  radial-gradient(circle 200px at 15% 85%, #e8839a88 0%, transparent 60%),
+  radial-gradient(circle 180px at 35% 70%, #d46b8366 0%, transparent 55%),
+  radial-gradient(circle 220px at 60% 80%, #e8839a77 0%, transparent 60%),
+  radial-gradient(circle 160px at 80% 65%, #d46b8355 0%, transparent 55%),
+  radial-gradient(circle 150px at 50% 45%, #e8839a44 0%, transparent 50%),
+  radial-gradient(circle 120px at 25% 30%, #d46b8344 0%, transparent 50%),
+  radial-gradient(circle 100px at 70% 30%, #e8839a33 0%, transparent 50%);
+  background-repeat:no-repeat
 }
 .sakura-dots{position:absolute;inset:0}
 .sakura-dots span{position:absolute;width:6px;height:6px;background:#e8839a;border-radius:50%;opacity:0;animation:sakuraFall linear infinite}
 @keyframes sakuraFall{0%{opacity:0;transform:translateY(-10px) rotate(0deg) scale(0.5)}10%{opacity:0.6}90%{opacity:0.3}100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(0.2)}}
 
-/* 青草绿 - 草地插画 */
-.scene-grass{opacity:0.4}
-.scene-grass::before{content:'';position:absolute;bottom:0;left:0;right:0;height:35%;background:
-  radial-gradient(ellipse 120px 50px at 10% 90%, #5aa85a44 0%, transparent 60%),
-  radial-gradient(ellipse 80px 40px at 25% 70%, #4a9a4a33 0%, transparent 55%),
-  radial-gradient(ellipse 140px 60px at 50% 95%, #5aa85a33 0%, transparent 60%),
-  radial-gradient(ellipse 90px 45px at 70% 75%, #5aa85a44 0%, transparent 55%),
-  radial-gradient(ellipse 100px 50px at 90% 85%, #4a9a4a33 0%, transparent 55%);
-  mask-image:linear-gradient(to top,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0) 100%)
+/* 青草绿 - 草地/草原 */
+.scene-grass::before{content:'';position:fixed;inset:0;z-index:-2;background:#e2ecd0}
+.scene-grass::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.3;background:
+  radial-gradient(circle 250px at 20% 90%, #5aa85a88 0%, transparent 55%),
+  radial-gradient(circle 200px at 50% 85%, #4a9a4a77 0%, transparent 50%),
+  radial-gradient(circle 220px at 75% 92%, #5aa85a66 0%, transparent 55%),
+  radial-gradient(circle 180px at 10% 60%, #5aa85a44 0%, transparent 50%),
+  radial-gradient(circle 160px at 90% 55%, #4a9a4a44 0%, transparent 50%);
+  background-repeat:no-repeat
 }
 
-/* 天空蓝 - 云朵 */
-.scene-sky{opacity:0.3}
-.scene-sky::before{content:'';position:absolute;top:3%;left:10%;width:200px;height:70px;background:radial-gradient(ellipse,#4a8fc855 30%,transparent 31%),radial-gradient(ellipse at 30% 100%,#4a8fc844 50%,transparent 51%);border-radius:50%;animation:cloudDrift 25s linear infinite}
-.scene-sky::after{content:'';position:absolute;top:12%;left:50%;width:160px;height:55px;background:radial-gradient(ellipse,#4a8fc844 30%,transparent 31%),radial-gradient(ellipse at 50% 80%,#4a8fc833 50%,transparent 51%);border-radius:50%;animation:cloudDrift 30s linear infinite;animation-delay:-12s}
+/* 天空蓝 - 蓝天白云 */
+.scene-sky::before{content:'';position:fixed;inset:0;z-index:-2;background:#d6e6f0}
+.scene-sky::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.3;background:
+  radial-gradient(ellipse 300px 100px at 15% 15%, #ffffffcc 0%, transparent 60%),
+  radial-gradient(ellipse 250px 80px at 50% 18%, #ffffffbb 0%, transparent 55%),
+  radial-gradient(ellipse 200px 70px at 75% 12%, #ffffffaa 0%, transparent 55%),
+  radial-gradient(ellipse 150px 50px at 30% 30%, #ffffff88 0%, transparent 50%),
+  radial-gradient(ellipse 180px 60px at 65% 28%, #ffffff99 0%, transparent 55%);
+  background-repeat:no-repeat
+}
 @keyframes cloudDrift{0%{transform:translateX(-100px)}100%{transform:translateX(calc(100vw + 100px))}}
 
-/* 暖阳米 - 麦穗/阳光 */
-.scene-warm{opacity:0.3}
-.scene-warm::before{content:'';position:absolute;top:0;left:10%;right:10%;height:100%;background:radial-gradient(ellipse at 30% 0%,#c4935a55 0%,transparent 50%);animation:sunPulse 4s ease-in-out infinite}
+/* 暖阳米 - 阳光/麦田 */
+.scene-warm::before{content:'';position:fixed;inset:0;z-index:-2;background:#f0e4c8}
+.scene-warm::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.35;background:
+  radial-gradient(ellipse 300px 200px at 30% 0%, #f5d78eaa 0%, transparent 60%),
+  radial-gradient(ellipse 250px 180px at 60% 0%, #e8c87888 0%, transparent 55%),
+  radial-gradient(circle 200px at 40% 80%, #d4a84477 0%, transparent 50%),
+  radial-gradient(circle 180px at 70% 90%, #c4935a66 0%, transparent 50%),
+  radial-gradient(circle 150px at 15% 85%, #d4a84455 0%, transparent 50%);
+  background-repeat:no-repeat
+}
 @keyframes sunPulse{0%,100%{opacity:0.5}50%{opacity:1}}
 
 /* 纯白极简 - 无 */
 .scene-clean{display:none}
 
-/* 薰衣草 */
-.scene-lavender{opacity:0.4}
-.scene-lavender::before{content:'';position:absolute;bottom:0;left:0;right:0;height:40%;background:
-  radial-gradient(ellipse 100px 50px at 15% 90%, #b39ddb55 0%, transparent 60%),
-  radial-gradient(ellipse 80px 40px at 30% 70%, #9575cd44 0%, transparent 55%),
-  radial-gradient(ellipse 120px 55px at 55% 85%, #b39ddb44 0%, transparent 60%),
-  radial-gradient(ellipse 90px 45px at 75% 65%, #9575cd44 0%, transparent 55%);
-  mask-image:linear-gradient(to top,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0) 100%)
+/* 薰衣草 - 紫色花田 */
+.scene-lavender::before{content:'';position:fixed;inset:0;z-index:-2;background:#e8dff0}
+.scene-lavender::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.3;background:
+  radial-gradient(circle 220px at 20% 90%, #b39ddb88 0%, transparent 55%),
+  radial-gradient(circle 200px at 50% 85%, #9575cd77 0%, transparent 50%),
+  radial-gradient(circle 180px at 75% 92%, #b39ddb66 0%, transparent 55%),
+  radial-gradient(circle 160px at 10% 60%, #9575cd44 0%, transparent 50%),
+  radial-gradient(circle 140px at 90% 50%, #b39ddb44 0%, transparent 50%);
+  background-repeat:no-repeat
 }
 
-/* 马卡龙 - 彩色气泡 */
-.scene-macaron{opacity:0.3}
-.scene-macaron::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,#ffb3ba55,transparent 25%),radial-gradient(circle at 60% 40%,#baffc955,transparent 20%),radial-gradient(circle at 80% 65%,#bae1ff55,transparent 25%),radial-gradient(circle at 35% 75%,#e8b4f855,transparent 20%),radial-gradient(circle at 55% 15%,#ffdfba55,transparent 20%)}
+/* 马卡龙 - 彩色圆点 */
+.scene-macaron::before{content:'';position:fixed;inset:0;z-index:-2;background:#f5f0f0}
+.scene-macaron::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.3;background:
+  radial-gradient(circle 180px at 20% 25%, #ffb3ba88 0%, transparent 50%),
+  radial-gradient(circle 150px at 55% 35%, #baffc977 0%, transparent 45%),
+  radial-gradient(circle 160px at 75% 60%, #bae1ff77 0%, transparent 50%),
+  radial-gradient(circle 140px at 35% 70%, #e8b4f877 0%, transparent 45%),
+  radial-gradient(circle 130px at 50% 10%, #ffdfba77 0%, transparent 45%);
+  background-repeat:no-repeat
+}
 
-/* 奶油白 */
-.scene-cream{opacity:0.08}
-.scene-cream::before{content:'';position:absolute;top:30%;left:0;right:0;height:200px;background:radial-gradient(ellipse at 20% 50%,#f0d9b555 0%,transparent 30%),radial-gradient(ellipse at 50% 40%,#f0d9b544 0%,transparent 25%),radial-gradient(ellipse at 80% 60%,#f0d9b544 0%,transparent 35%);animation:creamFlow 8s ease-in-out infinite}
-@keyframes creamFlow{0%,100%{transform:scaleY(1) translateY(0)}50%{transform:scaleY(1.15) translateY(-10px)}}
+/* 奶油白 - 柔和波纹 */
+.scene-cream::before{content:'';position:fixed;inset:0;z-index:-2;background:#f8f0e8}
+.scene-cream::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
+  radial-gradient(ellipse 300px 150px at 25% 40%, #f0d9b588 0%, transparent 50%),
+  radial-gradient(ellipse 250px 120px at 55% 35%, #e8c8a877 0%, transparent 45%),
+  radial-gradient(ellipse 200px 100px at 75% 55%, #f0d9b566 0%, transparent 45%),
+  radial-gradient(ellipse 180px 90px at 40% 70%, #e8c8a855 0%, transparent 45%);
+  background-repeat:no-repeat
+}
 
-/* 薄荷冰 - 冰晶 */
-.scene-mint{opacity:0.4}
-.scene-mint::before{content:'❄️';position:absolute;top:12%;left:15%;font-size:30px;opacity:0.4;animation:sparkle 3s ease-in-out infinite}
-.scene-mint::after{content:'❄️';position:absolute;top:25%;right:20%;font-size:22px;opacity:0.3;animation:sparkle 3.5s ease-in-out infinite;animation-delay:-1.2s}
+/* 薄荷冰 - 冰蓝色调 */
+.scene-mint::before{content:'';position:fixed;inset:0;z-index:-2;background:#dce8e8}
+.scene-mint::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
+  radial-gradient(circle 200px at 20% 15%, #80cbc488 0%, transparent 50%),
+  radial-gradient(circle 180px at 65% 20%, #b2dfdb77 0%, transparent 45%),
+  radial-gradient(circle 220px at 50% 80%, #80cbc466 0%, transparent 50%),
+  radial-gradient(circle 160px at 80% 55%, #b2dfdb55 0%, transparent 45%),
+  radial-gradient(circle 140px at 10% 60%, #80cbc444 0%, transparent 45%);
+  background-repeat:no-repeat
+}
 @keyframes sparkle{0%,100%{opacity:0.3;transform:scale(0.8) rotate(0deg)}50%{opacity:0.6;transform:scale(1.1) rotate(180deg)}}
 
-/* 蜜桃橘 - 小光点 */
-.scene-peach{opacity:0.35}
-.scene-peach::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 20%,#ffab9155 0%,transparent 20%),radial-gradient(circle at 65% 30%,#ffcc8044 0%,transparent 15%),radial-gradient(circle at 40% 70%,#ffab9133 0%,transparent 18%),radial-gradient(circle at 75% 60%,#ffcc8044 0%,transparent 20%)}
+/* 蜜桃橘 - 蜜桃色 */
+.scene-peach::before{content:'';position:fixed;inset:0;z-index:-2;background:#faede8}
+.scene-peach::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
+  radial-gradient(circle 200px at 20% 20%, #ffab9188 0%, transparent 50%),
+  radial-gradient(circle 180px at 60% 25%, #ffcc8077 0%, transparent 45%),
+  radial-gradient(circle 220px at 45% 75%, #ffab9166 0%, transparent 50%),
+  radial-gradient(circle 160px at 75% 60%, #ffcc8055 0%, transparent 45%),
+  radial-gradient(circle 140px at 85% 30%, #ffab9144 0%, transparent 45%);
+  background-repeat:no-repeat
+}
 @keyframes glowFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.2)}}
 
-/* 雾霾蓝 - 山峦轮廓 */
-.scene-haze{opacity:0.3}
-.scene-haze::before{content:'';position:absolute;bottom:0;left:0;right:0;height:30%;background:linear-gradient(0deg,#8eafcb55 0%,transparent 100%);clip-path:polygon(0% 100%,5% 70%,10% 85%,18% 55%,25% 80%,32% 60%,38% 75%,45% 50%,52% 65%,58% 55%,65% 45%,72% 60%,78% 50%,85% 40%,90% 55%,95% 45%,100% 60%,100% 100%)}
-.scene-haze::after{content:'';position:absolute;bottom:0;left:0;right:0;height:20%;background:linear-gradient(0deg,#a8c4de44 0%,transparent 100%);clip-path:polygon(0% 100%,3% 82%,8% 90%,12% 75%,18% 85%,22% 70%,28% 78%,32% 68%,38% 72%,42% 65%,48% 70%,52% 60%,58% 68%,62% 58%,68% 62%,72% 55%,78% 58%,82% 50%,88% 55%,92% 48%,96% 52%,100% 55%,100% 100%)}
+/* 雾霾蓝 - 远山 + 薄雾 */
+.scene-haze::before{content:'';position:fixed;inset:0;z-index:-2;background:#d0dce4}
+.scene-haze::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
+  radial-gradient(circle 250px at 10% 85%, #8eafcb88 0%, transparent 50%),
+  radial-gradient(circle 200px at 40% 80%, #a8c4de77 0%, transparent 45%),
+  radial-gradient(circle 220px at 65% 90%, #8eafcb66 0%, transparent 50%),
+  radial-gradient(circle 180px at 85% 75%, #a8c4de55 0%, transparent 45%);
+  background-repeat:no-repeat
+}
 
-/* 香槟金 - 金箔粒子 */
-.scene-champagne{opacity:0.35}
-.scene-champagne::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,#d4a84455,transparent 30%),radial-gradient(circle at 70% 50%,#d4a84444,transparent 25%),radial-gradient(circle at 40% 80%,#d4a84444,transparent 30%);animation:champagneGlow 5s ease-in-out infinite}
+/* 香槟金 - 金色渐变 */
+.scene-champagne::before{content:'';position:fixed;inset:0;z-index:-2;background:#f2e6cc}
+.scene-champagne::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.25;background:
+  radial-gradient(circle 220px at 25% 20%, #d4a84488 0%, transparent 50%),
+  radial-gradient(circle 200px at 60% 30%, #e8c87877 0%, transparent 45%),
+  radial-gradient(circle 180px at 35% 75%, #d4a84466 0%, transparent 50%),
+  radial-gradient(circle 160px at 75% 65%, #e8c87855 0%, transparent 45%);
+  background-repeat:no-repeat
+}
 
 /* 深色主题 - 星空 */
 .scene-starry{opacity:0.15}
@@ -1392,7 +1443,7 @@ function applyScene(sceneClass){
   /* Canvas粒子特效 */
   var canvas = document.createElement('canvas');
   canvas.id = 'themeCanvas';
-  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.15';
+  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.12';
   document.body.insertBefore(canvas, el.nextSibling);
   
   var ctx = canvas.getContext('2d');
