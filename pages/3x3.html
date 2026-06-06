@@ -1297,14 +1297,24 @@ function showEditFields(type, c){
       inp.onchange = function(e){
         var file = e.target.files[0]; if(!file) return;
         var reader = new FileReader();
-        reader.onload = function(ev){ var crd = cards.find(function(x){ return x.id === editingCardId; }); if(crd) crd.imageData = ev.target.result; openEditModal(editingCardId); };
+        reader.onload = function(ev){
+          var crd = cards.find(function(x){ return x.id === editingCardId; });
+          if(!crd) return;
+          var ext = file.name.split('.').pop() || 'png';
+          fb.textContent = "上传中..."; fb.style.opacity = "0.5";
+          uploadImgToGitHub(ev.target.result, ext, function(url){
+            fb.textContent = "选择图片"; fb.style.opacity = "1";
+            if(url){ crd.imageData = url; openEditModal(editingCardId); }
+            else alert("图片上传失败");
+          });
+        };
         reader.readAsDataURL(file);
       }; inp.click();
     };
     area.appendChild(fb);
     area.ondragover = function(e){ e.preventDefault(); this.classList.add("dragover"); };
     area.ondragleave = function(){ this.classList.remove("dragover"); };
-    area.ondrop = function(e){ e.preventDefault(); this.classList.remove("dragover"); var file = e.dataTransfer.files[0]; if(!file||!file.type.startsWith("image/")) return; var reader = new FileReader(); reader.onload = function(ev){ var crd = cards.find(function(x){return x.id===editingCardId}); if(crd) crd.imageData = ev.target.result; openEditModal(editingCardId); }; reader.readAsDataURL(file); };
+    area.ondrop = function(e){ e.preventDefault(); this.classList.remove("dragover"); var file = e.dataTransfer.files[0]; if(!file||!file.type.startsWith("image/")) return; var reader = new FileReader(); reader.onload = function(ev){ var crd = cards.find(function(x){return x.id===editingCardId}); if(!crd) return; var ext = file.name.split('.').pop()||'png'; uploadImgToGitHub(ev.target.result, ext, function(url){if(url){crd.imageData=url;openEditModal(editingCardId)}}) }; reader.readAsDataURL(file); };
   } else if(type === 'title'){
     if(titleRow){ titleRow.style.display = ""; titleRow.value = c.title || ""; }
     if(titleLabel) titleLabel.style.display = "";
@@ -1391,9 +1401,17 @@ document.addEventListener("DOMContentLoaded", function(){
       reader.onload = function(ev){
         var pa = document.getElementById("cmPreviewArea");
         if(!pa) return;
-        pa.setAttribute("data-img", ev.target.result);
-        pa.innerHTML = "已选择图片 <span onclick=\"this.parentNode.innerHTML='';this.parentNode.removeAttribute('data-img');this.parentNode.style.display='none'\" style=\"color:#f66;cursor:pointer\">✕</span>";
+        var ext = file.name.split('.').pop() || 'png';
+        pa.innerHTML = '<span style="color:#888">上传中...</span>';
         pa.style.display = "block";
+        uploadImgToGitHub(ev.target.result, ext, function(url){
+          if(url){
+            pa.setAttribute("data-img", url);
+            pa.innerHTML = "已选择图片 <span onclick=\"this.parentNode.innerHTML='';this.parentNode.removeAttribute('data-img');this.parentNode.style.display='none'\" style=\"color:#f66;cursor:pointer\">✕</span>";
+          } else {
+            pa.innerHTML = '<span style="color:#f66">上传失败</span>';
+          }
+        });
       };
       reader.readAsDataURL(file);
     };
@@ -1419,6 +1437,13 @@ function renderComments(){
     content.className = "cm-content";
     content.textContent = cm.content;
     item.appendChild(content);
+    if(cm.imageData){
+      var cmImg = document.createElement("img");
+      cmImg.src = cm.imageData;
+      cmImg.style.cssText = "max-width:100%;max-height:200px;border-radius:8px;margin-top:6px;cursor:pointer;object-fit:contain";
+      cmImg.onclick = function(){ window.open(this.src); };
+      item.appendChild(cmImg);
+    }
     if(cm.created_at){
       var time = document.createElement("div");
       time.className = "cm-time";
@@ -1575,6 +1600,43 @@ function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/page
 function logout(){localStorage.removeItem('abi_token');localStorage.removeItem('abi_user');window.location.reload();}
 function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
 function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return localStorage.getItem('abi_user')||'已登录';}}
+
+/* ====== GitHub 图片上传 ====== */
+function getGitHubToken(){ return localStorage.getItem('gh_token') || ''; }
+var GITHUB_REPO = 'qiuxue111/anqutuweiwuxian';
+var GITHUB_BRANCH = 'main';
+var GITHUB_PATH = 'assets/3x3-images/';
+var GITHUB_RAW = 'https://raw.githubusercontent.com/'+GITHUB_REPO+'/'+GITHUB_BRANCH+'/';
+
+function uploadImgToGitHub(base64Data, ext, cb){
+  if(!base64Data) return cb(null);
+  // base64Data format: data:image/png;base64,iVBOR...
+  var actualBase64 = base64Data.split(',')[1] || base64Data;
+  var filename = 'img_'+Date.now()+'_'+Math.random().toString(36).slice(2,6)+'.'+(ext||'png');
+  var path = GITHUB_PATH + filename;
+  var url = 'https://api.github.com/repos/'+GITHUB_REPO+'/contents/'+path;
+  var token = getGitHubToken();
+  if(!token){ alert('请先设置 GitHub Token：浏览器 F12 → Application → Local Storage → 添加 gh_token'); cb(null); return; }
+  
+  fetch(url, {
+    method: 'PUT',
+    headers: {'Authorization': 'Bearer '+token, 'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      message: 'upload '+filename,
+      content: actualBase64,
+      branch: GITHUB_BRANCH
+    })
+  }).then(function(r){
+    if(r.status === 201 || r.status === 200) return r.json();
+    return r.text().then(function(t){ throw new Error(t); });
+  }).then(function(data){
+    var rawUrl = GITHUB_RAW + path;
+    cb(rawUrl);
+  }).catch(function(err){
+    console.error('GitHub upload failed', err);
+    cb(null);
+  });
+}
 if((window.location.hash||'').indexOf('access_token')>=0||(window.location.search||'').indexOf('access_token')>=0){try{var raw=(window.location.hash||window.location.search).replace(/^[#?]/,'');var p={};raw.split('&').forEach(function(s){var kv=s.split('=');p[kv[0]]=decodeURIComponent(kv[1]||'');});if(p.access_token){localStorage.setItem('abi_token',p.access_token);try{var b64=p.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var u=JSON.parse(atob(b64));localStorage.setItem('abi_user',JSON.stringify(u));}catch(e){}history.replaceState(null,'',window.location.pathname+window.location.search);window.location.href=window.location.pathname+window.location.search;}}catch(e){}}
 var ALLOWED_GITHUB_USER='qiuxue111';
 function canEdit(){var token=localStorage.getItem('abi_token');if(!token)return false;try{var b64=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var payload=JSON.parse(atob(b64));return payload.email===ALLOWED_GITHUB_USER+'@users.noreply.github.com'||payload.user_metadata&&payload.user_metadata.user_name===ALLOWED_GITHUB_USER||payload.preferred_username===ALLOWED_GITHUB_USER||payload.email&&payload.email.split('@')[0]===ALLOWED_GITHUB_USER;}catch(e){return false;}}
