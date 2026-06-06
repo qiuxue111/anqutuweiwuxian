@@ -437,7 +437,7 @@ function loadData(){
     var connRows = results[1] || [];
     var commentRows = results[2] || [];
     if(cardRows.length > 0){
-      cards = cardRows.map(function(r){ return {id:r.id, title:r.name||'', body:r.description||'', x:r.x, y:r.y, type:r.card_type||'normal', imageData:r.image_data||'', fontSize:r.font_size||42, fontColor:r.font_color||'#ffc832', glow:r.glow!==false, bgColor:r.bg_color||''}; });
+      cards = cardRows.map(function(r){ return {id:r.id, title:r.name||'', body:r.description||'', x:r.x, y:r.y, type:r.card_type||'normal', imageData:r.image_data||'', fontSize:r.font_size||42, fontColor:r.font_color||'#ffc832', glow:r.glow===true||r.glow===1||r.glow===undefined||r.glow===null?true:false, bgColor:r.bg_color||''}; });
 
     } else {
       cards = [];
@@ -474,7 +474,7 @@ function saveToCloud(){
   task = task.then(function(){
     var ps = [];
     cards.forEach(function(c){
-      ps.push(fetch(SUPABASE_URL+'/rest/v1/task_cards', {method:'POST',headers:ah, body:JSON.stringify({id:c.id,canvas_id:currentCanvas,name:c.title||'',description:c.body||'',x:c.x,y:c.y})}));
+      ps.push(fetch(SUPABASE_URL+'/rest/v1/task_cards', {method:'POST',headers:ah, body:JSON.stringify({id:c.id,canvas_id:currentCanvas,name:c.title||'',description:c.body||'',x:c.x,y:c.y,card_type:c.type||'normal',image_data:c.imageData||null,font_size:c.fontSize||null,font_color:c.fontColor||null,glow:c.glow!==false,bg_color:c.bgColor||null})}));
     });
     connections.forEach(function(cn){
       ps.push(fetch(SUPABASE_URL+'/rest/v1/task_connections', {method:'POST',headers:ah, body:JSON.stringify({id:Date.now()+''+Math.random().toString(36).slice(2),canvas_id:currentCanvas,from_card:cn.from,to_card:cn.to})}));
