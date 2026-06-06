@@ -450,7 +450,7 @@ function loadData(){
   Promise.all([
     db('GET','task_cards','','canvas_id=eq.'+cid+'&order=created_at'),
     db('GET','task_connections','','canvas_id=eq.'+cid),
-    db('GET','task_comments','','canvas_id=eq.'+cid+'&order=created_at')
+    db('GET','task_comments','','order=created_at')
   ]).then(function(results){
     lp(30,"解析卡片数据...");
     var cardRows = results[0] || [];
@@ -464,7 +464,7 @@ function loadData(){
     }
     connections = connRows.map(function(r){ return {from:r.from_card, to:r.to_card}; });
     comments = {};
-    commentRows.filter(function(cr){ return cr.canvas_id===currentCanvas && cards.some(function(c){ return c.id === cr.card_id }) }).forEach(function(cr){
+    commentRows.filter(function(cr){ return cards.some(function(c){ return c.id === cr.card_id }) }).forEach(function(cr){
       if(!comments[cr.card_id]) comments[cr.card_id] = [];
       comments[cr.card_id].push({id:cr.id, author:cr.author||'', content:cr.content||'', created_at:cr.created_at});
     });
