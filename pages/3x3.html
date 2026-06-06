@@ -1075,17 +1075,13 @@ function renderImageCard(c){
     this.style.display = "none";
     loadingHint.textContent = "图片加载失败，重试中…";
     loadingHint.style.color = "#ff6b6b";
-    /* 自动重试，最多 5 次，间隔递增 */
+    /* 无限重试，间隔递增（1s → 2s → 4s → 8s → 16s → 保持16s） */
     var retries = parseInt(localStorage.getItem('_img_retry_'+c.id) || '0');
-    if(retries < 5){
-      localStorage.setItem('_img_retry_'+c.id, String(retries+1));
-      var delay = Math.min(1000 * Math.pow(2, retries), 16000);
-      loadingHint.textContent = "图片未能显示，继续加载中"+'.'.repeat(retries+1)+"…";
-      setTimeout(function(){ img.src = c.imageData; }, delay);
-    } else {
-      loadingHint.textContent = "图片加载失败";
-      loadingHint.style.color = "#666";
-    }
+    localStorage.setItem('_img_retry_'+c.id, String(retries+1));
+    var delay = Math.min(1000 * Math.pow(2, retries), 16000);
+    var dots = Math.min(retries + 1, 6);
+    loadingHint.textContent = "图片未能显示，继续加载中"+'.'.repeat(dots);
+    setTimeout(function(){ img.src = c.imageData; }, delay);
   };
   if(!c.imageData){
     var ph = document.createElement("div");
