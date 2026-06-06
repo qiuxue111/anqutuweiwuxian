@@ -1064,7 +1064,29 @@ function renderImageCard(c){
   if(selectedCardIds[c.id]) div.classList.add("selected");
   var img = document.createElement("img");
   img.src = c.imageData || '';
-  img.onerror = function(){ this.style.display = "none"; };
+  /* 并排加载提示 + 自动重试 */
+  var loadingHint = document.createElement("div");
+  loadingHint.className = "img-loading-hint";
+  loadingHint.textContent = "图片加载中……";
+  loadingHint.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#888;font-size:13px;text-align:center;pointer-events:none;transition:opacity .3s;z-index:2";
+  div.appendChild(loadingHint);
+  img.onload = function(){ loadingHint.style.opacity = "0"; setTimeout(function(){loadingHint.style.display="none"},300); };
+  img.onerror = function(){
+    this.style.display = "none";
+    loadingHint.textContent = "图片加载失败，重试中…";
+    loadingHint.style.color = "#ff6b6b";
+    /* 自动重试，最多 5 次，间隔递增 */
+    var retries = parseInt(localStorage.getItem('_img_retry_'+c.id) || '0');
+    if(retries < 5){
+      localStorage.setItem('_img_retry_'+c.id, String(retries+1));
+      var delay = Math.min(1000 * Math.pow(2, retries), 16000);
+      loadingHint.textContent = "图片未能显示，继续加载中"+'.'.repeat(retries+1)+"…";
+      setTimeout(function(){ img.src = c.imageData; }, delay);
+    } else {
+      loadingHint.textContent = "图片加载失败";
+      loadingHint.style.color = "#666";
+    }
+  };
   if(!c.imageData){
     var ph = document.createElement("div");
     ph.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#555;font-size:14px;text-align:center;pointer-events:none";
