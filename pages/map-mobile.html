@@ -556,7 +556,9 @@ function switchFloor(idx) {
   console.log('Switch to floor', idx, floorLabels[idx]);
 }
 function checkReviewBtn(){var rb=document.getElementById('reviewBtnMM');if(!rb)return;if(localStorage.getItem('abi_token')){rb.style.display='block';}else{rb.style.display='none';}}
-var iconUrls={}; // defined in init
+var iconUrls={
+,"空投罐":"https://raw.githubusercontent.com/qiuxue111/anqutuweiwuxian/main/assets/containers/%E7%A9%BA%E6%8A%95%E7%BD%90.png"
+}; // defined in init
 
 function getIconUrl(n){var u=iconUrls[n]||'';return u;}
 // SUPABASE_URL defined in mobile init
