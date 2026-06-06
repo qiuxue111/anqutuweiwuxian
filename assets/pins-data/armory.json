@@ -1,0 +1,93 @@
+[
+  {
+    "name": "抽屉",
+    "map_name": "军械库",
+    "x": 48.93,
+    "y": 72.28,
+    "type": "家具",
+    "ic": "",
+    "note": "",
+    "images": [],
+    "comments": [],
+    "floor": 0,
+    "submitted_by": ""
+  },
+  {
+    "name": "高级医疗箱",
+    "map_name": "军械库",
+    "x": 53.7,
+    "y": 57.61,
+    "type": "医疗",
+    "ic": "",
+    "note": "",
+    "images": [],
+    "comments": [],
+    "floor": 1,
+    "submitted_by": ""
+  },
+  {
+    "name": "滴滴保险",
+    "map_name": "军械库",
+    "x": 54.48,
+    "y": 54.16,
+    "type": "贵重",
+    "ic": "",
+    "note": "",
+    "images": [],
+    "comments": [],
+    "floor": 1,
+    "submitted_by": ""
+  },
+  {
+    "name": "保险箱",
+    "map_name": "军械库",
+    "x": 52.22,
+    "y": 49.37,
+    "type": "贵重",
+    "ic": "",
+    "note": "",
+    "images": [],
+    "comments": [],
+    "floor": 3,
+    "submitted_by": ""
+  },
+  {
+    "name": "抽屉",
+    "map_name": "军械库",
+    "x": 41.96,
+    "y": 10.47,
+    "type": "家具",
+    "ic": "",
+    "note": "",
+    "images": [],
+    "comments": [],
+    "floor": 2,
+    "submitted_by": "qiuxue111"
+  },
+  {
+    "name": "大衣",
+    "map_name": "军械库",
+    "x": 68.54,
+    "y": 51.02,
+    "type": "衣物",
+    "ic": "",
+    "note": "",
+    "images": [],
+    "comments": [],
+    "floor": 3,
+    "submitted_by": "qiuxue111"
+  },
+  {
+    "name": "高级工具箱",
+    "map_name": "军械库",
+    "x": 59.63,
+    "y": 8.63,
+    "type": "工具",
+    "ic": "",
+    "note": "",
+    "images": [],
+    "comments": [],
+    "floor": 2,
+    "submitted_by": "qiuxue111"
+  }
+]
