@@ -375,8 +375,13 @@ body{font-size:14px!important}
 
 </style>
   <button class="ly-btn" id="lbb">图层</button>
-  <div id="mv" style="transform-origin:0 0;cursor:grab">
-    <img src="../assets/maps/valley.png" draggable="false" id="mapImg" style="display:block;width:100%">
+  <div id="mv" style="transform-origin:0 0;cursor:grab;position:relative">
+    <img src="../assets/maps/valley_bg.png" draggable="false" id="mapImg" style="display:block;width:100%;position:relative;z-index:1" loading="eager">
+    <img src="../assets/maps/valley_hd_1.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:2;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/valley_hd_2.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:3;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/valley_hd_3.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:4;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/valley_hd_4.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:5;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/valley_hd_5.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:6;pointer-events:none" loading="lazy">
   </div>
   </div>
   <div class="ctrl">
@@ -464,7 +469,7 @@ function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));re
 if((window.location.hash||'').indexOf('access_token')>=0||(window.location.search||'').indexOf('access_token')>=0){try{var raw=(window.location.hash||window.location.search).replace(/^[#?]/,'');var p={};raw.split('&').forEach(function(s){var kv=s.split('=');p[kv[0]]=decodeURIComponent(kv[1]||'');});if(p.access_token){localStorage.setItem('abi_token',p.access_token);try{var b64=p.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var u=JSON.parse(atob(b64));localStorage.setItem('abi_user',JSON.stringify(u));}catch(e){localStorage.setItem('abi_user','{"user_metadata":{"preferred_username":"User"}}');}history.replaceState(null,'',window.location.pathname+window.location.search);window.location.href=window.location.pathname+window.location.search;}}catch(e){console.error('Auth err',e);}}
 var mapNameEng='valley',mapNameCN='山谷',cloudPins=[],cloudComments=[];
 // ========== 楼层切换 ==========
-var floorImages = ["../assets/maps/valley.png"];
+var floorImages = ["../assets/maps/valley_bg.png"];
 var floorLabels = [
   '山谷全境',
   '山谷二楼'
