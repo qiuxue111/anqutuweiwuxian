@@ -390,8 +390,16 @@ body{font-size:14px!important}
 
 </style>
   <button class="ly-btn" id="lbb">图层</button>
-  <div id="mv" style="transform-origin:0 0;cursor:grab">
-    <img src="../assets/maps/beishan.png" draggable="false" id="mapImg" style="display:block;width:100%">
+  <div id="mv" style="transform-origin:0 0;cursor:grab;position:relative">
+    <img src="../assets/maps/beishan_bg.jpg" draggable="false" id="mapImg" style="display:block;width:100%;position:relative;z-index:1" loading="eager">
+    <img src="../assets/maps/beishan_hd_1.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:2;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/beishan_hd_2.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:3;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/beishan_hd_3.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:4;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/beishan_hd_4.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:5;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/beishan_hd_5.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:6;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/beishan_hd_6.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:7;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/beishan_hd_7.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:8;pointer-events:none" loading="lazy">
+    <img src="../assets/maps/beishan_hd_8.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:9;pointer-events:none" loading="lazy">
   </div>
   </div>
   <div class="ctrl">
@@ -480,7 +488,7 @@ if((window.location.hash||'').indexOf('access_token')>=0||(window.location.searc
 var mapNameEng='beishan',mapNameCN='北山',cloudPins=[],cloudComments=[];
 // ========== 楼层切换 ==========
 var floorImages = [
-  '../assets/maps/beishan.png',
+  '../assets/maps/beishan_bg.jpg',
   '../assets/maps/beishan_北山酒店一楼.png',
   '../assets/maps/beishan_北山酒店二楼.png',
   '../assets/maps/beishan_北山酒店三楼.png'
@@ -503,6 +511,9 @@ function switchFloor(idx) {
     btn.classList.toggle('active', i === idx);
   });
   resetView();
+  // 非0层隐藏高清区域图层（楼层图本身就是高清的）
+  var hdLayers = document.querySelectorAll('.hd-layer');
+  hdLayers.forEach(function(el) { el.style.display = idx === 0 ? 'block' : 'none'; });
   // 过滤标记 — 只显示当前楼层
   var mv=document.getElementById('mv');
   if(mv){mv.querySelectorAll('.pin-marker').forEach(function(el){var pi=parseInt(el.getAttribute('data-pin-idx'));if(!isNaN(pi)&&pins[pi]){var pf=pins[pi].floor||0;el.style.display=pf===idx?'':'none';}});}
