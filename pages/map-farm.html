@@ -514,6 +514,8 @@ body{font-size:14px!important}
   if (window.innerWidth < 768) {
     document.body.classList.add('touch-mobile');
   }
+  // 加载完成后复位居中
+  setTimeout(function(){ resetView(); }, 10);
 })();
 
 // ===== 归一化坐标辅助函数 =====

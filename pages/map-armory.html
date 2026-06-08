@@ -496,6 +496,8 @@ body{font-size:14px!important}
   if (window.innerWidth < 768) {
     document.body.classList.add('touch-mobile');
   }
+  // 加载完成后复位居中
+  setTimeout(function(){ resetView(); }, 10);
 })();
 
 var scaleM=4,panX=0,panY=0,mode='browse',pins=[],mapComments=[],curPinIdx=null,touchStartDist=0,touchStartScale=1;
