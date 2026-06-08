@@ -493,32 +493,33 @@ body{font-size:14px!important}
     e.preventDefault();
   }, {passive: false});
   // 触控设备预缩放：视口宽的 1/3 对应地图实际宽度
-  (function(){
-    var w = window.innerWidth, h = window.innerHeight;
-    var img = document.getElementById('mapImg');
-    if (!img) { setTimeout(arguments.callee, 200); return; }
-    if (img.complete && img.naturalWidth) {
-      var iw = 6942;
-      var ih = 2872;
-      var imgEl = document.getElementById('mapImg');
-      var iw2 = imgEl ? imgEl.clientWidth : 0;
-      var ih2 = imgEl ? imgEl.clientHeight : 0;
-      if (iw2 > 0 && ih2 > 0) {
-        var sx = w / iw2;
-        var sy = h / ih2;
-        scaleM = Math.max(sx, sy);
-      } else {
-        scaleM = 0.8;
-      }
-      if (scaleM > 3) scaleM = 3;
-      if (scaleM < 0.3) scaleM = 0.3;
-      panX = (w - iw2 * scaleM) / 2;
-      panY = (h - ih2 * scaleM) / 2;
-      ut();
-      var zr = document.getElementById('zr');
-      if (zr) zr.value = Math.round(scaleM * 100);
+ (function(){
+  var w = window.innerWidth, h = window.innerHeight;
+  var img = document.getElementById('mapImg');
+  if (!img) { setTimeout(arguments.callee, 200); return; }
+  if (img.complete && img.naturalWidth) {
+    var imgEl = document.getElementById('mapImg');
+    var iw = imgEl ? imgEl.clientWidth : 0;
+    var ih = imgEl ? imgEl.clientHeight : 0;
+    if (iw > 0 && ih > 0) {
+      var sx = w / iw;
+      var sy = h / ih;
+      var scaleM2 = Math.max(sx, sy);
+    } else {
+      var scaleM2 = 0.8;
     }
-  })();
+    if (scaleM2 > 3) scaleM2 = 3;
+    if (scaleM2 < 0.3) scaleM2 = 0.3;
+    scaleM = scaleM2;
+    panX = (w - iw * scaleM) / 2;
+    panY = (h - ih * scaleM) / 2;
+    ut();
+    var zr = document.getElementById('zr');
+    if (zr) zr.value = Math.round(scaleM * 100);
+  } else {
+    setTimeout(arguments.callee, 200);
+  }
+})();
   // 如果屏幕宽度<768，给 body 加 mobile 类
   if (window.innerWidth < 768) {
     document.body.classList.add('touch-mobile');
