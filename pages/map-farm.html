@@ -333,7 +333,7 @@ body{overflow:hidden;background:#0a0a0f}
 <div class="hamburger" id="hamburger" onclick="toggleHamburger()">☰</div>
 <!-- 广告卡片 -->
 <div class="ad-card" id="adCard">
-  <a>
+  <a href="https://qm.qq.com/q/YWswLAYuoU" target="_blank">
     <img src="../assets/ads/ad-3x3.png" alt="3x3代肝喵" id="adImg">
   </a>
   <div class="ad-text">
@@ -344,9 +344,11 @@ body{overflow:hidden;background:#0a0a0f}
 </div>
 <script>
 var adCard=document.getElementById('adCard');
-if(adCard){var adDX,adDY;
-adCard.addEventListener('pointerdown',function(e){adDX=e.clientX;adDY=e.clientY;});
-adCard.addEventListener('pointerup',function(e){if(adDX!==undefined&&(Math.abs(e.clientX-adDX)<=10&&Math.abs(e.clientY-adDY)<=10))window.open('https://qm.qq.com/q/YWswLAYuoU','_blank');});}
+if(adCard){(function(){var dx,dy,drg=0;
+adCard.addEventListener('pointerdown',function(e){dx=e.clientX;dy=e.clientY;drg=0;});
+adCard.addEventListener('pointermove',function(e){if(dx!==undefined&&(Math.abs(e.clientX-dx)>10||Math.abs(e.clientY-dy)>10))drg=1;});
+adCard.addEventListener('pointerup',function(){setTimeout(function(){drg=0;},50);});
+adCard.querySelector('a').addEventListener('click',function(e){if(drg){e.preventDefault();e.stopPropagation();}});})();}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar"><a href="../index.html" class="logo">暗区无限</a><div class="sep"></div><button class="btn" onclick="resetView()">复位</button>
