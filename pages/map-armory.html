@@ -480,15 +480,15 @@ body{font-size:14px!important}
     var img = document.getElementById('mapImg');
     if (!img) { setTimeout(arguments.callee, 200); return; }
     if (img.complete && img.naturalWidth) {
-      var iw = img.naturalWidth || img.clientWidth;
-      var ratio = w / iw;
-      scaleM = Math.min(ratio, 2.5);
-      if (scaleM < 0.8) scaleM = 0.8;
-      // 如果地图较窄，水平居中
-      var mvEl = document.getElementById('mv');
-      if (mvEl && iw * scaleM < w) {
-        panX = (w - iw * scaleM) / 2;
-      }
+      var iw = img.naturalWidth || img.clientWidth || 2000;
+      var ih = img.naturalHeight || iw;
+      var sx = w / iw;
+      var sy = h / ih;
+      scaleM = Math.min(sx, sy);
+      if (scaleM > 2) scaleM = 2;
+      if (scaleM < 0.3) scaleM = 0.3;
+      panX = (w - iw * scaleM) / 2;
+      panY = (h - ih * scaleM) / 2;
       ut();
     }
   })();
