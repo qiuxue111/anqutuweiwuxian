@@ -348,7 +348,7 @@ body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
 (function(){
   var DEFAULTS={'--accent':'#ffc832','--bg-page':'#08080e','--text-body':'#ccc','--card-bg':'rgba(20,20,30,0.6)','--btn-blue-text':'#4a9eff','--btn-red-text':'#ff6b6b','--btn-green-text':'#51cf66','--btn-purple-text':'#cc5de8'};
   function getVal(k){
-    var s;try{s=JSON.parse(localStorage.getItem('abi_palette'));}catch(e){}
+    var s;try{s=JSON.parse(sessionStorage.getItem('abi_palette'));}catch(e){}
     return (s&&s[k]!==undefined)?s[k]:DEFAULTS[k];
   }
   var r=document.documentElement;
@@ -378,7 +378,7 @@ var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs
 function db(m,t,b,q){
   var u=SUPABASE_URL+'/rest/v1/'+t;
   var o={method:m||'GET',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'}};
-  if(b){o.body=JSON.stringify(b);var tk=localStorage.getItem('abi_token');if(tk) o.headers['Authorization']='Bearer '+tk;}
+  if(b){o.body=JSON.stringify(b);var tk=sessionStorage.getItem('abi_token');if(tk) o.headers['Authorization']='Bearer '+tk;}
   if(q) u+='?'+q;
   return fetch(u,o).then(function(r){
     if(r.status>=400) throw new Error(r.status);
@@ -387,11 +387,11 @@ function db(m,t,b,q){
       try{return JSON.parse(t2)}catch(e){return null}
     })
   }).catch(function(e){
-    console.warn('Supabase '+m+' '+t+' failed, localStorage fallback',e);
+    console.warn('Supabase '+m+' '+t+' failed, sessionStorage fallback',e);
     if(m!='GET') throw e;
     try{
       var k='3x3_'+t.replace('task_','');
-      var d=localStorage.getItem(k);
+      var d=sessionStorage.getItem(k);
       if(d) return JSON.parse(d);
     }catch(e2){}
     return null;
@@ -443,7 +443,7 @@ function renderCanvasPanel(){
     addBtn.className = "cp-add"; addBtn.textContent = "+ 新建画布";
     addBtn.onclick = function(){
       var name = prompt("新建画布名称："); if(!name||!name.trim()) return;
-      var tk=localStorage.getItem('abi_token'); if(!tk){if(confirm('需要登录。去登录？'))loginGitHub();return;}
+      var tk=sessionStorage.getItem('abi_token'); if(!tk){if(confirm('需要登录。去登录？'))loginGitHub();return;}
       if(canvasList.some(function(x){return x.label===name.trim()})){alert('已存在同名画布');return;}
       var id='cv_'+Date.now();
       canvasList.push({id:id,label:name.trim()});
@@ -459,7 +459,7 @@ function renderCanvasPanel(){
       var cv = canvasList.find(function(x){return x.id===currentCanvas}); if(!cv) return;
       var name = prompt("新名称：",cv.label); if(!name||!name.trim()) return;
       if(canvasList.some(function(x){return x.id!==currentCanvas&&x.label===name.trim()})){alert('已存在同名');return;}
-      cv.label=name.trim(); var tk=localStorage.getItem('abi_token');
+      cv.label=name.trim(); var tk=sessionStorage.getItem('abi_token');
       if(tk) fetch(SUPABASE_URL+'/rest/v1/task_canvases?id=eq.'+encodeURIComponent(currentCanvas),{method:'PATCH',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},body:JSON.stringify({label:name.trim()})}).catch(function(e){console.error(e)});
       renderCanvasPanel();
     };
@@ -481,7 +481,7 @@ function bindCanvasSwitch(){
 }
 
 function deleteCanvasDB(id){
-  var tk=localStorage.getItem('abi_token');if(!tk){if(confirm('需要登录。去登录？'))loginGitHub();return Promise.reject();}
+  var tk=sessionStorage.getItem('abi_token');if(!tk){if(confirm('需要登录。去登录？'))loginGitHub();return Promise.reject();}
   var h={'apikey':SUPABASE_ANON,'Content-Type':'application/json'};
   return Promise.all([
     fetch(SUPABASE_URL+'/rest/v1/task_cards?canvas_id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:h}),
@@ -609,8 +609,8 @@ function loadData(){
       document.getElementById("loading").style.display = "none";
     }, 300);
   }).catch(function(e){
-    console.warn('Load error, using localStorage',e);
-    try{var lc=localStorage.getItem('3x3_cards');if(lc && lc!=='[]'){cards=JSON.parse(lc);} else {cards=[];var nid='c'+Date.now();cards.push({id:nid,title:'示例卡片',body:'右键此卡片试试连线功能',x:100,y:100});}var lconn=localStorage.getItem('3x3_connections');if(lconn){connections=JSON.parse(lconn);}}catch(le){cards=[];}
+    console.warn('Load error, using sessionStorage',e);
+    try{var lc=sessionStorage.getItem('3x3_cards');if(lc && lc!=='[]'){cards=JSON.parse(lc);} else {cards=[];var nid='c'+Date.now();cards.push({id:nid,title:'示例卡片',body:'右键此卡片试试连线功能',x:100,y:100});}var lconn=sessionStorage.getItem('3x3_connections');if(lconn){connections=JSON.parse(lconn);}}catch(le){cards=[];}
     docscroll();
     renderAll();
     document.getElementById("loading").style.display = "none";
@@ -619,7 +619,7 @@ function loadData(){
 
 /* ====== 保存到云端 ====== */
 function saveToCloud(){
-  var tk = localStorage.getItem('abi_token');
+  var tk = sessionStorage.getItem('abi_token');
   if(!tk){ alert('需要 GitHub 登录才能保存到云端。请点击右上角 GitHub 图标登录。'); return; }
   var btn = document.getElementById('saveCloudBtn');
   if(btn) btn.textContent = '⏳ 保存中...';
@@ -757,7 +757,7 @@ function autoArrange(){
 }
 
 function saveData(){
-  var tk = localStorage.getItem('abi_token');
+  var tk = sessionStorage.getItem('abi_token');
   if(!tk){ if(confirm('需要GitHub登录才能保存。去登录？')) loginGitHub(); return; }
   var authHeaders = {'apikey':SUPABASE_ANON,'Content-Type':'application/json'};
   var cid = encodeURIComponent(currentCanvas);
@@ -819,7 +819,7 @@ function renderAll(){
   cards.forEach(function(c){ renderCard(c) });
   
   updateTransform();
-  try{localStorage.setItem('3x3_cards',JSON.stringify(cards));localStorage.setItem('3x3_connections',JSON.stringify(connections));localStorage.setItem('3x3_zones',JSON.stringify(zones));
+  try{sessionStorage.setItem('3x3_cards',JSON.stringify(cards));sessionStorage.setItem('3x3_connections',JSON.stringify(connections));sessionStorage.setItem('3x3_zones',JSON.stringify(zones));
 }catch(e){}
 }
 
@@ -1155,8 +1155,8 @@ function renderImageCard(c){
     loadingHint.textContent = "图片加载失败，重试中…";
     loadingHint.style.color = "#ff6b6b";
     /* 无限重试，间隔递增（1s → 2s → 4s → 8s → 16s → 保持16s） */
-    var retries = parseInt(localStorage.getItem('_img_retry_'+c.id) || '0');
-    localStorage.setItem('_img_retry_'+c.id, String(retries+1));
+    var retries = parseInt(sessionStorage.getItem('_img_retry_'+c.id) || '0');
+    sessionStorage.setItem('_img_retry_'+c.id, String(retries+1));
     var delay = Math.min(1000 * Math.pow(2, retries), 16000);
     var dots = Math.min(retries + 1, 6);
     loadingHint.textContent = "图片未能显示，继续加载中"+'.'.repeat(dots);
@@ -1750,12 +1750,12 @@ function showToast(msg){
 
 /* ====== 导航汉堡（同地图页面）====== */
 function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
-function logout(){localStorage.removeItem('abi_token');localStorage.removeItem('abi_user');window.location.reload();}
-function normalizeUser(){try{var u=localStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){localStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
-function getUserName(){try{var u=JSON.parse(localStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return localStorage.getItem('abi_user')||'已登录';}}
+function logout(){sessionStorage.removeItem('abi_token');sessionStorage.removeItem('abi_user');window.location.reload();}
+function normalizeUser(){try{var u=sessionStorage.getItem('abi_user');if(!u)return;var p=JSON.parse(u);if(typeof p==='string'){sessionStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:p}}));}else if(!p.user_metadata){var name=p.preferred_username||p.email||'User';sessionStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:name}}));}}catch(e){sessionStorage.setItem('abi_user',JSON.stringify({user_metadata:{preferred_username:u}}));}}
+function getUserName(){try{var u=JSON.parse(sessionStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return sessionStorage.getItem('abi_user')||'已登录';}}
 
 /* ====== GitHub 图片上传 ====== */
-function getGitHubToken(){ return localStorage.getItem('gh_token') || ''; }
+function getGitHubToken(){ return sessionStorage.getItem('gh_token') || ''; }
 var GITHUB_REPO = 'qiuxue111/anqutuweiwuxian';
 var GITHUB_BRANCH = 'main';
 var GITHUB_PATH = 'assets/3x3-images/';
@@ -1790,9 +1790,9 @@ function uploadImgToGitHub(base64Data, ext, cb){
     cb(null);
   });
 }
-if((window.location.hash||'').indexOf('access_token')>=0||(window.location.search||'').indexOf('access_token')>=0){try{var raw=(window.location.hash||window.location.search).replace(/^[#?]/,'');var p={};raw.split('&').forEach(function(s){var kv=s.split('=');p[kv[0]]=decodeURIComponent(kv[1]||'');});if(p.access_token){localStorage.setItem('abi_token',p.access_token);try{var b64=p.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var u=JSON.parse(atob(b64));localStorage.setItem('abi_user',JSON.stringify(u));}catch(e){}history.replaceState(null,'',window.location.pathname+window.location.search);window.location.href=window.location.pathname+window.location.search;}}catch(e){}}
+if((window.location.hash||'').indexOf('access_token')>=0||(window.location.search||'').indexOf('access_token')>=0){try{var raw=(window.location.hash||window.location.search).replace(/^[#?]/,'');var p={};raw.split('&').forEach(function(s){var kv=s.split('=');p[kv[0]]=decodeURIComponent(kv[1]||'');});if(p.access_token){sessionStorage.setItem('abi_token',p.access_token);try{var b64=p.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var u=JSON.parse(atob(b64));sessionStorage.setItem('abi_user',JSON.stringify(u));}catch(e){}history.replaceState(null,'',window.location.pathname+window.location.search);window.location.href=window.location.pathname+window.location.search;}}catch(e){}}
 var ALLOWED_GITHUB_USER='qiuxue111';
-function canEdit(){var token=localStorage.getItem('abi_token');if(!token)return false;try{var b64=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var payload=JSON.parse(atob(b64));return payload.email===ALLOWED_GITHUB_USER+'@users.noreply.github.com'||payload.user_metadata&&payload.user_metadata.user_name===ALLOWED_GITHUB_USER||payload.preferred_username===ALLOWED_GITHUB_USER||payload.email&&payload.email.split('@')[0]===ALLOWED_GITHUB_USER;}catch(e){return false;}}
+function canEdit(){var token=sessionStorage.getItem('abi_token');if(!token)return false;try{var b64=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var payload=JSON.parse(atob(b64));return payload.email===ALLOWED_GITHUB_USER+'@users.noreply.github.com'||payload.user_metadata&&payload.user_metadata.user_name===ALLOWED_GITHUB_USER||payload.preferred_username===ALLOWED_GITHUB_USER||payload.email&&payload.email.split('@')[0]===ALLOWED_GITHUB_USER;}catch(e){return false;}}
 /* 管理按钮可见性 */
 function applyEditVisibility(){
   var show = canEdit();
@@ -1801,7 +1801,7 @@ function applyEditVisibility(){
     if(el) el.style.display = show ? '' : 'none';
   });
 }
-(function(){normalizeUser();localStorage.getItem('abi_token')})();
+(function(){normalizeUser();sessionStorage.getItem('abi_token')})();
 
 /* 汉堡 */
 var navGroups = [
@@ -1831,16 +1831,16 @@ function toggleHamburger(){
   m.classList.add('show'); m.innerHTML='';
   // token 设置（仅你自己可见）
   if(canEdit()){
-    var hasToken = !!localStorage.getItem('gh_token');
+    var hasToken = !!sessionStorage.getItem('gh_token');
     var tkItem = document.createElement('div');
     tkItem.className = 'hm-item';
     tkItem.textContent = '🔑 图片Token '+(hasToken ? '✅' : '❌');
     tkItem.onclick = function(){
-      var current = localStorage.getItem('gh_token') || '';
+      var current = sessionStorage.getItem('gh_token') || '';
       var newToken = prompt('输入 GitHub Token:', current);
       if(newToken !== null){
-        if(newToken.trim()){ localStorage.setItem('gh_token', newToken.trim()); alert('Token 已保存'); }
-        else { localStorage.removeItem('gh_token'); alert('Token 已清除'); }
+        if(newToken.trim()){ sessionStorage.setItem('gh_token', newToken.trim()); alert('Token 已保存'); }
+        else { sessionStorage.removeItem('gh_token'); alert('Token 已清除'); }
       }
       toggleHamburger();
     };
@@ -1915,7 +1915,7 @@ window.addEventListener("resize",updateTransform);
   var tStartX = 0, tStartY = 0, tLeft = 0, tBottom = 0;
   var mm = null, mu = null;
   var AD_LINK = 'https://example.com';
-  if (localStorage.getItem('adCardClosed_v2')) {
+  if (sessionStorage.getItem('adCardClosed_v2')) {
     card.style.display = 'none'; return;
   }
   var adImg = document.getElementById('adImg');
@@ -1980,7 +1980,7 @@ window.addEventListener("resize",updateTransform);
   closeBtn.onclick = function(e) {
     e.stopPropagation(); e.preventDefault();
     card.style.display = 'none';
-    localStorage.setItem('adCardClosed_v2', '1');
+    sessionStorage.setItem('adCardClosed_v2', '1');
   };
   card.appendChild(closeBtn);
 })();
