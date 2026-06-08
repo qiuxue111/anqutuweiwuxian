@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>中文字体展示</title>
+<style>
+body{background:#1a1a22;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;font-family:sans-serif;color:#fff}
+.container{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;padding:20px;max-width:800px}
+.card{width:180px;height:240px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);position:relative;flex-shrink:0}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card .text{position:absolute;bottom:0;left:0;width:100%;text-align:center;padding:8px 6px;box-sizing:border-box;background:linear-gradient(transparent,rgba(0,0,0,0.7))}
+.card .text .t{font-size:14px}
+.card .text .d{font-size:11px;margin-top:2px}
+.card .label{position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);padding:2px 6px;border-radius:4px;font-size:10px;color:#aaa;z-index:5}
+</style>
+</head>
+<body>
+<div class="container">
+</div>
+<script>
+const fonts = [
+  {family: '"Microsoft YaHei",sans-serif', weight: '700', label: '微软雅黑 700'},
+  {family: '"Microsoft YaHei",sans-serif', weight: '900', label: '微软雅黑 900'},
+  {family: '"SimHei",sans-serif', weight: '700', label: 'SimHei 700'},
+  {family: '"Noto Sans SC",sans-serif', weight: '700', label: 'Noto Sans SC 700'},
+  {family: '"Source Han Sans SC",sans-serif', weight: '700', label: 'Source Han 700'},
+  {family: '"PingFang SC",sans-serif', weight: '700', label: 'PingFang 700'},
+  {family: 'sans-serif', weight: '700', label: '默认无衬线 700'},
+  {family: 'sans-serif', weight: '900', label: '默认无衬线 900'},
+];
+const container = document.querySelector('.container');
+fonts.forEach(f => {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = '<img src="../assets/ads/ad-3x3.png" style="width:100%;height:100%;object-fit:cover">' +
+    '<div class="text">' +
+      '<div class="t" style="font-family:'+f.family+';font-weight:'+f.weight+'">3x3代肝喵</div>' +
+      '<div class="d" style="font-family:'+f.family+';font-weight:'+f.weight+'">点击这里喵</div>' +
+    '</div>' +
+    '<div class="label">'+f.label+'</div>';
+  container.appendChild(div);
+});
+</script>
+</body>
+</html>
