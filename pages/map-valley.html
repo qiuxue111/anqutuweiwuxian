@@ -523,7 +523,7 @@ body{font-size:14px!important}
     scaleM = scaleM2;
     panX = (w - iw * scaleM) / 2;
     panY = (h - ih * scaleM) / 2;
-    ut();
+    if (typeof ut === 'function') ut();
     var zr = document.getElementById('zr');
     if (zr) zr.value = Math.round(scaleM * 100);
   } else {
