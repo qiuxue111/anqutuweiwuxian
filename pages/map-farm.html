@@ -502,11 +502,18 @@ body{font-size:14px!important}
       var ih = 2872;
       var imgEl = document.getElementById('mapImg');
       var iw2 = imgEl ? imgEl.clientWidth : 0;
-      if (iw2 > 0) { scaleM = w / iw2; } else { scaleM = 0.8; }
+      var ih2 = imgEl ? imgEl.clientHeight : 0;
+      if (iw2 > 0 && ih2 > 0) {
+        var sx = w / iw2;
+        var sy = h / ih2;
+        scaleM = Math.min(sx, sy);
+      } else {
+        scaleM = 0.8;
+      }
       if (scaleM > 3) scaleM = 3;
       if (scaleM < 0.3) scaleM = 0.3;
       panX = (w - iw2 * scaleM) / 2;
-      panY = 0;
+      panY = (h - ih2 * scaleM) / 2;
       ut();
     }
   })();
