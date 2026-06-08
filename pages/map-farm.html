@@ -504,15 +504,19 @@ body{font-size:14px!important}
       var iw2 = imgEl ? imgEl.clientWidth : 0;
       var ih2 = imgEl ? imgEl.clientHeight : 0;
       if (iw2 > 0 && ih2 > 0) {
-        scaleM = 1.8;
+        var sx = w / iw2;
+        var sy = h / ih2;
+        scaleM = Math.max(sx, sy);
       } else {
-        scaleM = 1.8;
+        scaleM = 0.8;
       }
-      panX = (w - iw2 * 1.8) / 2;
-      panY = (h - ih2 * 1.8) / 2;
+      if (scaleM > 3) scaleM = 3;
+      if (scaleM < 0.3) scaleM = 0.3;
+      panX = (w - iw2 * scaleM) / 2;
+      panY = (h - ih2 * scaleM) / 2;
       ut();
       var zr = document.getElementById('zr');
-      if (zr) zr.value = 180;
+      if (zr) zr.value = Math.round(scaleM * 100);
     }
   })();
   // 如果屏幕宽度<768，给 body 加 mobile 类
