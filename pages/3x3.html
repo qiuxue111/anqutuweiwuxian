@@ -300,10 +300,10 @@ body.touch-mobile
 
 <script>
 var adCard=document.getElementById('adCard');
-if(adCard){var adSX,adDist;
-adCard.addEventListener('pointerdown',function(e){adSX=e.clientX;adDist=0;});
-adCard.addEventListener('pointermove',function(e){if(adSX!==undefined)adDist=Math.max(adDist,Math.abs(e.clientX-adSX));});
-adCard.querySelector('a').addEventListener('click',function(e){if(adDist>5)e.preventDefault();});}
+if(adCard){var adSX,adMoved=false,adInterval;
+adCard.addEventListener('pointerdown',function(e){adSX=e.clientX;adMoved=false;if(adInterval)clearInterval(adInterval);});
+adCard.addEventListener('pointermove',function(e){if(adSX!==undefined&&Math.abs(e.clientX-adSX)>5)adMoved=true;});
+adCard.addEventListener('pointerup',function(e){if(!adMoved)window.open('https://qm.qq.com/q/YWswLAYuoU','_blank');});}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="loading" id="loading"><div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="font-size:16px;font-weight:600;color:#fff"><span id="loadingText">加载中...</span> <span id="loadingPercent" style="color:#8af;font-size:13px">0%</span></div><div style="width:220px;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;box-shadow:0 0 8px rgba(0,0,0,.2);position:relative"><div id="loadingBar" style="width:5%;height:100%;background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#9b59b6);background-size:400% 100%;background-position:0% 0%;border-radius:3px;transition:width .3s ease"></div></div></div></div>
@@ -1911,7 +1911,7 @@ window.addEventListener("resize",updateTransform);
 </script>
 <!-- 推荐卡片 -->
 <div class="ad-card" id="adCard">
-  <a href="https://qm.qq.com/q/YWswLAYuoU" target="_blank">
+  <a id="adLink">
     <img src="../assets/ads/ad-3x3.png" alt="3x3代肝喵" id="adImg">
   </a>
   <div class="ad-text" id="adText">
