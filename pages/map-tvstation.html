@@ -483,9 +483,9 @@ body{font-size:14px!important}
       var ih = 2000;
       var sx = w / iw;
       var sy = h / ih;
-      scaleM = Math.min(sx, sy);
-      if (scaleM > 2) scaleM = 2;
-      if (scaleM < 0.3) scaleM = 0.3;
+      scaleM = Math.max(sx, sy);
+      if (scaleM > 5) scaleM = 5;
+      if (scaleM < 0.5) scaleM = 0.5;
       panX = (w - iw * scaleM) / 2;
       panY = (h - ih * scaleM) / 2;
       ut();
@@ -563,9 +563,9 @@ function resetView(){
   if (w > 0) {
     var sx = w / iw;
     var sy = h / ih;
-    s = Math.min(sx, sy);
-    if (s > 2) s = 2;
-    if (s < 0.3) s = 0.3;
+    s = Math.max(sx, sy);
+    if (s > 5) s = 5;
+    if (s < 0.5) s = 0.5;
     scaleM = s;
     panX = (w - iw * s) / 2;
     panY = (h - ih * s) / 2;
