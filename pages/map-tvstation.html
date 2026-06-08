@@ -481,13 +481,11 @@ body{font-size:14px!important}
     if (img.complete && img.naturalWidth) {
       var iw = 2000;
       var ih = 2000;
-      var sx = w / iw;
-      var sy = h / ih;
-      scaleM = Math.max(sx, sy);
-      if (scaleM > 5) scaleM = 5;
+      scaleM = h / ih;
+      if (scaleM > 3) scaleM = 3;
       if (scaleM < 0.5) scaleM = 0.5;
-      panX = (w - iw * scaleM) / 2;
-      panY = (h - ih * scaleM) * 0.5;
+      panX = (w - iw * scaleM) * 0.3;
+      panY = 0;
       ut();
     }
   })();
@@ -561,14 +559,12 @@ function resetView(){
   var ih = 2000;
   var s = 1;
   if (w > 0) {
-    var sx = w / iw;
-    var sy = h / ih;
-    s = Math.max(sx, sy);
-    if (s > 5) s = 5;
+    s = h / ih;
+    if (s > 3) s = 3;
     if (s < 0.5) s = 0.5;
     scaleM = s;
-    panX = (w - iw * s) / 2;
-    panY = (h - ih * s) * 0.5;
+    panX = (w - iw * s) * 0.3;
+    panY = 0;
   } else {
     scaleM = 1; panX = 0; panY = 0;
   }
