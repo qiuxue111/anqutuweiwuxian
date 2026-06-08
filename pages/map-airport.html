@@ -1855,9 +1855,9 @@ document.addEventListener('click', function(e) {
     }
     e.preventDefault();
   }
-  card.addEventListener('mousedown', startDrag);
-  card.addEventListener('touchstart', startDrag, {passive:false});
-  card.addEventListener('click', function(e){ if (tMoved) { e.stopPropagation(); } });
+  card.addEventListener('mousedown', function(e){ e.stopPropagation(); startDrag(e); });
+  card.addEventListener('touchstart', function(e){ e.stopPropagation(); startDrag(e); }, {passive:false});
+  card.addEventListener('click', function(e){ e.stopPropagation(); if (tMoved) { e.stopPropagation(); } });
   var closeBtn = document.createElement('span');
   closeBtn.className = 'ad-close-btn';
   closeBtn.textContent = '\u00d7';
