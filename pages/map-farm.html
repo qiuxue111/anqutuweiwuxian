@@ -506,7 +506,7 @@ body{font-size:14px!important}
       if (iw2 > 0 && ih2 > 0) {
         var sx = w / iw2;
         var sy = h / ih2;
-        scaleM = Math.min(sx, sy);
+        scaleM = Math.max(sx, sy);
       } else {
         scaleM = 0.8;
       }
