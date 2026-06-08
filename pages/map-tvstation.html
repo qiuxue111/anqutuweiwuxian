@@ -1842,9 +1842,10 @@ document.addEventListener('click', function(e) {
   var tStartX = 0, tStartY = 0, tLeft = 0, tBottom = 0;
   var mm = null, mu = null;
   var AD_LINK = 'https://example.com';
-  if (sessionStorage.getItem('adCardClosed_v2')) {
-    card.style.display = 'none'; return;
-  }
+  /* ad card always visible */
+  // if (sessionStorage.getItem('adCardClosed_v2')) {
+  //   card.style.display = 'none'; return;
+  // }
   var adImg = document.getElementById('adImg');
   if (adImg) {
     adImg.onerror = function() { this.style.display = 'none'; };
