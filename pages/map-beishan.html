@@ -148,6 +148,40 @@ body{overflow:hidden;background:#0a0a0f}
 .hm-sep{height:1px;background:rgba(255,255,255,0.04);margin:3px 0}
 .pd-box{max-width:90vw!important;width:auto!important;min-width:300px!important}
 .ly-pop{min-width:280px!important;max-width:90vw!important;width:auto!important}
+/* ── 手机触控专用样式 ── */
+@media (max-width: 767px) {
+  body.touch-mobile .top-bar{min-width:auto!important;padding:2px 6px;top:4px!important;left:4px!important;right:4px!important;transform:none!important;border-radius:6px;flex-wrap:wrap;gap:3px;width:auto!important;max-width:calc(100vw - 8px)}
+  body.touch-mobile .top-bar .logo{font-size:11px}
+  body.touch-mobile .top-bar .btn{min-width:auto!important;height:24px!important;font-size:10px!important;padding:1px 5px!important}
+  body.touch-mobile .mat-panel{top:45px;left:4px;width:140px!important;min-width:140px!important}
+  body.touch-mobile .mat-btn{min-width:124px!important;font-size:11px!important;padding:4px 6px!important}
+  body.touch-mobile .mat-item{width:36px!important;min-width:36px!important;max-width:36px!important;height:42px!important}
+  body.touch-mobile .mat-item img{width:18px!important;height:18px!important}
+  body.touch-mobile .action-bar{right:4px!important;bottom:52px!important}
+  body.touch-mobile .action-btn{width:34px!important;height:34px!important;font-size:15px!important}
+  body.touch-mobile .zoom-wrap{right:4px!important;bottom:96px!important}
+  body.touch-mobile .zoom-btn{width:28px!important;height:28px!important;font-size:12px!important}
+  body.touch-mobile .floor-wrap{left:4px;bottom:52px;min-width:auto;font-size:11px}
+  body.touch-mobile .floor-btn{min-width:60px!important;height:26px!important;font-size:10px!important;padding:2px 6px!important}
+  body.touch-mobile #hamburger{width:30px!important;height:30px!important;font-size:15px!important}
+  body.touch-mobile .ly-pop{font-size:14px!important;padding:12px!important;min-width:auto!important;max-width:calc(100vw - 16px)!important;width:auto!important}
+  body.touch-mobile .ly-pop label{font-size:16px!important;padding:8px 10px!important}
+  body.touch-mobile .ly-pop input{width:20px!important;height:20px!important}
+  body.touch-mobile .ly-pop .ly-card-hdr{font-size:14px!important}
+  body.touch-mobile .ly-pop .ly-icon{width:28px!important;height:28px!important}
+  body.touch-mobile .ly-pop .ly-icon.e{width:28px!important;font-size:20px!important;line-height:28px}
+  body.touch-mobile .pd-box{padding:14px!important}
+  body.touch-mobile .pd-title{font-size:16px!important}
+  body.touch-mobile .pd-close{font-size:18px!important;top:8px;right:10px}
+  body.touch-mobile #cpMenu{max-width:calc(100vw - 16px)!important;min-width:auto!important;padding:10px!important}
+  body.touch-mobile .hamburger-menu{width:75vw!important}
+  body.touch-mobile .hamburger-menu .hm-item{font-size:14px!important;padding:8px 10px!important}
+  body.touch-mobile #zoomWrap{bottom:100px!important}
+}
+/* ── 手机触控 - 阻止浏览器默认行为 ── */
+.touch-mobile{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;overscroll-behavior:none;touch-action:none;-webkit-overflow-scrolling:touch}
+.touch-mobile .map-wrap{touch-action:none!important;overscroll-behavior:none}
+.touch-mobile #mv{touch-action:none!important;cursor:grab;-webkit-user-select:none;user-select:none}
 </style></head>
 <body>
 <div id="mapBgHint" onclick="resetView()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0a0a0f;display:flex;align-items:center;justify-content:center;z-index:0;cursor:pointer"><span style="color:#666;font-size:130px;font-family:sans-serif;user-select:none">如果没有地图请点击复位</span></div>
@@ -464,13 +498,38 @@ body{font-size:14px!important}
 
 
 <script>
-/* mobile redirect */
+/* ── 手机触控适配 ── */
 (function(){
-  var isMobile = false;
-try { isMobile = ('ontouchstart' in window && window.innerWidth < 600 && !navigator.userAgent.match(/Windows|Macintosh/)); } catch(e){}
-  if(!isMobile) return;
-  var m = window.location.pathname.match(/map-(\w+)\.html/);
-  if(m) window.location.href = 'map-mobile.html?map=' + m[1];
+  // 判断是否触控设备
+  var isTouchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  if (!isTouchDevice) return;
+  // 阻止浏览器滑动刷新、双指缩放等默认行为
+  document.addEventListener('touchmove', function(e) {
+    if (e.target.closest('.mat-content') || e.target.closest('.ly-pop') || e.target.closest('.pd-box') || e.target.closest('.hamburger-menu') || e.target.closest('#cpMenu')) return;
+    e.preventDefault();
+  }, {passive: false});
+  // 触控设备预缩放：视口宽的 1/3 对应地图实际宽度
+  (function(){
+    var w = window.innerWidth, h = window.innerHeight;
+    var img = document.getElementById('mapImg');
+    if (!img) { setTimeout(arguments.callee, 200); return; }
+    if (img.complete && img.naturalWidth) {
+      var iw = img.naturalWidth || img.clientWidth;
+      var ratio = w / iw;
+      scaleM = Math.min(ratio, 2.5);
+      if (scaleM < 0.8) scaleM = 0.8;
+      // 如果地图较窄，水平居中
+      var mvEl = document.getElementById('mv');
+      if (mvEl && iw * scaleM < w) {
+        panX = (w - iw * scaleM) / 2;
+      }
+      ut();
+    }
+  })();
+  // 如果屏幕宽度<768，给 body 加 mobile 类
+  if (window.innerWidth < 768) {
+    document.body.classList.add('touch-mobile');
+  }
 })();
 
 // ===== 归一化坐标辅助函数 =====
@@ -541,8 +600,110 @@ document.body.addEventListener('mousemove',function(e){if(mode==='place'){var ch
 document.getElementById('mv').addEventListener('click',function(e){if(mode==='place'&&!e.target.closest('.pin-marker')){extractPos(e);showPicker();}});
 function extractPos(e){var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=e.clientX-wr.left,my=e.clientY-wr.top;var img=document.getElementById('mapImg');var ix=mx/scaleM-panX/scaleM,iy=my/scaleM-panY/scaleM;var pctX=Math.round(ix/img.clientWidth*10000)/100;var pctY=Math.round(iy/img.clientHeight*10000)/100;var px__=Math.round(pctX/100*(img.naturalWidth||img.width||0));var py__=Math.round(pctY/100*(img.naturalHeight||img.height||0));var cv=document.getElementById('cv');if(cv)cv.textContent=pctX+', '+pctY;}
 document.getElementById('mv').addEventListener('wheel',function(e){_zooming=true;e.preventDefault();var f=e.deltaY>0?0.9:1.1;zoom(f,e.clientX,e.clientY);},{passive:false});
-document.getElementById('mv').addEventListener('touchstart',function(e){if(e.touches.length===2){touchStartDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);touchStartScale=scaleM;}},{passive:true});
-document.getElementById('mv').addEventListener('touchmove',function(e){if(e.touches.length===2){e.preventDefault();var dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);var ns=touchStartScale*dist/touchStartDist;zoomTo(Math.round(ns*100));}},{passive:false});
+/* ── 触控拖拽 + 双指缩放 ── */
+(function(){
+  var mv = document.getElementById('mv');
+  if (!mv) return;
+  var tStartX = 0, tStartY = 0, tDist = 0, tScale = 1;
+  var tPanX = 0, tPanY = 0, tMoved = false, tMode = 'none';
+  var longPressTimer = null;
+  // 记录上一次中心点（用于双指平移）
+  var lastMidX = 0, lastMidY = 0;
+
+  mv.addEventListener('touchstart', function(e) {
+    tMoved = false;
+    tMode = (e.touches.length === 2) ? 'pinch' : 'drag';
+    if (e.touches.length === 1) {
+      tStartX = e.touches[0].clientX;
+      tStartY = e.touches[0].clientY;
+      tPanX = panX;
+      tPanY = panY;
+      // 长按判定（300ms）
+      longPressTimer = setTimeout(function(){
+        if (!tMoved) {
+          // 模拟左键点击：位置拾取或投稿
+          var ch = document.getElementById('ch');
+          if (mode === 'place') {
+            ch.style.left = tStartX + 'px';
+            ch.style.top = tStartY + 'px';
+            ch.classList.add('show');
+            extractPos({clientX: tStartX, clientY: tStartY});
+          }
+        }
+      }, 300);
+    } else if (e.touches.length === 2) {
+      if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+      var dx = e.touches[0].clientX - e.touches[1].clientX;
+      var dy = e.touches[0].clientY - e.touches[1].clientY;
+      tDist = Math.hypot(dx, dy);
+      tScale = scaleM;
+      lastMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      lastMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    }
+  }, {passive: true});
+
+  mv.addEventListener('touchmove', function(e) {
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    
+    if (e.touches.length === 1 && tMode === 'drag') {
+      var dx = e.touches[0].clientX - tStartX;
+      var dy = e.touches[0].clientY - tStartY;
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) { tMoved = true; }
+      if (tMoved) {
+        panX = tPanX + dx;
+        panY = tPanY + dy;
+        ut();
+      }
+    } else if (e.touches.length === 2) {
+      tMoved = true;
+      // 双指缩放（以中心点为锚点）
+      var dx = e.touches[0].clientX - e.touches[1].clientX;
+      var dy = e.touches[0].clientY - e.touches[1].clientY;
+      var dist = Math.hypot(dx, dy);
+      var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      var ns = tScale * dist / tDist;
+      if (ns < 0.1) ns = 0.1;
+      if (ns > 22) ns = 22;
+      // 以中指为锚点缩放
+      var wrap = document.querySelector('.map-wrap');
+      if (wrap) {
+        var wr = wrap.getBoundingClientRect();
+        var mx = midX - wr.left, my = midY - wr.top;
+        var imgX = (mx - tPanX) / tScale, imgY = (my - tPanY) / tScale;
+        panX = mx - imgX * ns;
+        panY = my - imgY * ns;
+      }
+      scaleM = ns;
+      // 双指平移增量
+      var dpx = midX - lastMidX, dpy = midY - lastMidY;
+      tPanX = panX; tPanY = panY;
+      lastMidX = midX; lastMidY = midY;
+      ut();
+    }
+  }, {passive: false});
+
+  mv.addEventListener('touchend', function(e) {
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    // 如果没拖动过且触摸抬起后只剩0指，视为点击
+    if (!tMoved && e.touches.length === 0 && tMode === 'drag') {
+      var ch = document.getElementById('ch');
+      if (mode === 'place') {
+        ch.style.left = tStartX + 'px';
+        ch.style.top = tStartY + 'px';
+        ch.classList.add('show');
+        extractPos({clientX: tStartX, clientY: tStartY});
+        showPicker();
+      } else {
+        // 浏览模式下轻触是点击
+        var el = document.elementFromPoint(tStartX, tStartY);
+        if (el) el.click();
+      }
+    }
+    // 重置模式
+    tMode = 'none';
+  }, {passive: true});
+})();
 var sb=document.getElementById('sb');if(sb)sb.onclick=function(){showPicker();mode='browse';document.getElementById('ch').classList.remove('show');var btn=document.getElementById('mdBtn');if(btn)btn.textContent='[B] 浏览';};
 var lb=document.getElementById('lbb');if(lb){var lp=document.getElementById('lp');if(lp){lb.onclick=function(e){e.stopPropagation();lp.classList.toggle('show');if(lp.classList.contains('show')){renderLayers();}};document.addEventListener('click',function(ev){if(lp&&!lp.contains(ev.target)&&ev.target!==document.getElementById('lbb'))lp.classList.remove('show');});}}
 if(typeof renderMarkers==='function')renderMarkers();
@@ -1293,6 +1454,40 @@ input,textarea,button{font-size:14px!important}
 /* v1.19 UI入场动画 1s */
 [class*=btn],.drag-handle,.logo,#pd,.hamburger,#topBar,.hamburger-menu{animation:uiPopIn 1s ease both}
 @keyframes uiPopIn{from{opacity:0;transform:scale(0.85) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+/* ── 手机触控专用样式 ── */
+@media (max-width: 767px) {
+  body.touch-mobile .top-bar{min-width:auto!important;padding:2px 6px;top:4px!important;left:4px!important;right:4px!important;transform:none!important;border-radius:6px;flex-wrap:wrap;gap:3px;width:auto!important;max-width:calc(100vw - 8px)}
+  body.touch-mobile .top-bar .logo{font-size:11px}
+  body.touch-mobile .top-bar .btn{min-width:auto!important;height:24px!important;font-size:10px!important;padding:1px 5px!important}
+  body.touch-mobile .mat-panel{top:45px;left:4px;width:140px!important;min-width:140px!important}
+  body.touch-mobile .mat-btn{min-width:124px!important;font-size:11px!important;padding:4px 6px!important}
+  body.touch-mobile .mat-item{width:36px!important;min-width:36px!important;max-width:36px!important;height:42px!important}
+  body.touch-mobile .mat-item img{width:18px!important;height:18px!important}
+  body.touch-mobile .action-bar{right:4px!important;bottom:52px!important}
+  body.touch-mobile .action-btn{width:34px!important;height:34px!important;font-size:15px!important}
+  body.touch-mobile .zoom-wrap{right:4px!important;bottom:96px!important}
+  body.touch-mobile .zoom-btn{width:28px!important;height:28px!important;font-size:12px!important}
+  body.touch-mobile .floor-wrap{left:4px;bottom:52px;min-width:auto;font-size:11px}
+  body.touch-mobile .floor-btn{min-width:60px!important;height:26px!important;font-size:10px!important;padding:2px 6px!important}
+  body.touch-mobile #hamburger{width:30px!important;height:30px!important;font-size:15px!important}
+  body.touch-mobile .ly-pop{font-size:14px!important;padding:12px!important;min-width:auto!important;max-width:calc(100vw - 16px)!important;width:auto!important}
+  body.touch-mobile .ly-pop label{font-size:16px!important;padding:8px 10px!important}
+  body.touch-mobile .ly-pop input{width:20px!important;height:20px!important}
+  body.touch-mobile .ly-pop .ly-card-hdr{font-size:14px!important}
+  body.touch-mobile .ly-pop .ly-icon{width:28px!important;height:28px!important}
+  body.touch-mobile .ly-pop .ly-icon.e{width:28px!important;font-size:20px!important;line-height:28px}
+  body.touch-mobile .pd-box{padding:14px!important}
+  body.touch-mobile .pd-title{font-size:16px!important}
+  body.touch-mobile .pd-close{font-size:18px!important;top:8px;right:10px}
+  body.touch-mobile #cpMenu{max-width:calc(100vw - 16px)!important;min-width:auto!important;padding:10px!important}
+  body.touch-mobile .hamburger-menu{width:75vw!important}
+  body.touch-mobile .hamburger-menu .hm-item{font-size:14px!important;padding:8px 10px!important}
+  body.touch-mobile #zoomWrap{bottom:100px!important}
+}
+/* ── 手机触控 - 阻止浏览器默认行为 ── */
+.touch-mobile{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;overscroll-behavior:none;touch-action:none;-webkit-overflow-scrolling:touch}
+.touch-mobile .map-wrap{touch-action:none!important;overscroll-behavior:none}
+.touch-mobile #mv{touch-action:none!important;cursor:grab;-webkit-user-select:none;user-select:none}
 
 
 
