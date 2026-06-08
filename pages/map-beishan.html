@@ -603,21 +603,11 @@ function zoomTo(v,cx,cy){v=v/100;if(v<0.1)v=0.1;if(v>22)v=22;if(cx!==void 0&&cy!
 function resetView(){
   var w = window.innerWidth;
   var h = window.innerHeight;
-  var img = document.getElementById('mapImg');
-  if (img) {
-    var iw = img.naturalWidth || img.width || 2000;
-    var ih = img.naturalHeight || img.height || 2000;
-    // 缩放使地图内容刚好填满屏幕宽度的80%，居中显示
-    var scaleX = (w * 0.8) / iw;
-    var scaleY = (h * 0.8) / ih;
-    var s = Math.min(scaleX, scaleY, 2);
-    scaleM = s;
-    panX = w / (2 * s) - iw / 2;
-    panY = h / (2 * s) - ih / 2;
-  } else {
-    scaleM = 1; panX = 1; panY = 1;
-  }
-  var e=document.getElementById('mv');if(e)e.style.transform='translate('+panX+'px,'+panY+'px) scale('+scaleM+')';var zr=document.getElementById('zr');if(zr)zr.value=Math.round(scaleM*100);var zl=document.getElementById('zl');if(zl)zl.textContent=Math.round(scaleM*100)+'%';
+  scaleM = 1.58;
+  panX = -418;
+  panY = -44;
+  var s = scaleM;
+  var e=document.getElementById('mv');if(e)e.style.transform='translate('+panX+'px,'+panY+'px) scale('+s+')';var zr=document.getElementById('zr');if(zr)zr.value=Math.round(s*100);var zl=document.getElementById('zl');if(zl)zl.textContent=Math.round(s*100)+'%';
 }
 window.onerror=function(m,s,l,c,err){console.error('JS err',m,l,c);alert('Err: '+m);return true;};
 function toggleMode(){mode=(mode==='browse')?'place':'browse';var btn=document.getElementById('mdBtn');if(btn)btn.textContent=(mode==='place')?'[P] 放置':'[B] 浏览';document.getElementById('ch').classList.toggle('show',mode==='place');document.getElementById('cv').textContent='-';document.getElementById('ab').style.display='none';}
