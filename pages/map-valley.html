@@ -353,7 +353,7 @@ var adCard=document.getElementById('adCard');
 if(adCard){var adDrag=false,adSX,adSY;
 adCard.addEventListener('pointerdown',function(e){adDrag=false;adSX=e.clientX;adSY=e.clientY;});
 adCard.addEventListener('pointermove',function(e){if(Math.abs(e.clientX-adSX)>5||Math.abs(e.clientY-adSY)>5)adDrag=true;});
-adCard.addEventListener('pointerup',function(e){if(adDrag){e.preventDefault();e.target.closest('a')&&e.target.closest('a').click();}setTimeout(function(){adDrag=false;},50);});
+adCard.addEventListener('pointerup',function(e){setTimeout(function(){adDrag=false;},50);});
 adCard.querySelector('a').addEventListener('click',function(e){if(adDrag)e.preventDefault();});}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
