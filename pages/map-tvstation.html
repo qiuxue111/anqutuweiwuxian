@@ -578,20 +578,28 @@ function zoomTo(v,cx,cy){v=v/100;if(v<0.1)v=0.1;if(v>22)v=22;if(cx!==void 0&&cy!
 function resetView(){
   var w = window.innerWidth;
   var h = window.innerHeight;
-  var iw = 2000;
-  var ih = 2000;
   var s = 1;
   if (w > 0) {
-    s = h / ih;
+    var imgEl = document.getElementById('mapImg');
+    var iw = imgEl ? imgEl.clientWidth : 0;
+    var ih = imgEl ? imgEl.clientHeight : 0;
+    if (iw > 0 && ih > 0) {
+      var sx = w / iw;
+      var sy = h / ih;
+      s = Math.max(sx, sy);
+    } else {
+      s = 0.8;
+    }
     if (s > 3) s = 3;
-    if (s < 0.5) s = 0.5;
+    if (s < 0.3) s = 0.3;
     scaleM = s;
     panX = (w - iw * s) / 2;
-    panY = 0;
+    panY = (h - ih * s) / 2;
   } else {
     scaleM = 1; panX = 0; panY = 0;
   }
-  var e=document.getElementById('mv');if(e)e.style.transform='translate('+panX+'px,'+panY+'px) scale('+s+')';var zr=document.getElementById('zr');if(zr)zr.value=Math.round(s*100);var zl=document.getElementById('zl');if(zl)zl.textContent=Math.round(s*100)+'%';
+  var e=document.getElementById('zr');
+  if(e)e.value=Math.round(s*100);
 }
 document.addEventListener('DOMContentLoaded',function(){
   document.addEventListener('click',function(e){
