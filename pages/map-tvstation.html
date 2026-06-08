@@ -622,19 +622,23 @@ document.getElementById('mv').addEventListener('wheel',function(e){_zooming=true
       var ns = tScale * dist / tDist;
       if (ns < 0.1) ns = 0.1;
       if (ns > 22) ns = 22;
-      // 以中指为锚点缩放
+      // 以中指为锚点缩放 + 双指平移
+      var ratio = dist / tDist;
+      scaleM = Math.max(0.1, Math.min(22, tScale * ratio));
       var wrap = document.querySelector('.map-wrap');
       if (wrap) {
         var wr = wrap.getBoundingClientRect();
         var mx = midX - wr.left, my = midY - wr.top;
-        var imgX = (mx - tPanX) / tScale, imgY = (my - tPanY) / tScale;
-        panX = mx - imgX * ns;
-        panY = my - imgY * ns;
+        panX = mx - (mx - tPanX) * (scaleM / tScale);
+        panY = my - (my - tPanY) * (scaleM / tScale);
+        panX += midX - lastMidX;
+        panY += midY - lastMidY;
+      } else {
+        panX = panX * ratio;
+        panY = panY * ratio;
       }
-      scaleM = ns;
-      // 双指平移增量
-      var dpx = midX - lastMidX, dpy = midY - lastMidY;
       tPanX = panX; tPanY = panY;
+      tScale = scaleM; tDist = dist;
       lastMidX = midX; lastMidY = midY;
       ut();
     }
