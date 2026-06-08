@@ -522,13 +522,15 @@ body{font-size:14px!important}
     var img = document.getElementById('mapImg');
     if (!img) { setTimeout(arguments.callee, 200); return; }
     if (img.complete && img.naturalWidth) {
-      var iw = 3000;
-      var ih = 1000;
-      scaleM = h / ih;
+      var iw = 7566;
+      var ih = 4588;
+      var sx = w / iw;
+      var sy = h / ih;
+      scaleM = Math.max(sx, sy);
       if (scaleM > 3) scaleM = 3;
-      if (scaleM < 0.5) scaleM = 0.5;
+      if (scaleM < 0.3) scaleM = 0.3;
       panX = (w - iw * scaleM) / 2;
-      panY = 0;
+      panY = (h - ih * scaleM) / 2;
       ut();
     }
   })();
