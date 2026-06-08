@@ -500,13 +500,9 @@ body{font-size:14px!important}
     if (img.complete && img.naturalWidth) {
       var iw = 6942;
       var ih = 2872;
-      var sx = w / iw;
-      var sy = h / ih;
-      scaleM = Math.max(sx, sy);
-      if (scaleM > 3) scaleM = 3;
-      if (scaleM < 0.3) scaleM = 0.3;
-      panX = (w - iw * scaleM) / 2;
-      panY = (h - ih * scaleM) / 2;
+      scaleM = 0.5;
+      panX = (w - iw * 0.5) / 2;
+      panY = (h - ih * 0.5) / 2;
       ut();
     }
   })();
