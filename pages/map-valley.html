@@ -512,7 +512,7 @@ body{font-size:14px!important}
       if (scaleM > 5) scaleM = 5;
       if (scaleM < 0.5) scaleM = 0.5;
       panX = (w - iw * scaleM) / 2;
-      panY = (h - ih * scaleM) * 1.0;
+      panY = (h - ih * scaleM) * 0.5;
       ut();
     }
   })();
@@ -590,7 +590,7 @@ function resetView(){
     if (s < 0.5) s = 0.5;
     scaleM = s;
     panX = (w - iw * s) / 2;
-    panY = (h - ih * s) * 1.0;
+    panY = (h - ih * s) * 0.5;
   } else {
     scaleM = 1; panX = 0; panY = 0;
   }
