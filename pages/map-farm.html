@@ -500,9 +500,13 @@ body{font-size:14px!important}
     if (img.complete && img.naturalWidth) {
       var iw = 6942;
       var ih = 2872;
-      scaleM = 0.5;
-      panX = (w - iw * 0.5) / 2;
-      panY = (h - ih * 0.5) / 2;
+      var imgEl = document.getElementById('mapImg');
+      var iw2 = imgEl ? imgEl.clientWidth : 0;
+      if (iw2 > 0) { scaleM = w / iw2; } else { scaleM = 0.8; }
+      if (scaleM > 3) scaleM = 3;
+      if (scaleM < 0.3) scaleM = 0.3;
+      panX = (w - iw2 * scaleM) / 2;
+      panY = 0;
       ut();
     }
   })();
