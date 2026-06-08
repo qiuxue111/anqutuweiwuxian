@@ -1524,7 +1524,7 @@ input,textarea,button{font-size:14px!important}
 
 
 /* ─── 广告卡片 ─── */
-.ad-card{position:fixed;left:12px;bottom:12px;z-index:99990;width:140px;height:auto;background:rgba(10,10,15,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;transition:border-color .2s,box-shadow .2s;box-shadow:0 2px 12px rgba(0,0,0,0.4);user-select:none;-webkit-user-select:none;touch-action:none}
+.ad-card{position:fixed;left:12px;bottom:12px;z-index:99990;width:240px;height:auto;background:rgba(10,10,15,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;transition:border-color .2s,box-shadow .2s;box-shadow:0 2px 12px rgba(0,0,0,0.4);user-select:none;-webkit-user-select:none;touch-action:none}
 .ad-card:hover{border-color:rgba(255,200,50,0.3);box-shadow:0 2px 16px rgba(255,200,50,0.08)}
 .ad-card:active{transform:scale(0.97)}
 .ad-card img{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;pointer-events:none}
@@ -1716,7 +1716,7 @@ function showPicker(){
   noteLabel.textContent='\ud83d\udcac \u5907\u6ce8\uff08\u975e\u5fc5\u586b\uff09';
   footer.appendChild(noteLabel);
   var noteRow=document.createElement('div');
-  noteRow.style.cssText='display:flex;gap:6px;align-items:center';
+  noteRow.style.cssText='display:flex;gap:0;align-items:center';
   var noteInput=document.createElement('input');
   noteInput.type='text';
   noteInput.id='pdNote';
