@@ -577,12 +577,17 @@ function resetView(){
   var s = 1;
   if (img && img.complete && img.naturalWidth) {
     var iw = img.naturalWidth;
-    s = Math.min(w / iw, 2.5);
-    if (s < 0.8) s = 0.8;
+    var ih = img.naturalHeight || iw;
+    // 缩放：让地图撑满屏幕宽高（取较紧的边），不超过实际尺寸的2倍
+    var sx = w / iw;
+    var sy = h / ih;
+    s = Math.min(sx, sy);
+    if (s > 2) s = 2;
+    if (s < 0.3) s = 0.3;
     scaleM = s;
-    panX = 0;
-    panY = 0;
-    if (iw * s < w) panX = (w - iw * s) / 2;
+    // 始终居中
+    panX = (w - iw * s) / 2;
+    panY = (h - ih * s) / 2;
   } else {
     scaleM = 1; panX = 0; panY = 0;
   }
