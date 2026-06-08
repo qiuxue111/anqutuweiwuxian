@@ -196,6 +196,14 @@ body{overflow:hidden;background:#0a0a0f}
     <div class="ad-desc" id="adDesc">点击这里喵</div>
   </div>
 </div>
+<script>
+var adCard=document.getElementById('adCard');
+var adDragging=false,adStartX,adStartY;
+if(adCard){adCard.addEventListener('mousedown',function(e){adDragging=false;adStartX=e.clientX;adStartY=e.clientY;});
+adCard.addEventListener('mousemove',function(e){if(Math.abs(e.clientX-adStartX)>5||Math.abs(e.clientY-adStartY)>5)adDragging=true;});
+adCard.addEventListener('mouseup',function(e){if(adDragging)e.preventDefault();adDragging=false;});
+adCard.querySelector('a').addEventListener('click',function(e){if(adDragging){e.preventDefault();adDragging=false;}});}
+</script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar">
 <a href="../index.html" class="logo">暗区无限</a>
@@ -358,6 +366,14 @@ body{overflow:hidden;background:#0a0a0f}
 <body>
 <div id="mapBgHint" onclick="resetView()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0a0a0f;display:flex;align-items:center;justify-content:center;z-index:0;cursor:pointer"><span style="color:#666;font-size:130px;font-family:sans-serif;user-select:none">如果没有地图请点击复位</span></div>
 <div class="hamburger" id="hamburger" onclick="toggleHamburger()">☰</div>
+<script>
+var adCard=document.getElementById('adCard');
+var adDragging=false,adStartX,adStartY;
+if(adCard){adCard.addEventListener('mousedown',function(e){adDragging=false;adStartX=e.clientX;adStartY=e.clientY;});
+adCard.addEventListener('mousemove',function(e){if(Math.abs(e.clientX-adStartX)>5||Math.abs(e.clientY-adStartY)>5)adDragging=true;});
+adCard.addEventListener('mouseup',function(e){if(adDragging)e.preventDefault();adDragging=false;});
+adCard.querySelector('a').addEventListener('click',function(e){if(adDragging){e.preventDefault();adDragging=false;}});}
+</script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar"><a href="../index.html" class="logo">暗区无限</a><div class="sep"></div><button class="btn" onclick="resetView()">复位</button>
 <button class="btn" onclick="resetPositions()">↺ 归位</button><div class="sep"></div><span class="user-name" id="userName2"></span><button class="btn" id="loginBtn2" onclick="loginGitHub()">登录</button><button class="btn" id="reviewBtn2" onclick="window.location.href='review.html?from=map-beishan'" >审核</button></div>
