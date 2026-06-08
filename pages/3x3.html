@@ -1915,7 +1915,7 @@ window.addEventListener("resize",updateTransform);
   var tStartX = 0, tStartY = 0, tLeft = 0, tBottom = 0;
   var mm = null, mu = null;
   var AD_LINK = 'https://example.com';
-  if (localStorage.getItem('adCardClosed_' + location.pathname)) {
+  if (localStorage.getItem('adCardClosed_v2')) {
     card.style.display = 'none'; return;
   }
   var adImg = document.getElementById('adImg');
@@ -1980,7 +1980,7 @@ window.addEventListener("resize",updateTransform);
   closeBtn.onclick = function(e) {
     e.stopPropagation(); e.preventDefault();
     card.style.display = 'none';
-    localStorage.setItem('adCardClosed_' + location.pathname, '1');
+    localStorage.setItem('adCardClosed_v2', '1');
   };
   card.appendChild(closeBtn);
 })();
