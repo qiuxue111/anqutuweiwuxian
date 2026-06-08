@@ -1454,7 +1454,7 @@ input,textarea,button{font-size:14px!important}
 
 
 /* ─── 广告卡片 ─── */
-.ad-card{position:fixed;top:12px!important;left:12px!important;z-index:99999!important;width:200px!important;height:80px!important;background:red!important;border:3px solid yellow!important;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white!important;font-size:16px!important}
+.ad-card{position:fixed;top:12px;left:12px;z-index:99999;width:200px;height:80px;background:rgba(10,10,15,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;transition:border-color .2s,box-shadow .2s;box-shadow:0 2px 12px rgba(0,0,0,0.4);user-select:none;-webkit-user-select:none;touch-action:none}
 .ad-card:hover{border-color:rgba(255,200,50,0.3);box-shadow:0 2px 16px rgba(255,200,50,0.08)}
 .ad-card:active{transform:scale(0.97)}
 .ad-card img{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;pointer-events:none}
@@ -1788,7 +1788,7 @@ document.addEventListener('click', function(e) {
 
 </script><div style="position:fixed;bottom:4px;right:60px;z-index:99999;font-size:30px;color:rgba(255,255,255,0.25);pointer-events:none;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.8)">📦 Shift+左键投稿容器</div>
 <!-- 广告卡片 -->
-<div class="ad-card" id="adCard" style="display:flex!important;top:12px;left:12px!important;z-index:99999!important;background:red!important;border:3px solid yellow!important">
+<div class="ad-card" id="adCard">
   <img src="" alt="" id="adImg" style="display:none">
   <div class="ad-text">
     <div class="ad-title" id="adTitle">广告位招租</div>
