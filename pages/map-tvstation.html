@@ -164,10 +164,11 @@ body{overflow:hidden;background:#0a0a0f}
 </div>
 <script>
 var adCard=document.getElementById('adCard');
-if(adCard){var adSX,adDist;
-adCard.addEventListener('pointerdown',function(e){adSX=e.clientX;adDist=0;});
-adCard.addEventListener('pointermove',function(e){if(adSX!==undefined)adDist=Math.max(adDist,Math.abs(e.clientX-adSX));});
-adCard.querySelector('a').addEventListener('click',function(e){if(adDist>10)e.preventDefault();});}
+if(adCard){var adDX,adDY,dragged=0;
+adCard.addEventListener('pointerdown',function(e){adDX=e.clientX;adDY=e.clientY;dragged=0;});
+adCard.addEventListener('pointermove',function(e){if(adDX!==undefined&&(Math.abs(e.clientX-adDX)>10||Math.abs(e.clientY-adDY)>10))dragged=1;});
+adCard.addEventListener('pointerup',function(){setTimeout(function(){dragged=0;},100);});
+adCard.querySelector('a').addEventListener('click',function(e){if(dragged)e.preventDefault();});}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar">
@@ -332,10 +333,11 @@ body{overflow:hidden;background:#0a0a0f}
 <div class="hamburger" id="hamburger" onclick="toggleHamburger()">☰</div>
 <script>
 var adCard=document.getElementById('adCard');
-if(adCard){var adSX,adDist;
-adCard.addEventListener('pointerdown',function(e){adSX=e.clientX;adDist=0;});
-adCard.addEventListener('pointermove',function(e){if(adSX!==undefined)adDist=Math.max(adDist,Math.abs(e.clientX-adSX));});
-adCard.querySelector('a').addEventListener('click',function(e){if(adDist>10)e.preventDefault();});}
+if(adCard){var adDX,adDY,dragged=0;
+adCard.addEventListener('pointerdown',function(e){adDX=e.clientX;adDY=e.clientY;dragged=0;});
+adCard.addEventListener('pointermove',function(e){if(adDX!==undefined&&(Math.abs(e.clientX-adDX)>10||Math.abs(e.clientY-adDY)>10))dragged=1;});
+adCard.addEventListener('pointerup',function(){setTimeout(function(){dragged=0;},100);});
+adCard.querySelector('a').addEventListener('click',function(e){if(dragged)e.preventDefault();});}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar"><a href="../index.html" class="logo">暗区无限</a><div class="sep"></div><button class="btn" onclick="resetView()">复位</button>
