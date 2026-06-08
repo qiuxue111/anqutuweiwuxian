@@ -167,7 +167,7 @@ var adCard=document.getElementById('adCard');
 if(adCard){var adSX,adDist;
 adCard.addEventListener('pointerdown',function(e){adSX=e.clientX;adDist=0;});
 adCard.addEventListener('pointermove',function(e){if(adSX!==undefined)adDist=Math.max(adDist,Math.abs(e.clientX-adSX));});
-adCard.querySelector('a').addEventListener('click',function(e){if(adDist>5)e.preventDefault();});}
+adCard.querySelector('a').addEventListener('click',function(e){if(adDist>10)e.preventDefault();});}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar">
@@ -335,7 +335,7 @@ var adCard=document.getElementById('adCard');
 if(adCard){var adSX,adDist;
 adCard.addEventListener('pointerdown',function(e){adSX=e.clientX;adDist=0;});
 adCard.addEventListener('pointermove',function(e){if(adSX!==undefined)adDist=Math.max(adDist,Math.abs(e.clientX-adSX));});
-adCard.querySelector('a').addEventListener('click',function(e){if(adDist>5)e.preventDefault();});}
+adCard.querySelector('a').addEventListener('click',function(e){if(adDist>10)e.preventDefault();});}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar"><a href="../index.html" class="logo">暗区无限</a><div class="sep"></div><button class="btn" onclick="resetView()">复位</button>
