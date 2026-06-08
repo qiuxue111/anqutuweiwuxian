@@ -152,6 +152,14 @@ body{overflow:hidden;background:#0a0a0f}
 <body>
 <div id="mapBgHint" onclick="resetView()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0a0a0f;display:flex;align-items:center;justify-content:center;z-index:0;cursor:pointer"><span style="color:#666;font-size:130px;font-family:sans-serif;user-select:none">如果没有地图请点击复位</span></div>
 <div class="hamburger" id="hamburger" onclick="toggleHamburger()">☰</div>
+<!-- 广告卡片 -->
+<div class="ad-card" id="adCard">
+  <img src="" alt="" id="adImg" style="display:none">
+  <div class="ad-text">
+    <div class="ad-title" id="adTitle">广告位招租</div>
+    <div class="ad-desc" id="adDesc">联系站长投放广告</div>
+  </div>
+</div>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar">
 <a href="../index.html" class="logo">暗区无限</a>
@@ -1804,16 +1812,8 @@ document.addEventListener('click', function(e) {
 });
 
 </script><div style="position:fixed;bottom:4px;right:60px;z-index:99999;font-size:30px;color:rgba(255,255,255,0.25);pointer-events:none;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.8)">📦 Shift+左键投稿容器</div>
-<!-- 广告卡片 -->
-<div class="ad-card" id="adCard">
-  <img src="" alt="" id="adImg" style="display:none">
-  <div class="ad-text">
-    <div class="ad-title" id="adTitle">广告位招租</div>
-    <div class="ad-desc" id="adDesc">联系站长投放广告</div>
-  </div>
-</div>
-<script>
-(function(){
+
+<script>(function(){
   var card = document.getElementById('adCard');
   if (!card) return;
   var isDragging = false, tMoved = false;
@@ -1821,9 +1821,6 @@ document.addEventListener('click', function(e) {
   var mm = null, mu = null;
   var AD_LINK = 'https://example.com';
   /* ad card always visible */
-  // if (sessionStorage.getItem('adCardClosed_v2')) {
-  //   card.style.display = 'none'; return;
-  // }
   var adImg = document.getElementById('adImg');
   if (adImg) {
     adImg.onerror = function() { this.style.display = 'none'; };
@@ -1878,7 +1875,6 @@ document.addEventListener('click', function(e) {
   card.addEventListener('mousedown', startDrag);
   card.addEventListener('touchstart', startDrag, {passive:false});
   card.addEventListener('click', function(e){ if (tMoved) { e.stopPropagation(); } });
-  // close button
   var closeBtn = document.createElement('span');
   closeBtn.className = 'ad-close-btn';
   closeBtn.textContent = '\u00d7';
@@ -1886,11 +1882,8 @@ document.addEventListener('click', function(e) {
   closeBtn.onclick = function(e) {
     e.stopPropagation(); e.preventDefault();
     card.style.display = 'none';
-    sessionStorage.setItem('adCardClosed_v2', '1');
   };
   card.appendChild(closeBtn);
-})();
-
-</script>
+})();</script>
 </body>
 </html>
