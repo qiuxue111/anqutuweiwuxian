@@ -1475,6 +1475,10 @@ body.touch-mobile .ad-card img{width:32px;height:32px}
 body.touch-mobile .ad-card .ad-text .ad-title{font-size:10px}
 body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
 
+
+.ad-card:hover .ad-close-btn{opacity:1}
+.ad-close-btn{opacity:0;transition:opacity .15s}
+.ad-close-btn:hover{color:#aaa!important}
 </style>
 <script>
 (function(){
@@ -1550,9 +1554,9 @@ body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
     tb.appendChild(rp);
   }
 }
-.ad-card:hover .ad-close-btn{opacity:1}
-.ad-close-btn{opacity:0;transition:opacity .15s}
-.ad-close-btn:hover{color:#aaa!important})();
+
+
+)();
 
 // === showPicker（投稿弹窗） ===
 function showPicker(){
