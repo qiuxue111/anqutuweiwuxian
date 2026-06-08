@@ -105,7 +105,6 @@ body{overflow:hidden;background:#0a0a0f}
 .mat-item img{width:20px;height:20px;border-radius:2px;object-fit:cover}
 .mat-item .mi-name{font-size:8px;color:#999;text-align:center;line-height:1.1}
 
-
 .floor-wrap{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;gap:3px;background:rgba(10,10,15,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:4px 5px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
 .floor-btn{padding:5px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:5px;color:#999;cursor:pointer;font-size:10px;transition:all .2s;white-space:nowrap}
 .floor-btn:hover{background:rgba(255,200,50,0.08);border-color:#ffc832;color:#ffc832}
@@ -256,7 +255,6 @@ body{overflow:hidden;background:#0a0a0f}
 .mat-item img{width:20px;height:20px;border-radius:2px;object-fit:cover}
 .mat-item .mi-name{font-size:8px;color:#999;text-align:center;line-height:1.1}
 
-
 .floor-wrap{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;gap:3px;background:rgba(10,10,15,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:4px 5px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
 .floor-btn{padding:5px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:5px;color:#999;cursor:pointer;font-size:10px;transition:all .2s;white-space:nowrap}
 .floor-btn:hover{background:rgba(255,200,50,0.08);border-color:#ffc832;color:#ffc832}
@@ -396,9 +394,7 @@ adCard.querySelector('a').addEventListener('click',function(e){if(adDist>5)e.pre
 #sideMenu a:hover{background:#1a1a28;}
 </style>
 
-
 <div class="map-wrap">
-  
 
 <style>
 .floor-btn{background:rgba(0,0,0,0.65);border:1px solid #333;color:#ccc;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s;white-space:nowrap}
@@ -493,9 +489,6 @@ body{font-size:14px!important}
   </div>
   <div class="mc-list" id="mcList" style="margin-top:8px;overflow-y:auto;flex:1"></div>
 </div>
-
-
-
 
 <script>
 /* ── 手机触控适配 ── */
@@ -1095,7 +1088,7 @@ function renderLayers(){
   closeBtn.textContent='Close';
   closeBtn.style.cssText='margin-top:8px;padding:6px 12px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:6px;color:#888;cursor:pointer;font-size:12px;width:100%';
   closeBtn.onclick=function(){lp.classList.remove('show');};
-  lp.appendChild(closeBtn);
+  lp.appendChild(closeBtn2);
 }
 function toggleAllLayers(c){var lp=document.getElementById('lp');if(lp)lp.querySelectorAll('input[type=checkbox]').forEach(function(cb){cb.checked=c;});dispatchLayerCheck();}
 function toggleLayer(n,c){var lp=document.getElementById('lp');if(lp)lp.querySelectorAll('input[data-name]').forEach(function(cb){var t=cb.getAttribute('data-name');if(layerData[n]&&layerData[n].indexOf(t)>=0)cb.checked=c;});dispatchLayerCheck();}
@@ -1268,8 +1261,6 @@ function saveNote(idx,el){
 
 function showNoteToast(val){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:8px 16px;z-index:99999;color:#ccc;font-size:13px;transition:opacity 0.3s';t.textContent=val?'\u2705 \u5907\u6ce8\u5df2\u4fdd\u5b58':'\u2705 \u5907\u6ce8\u5df2\u6e05\u7a7a';document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove();},300);},1500);}
 
-
-
 function mergeLocalNotes(){try{var d=JSON.parse(sessionStorage.getItem('abi_'+mapNameEng+'_pins'));if(d&&d.pins&&d.pins.length>0){var lookup={};d.pins.forEach(function(lp){if(lp.note){if(lp.id)lookup['id_'+lp.id]=lp;else lookup['p_'+Math.round(lp.x*100)+'_'+Math.round(lp.y*100)]=lp;}});pins.forEach(function(p,i){var found;if(p.id&&lookup['id_'+p.id])found=lookup['id_'+p.id];else found=lookup['p_'+Math.round(p.x*100)+'_'+Math.round(p.y*100)];if(found)pins[i].note=found.note;});renderMarkers();}}catch(e){}}
 
 function submitPinNote(){
@@ -1388,7 +1379,6 @@ document.addEventListener('click', function(e){
 
 // === 所有浮动按钮可拖拽 ===
 
-
 // 初始化拖拽
 (function(){ var h=document.getElementById('hamburger'); if(h) {} })();
 (function(){ var ab=document.getElementById('actionBar'); if(ab) {} })();
@@ -1447,7 +1437,6 @@ document.addEventListener('click', function(e){
 })();
 </script>
 
-
 <script>
 // 阻止浏览器缩放（Ctrl+滚轮 / Ctrl+加号减号）
 document.addEventListener('wheel',function(e){
@@ -1463,7 +1452,6 @@ document.addEventListener('wheel',function(e){
   }
 },{passive:false});
 </script>
-
 
 <script>
 function resetPositions(){
@@ -1488,11 +1476,9 @@ function resetPositions(){
 }
 </script>
 
-
 <script>
 
 </script>
-
 
 <style>
 body{font-size:14px!important}
@@ -1511,31 +1497,16 @@ input,textarea,button{font-size:14px!important}
 [class*=btn],.drag-handle,.logo,#pd,.hamburger,#topBar,.hamburger-menu{animation:uiPopIn 1s ease both}
 @keyframes uiPopIn{from{opacity:0;transform:scale(0.85) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
 
-
-
-
-
-
-
-
 /* ─── 广告卡片 ─── */
-.ad-card{position:fixed;left:12px;bottom:12px;z-index:99990;width:180px;height:240px;border-radius:10px;cursor:pointer;overflow:hidden;transition:border-color .2s,box-shadow .2s;box-shadow:0 2px 12px rgba(0,0,0,0.4);user-select:none;-webkit-user-select:none;touch-action:none;border:1px solid rgba(255,255,255,0.08)}.ad-card a{display:block;width:100%;height:100%;overflow:hidden;position:relative}.ad-card img{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block}.ad-card .ad-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:2;width:90%}.ad-card .ad-title{color:#fff;font-weight:700;font-size:14px;text-shadow:0 0 4px #000,0 0 8px #000,1px 1px 2px #000;-webkit-text-stroke:1px #000;text-stroke:1px #000}.ad-card .ad-desc{color:#fff;font-weight:600;font-size:12px;margin-top:4px;text-shadow:0 0 4px #000,0 0 8px #000,1px 1px 2px #000;-webkit-text-stroke:1px #000;text-stroke:1px #000}.ad-close-btn{position:absolute;top:6px;right:6px;width:24px;height:24px;background:rgba(255,50,50,0.85);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;cursor:pointer;z-index:3;line-height:1;border:1px solid rgba(255,0,0,0.4);transition:opacity .2s,transform .2s;opacity:0}.ad-card:hover .ad-close-btn{opacity:1}.ad-close-btn:hover{transform:scale(1.15);background:rgba(255,30,30,1)}
+.ad-card{position:fixed;left:12px;bottom:12px;z-index:99990;width:180px;height:240px;border-radius:10px;cursor:pointer;overflow:hidden;transition:border-color .2s,box-shadow .2s;box-shadow:0 2px 12px rgba(0,0,0,0.4);user-select:none;-webkit-user-select:none;touch-action:none;border:1px solid rgba(255,255,255,0.08)}.ad-card a{display:block;width:100%;height:100%;overflow:hidden;position:relative}.ad-card img{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block}.ad-card .ad-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:2;width:90%}.ad-card .ad-title{color:#fff;font-weight:700;font-size:14px;text-shadow:0 0 4px #000,0 0 8px #000,1px 1px 2px #000;-webkit-text-stroke:1px #000;text-stroke:1px #000}.ad-card .ad-desc{color:#fff;font-weight:600;font-size:12px;margin-top:4px;text-shadow:0 0 4px #000,0 0 8px #000,1px 1px 2px #000;-webkit-text-stroke:1px #000;text-stroke:1px #000}.ad-close-btn{position:absolute;top:6px;right:6px;width:24px;height:24px;background:rgba(255,50,50,0.85);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;cursor:pointer;z-index:3;line-height:1;border:1px solid rgba(255,0,0,0.4);transition:opacity .2s,transform .2s;opacity:0}.ad-close-btn:hover{transform:scale(1.15);background:rgba(255,30,30,1)}
 .ad-card:hover{border-color:rgba(255,200,50,0.3);box-shadow:0 2px 16px rgba(255,200,50,0.08)}
 .ad-card:active{transform:scale(0.97)}
-
-
-
-
 
 body.touch-mobile .ad-card{width:110px;height:auto;left:6px;bottom:6px;padding:5px}
 body.touch-mobile .ad-card img{width:100%;height:auto}
 body.touch-mobile .ad-card .ad-text .ad-title{font-size:10px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
 
-
-.ad-card:hover .ad-close-btn{opacity:1}
-.ad-close-btn{opacity:0;transition:opacity .15s}
-.ad-close-btn:hover{color:#aaa!important}
 </style>
 <script>
 (function(){
@@ -1611,7 +1582,6 @@ body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
     tb.appendChild(rp);
   }
 }
-
 
 )();
 
@@ -1914,20 +1884,11 @@ document.addEventListener('click', function(e) {
   card.addEventListener('mousedown', function(e){ e.stopPropagation(); startDrag(e); });
   card.addEventListener('touchstart', function(e){ e.stopPropagation(); startDrag(e); }, {passive:false});
   card.addEventListener('click', function(e){ e.stopPropagation(); if (tMoved) { e.stopPropagation(); } });
-  var closeBtn = document.createElement('span');
-  closeBtn.className = 'ad-close-btn';
-  closeBtn.textContent = '\u00d7';
-  closeBtn.style.cssText = 'position:absolute;top:2px;right:4px;font-size:11px;color:#666;cursor:pointer;z-index:1;line-height:1;padding:0 3px;font-family:sans-serif';
-  closeBtn.onclick = function(e) {
-    e.stopPropagation(); e.preventDefault();
-    card.style.display = 'none';
-  };
-  card.appendChild(closeBtn);
+  
 })();</script>
 </body>
 
 <script>
-
 
 </script>
 </html>

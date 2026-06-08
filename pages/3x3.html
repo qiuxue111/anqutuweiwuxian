@@ -80,7 +80,6 @@ body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,
 .modal .title-style-controls input,.modal .title-style-controls select{width:100%;padding:4px 6px;background:rgba(255,255,255,.05);border:1px solid #333;border-radius:5px;color:#ddd;font-size:12px;outline:none}
 .modal .title-style-controls input[type="color"]{height:30px;padding:2px;cursor:pointer}
 
-
 /* 卡片操作按钮 */
 .card-actions-bar{position:absolute;top:6px;right:6px;z-index:10;display:flex;gap:4px;opacity:0;transition:opacity .15s}
 .card:hover .card-actions-bar{opacity:1}
@@ -93,7 +92,6 @@ body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,
 
 /* 卡片子内容 - 可换行滚动 */
 .card-body{flex:1;padding:6px 14px 8px;font-size:12px;color:var(--text-body,#999);line-height:1.6;overflow-y:auto;word-break:break-word;white-space:pre-wrap}
-
 
 /* 子任务卡片 */
 .card-subtask{padding:10px 14px;margin:4px 0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text-body,#ccc);transition:all .15s;white-space:pre-wrap;word-break:break-word;line-height:1.4}
@@ -156,7 +154,6 @@ body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,
 .zone-resize{position:absolute;bottom:4px;right:4px;width:12px;height:12px;background:rgba(255,200,50,.5);border-radius:2px;cursor:nwse-resize}
 .zone-del{position:absolute;top:-12px;right:-12px;width:28px;height:28px;border-radius:50%;background:rgba(255,50,50,.85);border:2px solid rgba(255,255,255,.2);color:#fff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;z-index:15;pointer-events:auto}
 .zone-edit:hover .zone-del{opacity:1}
-
 
 .hamburger{position:fixed;top:54px;left:8px;z-index:9999;width:30px;height:30px;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.06);border-radius:7px;color:#ccc;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:15px}
 .hamburger:active{cursor:grabbing}
@@ -245,19 +242,11 @@ body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,
 .ad-card:hover{border-color:rgba(255,200,50,0.3);box-shadow:0 2px 16px rgba(255,200,50,0.08)}
 .ad-card:active{transform:scale(0.97)}
 
-
-
-
-
 body.touch-mobile .ad-card{width:110px;height:auto;left:6px;bottom:6px;padding:5px}
 body.touch-mobile .ad-card img{width:100%;height:auto}
 body.touch-mobile 
 body.touch-mobile 
 
-
-.ad-card:hover .ad-close-btn{opacity:1}
-.ad-close-btn{opacity:0;transition:opacity .15s}
-.ad-close-btn:hover{color:#aaa!important}
 </style>
 </head>
 <body>
@@ -657,7 +646,6 @@ function saveToCloud(){
   });
 }
 
-
 /* ====== 框选 + 排列功能 ====== */
 function confirmSelection(){
   var sb = document.getElementById("selectionBox");
@@ -835,7 +823,6 @@ function renderAll(){
 
 /* 渲染区域 */
 
-
 function renderZone(z){
   var cvs = document.getElementById("canvas");
   var div = document.createElement("div");
@@ -902,7 +889,6 @@ function updateZoneDraw(e){
     renderAll();
   }
 }
-
 
 /* 调色盘回调 */
 var _zonePending = null;
@@ -1217,7 +1203,6 @@ function renderTitleCard(c){
   div.addEventListener("wheel",function(e){e.stopPropagation()},{passive:true});
   cvs.appendChild(div);
 }
-
 
 function updateTransform(){
   var cvs = document.getElementById("canvas");
@@ -1757,7 +1742,6 @@ function showToast(msg){
   t._timer = setTimeout(function(){ t.style.opacity = "0"; }, 2000);
 }
 
-
 /* ====== 导航汉堡（同地图页面）====== */
 function loginGitHub(){var p=window.location.pathname;var i=p.lastIndexOf('/pages/');var isMap=i>=0;var cb=window.location.origin+(isMap?p.substring(0,i+1):p.replace(/index.html$/,''))+'index.html';window.location.href='https://hanrfbciinkhgcumvous.supabase.co/auth/v1/authorize?provider=github&redirect_to='+encodeURIComponent(cb);}
 function logout(){sessionStorage.removeItem('abi_token');sessionStorage.removeItem('abi_user');window.location.reload();}
@@ -1911,7 +1895,7 @@ window.addEventListener("resize",updateTransform);
 </script>
 <!-- 推荐卡片 -->
 <div class="ad-card" id="adCard">
-  <a id="adLink">
+  <a href="https://qm.qq.com/q/YWswLAYuoU" target="_blank">
     <img src="../assets/ads/ad-3x3.png" alt="3x3代肝喵" id="adImg">
   </a>
   <div class="ad-text" id="adText">
@@ -1987,16 +1971,7 @@ window.addEventListener("resize",updateTransform);
   card.addEventListener('touchstart', startDrag, {passive:false});
   card.addEventListener('click', function(e){ if (tMoved) { e.stopPropagation(); } });
   // close button
-  var closeBtn = document.createElement('span');
-  closeBtn.className = 'ad-close-btn';
-  closeBtn.textContent = '\u00d7';
-  closeBtn.style.cssText = 'position:absolute;top:2px;right:4px;font-size:11px;color:#666;cursor:pointer;z-index:1;line-height:1;padding:0 3px;font-family:sans-serif';
-  closeBtn.onclick = function(e) {
-    e.stopPropagation(); e.preventDefault();
-    card.style.display = 'none';
-    sessionStorage.setItem('adCardClosed_v2', '1');
-  };
-  card.appendChild(closeBtn);
+  
 })();
 
 </script>
