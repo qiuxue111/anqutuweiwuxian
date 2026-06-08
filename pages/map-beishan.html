@@ -1202,14 +1202,14 @@ function toggleMat(){
   var btn=document.getElementById('matBtn'),mc=document.getElementById('matContent');
   if(!mc) return;
   if(mc.animating) return;
-  if(mc.classList.contains('show')){ btn.classList.remove('active'); btn.innerHTML='📦 物资'; mc.animating=false;var items=mc.querySelectorAll('.mat-cat,.mat-items,.mat-ctrl');var len=items.length;mc.style.transition='max-height 0.4s ease';mc.style.maxHeight=Math.min(mc.scrollHeight,520)+'px';requestAnimationFrame(function(){mc.style.maxHeight='0';});items.forEach(function(e,i){e.style.transition='opacity 0.2s ease,transform 0.2s ease';setTimeout(function(){e.style.opacity='0';e.style.transform='translateY(12px)';},(len-1-i)*40);});setTimeout(function(){mc.classList.remove('show');mc.style.maxHeight='';mc.innerHTML='';},Math.max(len*40+200,400)); return; }
+  if(mc.classList.contains('show')){ btn.classList.remove('active'); btn.innerHTML='📦 物资'; mc.animating=false;var items=mc.querySelectorAll('.mat-cat,.mat-items,.mat-ctrl');var len=items.length;mc.style.transition='max-height 0.4s ease';mc.style.maxHeight=Math.min(mc.scrollHeight, window.innerHeight * 0.8)+'px';requestAnimationFrame(function(){mc.style.maxHeight='0';});items.forEach(function(e,i){e.style.transition='opacity 0.2s ease,transform 0.2s ease';setTimeout(function(){e.style.opacity='0';e.style.transform='translateY(12px)';},(len-1-i)*40);});setTimeout(function(){mc.classList.remove('show');mc.style.maxHeight='';mc.innerHTML='';},Math.max(len*40+200,400)); return; }
   btn.classList.add('active'); btn.innerHTML='📦 物资 ▲'; mc.innerHTML='';mc.animating=false; mc.innerHTML=''; setTimeout(function(){
     mc.classList.add('show');
     mc.style.maxHeight='0';
         requestAnimationFrame(function(){
       mc.style.transition='max-height 0.4s ease';
-      mc.style.maxHeight=Math.min(mc.scrollHeight,520)+'px';
-      setTimeout(function(){mc.style.overflow='auto';mc.style.maxHeight='520px';},450);
+      mc.style.maxHeight=Math.min(mc.scrollHeight, window.innerHeight * 0.8)+'px';
+      setTimeout(function(){mc.style.overflow='auto';mc.style.maxHeight=Math.min(mc.scrollHeight, window.innerHeight * 0.8)+'px';},450);
     });
     var items=mc.querySelectorAll('.mat-cat,.mat-items,.mat-ctrl');
     items.forEach(function(e,i){
