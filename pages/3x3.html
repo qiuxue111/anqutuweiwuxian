@@ -250,9 +250,9 @@ body{background:var(--bg-page);color:var(--text-body);font-family:-apple-system,
 .ad-card .ad-text .ad-title{color:#eee;font-size:12px;font-weight:600;line-height:1.3;margin-bottom:2px}
 .ad-card .ad-text .ad-desc{color:#888;font-size:10px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 
-body.touch-mobile .ad-card{width:160px;height:64px;left:6px;bottom:6px;padding:5px 8px}
-body.touch-mobile .ad-card img{width:32px;height:32px}
-body.touch-mobile .ad-card .ad-text .ad-title{font-size:10px}
+body.touch-mobile .ad-card{width:110px;height:auto;left:6px;bottom:6px;padding:5px}
+body.touch-mobile .ad-card img{width:100%;height:auto}
+body.touch-mobile .ad-card .ad-text .ad-title{font-size:10px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
 
 
@@ -267,8 +267,8 @@ body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
   <div class="hamburger" id="hamburger">☰</div>
   <span class="app-title" id="canvasLabel">默认</span>
   <button class="btn btn-edit" id="editToggle" onclick="toggleEdit()">编辑</button>
-  <button class="btn btn-save" id="saveBtn" style="display:none" onclick="saveData()">保存</button>
-  <button class="btn btn-cancel" id="cancelBtn" style="display:none" onclick="cancelEdit()">取消</button>
+  <button class="btn btn-save" id="saveBtn"  onclick="saveData()">保存</button>
+  <button class="btn btn-cancel" id="cancelBtn"  onclick="cancelEdit()">取消</button>
   <button class="btn btn-add-card" id="addCardBtn" onclick="addCard()">+ 添加</button>
 <select id="cardTypeSelect" style="padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.08);background:#1a1a22;color:#ddd;font-size:12px;cursor:pointer;display:none"><option value="normal">普通</option><option value="image">图片</option><option value="title">标题</option></select>
 </div>
@@ -286,15 +286,15 @@ body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
   <button class="et-add" onclick="addCard()">+ 添加卡片</button>
   <button class="et-zone" onclick="toggleZoneMode()">🎨 添加区域</button>
   <span class="sel-count" id="selCount"></span>
-  <button id="alignBtn" class="align-btn" style="display:none" onclick="alignCards('h')">⇕ 水平对齐</button>
-  <button id="alignBtnV" class="align-btn" style="display:none" onclick="alignCards('v')">⇔ 垂直对齐</button>
-  <button id="spaceBtnH" class="space-btn" style="display:none" onclick="spaceEvenly('h')">≡ 等距水平</button>
-  <button id="spaceBtnV" class="space-btn" style="display:none" onclick="spaceEvenly('v')">≡ 等距垂直</button>
-  <button id="arrangeBtn" class="arrange-btn" style="display:none" onclick="autoArrange()">⊞ 自动排列</button>
+  <button id="alignBtn" class="align-btn"  onclick="alignCards('h')">⇕ 水平对齐</button>
+  <button id="alignBtnV" class="align-btn"  onclick="alignCards('v')">⇔ 垂直对齐</button>
+  <button id="spaceBtnH" class="space-btn"  onclick="spaceEvenly('h')">≡ 等距水平</button>
+  <button id="spaceBtnV" class="space-btn"  onclick="spaceEvenly('v')">≡ 等距垂直</button>
+  <button id="arrangeBtn" class="arrange-btn"  onclick="autoArrange()">⊞ 自动排列</button>
   <button onclick="undoLast()" style="background:color-mix(in srgb, var(--accent) 8%, #111);color:var(--text-body)">↩ 撤销</button>
   <button onclick="clearConns()" style="background:color-mix(in srgb, var(--accent) 8%, #111);color:#f88">⛌ 清空连线</button>
   <button id="saveCloudBtn" style="background:color-mix(in srgb, var(--accent) 15%, #111);color:var(--accent)" onclick="saveToCloud()">☁ 保存</button>
-  <button class="et-del-batch" id="batchDelBtn" style="display:none" onclick="batchDelete()">🗑 批量删除</button>
+  <button class="et-del-batch" id="batchDelBtn"  onclick="batchDelete()">🗑 批量删除</button>
 </div>
 
 <div class="zoom-info" id="zoomInfo">100%</div>
@@ -337,7 +337,7 @@ body.touch-mobile .ad-card .ad-text .ad-desc{font-size:9px}
     <div class="cm-input-wrap">
       <input id="cmInput" placeholder="写评论..." onkeydown="if(event.key==='Enter')addComment()" style="flex:1">
       <label id="cmImgBtn" style="padding:6px 10px;background:rgba(255,200,50,.1);border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap">🖼 图片</label>
-      <input id="cmImgInput" type="file" accept="image/*" style="display:none">
+      <input id="cmImgInput" type="file" accept="image/*" >
       <button onclick="addComment()" style="padding:6px 14px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">发送</button>
     </div>
     <div id="cmPreviewArea" style="display:none;padding:6px;margin-top:6px;background:rgba(255,255,255,.03);border-radius:6px;font-size:11px;color:var(--accent)"></div>
@@ -1905,10 +1905,12 @@ window.addEventListener("resize",updateTransform);
 </script>
 <!-- 推荐卡片 -->
 <div class="ad-card" id="adCard">
-  <img src="" alt="" id="adImg" style="display:none">
+  <a href="https://qm.qq.com/q/YWswLAYuoU" target="_blank">
+    <img src="../assets/ads/ad-3x3.png" alt="3x3代肝喵" id="adImg">
+  </a>
   <div class="ad-text" id="adText">
-    <div class="ad-title" id="adTitle">广告位招租</div>
-    <div class="ad-desc" id="adDesc">联系站长投放广告</div>
+    <div class="ad-title" id="adTitle">3x3代肝喵</div>
+    <div class="ad-desc" id="adDesc">点击这里喵</div>
   </div>
 </div>
 <script>
