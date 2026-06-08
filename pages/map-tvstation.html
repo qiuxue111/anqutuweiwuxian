@@ -552,7 +552,22 @@ function logout(){sessionStorage.removeItem('abi_token');sessionStorage.removeIt
 function ut(){var el=document.getElementById('mv');if(!el)return;el.style.transform='translate('+panX+'px,'+panY+'px) scale('+scaleM+')';var zr=document.getElementById('zr');if(zr)zr.value=Math.round(scaleM*100);var zl=document.getElementById('zl');if(zl)zl.textContent=Math.round(scaleM*100)+'%';try{renderMarkers();}catch(e){}}
 function zoom(f,cx,cy){if(cx===void 0||cy===void 0){scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>22)scaleM=22;ut();return;}var prev=scaleM;scaleM*=f;if(scaleM<0.1)scaleM=0.1;if(scaleM>22)scaleM=22;var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=cx-wr.left,my=cy-wr.top;var imgX=(mx-panX)/prev,imgY=(my-panY)/prev;panX=mx-imgX*scaleM;panY=my-imgY*scaleM;ut();}
 function zoomTo(v,cx,cy){v=v/100;if(v<0.1)v=0.1;if(v>22)v=22;if(cx!==void 0&&cy!==void 0){var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=cx-wr.left,my=cy-wr.top;var imgX=(mx-panX)/scaleM,imgY=(my-panY)/scaleM;panX=mx-imgX*v;panY=my-imgY*v;}scaleM=v;ut();}
-function resetView(){scaleM=1;panX=0;panY=0;var e=document.getElementById('mv');if(e)e.style.transform='translate(0px,0px) scale(1)';var zr=document.getElementById('zr');if(zr)zr.value=100;var zl=document.getElementById('zl');if(zl)zl.textContent='100%';}
+function resetView(){
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+  var img = document.getElementById('mapImg');
+  if (img && img.naturalWidth) {
+    // 手机端：缩放使地图宽度适应屏幕宽度
+    var iw = img.naturalWidth || img.width || 2000;
+    var s = Math.min(1, (w - 40) / iw);
+    scaleM = s;
+    panX = (w - iw * s) / 2;
+    panY = (h - (img.naturalHeight || img.height || 2000) * s) / 2;
+  } else {
+    scaleM = 1; panX = 0; panY = 0;
+  }
+  var e=document.getElementById('mv');if(e)e.style.transform='translate('+panX+'px,'+panY+'px) scale('+scaleM+')';var zr=document.getElementById('zr');if(zr)zr.value=Math.round(scaleM*100);var zl=document.getElementById('zl');if(zl)zl.textContent=Math.round(scaleM*100)+'%';
+}
 document.addEventListener('DOMContentLoaded',function(){
   document.addEventListener('click',function(e){
     if(e.target===document.body){resetView();}
