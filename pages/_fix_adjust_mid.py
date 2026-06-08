@@ -1,0 +1,13 @@
+# -*- coding: utf-8 -*-
+maps = ['map-farm','map-valley','map-beishan','map-tvstation','map-armory','map-airport']
+for m in maps:
+    path = 'F:/暗区突围网站/pages/'+m+'.html'
+    with open(path, 'rb') as f:
+        t = f.read().decode('utf-8')
+    
+    t = t.replace('panY = (h - ih * scaleM) * 1.0;', 'panY = (h - ih * scaleM) * 0.5;')
+    t = t.replace('panY = (h - ih * s) * 1.0;', 'panY = (h - ih * s) * 0.5;')
+    
+    with open(path, 'wb') as f:
+        f.write(t.encode('utf-8'))
+    print(f'{m}: panY 1.0 -> 0.5')
