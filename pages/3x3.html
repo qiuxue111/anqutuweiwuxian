@@ -1165,7 +1165,7 @@ function renderImageCard(c){
     loadingHint.textContent = "图片未能显示，继续加载中"+'.'.repeat(dots);
     setTimeout(function(){ img.src = get3x3ImageSrc(c.imageData, c); }, delay);
   };
-  if(!c.imageData){
+  if(!c.imageData && !getRoleImageUrlByTitle(c.title)){
     var ph = document.createElement("div");
     ph.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#555;font-size:14px;text-align:center;pointer-events:none";
     ph.textContent = "点击编辑上传图片"; div.appendChild(ph);
