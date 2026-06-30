@@ -407,54 +407,50 @@ body{overflow:hidden;background:#0a0a0f}
       function refreshHD(){
         var sm = window.scaleM || 1;
         var showHD = sm >= 1.2;
-        var wrap = document.querySelector('.map-wrap');
-        if(!wrap) return;
-        var wr = wrap.getBoundingClientRect();
-        // mv容器的实际尺寸（受scale影响）
         var mv = document.getElementById('mv');
         if(!mv) return;
-        // 计算视口在mv坐标系中的范围
-        var vpLeft = -panX / sm;
-        var vpTop = -panY / sm;
-        var vpRight = vpLeft + wr.width / sm;
-        var vpBottom = vpTop + wr.height / sm;
         var cells = document.querySelectorAll('.tile-cell');
         if(!cells.length) return;
+        var cols = 4;
         var firstCell = cells[0];
         var cellW = firstCell.offsetWidth;
         var cellH = firstCell.offsetHeight;
-        var cols = 4; // 固定4x4
+        if(!cellW || !cellH) return; // 还没渲染
+        // 屏幕视口范围（在原始的未缩放坐标系中）
+        var vpLeft = -panX;
+        var vpTop = -panY;
+        var vpRight = vpLeft + window.innerWidth;
+        var vpBottom = vpTop + window.innerHeight;
         cells.forEach(function(cell, i){
           var r = Math.floor(i / cols);
           var c2 = i % cols;
-          var cellLeft = c2 * cellW;
-          var cellTop = r * cellH;
-          var cellRight = cellLeft + cellW;
-          var cellBottom = cellTop + cellH;
-          var visible = cellRight > vpLeft && cellLeft < vpRight && cellBottom > vpTop && cellTop < vpBottom;
+          var cellLeft = c2 * cellW * sm;
+          var cellTop = r * cellH * sm;
+          var cellRight = (c2 + 1) * cellW * sm;
+          var cellBottom = (r + 1) * cellH * sm;
+          // 在屏幕上的位置
+          var sx = cellLeft + panX;
+          var sy = cellTop + panY;
+          var ex = cellRight + panX;
+          var ey = cellBottom + panY;
+          var visible = ex > -100 && sx < window.innerWidth + 100 && ey > -100 && sy < window.innerHeight + 100;
           cell.style.display = visible ? '' : 'none';
           if(visible){
-            // 低清图块
+            // 加载低清图块
             var bg = cell.querySelector('.tile-img');
             if(bg && !bg.src){
               var src = bg.getAttribute('data-src');
               if(src) bg.src = src;
             }
-            // 高清图块
-            if(showHD){
-              cell.querySelectorAll('.tile-hd').forEach(function(hd){
-                if(!hd.src){
-                  var s = hd.getAttribute('data-src');
-                  if(s) hd.src = s;
-                }
-                hd.style.opacity = '1';
-                hd.style.transition = 'opacity .3s ease';
-              });
-            } else {
-              cell.querySelectorAll('.tile-hd').forEach(function(hd){
-                hd.style.opacity = '0';
-              });
-            }
+            // 加载并显示高清图块
+            cell.querySelectorAll('.tile-hd').forEach(function(hd){
+              if(!hd.src){
+                var s = hd.getAttribute('data-src');
+                if(s) hd.src = s;
+              }
+              hd.style.transition = 'opacity .3s ease';
+              hd.style.opacity = showHD ? '1' : '0';
+            });
           }
         });
       }
