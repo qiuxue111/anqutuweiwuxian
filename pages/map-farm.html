@@ -420,12 +420,125 @@ body{font-size:14px!important}
 </style>
   <button class="ly-btn" id="lbb">图层</button>
   <div id="mv" style="transform-origin:0 0;cursor:grab;position:relative">
-    <img src="../assets/maps/farm_bg.jpg" draggable="false" id="mapImg" style="display:block;width:100%;position:relative;z-index:1" loading="eager">
-    <img src="../assets/maps/farm_hd_1.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:2;pointer-events:none" loading="lazy">
-    <img src="../assets/maps/farm_hd_2.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:3;pointer-events:none" loading="lazy">
-    <img src="../assets/maps/farm_hd_3.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:4;pointer-events:none" loading="lazy">
-    <img src="../assets/maps/farm_hd_4.png" draggable="false" class="hd-layer" style="display:block;width:100%;position:absolute;left:0;top:0;z-index:5;pointer-events:none" loading="lazy">
-  </div>
+        <div id="mapTileGrid" class="tile-grid" style="display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);width:100%;position:relative;z-index:1">
+      <!-- 低清底图 + 4层高清图块，由JS动态生成 -->
+    </div>
+    <!-- 保留mapImg用于JS获取图片尺寸（隐藏） -->
+    <img src="../assets/maps/farm_bg.jpg" id="mapImg" style="display:none;position:absolute;left:0;top:0;width:100%;height:auto;z-index:0;pointer-events:none" loading="lazy">
+    <script>
+    // 生成瓦片：低清 + 4层高清，全部懒加载
+    (function(){
+      var grid = document.getElementById('mapTileGrid');
+      if(!grid) return;
+      var COLS = 4, ROWS = 4;
+      var tiles = {};
+      // 为每个图块创建容器
+      for(var r = 0; r < ROWS; r++){
+        for(var c = 0; c < COLS; c++){
+          var wrap = document.createElement('div');
+          wrap.className = 'tile-cell';
+          wrap.style.cssText = 'position:relative;overflow:hidden;width:100%;height:100%';
+          // 低清图块
+          var bg = document.createElement('img');
+          bg.className = 'tile-img tile-lazy';
+          bg.setAttribute('data-src', '../assets/maps/tiles/farm/farm_'+r+'_'+c+'.jpg');
+          bg.style.cssText = 'display:block;width:100%;height:auto;object-fit:cover;background:#1a1a2e;position:relative;z-index:1';
+          bg.loading = 'lazy';
+          wrap.appendChild(bg);
+          // 4层高清图块
+          for(var h = 1; h <= 4; h++){
+            var hd = document.createElement('img');
+            hd.className = 'tile-hd tile-lazy hd-'+h;
+            hd.setAttribute('data-src', '../assets/maps/tiles/farm/farm_hd_'+h+'_'+r+'_'+c+'.png');
+            hd.style.cssText = 'display:block;width:100%;height:auto;object-fit:cover;position:absolute;left:0;top:0;z-index:'+(h+1)+';pointer-events:none;opacity:0;transition:opacity .3s';
+            hd.loading = 'lazy';
+            wrap.appendChild(hd);
+          }
+          grid.appendChild(wrap);
+        }
+      }
+      // 图块懒加载 IntersectionObserver
+      if(window.IntersectionObserver){
+        var observer = new IntersectionObserver(function(entries){
+          entries.forEach(function(entry){
+            if(entry.isIntersecting){
+              var img = entry.target;
+              var src = img.getAttribute('data-src');
+              if(src && (!img.src || img.src.indexOf('data:')===0)){
+                img.src = src;
+                img.onload = function(){ this.style.background = ''; };
+                img.onerror = function(){ this.src = ''; };
+              }
+              observer.unobserve(img);
+            }
+          });
+        }, { rootMargin: '400px' });
+        // 等DOM更新后开始观察
+        setTimeout(function(){
+          document.querySelectorAll('.tile-lazy').forEach(function(img){
+            observer.observe(img);
+          });
+        }, 50);
+      }
+      // 在缩放变化时切换高清可见性（缩放>=3 显示高清）
+      function refreshHD(){
+        var sm = window.scaleM || 1;
+        var showHD = sm >= 3;
+        document.querySelectorAll('.tile-hd').forEach(function(img){
+          img.style.opacity = showHD ? '1' : '0';
+        });
+      }
+      // 挂到ut上，每次缩放/平移时调用
+      var _origRefreshHD = window._refreshHD;
+      window._refreshHD = refreshHD;
+      var orig_ut = window.ut;
+      window.ut = function(){
+        if(typeof orig_ut === 'function') orig_ut();
+        setTimeout(function(){
+          if(window._refreshHD) window._refreshHD();
+        }, 50);
+      };
+      // 初始调用
+      setTimeout(refreshHD, 100);
+    })();
+    </script>
+<!-- 保留mapImg用于JS获取图片尺寸（隐藏） -->
+    <img src="../assets/maps/farm_bg.jpg" id="mapImg" style="display:none;position:absolute;left:0;top:0;width:100%;height:auto;z-index:0;pointer-events:none" loading="lazy">  
+  <script>
+  // 图块懒加载 - IntersectionObserver
+  (function(){
+    if(!window.IntersectionObserver) return;
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          var img = entry.target;
+          var src = img.getAttribute('data-src');
+          if(src && !img.src){
+            img.src = src;
+            img.onload = function(){ img.style.background = ''; };
+            img.onerror = function(){ img.src = ''; };
+          }
+          observer.unobserve(img);
+        }
+      });
+    }, { rootMargin: '200px' });
+    document.querySelectorAll('.tile-lazy').forEach(function(img){
+      observer.observe(img);
+    });
+    // 缩放/平移后重新观察（部分图块可能刚进入视口）
+    var orig_ut = window.ut;
+    window.ut = function(){
+      if(typeof orig_ut === 'function') orig_ut();
+      setTimeout(function(){
+        document.querySelectorAll('.tile-lazy:not([src])').forEach(function(img){
+          observer.unobserve(img);
+          observer.observe(img);
+        });
+      }, 100);
+    };
+  })();
+  </script>
+</div>
   </div>
   <div class="ctrl">
     <button onclick="zoom(0.85)">-</button>
@@ -1822,7 +1935,6 @@ document.addEventListener('click', function(e) {
 });
 
 </script><div style="position:fixed;bottom:4px;right:60px;z-index:99999;font-size:30px;color:rgba(255,255,255,0.25);pointer-events:none;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.8)">📦 Shift+左键投稿容器</div>
-
 
 </body>
 </html>
