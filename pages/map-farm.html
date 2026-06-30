@@ -567,7 +567,7 @@ body{font-size:14px!important}
       <!-- 低清底图 + 4层高清图块，由JS动态生成 -->
     </div>
     <!-- 保留mapImg用于JS获取图片尺寸（隐藏） -->
-    <img src="../assets/maps/farm_bg.jpg" id="mapImg" style="display:none;position:absolute;left:0;top:0;width:100%;height:auto;z-index:0;pointer-events:none">
+    <img src="../assets/maps/farm_bg.jpg" id="mapImg" style="position:absolute;left:0;top:0;width:100%;height:auto;z-index:0;pointer-events:none;visibility:hidden">
     <script>
     // 生成瓦片：低清 + 4层高清，全部懒加载
     (function(){
@@ -650,42 +650,7 @@ body{font-size:14px!important}
       setTimeout(refreshHD, 100);
     })();
     </script>
-<!-- 保留mapImg用于JS获取图片尺寸（隐藏） -->
-    <img src="../assets/maps/farm_bg.jpg" id="mapImg" style="display:none;position:absolute;left:0;top:0;width:100%;height:auto;z-index:0;pointer-events:none">  
-  <script>
-  // 图块懒加载 - IntersectionObserver
-  (function(){
-    if(!window.IntersectionObserver) return;
-    var observer = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){
-          var img = entry.target;
-          var src = img.getAttribute('data-src');
-          if(src && !img.src){
-            img.src = src;
-            img.onload = function(){ img.style.background = ''; };
-            img.onerror = function(){ img.src = ''; };
-          }
-          observer.unobserve(img);
-        }
-      });
-    }, { rootMargin: '200px' });
-    document.querySelectorAll('.tile-lazy').forEach(function(img){
-      observer.observe(img);
-    });
-    // 缩放/平移后重新观察（部分图块可能刚进入视口）
-    var orig_ut = window.ut;
-    window.ut = function(){
-      if(typeof orig_ut === 'function') orig_ut();
-      setTimeout(function(){
-        document.querySelectorAll('.tile-lazy:not([src])').forEach(function(img){
-          observer.unobserve(img);
-          observer.observe(img);
-        });
-      }, 100);
-    };
-  })();
-  </script>
+<!-- </script>
 </div>
   </div>
   <div class="ctrl">
