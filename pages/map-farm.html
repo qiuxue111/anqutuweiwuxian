@@ -450,6 +450,17 @@ body{overflow:hidden;background:#0a0a0f}
           refreshHD();
         }
       }, 1000);
+      // 强制所有高清图块加载（绕过浏览器懒加载干预）
+      document.querySelectorAll('.tile-hd').forEach(function(img){
+        var src = img.getAttribute('data-src');
+        if(src && !img.src){
+          img.src = src;
+          img.onload = function(){ this.style.background = ''; };
+          img.onerror = function(){ this.removeAttribute('src'); };
+        }
+      });
+      // 延后刷新HD状态，等图片加载
+      setTimeout(function(){ if(window._refreshHD) window._refreshHD(); }, 1500);
     })()</script>
 <div class="hamburger-menu" id="hamburgerMenu"></div>
 <div class="top-bar" id="topBar"><a href="../index.html" class="logo">暗区无限</a><div class="sep"></div><button class="btn" onclick="resetView()">复位</button>
