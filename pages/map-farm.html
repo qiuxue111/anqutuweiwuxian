@@ -862,7 +862,7 @@ document.body.addEventListener('mousedown',function(e){if(mode==='place')return;
 document.body.addEventListener('mousemove',function(e){if(mode==='place'){var ch=document.getElementById('ch');ch.style.left=e.clientX+'px';ch.style.top=e.clientY+'px';}});
 document.getElementById('mv').addEventListener('click',function(e){if(mode==='place'&&!e.target.closest('.pin-marker')){extractPos(e);showPicker();}});
 function extractPos(e){var wrap=document.querySelector('.map-wrap');if(!wrap)return;var wr=wrap.getBoundingClientRect();var mx=e.clientX-wr.left,my=e.clientY-wr.top;var img=document.getElementById('mapImg');var ix=mx/scaleM-panX/scaleM,iy=my/scaleM-panY/scaleM;var pctX=Math.round(ix/img.clientWidth*10000)/100;var pctY=Math.round(iy/img.clientHeight*10000)/100;var px__=Math.round(pctX/100*(img.naturalWidth||img.width||0));var py__=Math.round(pctY/100*(img.naturalHeight||img.height||0));var cv=document.getElementById('cv');if(cv)cv.textContent=pctX+', '+pctY;}
-document.getElementById('mv').addEventListener('wheel',function(e){_zooming=true;e.preventDefault();var f=e.deltaY>0?0.9:1.1;zoom(f,e.clientX,e.clientY);},{passive:false});
+document.getElementById('mv').addEventListener('wheel',function(e){_zooming=true;e.preventDefault();var f=e.deltaY>0?0.9:1.1;zoom(f,e.clientX,e.clientY);if(window._refreshHD)setTimeout(function(){window._refreshHD();},10);},{passive:false});
 /* ── 触控拖拽 + 双指缩放 ── */
 (function(){
   var mv = document.getElementById('mv');
