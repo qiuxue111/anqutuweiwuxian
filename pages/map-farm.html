@@ -408,14 +408,26 @@ if(adCard){(function(){
       function refreshHD(){
         var sm = window.scaleM || 1;
         var showHD = sm >= 1.5;
+        var loaded = 0, total = 0;
         document.querySelectorAll('.tile-hd').forEach(function(img){
+          total++;
           if(img.src && img.complete && img.naturalWidth > 0){
+            loaded++;
             img.style.opacity = showHD ? '1' : '0';
             img.style.transition = 'opacity .3s ease';
           } else {
             img.style.opacity = '0';
           }
         });
+        // 调试：状态栏显示高清加载情况
+        var dbg = document.getElementById('hdDebug');
+        if(!dbg){
+          dbg = document.createElement('div');
+          dbg.id = 'hdDebug';
+          dbg.style.cssText = 'position:fixed;bottom:5px;left:5px;z-index:99999;color:#0f0;font-size:11px;background:rgba(0,0,0,0.7);padding:2px 6px;border-radius:3px;pointer-events:none';
+          document.body.appendChild(dbg);
+        }
+        dbg.textContent = 'HD: '+loaded+'/'+total+' sm='+sm.toFixed(2)+' show='+showHD;
       }
       window._refreshHD = refreshHD;
       // 挂到ut上
