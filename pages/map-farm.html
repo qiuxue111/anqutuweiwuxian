@@ -358,7 +358,7 @@ body{overflow:hidden;background:#0a0a0f}
           bg.className = 'tile-img tile-lazy';
           bg.setAttribute('data-src', '../assets/maps/tiles/farm/farm_'+r+'_'+c+'.jpg');
           bg.style.cssText = 'display:block;width:100%;height:auto;object-fit:cover;background:#1a1a2e;position:relative;z-index:1';
-          bg.loading = 'lazy';
+          
           bg.setAttribute('draggable', 'false');
           wrap.appendChild(bg);
           // 4层高清图块（初始隐藏，加载后自动显示）
@@ -367,7 +367,7 @@ body{overflow:hidden;background:#0a0a0f}
             hd.className = 'tile-hd tile-lazy hd-'+h;
             hd.setAttribute('data-src', '../assets/maps/tiles/farm/farm_hd_'+h+'_'+r+'_'+c+'.png');
             hd.style.cssText = 'display:block;width:100%;height:auto;object-fit:cover;position:absolute;left:0;top:0;z-index:'+(h+1)+';pointer-events:none;background:transparent';
-            hd.loading = 'lazy';
+            
             hd.setAttribute('draggable', 'false');
             // 加载完成后自动设置opacity（由refreshHD控制）
             wrap.appendChild(hd);
@@ -544,7 +544,7 @@ body{font-size:14px!important}
           bg.className = 'tile-img tile-lazy';
           bg.setAttribute('data-src', '../assets/maps/tiles/farm/farm_'+r+'_'+c+'.jpg');
           bg.style.cssText = 'display:block;width:100%;height:auto;object-fit:cover;background:#1a1a2e;position:relative;z-index:1';
-          bg.loading = 'lazy';
+          
           wrap.appendChild(bg);
           // 4层高清图块
           for(var h = 1; h <= 4; h++){
@@ -552,7 +552,7 @@ body{font-size:14px!important}
             hd.className = 'tile-hd tile-lazy hd-'+h;
             hd.setAttribute('data-src', '../assets/maps/tiles/farm/farm_hd_'+h+'_'+r+'_'+c+'.png');
             hd.style.cssText = 'display:block;width:100%;height:auto;object-fit:cover;position:absolute;left:0;top:0;z-index:'+(h+1)+';pointer-events:none;opacity:0;transition:opacity .3s';
-            hd.loading = 'lazy';
+            
             wrap.appendChild(hd);
           }
           grid.appendChild(wrap);
