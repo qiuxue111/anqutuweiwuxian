@@ -413,14 +413,23 @@ body{overflow:hidden;background:#0a0a0f}
         });
       }
       window._refreshHD = refreshHD;
-      // 挂到ut上
+      // 每当缩放/平移后调用refreshHD
       var orig_ut = window.ut;
       window.ut = function(){
         if(typeof orig_ut === 'function') orig_ut();
-        setTimeout(function(){
-          if(window._refreshHD) window._refreshHD();
-        }, 50);
+        if(window._refreshHD){
+          setTimeout(function(){ window._refreshHD(); }, 10);
+          setTimeout(function(){ window._refreshHD(); }, 100);
+        }
       };
+      // 也挂在zoom上
+      var orig_zoom = window.zoom;
+      if(orig_zoom){
+        window.zoom = function(f, cx, cy){
+          orig_zoom(f, cx, cy);
+          setTimeout(function(){ if(window._refreshHD) window._refreshHD(); }, 50);
+        };
+      }
       // 首次调用
       setTimeout(refreshHD, 200);
       // 每秒检查一次（处理异步加载）
