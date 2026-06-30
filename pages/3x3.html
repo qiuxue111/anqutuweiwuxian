@@ -1145,7 +1145,7 @@ function renderImageCard(c){
   div.style.left = c.x+"px"; div.style.top = c.y+"px";
   if(selectedCardIds[c.id]) div.classList.add("selected");
   var img = document.createElement("img");
-  img.src = c.imageData || '';
+  img.src = get3x3ImageSrc(c.imageData, c) || '';
   /* 并排加载提示 + 自动重试 */
   var loadingHint = document.createElement("div");
   loadingHint.className = "img-loading-hint";
@@ -1163,7 +1163,7 @@ function renderImageCard(c){
     var delay = Math.min(1000 * Math.pow(2, retries), 16000);
     var dots = Math.min(retries + 1, 6);
     loadingHint.textContent = "图片未能显示，继续加载中"+'.'.repeat(dots);
-    setTimeout(function(){ img.src = c.imageData; }, delay);
+    setTimeout(function(){ img.src = get3x3ImageSrc(c.imageData, c); }, delay);
   };
   if(!c.imageData){
     var ph = document.createElement("div");
@@ -1387,9 +1387,49 @@ function showEditFields(type, c){
       if(bt) bt.parentNode.insertBefore(area, bt.nextSibling); else mc.appendChild(area);
     }
     area.style.display = "flex"; area.innerHTML = "";
-    if(c.imageData){ var im = document.createElement("img"); im.src = c.imageData; area.appendChild(im); }
-    var hint = document.createElement("div"); hint.className = "upload-hint"; hint.textContent = "拖拽图片到此处 或"; area.appendChild(hint);
-    var fb = document.createElement("button"); fb.className = "upload-btn"; fb.textContent = "选择图片";
+    /* ── 角色下拉选择（新增） ── */
+    var roleRow = document.createElement("div");
+    roleRow.style.cssText = "width:100%;display:flex;align-items:center;gap:8px;margin-bottom:8px";
+    var roleLabel = document.createElement("span");
+    roleLabel.textContent = "角色：";
+    roleLabel.style.cssText = "color:#aaa;font-size:12px;white-space:nowrap";
+    roleRow.appendChild(roleLabel);
+    var roleSelect = document.createElement("select");
+    roleSelect.style.cssText = "flex:1;padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:#ddd;font-size:12px;outline:none;cursor:pointer";
+    var optNone = document.createElement("option"); optNone.value = ""; optNone.textContent = "— 自定义图片 —"; roleSelect.appendChild(optNone);
+    ROLE_IMAGES.forEach(function(ri){
+      var opt = document.createElement("option"); opt.value = ri.file; opt.textContent = ri.label;
+      /* 如果卡片标题匹配当前角色，默认选中 */
+      if(c.title && (c.title === ri.label || c.title.indexOf(ri.file.replace('.png','')) >= 0)) opt.selected = true;
+      roleSelect.appendChild(opt);
+    });
+    roleSelect.onchange = function(){
+      var crd = cards.find(function(x){ return x.id === editingCardId; });
+      if(!crd) return;
+      if(this.value){
+        /* 选了角色：自动设标题，清空旧 imageData（走角色匹配） */
+        var matched = ROLE_IMAGES.find(function(r){ return r.file === roleSelect.value; });
+        if(matched){
+          crd.title = matched.label;
+          crd.imageData = ''; /* 清空上传记录，走角色匹配 */
+          openEditModal(editingCardId);
+        }
+      } else {
+        /* 选了"自定义图片"，保留原标题不清空，让用户手动上传 */
+        var crd2 = cards.find(function(x){ return x.id === editingCardId; });
+        if(crd2) crd2.imageData = c.imageData || '';
+        openEditModal(editingCardId);
+      }
+    };
+    roleRow.appendChild(roleSelect);
+    area.appendChild(roleRow);
+    /* ── 图片预览 ── */
+    var previewImg = document.createElement("img");
+    var previewSrc = c.imageData ? get3x3ImageSrc(c.imageData, c) : get3x3ImageSrc('', c);
+    if(previewSrc){ previewImg.src = previewSrc; area.appendChild(previewImg); }
+    /* ── 手动上传区域 ── */
+    var hint = document.createElement("div"); hint.className = "upload-hint"; hint.textContent = "拖拽自定义图片到此处 或"; area.appendChild(hint);
+    var fb = document.createElement("button"); fb.className = "upload-btn"; fb.textContent = "选择图片上传";
     fb.onclick = function(){
       var inp = document.getElementById("_imgFileInput");
       if(!inp){ inp = document.createElement("input"); inp.id = "_imgFileInput"; inp.type = "file"; inp.accept = "image/*"; inp.style.display = "none"; document.body.appendChild(inp); }
@@ -1402,7 +1442,7 @@ function showEditFields(type, c){
           var ext = file.name.split('.').pop() || 'png';
           fb.textContent = "上传中..."; fb.style.opacity = "0.5";
           uploadImgToGitHub(ev.target.result, ext, function(url){
-            fb.textContent = "选择图片"; fb.style.opacity = "1";
+            fb.textContent = "选择图片上传"; fb.style.opacity = "1";
             if(url){ crd.imageData = url; openEditModal(editingCardId); }
             else alert("图片上传失败");
           });
@@ -1538,7 +1578,7 @@ function renderComments(){
     item.appendChild(content);
     if(cm.imageData){
       var cmImg = document.createElement("img");
-      cmImg.src = cm.imageData;
+      cmImg.src = get3x3ImageSrc(cm.imageData);
       cmImg.style.cssText = "max-width:100%;max-height:200px;border-radius:8px;margin-top:6px;cursor:pointer;object-fit:contain";
       cmImg.onclick = function(){ window.open(this.src); };
       item.appendChild(cmImg);
@@ -1762,6 +1802,61 @@ var GITHUB_BRANCH = 'main';
 var GITHUB_PATH = 'assets/3x3-images/';
 var GITHUB_RAW = 'https://raw.githubusercontent.com/'+GITHUB_REPO+'/'+GITHUB_BRANCH+'/';
 
+/* ── 角色图片映射表 ── */
+/* 你预设的角色图片：文件名 → 显示名，图片已放在 assets/3x3-images/ 下 */
+var ROLE_IMAGES = [
+  { file: '使徒.png', label: '使徒' },
+  { file: '塔莉娅.png', label: '塔莉娅' },
+  { file: '弗拉德伦.png', label: '弗拉德伦' },
+  { file: '白蔷薇.png', label: '白蔷薇' },
+  { file: '马克西姆.png', label: '马克西姆' }
+];
+/* 兜底图片（找不到匹配角色时用） */
+var ROLE_IMAGE_DEFAULT = '无图片时使用的默认图片.jpg';
+
+/* 根据卡片标题自动匹配角色图片的 URL */
+function getRoleImageUrlByTitle(title){
+  if(!title) return '';
+  var t = title.trim();
+  for(var i = 0; i < ROLE_IMAGES.length; i++){
+    if(t === ROLE_IMAGES[i].label || t.indexOf(ROLE_IMAGES[i].file.replace('.png','')) >= 0){
+      var relPath = '../assets/3x3-images/' + ROLE_IMAGES[i].file;
+      return resolve3x3Url(relPath);
+    }
+  }
+  /* 没匹配到，用默认占位图 */
+  var defaultRel = '../assets/3x3-images/' + ROLE_IMAGE_DEFAULT;
+  return resolve3x3Url(defaultRel);
+}
+
+/* 解析相对路径 → 完整可访问 URL（兼容 file:// 和 GitHub Pages） */
+function resolve3x3Url(relPath){
+  if(!relPath) return '';
+  if(relPath.indexOf('http') === 0) return relPath;
+  if(relPath.indexOf('../') === 0){
+    if(window.location.protocol === 'file:'){
+      return relPath;
+    }
+    return 'https://qiuxue111.github.io/anqutuweiwuxian/' + relPath.replace('../','');
+  }
+  return relPath;
+}
+
+/* 3x3 图片 URL 解析（兼容新旧两种方式）：
+   旧方式：c.imageData 存 uploadImgToGitHub 返回的 ../assets/3x3-images/img_xxx.png
+   新方式：c.imageData 为空，根据 c.title 自动匹配角色图片
+   如果 card 参数传入，优先用角色匹配；否则 fallback 到旧 path 逻辑 */
+function get3x3ImageSrc(path, card){
+  /* 如果有 card 且没有 imageData（新式角色匹配） */
+  if(card && !card.imageData && card.title){
+    var roleUrl = getRoleImageUrlByTitle(card.title);
+    if(roleUrl) return roleUrl;
+  }
+  /* 旧式：path 是 uploadImgToGitHub 返回的相对路径 */
+  if(!path) return '';
+  return resolve3x3Url(path);
+}
+
 function uploadImgToGitHub(base64Data, ext, cb){
   if(!base64Data) return cb(null);
   // base64Data format: data:image/png;base64,iVBOR...
@@ -1784,8 +1879,9 @@ function uploadImgToGitHub(base64Data, ext, cb){
     if(r.status === 201 || r.status === 200) return r.json();
     return r.text().then(function(t){ throw new Error(t); });
   }).then(function(data){
-    var rawUrl = GITHUB_RAW + path;
-    cb(rawUrl);
+    /* 返回相对路径，避免 raw.githubusercontent.com CORS/连接问题 */
+    var relUrl = '../assets/3x3-images/'+filename;
+    cb(relUrl);
   }).catch(function(err){
     console.error('GitHub upload failed', err);
     cb(null);
