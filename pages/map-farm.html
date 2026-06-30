@@ -480,12 +480,17 @@ body{font-size:14px!important}
           });
         }, 50);
       }
-      // 在缩放变化时切换高清可见性（缩放>=3 显示高清）
+      // 在缩放变化时切换高清可见性（缩放>=1.5 显示高清，有淡入）
       function refreshHD(){
         var sm = window.scaleM || 1;
-        var showHD = sm >= 3;
+        var showHD = sm >= 1.5;
         document.querySelectorAll('.tile-hd').forEach(function(img){
-          img.style.opacity = showHD ? '1' : '0';
+          if(showHD && img.style.opacity !== '1'){
+            // 淡入：确保图片已加载
+            img.style.opacity = '1';
+          } else if(!showHD){
+            img.style.opacity = '0';
+          }
         });
       }
       // 挂到ut上，每次缩放/平移时调用
