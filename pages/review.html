@@ -168,7 +168,7 @@ function autoCleanExpired(items){
     if(p.admin_passed)return;
     var created=new Date(p.created_at||now).getTime();
     var hoursOld=(now-created)/3600000;
-    if(hoursOld>=24){
+    if(hoursOld>=720){
       toDelete.push(p.id);
     }
   });
@@ -236,7 +236,7 @@ function renderList(items){
     var now=Date.now();
     var created=new Date(p.created_at||now).getTime();
     var hoursOld=(now-created)/3600000;
-    var expired=hoursOld>=24;
+    var expired=hoursOld>=720;
     var passed=p.admin_passed||false;
     html+="<div class='card"+(expired?" expired":"")+"'>";
     html+="<div class='hdr'>";
