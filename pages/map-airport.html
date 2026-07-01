@@ -4,7 +4,7 @@
   <link rel="icon" href="../favicon.ico" type="image/jpeg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>阿贾克斯港口地图 - 暗区突围：无限</title>
+<title>机场地图 - 暗区突围：无限</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0;padding:0;overflow:hidden;padding-bottom:60px!important}
@@ -184,7 +184,7 @@ adCard.querySelector('a').addEventListener('click',function(e){if(drg){e.prevent
   <link rel="icon" href="../favicon.ico" type="image/jpeg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>阿贾克斯港口地图 - 暗区突围：无限</title>
+<title>机场地图 - 暗区突围：无限</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a0f;color:#ddd;font-family:-apple-system,"Microsoft YaHei",sans-serif}
@@ -344,7 +344,7 @@ adCard.querySelector('a').addEventListener('click',function(e){if(drg){e.prevent
 <button class="btn" onclick="resetPositions()">↺ 归位</button><div class="sep"></div><span class="user-name" id="userName2"></span><button class="btn" id="loginBtn2" onclick="loginGitHub()">登录</button><button class="btn" id="reviewBtn2" onclick="window.location.href='review.html?from=map-airport'" >审核</button></div>
 <div class="mat-panel" id="matPanel"><button class="mat-btn" id="matBtn" onclick="toggleMat()">📦 物资</button><div class="mat-content" id="matContent"></div></div>
 <div class="floor-wrap" id="floorWrap" style="position:fixed!important;bottom:10px!important;left:50%!important;transform:translateX(-50%)!important;z-index:99999!important;display:flex;gap:6px;background:rgba(10,10,15,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:4px 5px">
-  <button class="floor-btn active" data-floor="0" onclick="switchFloor(0)">港口全境</button>
+  <button class="floor-btn active" data-floor="0" onclick="switchFloor(0)">机场全境</button>
   <button class="floor-btn" data-floor="1" onclick="switchFloor(1)">机场塔内一层</button>
   <button class="floor-btn" data-floor="2" onclick="switchFloor(2)">机场塔内二层</button>
 </div>
@@ -533,7 +533,7 @@ function normalizeUser(){try{var u=sessionStorage.getItem('abi_user');if(!u)retu
 function getUserName(){try{var u=JSON.parse(sessionStorage.getItem('abi_user'));return u&&(u.user_metadata&&u.user_metadata.preferred_username||u.user_metadata&&u.user_metadata.user_name||u.email||'已登录');}catch(e){return sessionStorage.getItem('abi_user')||'已登录';}}
 (function(){normalizeUser();var t=sessionStorage.getItem('abi_token');var un=document.getElementById('userName');var lb=document.getElementById('loginBtn');var rb=document.getElementById('reviewBtnMM');if(t&&un){un.style.display='inline';un.textContent=getUserName();}if(t&&lb)lb.style.display='none';if(rb)rb.style.display=t?'block':'none';setTimeout(function(){normalizeUser();var t2=sessionStorage.getItem('abi_token');var un2=document.getElementById('userName');var lb2=document.getElementById('loginBtn');var rb2=document.getElementById('reviewBtnMM');if(t2&&un2){un2.style.display='inline';un2.textContent=getUserName();}if(t2&&lb2)lb2.style.display='none';if(rb2)rb2.style.display=t2?'block':'none';},500);})();
 if((window.location.hash||'').indexOf('access_token')>=0||(window.location.search||'').indexOf('access_token')>=0){try{var raw=(window.location.hash||window.location.search).replace(/^[#?]/,'');var p={};raw.split('&').forEach(function(s){var kv=s.split('=');p[kv[0]]=decodeURIComponent(kv[1]||'');});if(p.access_token){sessionStorage.setItem('abi_token',p.access_token);try{var b64=p.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';var u=JSON.parse(atob(b64));sessionStorage.setItem('abi_user',JSON.stringify(u));}catch(e){sessionStorage.setItem('abi_user','{"user_metadata":{"preferred_username":"User"}}');}history.replaceState(null,'',window.location.pathname+window.location.search);window.location.href=window.location.pathname+window.location.search;}}catch(e){console.error('Auth err',e);}}
-var mapNameEng='airport',mapNameCN='阿贾克斯港口',cloudPins=[],cloudComments=[];
+var mapNameEng='airport',mapNameCN='机场',cloudPins=[],cloudComments=[];
 // ========== 楼层切换 ==========
 var floorImages = [
   '../assets/maps/airport.png',
@@ -541,8 +541,8 @@ var floorImages = [
   '../assets/maps/airport_机场塔内二层.png'
 ];
 var floorLabels = [
-  '阿贾克斯港口全境',
-  '阿贾克斯港口二楼'
+  '机场全境',
+  '机场二楼'
 ];
 var currentFloor = 0;
 
